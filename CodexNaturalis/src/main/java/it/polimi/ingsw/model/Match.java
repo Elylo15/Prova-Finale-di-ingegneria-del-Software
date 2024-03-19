@@ -37,8 +37,8 @@ public class Match {
         int winnerIndex = 0;
         int size = players.size();
 
-        for (int i = 0; i < (size-1) ; i++) {
-            if (playerScore.get(i) > playerScore.get(i + 1))
+        for (int i = 1; i < (size-1) ; i++) {
+            if (playerScore.get(winnerIndex) < playerScore.get(i))
                 winnerIndex = i;
         }
 
@@ -53,7 +53,7 @@ public class Match {
         int size = players.size();
         int nextIndex;
 
-        if (index == size)
+        if (index == size - 1)
             nextIndex = 0;
         else
             nextIndex = index + 1;
