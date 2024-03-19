@@ -1,28 +1,31 @@
 package it.polimi.ingsw.model;
 
 import java.util.ArrayList;
+import java.util.Collections; //bisogna chiedere se si può usare
 
 public class Deck {
-    ArrayList<GoldCard> goldCardsDeck;
-    ArrayList<ResourceCard> resourceCardsDeck;
-    ArrayList<ObjectiveCard> objectiveCardsDeck;
-    ArrayList<StarterCard> starterCardsDeck;
+    ArrayList<Card> list;
 
-    public Deck(ArrayList<GoldCard> goldCardsDeck,ArrayList<ResourceCard> resourceCardsDeck,ArrayList<ObjectiveCard> objectiveCardsDeck,ArrayList<StarterCard> starterCardsDeck){
-        this.goldCardsDeck  = goldCardsDeck;
-        this.resourceCardsDeck = resourceCardsDeck;
-        this.objectiveCardsDeck = objectiveCardsDeck;
-        this.starterCardsDeck = starterCardsDeck;
+    public Deck(){
+       list = new ArrayList<Card>();
     }
 
-    public void addGoldCard(GoldCard gc){
-        goldCardsDeck.add(gc);
+    public void addGoldCard(Card c){
+        list.add(c);
     }
-    public void addResourceCard(ResourceCard rc){
-        resourceCardsDeck.add(rc);
+
+    public void shuffle(){
+        Collections.shuffle(list);
     }
-    public void addObjectivedCard(ObjectiveCard oc){
-        objectiveCardsDeck.add(oc);
+
+    public ArrayList<Card> removeCard(){
+        list.remove(0);
+        return list;
     }
-    public void addStarterCard(StarterCard sc){ starterCardsDeck.add(sc);}
+
+    public int getCardNumber(){
+        return list.size();
+    }
+
+
 }
