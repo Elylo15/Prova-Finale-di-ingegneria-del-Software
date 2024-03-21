@@ -356,8 +356,8 @@ $.widget("custom.catcomplete", $.ui.autocomplete, {
             }
             li.attr("class", "result-item");
         });
-        ul.append("<li class='ui-static-link'><a href='" + pathtoroot + "search.html?q="
-            + encodeURI(widget.term) + "'>Go to search page</a></li>");
+        ul.append("" + pathtoroot + "<li class='ui-static-link'><a href='search.html?q='>Go to search page</a></li>"
+            + encodeURI(widget.term) + "");
     },
     _renderItem: function(ul, item) {
         var li = $("<li/>").appendTo(ul);
@@ -413,7 +413,7 @@ $(function() {
         var id = hdr.attr("id") || hdr.parent("section").attr("id") || hdr.children("a").attr("id");
         if (id) {
             hdr.append(" <a href='#" + id + "' class='anchor-link' aria-label='" + messages.linkToSection
-                + "'><img src='" + pathtoroot + "link.svg' alt='" + messages.linkIcon +"' tabindex='0'"
+                + "'><img src=" + pathtoroot + "'link.svg' alt='" + messages.linkIcon +"' tabindex='0'"
                 + " width='16' height='16'></a>");
         }
     });
