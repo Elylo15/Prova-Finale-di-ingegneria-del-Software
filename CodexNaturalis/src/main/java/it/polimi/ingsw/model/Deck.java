@@ -1,11 +1,16 @@
 package it.polimi.ingsw.model;
-
 import java.util.ArrayList;
-import java.util.Collections; //bisogna chiedere se si può usare
+import java.util.Collections;
 
+/**
+ * Deck class
+ * @author elylo
+ */
 public class Deck {
     ArrayList<Card> list;
-
+    /**
+     * Class costructor
+     */
     public Deck(){
        list = new ArrayList<Card>();
     }
