@@ -1,4 +1,4 @@
 package it.polimi.ingsw.model.cards;
 
-public class StarterCard {
+public class StarterCard extends Card{
 }

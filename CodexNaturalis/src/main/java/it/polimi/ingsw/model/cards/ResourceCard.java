@@ -1,4 +1,4 @@
 package it.polimi.ingsw.model.cards;
 
-public class ResourceCard {
+public class ResourceCard extends Card{
 }

@@ -1,4 +1,5 @@
 package it.polimi.ingsw.model.cards;
 
-public class GoldCard {
+public class GoldCard extends Card{
+
 }
