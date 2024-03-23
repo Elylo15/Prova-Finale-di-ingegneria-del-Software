@@ -5,7 +5,7 @@ import it.polimi.ingsw.model.cards.enumeration.Resource;
 
 import java.util.ArrayList;
 
-public class PlaceableCard extends Card{
+public abstract class PlaceableCard extends Card{
 
     private ArrayList<Resource> requirement;
     private int points;
