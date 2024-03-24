@@ -8,36 +8,81 @@ public class Cell {
     private int column;
     private boolean available;
     private Resource resource;
-    private Card bottomCard;
-    private Card topCard;
+    private PlaceableCard bottomCard;
+    private PlaceableCard topCard;
 
-    public Cell(int row, int column, Card bottomCard, Resource resource)
+    /**
+     * Creates a new cell
+     * @param row row coordinate of the matrix of cells
+     * @param column column coordinate of the matrix of cells
+     * @param bottomCard pointer to the card on the bottom
+     * @param resource pointer to the card on the top
+     */
+    public Cell(int row, int column, PlaceableCard bottomCard, Resource resource)
     {
         this.row = row;
         this.column = column;
         this.resource = resource;
         this.bottomCard = bottomCard;
         this.topCard = null;
-        if(resource.equals(Resource.Blocked))
-            this.available = false;
-        else
-            this.available = true;
+        this.available = !resource.equals(Resource.Blocked);
 
     }
 
-
-    public void linkCard(Card topCard, Resource resource)
+    /**
+     * Initialize the pointer to the card on top and update the stored resource
+     * @param topCard pointer to the card on top
+     * @param resource new stored resource
+     */
+    public void linkCard(PlaceableCard topCard, Resource resource)
     {
         this.topCard = topCard;
         this.resource = resource;
         this.available = false;
     }
 
+    /**
+     * Returns the stored resource
+     * @return stored resource
+     */
     public Resource getResource() {
         return resource;
     }
 
+    /**
+     * Determines if a cell is available to get a card on top
+     * @return true if the pointer to the top card is null and if the stored resource is not "Blocked"
+     */
     public boolean isAvailable() {
         return available;
+    }
+
+    /**
+     * Returns the row coordinate of the cell
+     * @return row
+     */
+    public int getRow() { return row; }
+
+    /**
+     * Returns the column coordinate of the cell
+     * @return column
+     */
+    public int getColumn() { return column; }
+
+    /**
+     * Return the reference to the card on bottom
+     * @return pointer to the card on bottom
+     */
+    public PlaceableCard getBottomCard() {
+        return bottomCard;
+    }
+
+
+    /**
+     * Return the reference to the card on top
+     * @return pointer to the card on top
+     */
+    public PlaceableCard getTopCard() {
+        return topCard;
     }
 }
