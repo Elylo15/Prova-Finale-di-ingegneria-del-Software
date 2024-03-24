@@ -18,7 +18,7 @@ public class Deck<E extends Card> {
 
     /**
      * method addCard: add a card to the end of the deck
-     * @param c: cardo to add to the end of the deck
+     * @param c: card to add to the end of the deck
      */
     public void addGoldCard(E c){
         list.add(c);
@@ -30,11 +30,13 @@ public class Deck<E extends Card> {
         Collections.shuffle(list);
     }
     /**
-     * method removeCard:  remove the top card from deck
+     * method removeCard:  remove the top card from deck and return it
      */
-    public ArrayList<E> removeCard(){
+    public E removeCard(){
+        E card;
+        card = list.getFirst();
         list.removeFirst();
-        return list;
+        return card;
     }
     /**
      * method getCardNumber: return the number of cards in the decks
@@ -55,7 +57,9 @@ public class Deck<E extends Card> {
         }
         return null;
     }
-
+    /**
+     * method getList: return the list
+     */
     public ArrayList<E> getList() {
         return list;
     }

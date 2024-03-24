@@ -6,4 +6,4 @@ public abstract class Card {
     public int getID() {
         return ID;
     }
-}
+    }
