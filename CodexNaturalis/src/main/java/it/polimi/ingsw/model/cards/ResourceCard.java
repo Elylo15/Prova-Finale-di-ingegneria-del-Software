@@ -29,8 +29,8 @@ public class ResourceCard extends PlaceableCard{
      */
     @Override
     public ArrayList<Resource> getRequirement() {
-        ArrayList<Resource> temporary = new ArrayList<Resource>();
-        return temporary;
+        ArrayList<Resource> requirement = new ArrayList<Resource>();
+        return requirement;
     }
 
     /**
@@ -49,7 +49,7 @@ public class ResourceCard extends PlaceableCard{
      */
     @Override
     public int getPoints() {
-        if(this.ID >= 8 && this.ID <=10 || this.ID >=18 && this.ID <= 20 || this.ID >= 28 && this.ID <=30 || this.ID >=38 &&this.ID <=40){
+        if(ID >= 8 && ID <=10 || ID >=18 && ID <= 20 || ID >= 28 && ID <=30 || ID >=38 && ID <=40){
             return 1;
         }
         else {
@@ -64,20 +64,20 @@ public class ResourceCard extends PlaceableCard{
      */
     @Override
     public ArrayList<Resource> getPermanentResource() {
-        ArrayList<Resource> temporary = new ArrayList<Resource>();
+        ArrayList<Resource> resources = new ArrayList<Resource>();
         if(this.ID >=1 && this.ID <= 10){
-            temporary.add(Resource.Fungus);
+            resources.add(Resource.Fungus);
         }
         if(this.ID >=11 && this.ID <= 20){
-            temporary.add(Resource.Plant);
+            resources.add(Resource.Plant);
         }
         if(this.ID >=21 && this.ID <= 30){
-            temporary.add(Resource.Animal);
+            resources.add(Resource.Animal);
         }
         if(this.ID >=31 && this.ID <=40){
-            temporary.add(Resource.Insect);
+            resources.add(Resource.Insect);
         }
-        return temporary;
+        return resources;
 
     }
 }
