@@ -13,29 +13,57 @@ public abstract class PlaceableCard extends Card{
     private boolean front;
     private ArrayList<Cell> cells;
 
-    public PlaceableCard(int ID) {}
+    //public PlaceableCard(int ID){}
+
     public ArrayList<Resource> getRequirement() {}
 
     public boolean checkRequirement(ArrayList<Integer> req) {}
 
     public void setCells(ArrayList<Cell> cells) {}
 
-    public Reign getReign() {}
+    public Reign getReign() {
+    }
 
-    public boolean isFront() {}
+    public boolean isFront() {
+    }
 
     public ArrayList<Cell> getCells() {}
 
-    public int getPoints() {}
+    public int getPoints() {
+        return points;
+    }
 
     public ArrayList<Resource> getResource() {}
 
-    public ArrayList<Resource> getPermanentResource() {}
+    public ArrayList<Resource> getPermanentResource() {
+    }
 
-    public boolean isResource() {}
+    public boolean isResource() {
+        if(this.ID >= 1 && this.ID <=40){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
 
-    public boolean isGold() {}
+    public boolean isGold() {
+        if(this.ID>=41 && this.ID <=80){
+            return true;
+        }
+        else {
+            return false;
+        }
 
-    public boolean isStarter() {}
+    }
+
+    public boolean isStarter() {
+        if(this.ID>=81 && this.ID <=86){
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
 
 }
