@@ -35,8 +35,7 @@ public abstract class PlaceableCard extends Card{
 
     public ArrayList<Resource> getResource() {}
 
-    public ArrayList<Resource> getPermanentResource() {
-    }
+    public ArrayList<Resource> getPermanentResource();
 
     public boolean isResource() {
         if(this.ID >= 1 && this.ID <=40){

@@ -59,7 +59,7 @@ public class ResourceCard extends PlaceableCard{
     }
 
     /**
-     * Resource cards contains only one permanent resource
+     * Resource cards contain only one permanent resource
      * @return an Arraylist containing the permanent resource in the back of the card
      */
     @Override
