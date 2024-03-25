@@ -8,7 +8,7 @@ import java.util.ArrayList;
 public class StarterCard extends PlaceableCard{
     /**
      * Constructor
-     * @param ID must be >=81 and <=86
+     * @param ID, it must be >=81 and <=86
      * @throws InvalidIdException if the condition on ID is not met
      */
     public StarterCard(int ID) throws InvalidIdException {
@@ -32,10 +32,10 @@ public class StarterCard extends PlaceableCard{
         if(ID==81){
             resources.add(Resource.Insect);
         }
-        else if (ID==82) {
+        else if(ID==82) {
              resources.add(Resource.Fungus);
         }
-        else if (ID==83) {
+        else if(ID==83) {
              resources.add(Resource.Plant);
              resources.add(Resource.Fungus);
         }
@@ -43,12 +43,12 @@ public class StarterCard extends PlaceableCard{
              resources.add(Resource.Animal);
              resources.add(Resource.Insect);
         }
-        else if (ID==85) {
+        else if(ID==85) {
               resources.add(Resource.Animal);
               resources.add(Resource.Insect);
               resources.add(Resource.Plant);
         }
-        else if (ID==86) {
+        else if(ID==86) {
               resources.add(Resource.Plant);
               resources.add(Resource.Animal);
               resources.add(Resource.Fungus);

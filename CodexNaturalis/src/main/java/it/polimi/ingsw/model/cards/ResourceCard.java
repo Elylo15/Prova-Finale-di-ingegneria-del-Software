@@ -9,16 +9,16 @@ public class ResourceCard extends PlaceableCard{
     /**
      * Constructor
      *
-     * @param ID, it must be >=1  and =<41
+     * @param ID, it must be >=1  and =<40
      * @throws InvalidIdException if the condition on ID is not met
      */
     public ResourceCard(int ID) throws InvalidIdException {
-        if(ID >0 && ID <41) {
+        if(ID>=1 && ID <=40) {
             this.ID = ID;
-        } else if (ID <=0) {
+        } else if (ID <1) {
             throw new InvalidIdException("ID is too small");
         }
-        else if(ID >=41){
+        else if(ID >40){
             throw new InvalidIdException("ID is too big");
         }
     }
