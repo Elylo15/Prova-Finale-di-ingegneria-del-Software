@@ -16,7 +16,6 @@ public class ObjectiveCard extends Card{
     {
         if(ID > 86 && ID < 102) {
             this.ID = ID;
-
             if(ID >= 87 && ID <= 90) {this.points = 2;}
             if(ID >= 91 && ID <= 94) {this.points = 3;}
             if(ID >= 95 && ID <= 98) {this.points = 2;}
