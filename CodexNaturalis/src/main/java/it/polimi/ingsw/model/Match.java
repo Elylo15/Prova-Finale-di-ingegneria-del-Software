@@ -1,10 +1,14 @@
 package it.polimi.ingsw.model;
+<<<<<<< HEAD
 import it.polimi.ingsw.model.cards.*;
 
+=======
+>>>>>>> 165970a (creation Match)
 import java.util.ArrayList;
 
 public class Match {
     private ArrayList<Player> players;
+<<<<<<< HEAD
     private ObjectiveCard[] commonObjective = new ObjectiveCard[2];
     private CommonArea commonArea;
     private ArrayList<Integer> playerScore;
@@ -66,3 +70,37 @@ public class Match {
 }
 
 
+=======
+    private ObjectiveCard commonObjective[2];
+    private CommonArea commonArea;
+    private ArrayList<int> playerScore;
+
+    public match(){
+
+    }
+
+    public void addPlayer(Player player){
+
+    }
+
+    public boolean start(){
+
+        return true;
+    }
+
+    public void addObjectivePoints{
+
+    }
+
+    public Player winner(){
+
+        return player;
+    }
+
+    public Player nextplayer(){
+
+        return player;
+    }
+
+}
+>>>>>>> 165970a (creation Match)

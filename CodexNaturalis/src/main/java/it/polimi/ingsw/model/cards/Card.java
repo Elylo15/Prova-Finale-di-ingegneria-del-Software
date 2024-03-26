@@ -1,9 +1,35 @@
 package it.polimi.ingsw.model.cards;
 
-public abstract class Card {
-    int ID;
+import it.polimi.ingsw.model.cards.exceptions.InvalidIdException;
 
+/**
+ * Card class
+ * @author bianca
+ */
+
+public abstract class Card {
+    protected int ID;
+
+    /**
+     * Class constructor
+     *
+     * @param ID must be <103 and >0
+     * @throws InvalidIdException if ID´s condition is not met.
+     */
+    public Card(int ID) throws InvalidIdException {
+        if(ID<0 || ID>102) throw new InvalidIdException("Invalid ID");
+        this.ID = ID;
+    }
+
+    /**
+     * Class constructor
+     */
+    protected Card(){}
+
+    /**
+     * @return card ID
+     */
     public int getID() {
-        return ID;
+        return this.ID;
     }
-    }
+}
