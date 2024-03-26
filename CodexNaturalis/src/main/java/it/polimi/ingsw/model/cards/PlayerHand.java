@@ -31,7 +31,7 @@ public class PlayerHand {
     /**
      * method getplaceableCard: returns the placeableCards
      */
-    public ArrayList<PlaceableCard> getPlaceableGoldCards(GoldCard card){
+    public ArrayList<PlaceableCard> getPlaceableCards(GoldCard card){
         return placeableGoldCards;
     }
 
