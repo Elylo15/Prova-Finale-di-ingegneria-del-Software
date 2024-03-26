@@ -17,8 +17,8 @@ public abstract class Card {
      * @throws InvalidIdException if ID´s condition is not met.
      */
     public Card(int ID) throws InvalidIdException {
-        if(this.ID<0 || this.ID>102) throw new InvalidIdException("Invalid ID");
-            this.ID = ID;
+        if(ID<0 || ID>102) throw new InvalidIdException("Invalid ID");
+        this.ID = ID;
     }
 
     /**
