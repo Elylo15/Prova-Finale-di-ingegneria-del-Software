@@ -22,6 +22,11 @@ public abstract class Card {
     }
 
     /**
+     * Class constructor
+     */
+    protected Card(){}
+
+    /**
      * @return card ID
      */
     public int getID() {
