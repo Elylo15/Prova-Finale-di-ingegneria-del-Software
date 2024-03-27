@@ -58,7 +58,7 @@ public class  Player {
      * @param objective2 second drawn ObjectiveCard.
      * @return ObjectiveCard
      */
-    public ObjectiveCard pickObjectiveCard(ObjectiveCard objective1, ObjectiveCard objective2){
+    private ObjectiveCard pickObjectiveCard(ObjectiveCard objective1, ObjectiveCard objective2){
         Scanner scanner = new Scanner(System.in);
 
         //show cards
@@ -86,7 +86,7 @@ public class  Player {
      * Method {@code pickSide}: the player picks if he wants to place the card front(return true) or back(return  false).
      * @return boolean
      */
-    public boolean pickSide(){
+    private boolean pickSide(){
         Scanner scanner = new Scanner(System.in);
 
         System.out.print("""
@@ -134,7 +134,7 @@ public class  Player {
      * @param availablePosition arrayList of integers that contains the available positions.
      * @return array of two integers.
      */
-    public int[] pickPosition(ArrayList<Integer[]> availablePosition){
+    private int[] pickPosition(ArrayList<Integer[]> availablePosition){
         Scanner scanner = new Scanner(System.in);
         int[] position = new int[2];
 
@@ -156,7 +156,7 @@ public class  Player {
      * @param cards arrayList containing his cards.
      * @return PlaceableCard.
      */
-    public PlaceableCard pickPlaceableCard(ArrayList<PlaceableCard> cards){
+    private PlaceableCard pickPlaceableCard(ArrayList<PlaceableCard> cards){
         Scanner scanner = new Scanner(System.in);
 
         //show the cards
@@ -187,7 +187,7 @@ public class  Player {
      * He draws the card which is added to his personal deck.
      * @param cards arrayList containing the cards placed face-up on the table
      */
-    public void pickNewCard(ArrayList<Card> cards) {
+    private void pickNewCard(ArrayList<Card> cards) {
         Scanner scanner = new Scanner(System.in);
 
         //show cards
@@ -211,19 +211,14 @@ public class  Player {
             commonArea.drawFromToPlayer(1);
         else if (drawPick == 2)
             commonArea.drawFromToPlayer(2);
-        else if (drawPick == 3){
+        else if (drawPick == 3)
             commonArea.pickTableCard(cards.getFirst().getID());
-            commonArea.drawFromDeck(1);
-        } else if(drawPick==4) {
+        else if(drawPick==4)
             commonArea.pickTableCard(cards.get(1).getID());
-            commonArea.drawFromDeck(1);
-        } else if(drawPick==5) {
+        else if(drawPick==5)
             commonArea.pickTableCard(cards.get(2).getID());
-            commonArea.drawFromDeck(2);
-        } else {
+        else
             commonArea.pickTableCard(cards.get(3).getID());
-            commonArea.drawFromDeck(2);
-        }
 
     }
 
