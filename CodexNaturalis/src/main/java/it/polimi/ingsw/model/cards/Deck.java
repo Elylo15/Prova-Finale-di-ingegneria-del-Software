@@ -20,7 +20,7 @@ public class Deck<E extends Card> {
      * method addCard: add a card to the end of the deck
      * @param c: card to add to the end of the deck
      */
-    public void addGoldCard(E c){
+    public void addCard(E c){
         list.add(c);
     }
     /**
