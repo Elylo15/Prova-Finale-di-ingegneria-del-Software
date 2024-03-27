@@ -12,7 +12,7 @@ public class CommonArea {
     Deck<GoldCard> d2;
     Deck<StarterCard> d3;
     Deck<ObjectiveCard> d4;
-    ArrayList<Card> tableCards;
+    ArrayList<PlaceableCard> tableCards;
     /**
      * Class costructor
      */
@@ -22,14 +22,14 @@ public class CommonArea {
         d2 = new Deck<GoldCard>();
         d3 = new Deck<StarterCard>();
         d4 = new Deck<ObjectiveCard>();
-        tableCards = new ArrayList<Card>();
+        tableCards = new ArrayList<PlaceableCard>();
     }
     /**
      * method pickTableCard: remove a face-up card
      * @param cardNumber: card you want to take from the exposed cards
      */
-    public Card pickTableCard(int cardNumber){
-        for (Card tableCard : tableCards) {
+    public PlaceableCard pickTableCard(int cardNumber){
+        for (PlaceableCard tableCard : tableCards) {
             if (cardNumber == tableCard.getID()) {
                 return tableCard;
             }
@@ -38,38 +38,59 @@ public class CommonArea {
         return null;
     }
     /**
-     * method drawFromDeck: remove the top resource card of the deck and places it as a face-up card
+     * method drawFromDeck: remove the top GoldCard/ResourceCard of the deck and places it as a face-up card
      * @param d: number of the deck from witch you want to remove a card to put in among those discovered
      */
     private void drawFromDeck(int d){
-        Card c = null;
+        PlaceableCard c = null;
         switch (d) {
             case 1 -> c= d1.removeCard();
             case 2 -> c= d2.removeCard();
-            case 3 -> c = d3.removeCard();
-            case 4 -> c= d4.removeCard();
         };
         tableCards.add(c);
     }
     /**
-     * method drawFromPlayer: the player draws from the deck and keeps the card
+     * method drawFromPlayer: the player draws from the GoldCardDeck/ResourceCardDeck/StarterCardDeck and keeps the card
      * @param d: number of the deck from wich the player wants to draw
      */
-    public Card drawFromToPlayer(int d){
-        Card c = null;
+    public PlaceableCard drawFromToPlayer(int d){
+        PlaceableCard c = null;
         switch (d) {
             case 1 -> c= d1.removeCard();
             case 2 -> c= d2.removeCard();
             case 3 -> c = d3.removeCard();
-            case 4 -> c= d4.removeCard();
         };
         return c;
     }
     /**
      * method getTableCards:show the player the cards face-up
      */
-    public ArrayList<Card> getTableCards(){
+    public ArrayList<PlaceableCard> getTableCards(){
         return tableCards;
     }
+
+    /**
+     * method drawObjectiveCard:the player draws from the ObjectiveCardDeck and keeps the card
+     */
+    public ObjectiveCard drawObjectiveCard(){
+        return  d4.removeCard();
+
+    }
+    public Deck<ResourceCard> getD1() {
+        return d1;
+    }
+
+    public Deck<GoldCard> getD2() {
+        return d2;
+    }
+
+    public Deck<StarterCard> getD3() {
+        return d3;
+    }
+
+    public Deck<ObjectiveCard> getD4() {
+        return d4;
+    }
+
 
 }
