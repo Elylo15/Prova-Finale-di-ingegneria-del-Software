@@ -6,23 +6,23 @@ import it.polimi.ingsw.model.cards.exceptions.InvalidIdException;
  * Card class
  * @author bianca
  */
-
 public abstract class Card {
     protected int ID;
 
     /**
-     * Class constructor
+     * Constructs a new {@code Card} object with the specified {@param ID}.
      *
      * @param ID must be <103 and >0
      * @throws InvalidIdException if ID´s condition is not met.
      */
-    public Card(int ID) throws InvalidIdException {
-        if(ID<0 || ID>102) throw new InvalidIdException("Invalid ID");
+    protected Card(int ID) throws InvalidIdException {
+        if(ID<0 || ID>102) throw new InvalidIdException("Invalid ID"); //Dovremmo controllare anche che passiamo un int?
         this.ID = ID;
     }
 
     /**
-     * Class constructor
+     * Constructs a new {@code Card} object.
+     * This constructor is an overload that creates a default Card object.
      */
     protected Card(){}
 
@@ -30,6 +30,6 @@ public abstract class Card {
      * @return card ID
      */
     public int getID() {
-        return this.ID;
+        return ID;
     }
 }
