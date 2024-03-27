@@ -2,10 +2,6 @@ package it.polimi.ingsw.model.cards;
 
 import it.polimi.ingsw.model.cards.exceptions.InvalidIdException;
 
-/**
- * Card class
- * @author bianca
- */
 public abstract class Card {
     protected int ID;
 
@@ -16,7 +12,7 @@ public abstract class Card {
      * @throws InvalidIdException if ID´s condition is not met.
      */
     protected Card(int ID) throws InvalidIdException {
-        if(ID<0 || ID>102) throw new InvalidIdException("Invalid ID"); //Dovremmo controllare anche che passiamo un int?
+        if(ID<0 || ID>102) throw new InvalidIdException("Invalid ID");
         this.ID = ID;
     }
 

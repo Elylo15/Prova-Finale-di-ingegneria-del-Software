@@ -10,11 +10,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
 
-
-/**
- * Player class
- * @author bianca
- */
 public class  Player {
     private final String nickname;
     private final String color;
@@ -33,6 +28,8 @@ public class  Player {
         this.score = 0;
         this.deck = new PlayerHand();
         this.playerArea = new PlayerArea();
+        if(commonArea == null)
+            commonArea =  new CommonArea();
     }
 
     /**
@@ -70,8 +67,8 @@ public class  Player {
                 """);
         int pick = scanner.nextInt();
 
-        while(pick!=1 && pick!=2) {
-            System.out.println("You entered a wrong value. Try Again.");
+        while(pick!=1 && pick!=2) {// se lettera confronta con intero?
+            System.out.println("You entered a wrong value. Try Again:");
             pick = scanner.nextInt();
         }
 
@@ -97,7 +94,7 @@ public class  Player {
         int side = scanner.nextInt();
 
         while(side!=1 && side!=2) {
-            System.out.println("You entered a wrong value. Try Again.");
+            System.out.println("You entered a wrong value. Try Again:");
             side = scanner.nextInt();
         }
 
@@ -113,17 +110,21 @@ public class  Player {
      * The card is removed from the player's deck and placed in his playerArea.
      * The player chooses to draw a card from one of the decks on the table, or to draw one of the face-up cards.
      */
-    public void playTurn() throws noPlaceCardException {
-        int[] position = new int[2];
+    public void playTurn(){
+        int[] position;
         int cardID;
         Card card;
 
-        while (/*carta non piazzata correttamente*/) {
-            card = pickPlaceableCard(deck.getPlaceableCards());
-            cardID = card.getID();
-            position = pickPosition(playerArea.getAvailablePosition());
-            score = getScore() + playerArea.placeCard(deck.removeplaceableCard(cardID), position[0], position[1], pickSide());
-
+        while (true) {
+            try {
+                card = pickPlaceableCard(deck.getPlaceableCards());
+                cardID = card.getID();
+                position = pickPosition(playerArea.getAvailablePosition());
+                score = getScore() + playerArea.placeCard(deck.removeplaceableCard(cardID), position[0], position[1], pickSide());
+                break;
+            } catch (noPlaceCardException exception) {
+                System.out.println("You didn't place the card correctly. Try again:");
+            }
         }
 
         pickNewCard(commonArea.getTableCards());
@@ -208,17 +209,17 @@ public class  Player {
             drawPick = scanner.nextInt();
         }
         if (drawPick == 1)
-            commonArea.drawFromToPlayer(1);
+            deck.addNewplaceableCard((PlaceableCard) commonArea.drawFromToPlayer(1));
         else if (drawPick == 2)
-            commonArea.drawFromToPlayer(2);
+            deck.addNewplaceableCard((PlaceableCard) commonArea.drawFromToPlayer(2));
         else if (drawPick == 3)
-            commonArea.pickTableCard(cards.getFirst().getID());
+            deck.addNewplaceableCard((PlaceableCard) commonArea.pickTableCard(cards.getFirst().getID()));
         else if(drawPick==4)
-            commonArea.pickTableCard(cards.get(1).getID());
+            deck.addNewplaceableCard((PlaceableCard) commonArea.pickTableCard(cards.get(1).getID()));
         else if(drawPick==5)
-            commonArea.pickTableCard(cards.get(2).getID());
+            deck.addNewplaceableCard((PlaceableCard) commonArea.pickTableCard(cards.get(2).getID()));
         else
-            commonArea.pickTableCard(cards.get(3).getID());
+            deck.addNewplaceableCard((PlaceableCard) commonArea.pickTableCard(cards.get(3).getID()));
 
     }
 
