@@ -769,67 +769,117 @@
   "ObjectiveCard": [
     {
       "ID": 87,
-      "points": 2
+      "points": 2,
+      "requirement": null,
+      "pattern": [[-1,1],[-2,2]],
+      "reignCards": ["Fungus", "Fungus","Fungus"]
     },
     {
       "ID": 88,
-      "points": 2
+      "points": 2,
+      "requirement": null,
+      "pattern": [[1,1],[2,-2]],
+      "reignCards": ["Plant", "Plant","Plant"]
     },
     {
       "ID": 89,
-      "points": 2
+      "points": 2,
+      "requirement": null,
+      "pattern": [[-1,1],[-2,2]],
+      "reignCards": ["Animal", "Animal","Animal"]
     },
     {
       "ID": 90,
-      "points": 2
+      "points": 2,
+      "requirement": null,
+      "pattern": [[1,1],[2,2]],
+      "reignCards": ["Insect", "Insect","Insect"]
     },
     {
       "ID": 91,
-      "points": 3
+      "points": 3,
+      "requirement": null,
+      "pattern": [[2,0], [3,1]],
+      "reignCards": ["Fungus", "Fungus","Plant"]
     },
     {
       "ID": 92,
-      "points": 3
+      "points": 3,
+      "requirement": null,
+      "pattern": [[2,0], [3,-1]],
+      "reignCards": ["Plant", "Plant","Insect"]
     },
     {
       "ID": 93,
-      "points": 3
+      "points": 3,
+      "requirement": null,
+      "pattern": [],
+      "reignCards": ["Fungus", "Animal","Animal"]
     },
     {
       "ID": 94,
-      "points": 3
+      "points": 3,
+      "requirement": null,
+      "pattern": [],
+      "reignCards": ["Animal", "Insect","Insect"]
     },
     {
       "ID": 95,
-      "points": 2
+      "points": 2,
+      "requirement": ["Fungus", "Fungus", "Fungus"],
+      "pattern": null,
+      "reignCards": null
     },
     {
       "ID": 96,
-      "points": 2
+      "points": 2,
+      "requirement": ["Plant", "Plant", "Plant"],
+      "pattern": null,
+      "reignCards": null
+
     },
     {
       "ID": 97,
-      "points": 2
+      "points": 2,
+      "requirement": ["Animal", "Animal", "Animal"],
+      "pattern": null,
+      "reignCards": null
     },
     {
       "ID": 98,
-      "points": 2
+      "points": 2,
+      "requirement": ["Insect", "Insect", "Insect"],
+      "pattern": null,
+      "reignCards": null
     },
     {
       "ID": 99,
-      "points": 3
+      "points": 3,
+      "requirement": ["Quill", "Inkwell", "Manuscript"],
+      "pattern": null,
+      "reignCards": null
     },
     {
       "ID": 100,
-      "points": 2
+      "points": 2,
+      "requirement": ["Manuscript", "Manuscript"],
+      "pattern": null,
+      "reignCards": null
     },
     {
       "ID": 101,
-      "points": 2
+      "points": 2,
+      "requirement": ["Inkwell", "Inkwell"],
+      "pattern": null,
+      "reignCards": null
     },
     {
       "ID": 102,
-      "points": 2
+      "points": 2,
+      "requirement": ["Quill", "Quill"],
+      "pattern": null,
+      "reignCards": null
+
     }
   ]
 }

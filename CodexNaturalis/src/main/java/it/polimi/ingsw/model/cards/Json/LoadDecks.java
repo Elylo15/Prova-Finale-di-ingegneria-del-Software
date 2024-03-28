@@ -23,7 +23,8 @@ public class LoadDecks {
                 c.getD1().addCard(resourceCard);
             }
 
-            /*prova
+            //prova
+            /*JsonArray x= jsonObject.getAsJsonArray("resourceCard");
             JsonElement y = x.get(0);
             ResourceCard resourceCard = new Gson().fromJson(y, ResourceCard.class);
             resourceCard.getID();
@@ -48,7 +49,7 @@ public class LoadDecks {
                 StarterCard starterCard = new Gson().fromJson(y,StarterCard.class);
                 c.getD3().addCard(starterCard);
             }
-            //per starterCard
+            //per objectiveCard
             JsonArray ArrayObjectiveCard= jsonObject.getAsJsonArray("ObjectiveCard");
             for (int i = 0; i < ArrayObjectiveCard.size() ; i++) {
                 JsonElement y = ArrayObjectiveCard.get(i);
