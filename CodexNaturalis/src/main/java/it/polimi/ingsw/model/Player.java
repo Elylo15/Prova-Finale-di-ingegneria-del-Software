@@ -41,11 +41,11 @@ public class  Player {
 
         playerArea.placeStarterCard((PlaceableCard)commonArea.drawFromToPlayer(3), pickSide()); //starterCard
 
-        deck.addNewplaceableCard((PlaceableCard)commonArea.drawFromToPlayer(1)); //draw resource
-        deck.addNewplaceableCard((PlaceableCard)commonArea.drawFromToPlayer(1)); //draw resource
-        deck.addNewplaceableCard((PlaceableCard)commonArea.drawFromToPlayer(2)); //draw gold
+        deck.addNewplaceableCard(commonArea.drawFromToPlayer(1)); //draw resource
+        deck.addNewplaceableCard(commonArea.drawFromToPlayer(1)); //draw resource
+        deck.addNewplaceableCard(commonArea.drawFromToPlayer(2)); //draw gold
 
-        objective = pickObjectiveCard((ObjectiveCard) commonArea.drawFromToPlayer(4), (ObjectiveCard) commonArea.drawFromToPlayer(4));
+        objective = pickObjectiveCard( commonArea.drawObjectiveCard(), commonArea.drawObjectiveCard());
 
     }
 
@@ -67,7 +67,7 @@ public class  Player {
                 """);
         int pick = scanner.nextInt();
 
-        while(pick!=1 && pick!=2) {// se lettera confronta con intero?
+        while(pick!=1 && pick!=2) { // if letter in input?
             System.out.println("You entered a wrong value. Try Again:");
             pick = scanner.nextInt();
         }
@@ -98,10 +98,7 @@ public class  Player {
             side = scanner.nextInt();
         }
 
-        if(side==1)
-            return true;
-        else
-            return false;
+        return side == 1;
 
     }
 
@@ -188,7 +185,7 @@ public class  Player {
      * He draws the card which is added to his personal deck.
      * @param cards arrayList containing the cards placed face-up on the table
      */
-    private void pickNewCard(ArrayList<Card> cards) {
+    private void pickNewCard(ArrayList<PlaceableCard> cards) {
         Scanner scanner = new Scanner(System.in);
 
         //show cards
@@ -209,17 +206,17 @@ public class  Player {
             drawPick = scanner.nextInt();
         }
         if (drawPick == 1)
-            deck.addNewplaceableCard((PlaceableCard) commonArea.drawFromToPlayer(1));
+            deck.addNewplaceableCard(commonArea.drawFromToPlayer(1));
         else if (drawPick == 2)
-            deck.addNewplaceableCard((PlaceableCard) commonArea.drawFromToPlayer(2));
+            deck.addNewplaceableCard(commonArea.drawFromToPlayer(2));
         else if (drawPick == 3)
-            deck.addNewplaceableCard((PlaceableCard) commonArea.pickTableCard(cards.getFirst().getID()));
+            deck.addNewplaceableCard(commonArea.pickTableCard(cards.getFirst().getID()));
         else if(drawPick==4)
-            deck.addNewplaceableCard((PlaceableCard) commonArea.pickTableCard(cards.get(1).getID()));
+            deck.addNewplaceableCard(commonArea.pickTableCard(cards.get(1).getID()));
         else if(drawPick==5)
-            deck.addNewplaceableCard((PlaceableCard) commonArea.pickTableCard(cards.get(2).getID()));
+            deck.addNewplaceableCard(commonArea.pickTableCard(cards.get(2).getID()));
         else
-            deck.addNewplaceableCard((PlaceableCard) commonArea.pickTableCard(cards.get(3).getID()));
+            deck.addNewplaceableCard(commonArea.pickTableCard(cards.get(3).getID()));
 
     }
 

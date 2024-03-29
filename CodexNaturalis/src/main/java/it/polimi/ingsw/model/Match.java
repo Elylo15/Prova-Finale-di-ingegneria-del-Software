@@ -1,106 +1,136 @@
 package it.polimi.ingsw.model;
-<<<<<<< HEAD
 import it.polimi.ingsw.model.cards.*;
 
-=======
->>>>>>> 165970a (creation Match)
 import java.util.ArrayList;
 
 public class Match {
-    private ArrayList<Player> players;
-<<<<<<< HEAD
-    private ObjectiveCard[] commonObjective = new ObjectiveCard[2];
-    private CommonArea commonArea;
-    private ArrayList<Integer> playerScore;
+    private final ArrayList<Player> players;
+    private final ObjectiveCard[] commonObjective;
+    private final CommonArea commonArea;
+//    private final ArrayList<Integer> playerScore; I think we don't need this
 
-    public Match(){
-        players = new ArrayList<Player>();
-        playerScore = new ArrayList<Integer>();
+    /**
+     * Constructs a new {@code Match} object.
+     */
+    public Match() {
+        this.players = new ArrayList<>();
+//        this.playerScore = new ArrayList<Integer>();
+        this.commonObjective = new ObjectiveCard[2];
+        this.commonArea = new CommonArea();
     }
 
-    public void addPlayer(Player player){
-        if(players.size() < 5)
+    /**
+     * method {@code addPlayer}: adds a new player. Can't be added more than 4 players.
+     *
+     * @param player: player to be added.
+     */
+    public void addPlayer(Player player) {
+        if (players.size() < 4)
             players.add(player);
         else
             System.out.println("The maximum number of players is 4. Can't add more players.");
     }
 
+    /**
+     * method {@code start}: start the match. Each player plays its turn.
+     * @return true if the match ended correctly.
+     */
     public boolean start() {
-        if (players.size() > 1)
-            return true;
-        else {
+        int i =0;
+
+        if (players.size() < 2) {
             System.out.println("Not enough players to start the match");
             return false;
         }
+
+        commonArea.d1.shuffle();
+        commonArea.d2.shuffle();
+        commonArea.d3.shuffle();
+        commonArea.d4.shuffle();
+
+        playerOrder();
+
+        for (Player player : players)
+            player.initialHand();
+
+        while (players.get(i).getScore() < 20){ //and deck not empty
+            for (i =0 ; i < players.size(); i++) {
+                nextPlayer(players.get(i)).playTurn();
+            }
+        }
+
+        for (i=0; i < players.size(); i++)      //lastTurn
+            nextPlayer(players.get(i)).playTurn();
+
+        addObjectivePoints();
+
+        return true;
     }
 
-    public void addObjectivePoints(){
+    /**
+     * Method {@code playerOrder}: randomizes the order of the players.
+     */
+    private void playerOrder() {
+        int max = players.size();
+        int min = 2;
+        int times = 0;
+
+        ArrayList<Player> playersOrdered = new ArrayList<>(players);
+
+        while (times < max) {
+            int order = (int) (Math.random() * (max - min) + min); //what if I get twice the same number
+            players.set(times, playersOrdered.get(order));
+            times++;
+        }
+
+    }
+
+    /**
+     * Method {@code addObjectivePoints}: adds the objective points to the players score.
+     */
+    private void addObjectivePoints() {
+
+    //    for(int i=0; i<players.size(); i++)
+    //        players.get(i).getScore() += objectivePoints;
+
         // objectivePoints = Objective points calculated
-        // playerScore += objectivePoints;
+
     }
 
+    /**
+     * Method {@code winner} calculates which player has higher score.
+     * @return player that won.
+     */
     public Player winner() {
         int winnerIndex = 0;
-        int size = players.size();
 
-        for (int i = 1; i < (size-1) ; i++) {
-            if (playerScore.get(winnerIndex) < playerScore.get(i))
+        for (int i = 1; i < (players.size()- 1); i++) {
+            if (players.get(winnerIndex).getScore() < players.get(i).getScore())
                 winnerIndex = i;
         }
 
         return players.get(winnerIndex);
 
-        //to be implemented: if playerscore == playerscore and we have two winners
+        //to do if playerScore == playerScore and we have two winners
 
     }
 
-    public Player nextPlayer(Player current){
-        int index = players.indexOf(current);
+    /**
+     * method {@code nextPlayer}: calculates the next player.
+     * @param current: the current player
+     * @return the next player
+     */
+    private Player nextPlayer(Player current) {
+        int i = players.indexOf(current);
         int size = players.size();
-        int nextIndex;
+        int nextI;
 
-        if (index == size - 1)
-            nextIndex = 0;
+        if (i == size - 1)
+            nextI = 0;
         else
-            nextIndex = index + 1;
+            nextI = i + 1;
 
-        return players.get(nextIndex);
+        return players.get(nextI);
     }
 
 }
-
-
-=======
-    private ObjectiveCard commonObjective[2];
-    private CommonArea commonArea;
-    private ArrayList<int> playerScore;
-
-    public match(){
-
-    }
-
-    public void addPlayer(Player player){
-
-    }
-
-    public boolean start(){
-
-        return true;
-    }
-
-    public void addObjectivePoints{
-
-    }
-
-    public Player winner(){
-
-        return player;
-    }
-
-    public Player nextplayer(){
-
-        return player;
-    }
-
-}
->>>>>>> 165970a (creation Match)
