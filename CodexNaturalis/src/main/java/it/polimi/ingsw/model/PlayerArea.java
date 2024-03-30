@@ -238,7 +238,7 @@ public class PlayerArea {
      */
     private PlaceableCard getCard(int x, int y) {
         /*
-          There are two candidate for the return: the topCard and the bottomCard
+          There are two candidates for the return: the topCard and the bottomCard
           in the cell at coordinates (x,y)
          */
         Cell cell = getCell(x,y);
@@ -526,6 +526,11 @@ public class PlayerArea {
         return 0;
     }
 
+    /**
+     * Counts the number of times a pattern is achieved
+     * @param card Identifies the pattern to search for
+     * @return number of times a pattern is encountered
+     */
     public int countPattern(ObjectiveCard card) {
         return this.checkPattern(card) / card.getPoints();
     }
