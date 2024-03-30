@@ -27,10 +27,16 @@ public class CommonArea {
     /**
      * method pickTableCard: remove a face-up card
      * @param cardNumber: card you want to take from the exposed cards
+     * @return PlaceableCard: card removed from those discovered and which will go to a player
      */
     public PlaceableCard pickTableCard(int cardNumber){
         for (PlaceableCard tableCard : tableCards) {
             if (cardNumber == tableCard.getID()) {
+                tableCards.remove(cardNumber);
+                if (tableCard.getClass() == ResourceCard.class)
+                    drawFromDeck(1);
+                else
+                    drawFromDeck(1);
                 return tableCard;
             }
         }
@@ -51,7 +57,8 @@ public class CommonArea {
     }
     /**
      * method drawFromPlayer: the player draws from the GoldCardDeck/ResourceCardDeck/StarterCardDeck and keeps the card
-     * @param d: number of the deck from wich the player wants to draw
+     * @param d: number of the deck from which the player wants to draw
+     * @return PlaceableCard: card removed from a deck and which will go to a player
      */
     public PlaceableCard drawFromToPlayer(int d){
         PlaceableCard c = null;
@@ -64,6 +71,7 @@ public class CommonArea {
     }
     /**
      * method getTableCards:show the player the cards face-up
+     * @return ArrayList<PlaceableCard>: array list of face-up cards
      */
     public ArrayList<PlaceableCard> getTableCards(){
         return tableCards;
@@ -71,23 +79,40 @@ public class CommonArea {
 
     /**
      * method drawObjectiveCard:the player draws from the ObjectiveCardDeck and keeps the card
+     * @return ObjectiveCard: ObjectiveCard that will be given to a player
      */
     public ObjectiveCard drawObjectiveCard(){
         return  d4.removeCard();
 
     }
+    /**
+     * method  getD1: Resource deck
+     * @return Deck<ResourceCard>: return all ResourceCardDeck
+     */
     public Deck<ResourceCard> getD1() {
         return d1;
     }
 
+    /**
+     * method  getD2: GoldCard deck
+     * @return Deck<GoldCard>: return all GoldCardDeck
+     */
     public Deck<GoldCard> getD2() {
         return d2;
     }
 
+    /**
+     * method  getD3: StarterCard deck
+     * @return Deck<GoldCard>: return all StarterCardDeck
+     */
     public Deck<StarterCard> getD3() {
         return d3;
     }
 
+    /**
+     * method  getD4: ObjectiveCard deck
+     * @return Deck<GoldCard>: return all ObjectiveCardDeck
+     */
     public Deck<ObjectiveCard> getD4() {
         return d4;
     }

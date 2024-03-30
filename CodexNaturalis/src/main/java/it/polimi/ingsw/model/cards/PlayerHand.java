@@ -6,33 +6,35 @@ import java.util.ArrayList;
  * @author elylo
  */
 public class PlayerHand {
-    ArrayList<PlaceableCard> placeableGoldCards;
+    ArrayList<PlaceableCard> placeableCards;
 
     /**
      * Class costructor
      */
     public PlayerHand(){
-        placeableGoldCards = new ArrayList<PlaceableCard>();
+        placeableCards = new ArrayList<PlaceableCard>();
     }
     /**
      * method removeplaceableCard: removes placeableCard from PlayerHand. Returns the placeableCard
      * @param numCard: id of the card the player wants to play
+     * @return PlaceableCard: card played by the player
      */
     public PlaceableCard removeplaceableCard(int numCard){
         PlaceableCard c = null;
-        for (int i = 0; i < placeableGoldCards.size() ; i++) {
-            if (numCard == placeableGoldCards.get(i).getID()){
-                c= placeableGoldCards.get(i);
-                placeableGoldCards.remove(c);
+        for (int i = 0; i < placeableCards.size() ; i++) {
+            if (numCard == placeableCards.get(i).getID()){
+                c= placeableCards.get(i);
+                placeableCards.remove(c);
             }
         }
         return c;
     }
     /**
      * method getplaceableCard: returns the placeableCards
+     * @return ArrayList<PlaceableCard>: array list of player cards
      */
     public ArrayList<PlaceableCard> getPlaceableCards(){
-        return placeableGoldCards;
+        return placeableCards;
     }
 
     /**
@@ -40,7 +42,7 @@ public class PlayerHand {
      * @param card: card drawn by the player to add to the PlayerHand
      */
     public void addNewplaceableCard(PlaceableCard card){
-        placeableGoldCards.add(card);
+        placeableCards.add(card);
     }
 
 }

@@ -31,15 +31,17 @@ public class Deck<E extends Card> {
     }
     /**
      * method removeCard:  remove the top card from deck and return it
+     * @return E: returns the removed card which is a subtype of card
      */
     public E removeCard(){
-        E card;
-        card = list.getFirst();
-        list.removeFirst();
-        return card;
+        if (list.isEmpty())
+            return null;
+        else
+            return list.removeFirst();
     }
     /**
      * method getCardNumber: return the number of cards in the decks
+     * @return int: number of cards in the decks
      */
     public int getCardNumber(){
         return list.size();
@@ -48,6 +50,7 @@ public class Deck<E extends Card> {
     /**
      * method getCard: return the cards equal to the ID
      * @param ID: id of the card I'm looking for in the deck
+     * @return Card: get the card that matches with that ID
      */
     public Card getCard(int ID){
         for (int i = 0; i < list.size(); i++) {
@@ -59,8 +62,10 @@ public class Deck<E extends Card> {
     }
     /**
      * method getList: return the list
+     * @return ArrayList<E>: deck list
      */
     public ArrayList<E> getList() {
-        return list;
+
+        return (ArrayList<E>) list.clone();
     }
 }
