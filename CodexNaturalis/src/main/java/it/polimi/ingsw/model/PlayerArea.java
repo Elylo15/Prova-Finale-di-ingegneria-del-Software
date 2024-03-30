@@ -1,11 +1,13 @@
 package it.polimi.ingsw.model;
 
 import it.polimi.ingsw.model.cards.Cell;
+import it.polimi.ingsw.model.cards.ObjectiveCard;
 import it.polimi.ingsw.model.cards.PlaceableCard;
 import it.polimi.ingsw.model.cards.enumeration.Reign;
 import it.polimi.ingsw.model.cards.enumeration.Resource;
 import it.polimi.ingsw.model.cards.exceptions.noPlaceCardException;
 
+import javax.swing.plaf.metal.MetalBorders;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -82,38 +84,18 @@ public class PlayerArea {
      * @param resource Resource to increase
      */
     public void addPermanentResource(Resource resource) {
-        int selector = -1;
-        switch (resource) {
-            case Resource.Fungus:
-                selector = 0;
-                break;
-            case Resource.Insect:
-                selector = 1;
-                break;
-            case Resource.Animal:
-                selector = 2;
-                break;
-            case Resource.Plant:
-                selector = 3;
-                break;
-            case Resource.Manuscript:
-                selector = 4;
-                break;
-            case Resource.Quill:
-                selector = 5;
-                break;
-            case Resource.Inkwell:
-                selector = 6;
-                break;
-            case Resource.Empty:
-                selector = 7;
-                break;
-            case Resource.Blocked:
-                selector = 8;
-                break;
-        }
-        if (selector != -1)
-            this.permanentResource.set(selector, this.permanentResource.get(selector) + 1);
+        int selector = switch (resource) {
+            case Resource.Fungus -> 0;
+            case Resource.Insect -> 1;
+            case Resource.Animal -> 2;
+            case Resource.Plant -> 3;
+            case Resource.Manuscript -> 4;
+            case Resource.Quill -> 5;
+            case Resource.Inkwell -> 6;
+            case Resource.Empty -> 7;
+            case Resource.Blocked -> 8;
+        };
+        this.permanentResource.set(selector, this.permanentResource.get(selector) + 1);
     }
 
     /**
@@ -131,18 +113,7 @@ public class PlayerArea {
      */
     public ArrayList<Integer> getResources() {
         ArrayList<Integer> resourceList = (ArrayList<Integer>) this.permanentResource.clone();
-        resourceList.add(0); // Counter for FUNGUS
-        resourceList.add(0); // Counter for INSECT
-        resourceList.add(0); // Counter for ANIMAL
-        resourceList.add(0); // Counter for PLANT
-        resourceList.add(0); // Counter for MANUSCRIPT
-        resourceList.add(0); // Counter for QUILL
-        resourceList.add(0); // Counter for INKWELL
-        resourceList.add(0); // Counter for EMPTY
-        resourceList.add(0); // Counter for BLOCKED
-
         CellMatrix.values().forEach((x)->{addResourceToList(resourceList, x.getResource());});
-
         return resourceList;
     }
 
@@ -154,38 +125,18 @@ public class PlayerArea {
     private void addResourceToList(ArrayList<Integer> list, Resource resource)
     {
 
-        int selector = -1;
-        switch (resource) {
-            case Resource.Fungus:
-                selector = 0;
-                break;
-            case Resource.Insect:
-                selector = 1;
-                break;
-            case Resource.Animal:
-                selector = 2;
-                break;
-            case Resource.Plant:
-                selector = 3;
-                break;
-            case Resource.Manuscript:
-                selector = 4;
-                break;
-            case Resource.Quill:
-                selector = 5;
-                break;
-            case Resource.Inkwell:
-                selector = 6;
-                break;
-            case Resource.Empty:
-                selector = 7;
-                break;
-            case Resource.Blocked:
-                selector = 8;
-                break;
-        }
-        if (selector != -1)
-            list.set(selector, list.get(selector) + 1);
+        int selector = switch (resource) {
+            case Resource.Fungus -> 0;
+            case Resource.Insect -> 1;
+            case Resource.Animal -> 2;
+            case Resource.Plant -> 3;
+            case Resource.Manuscript -> 4;
+            case Resource.Quill -> 5;
+            case Resource.Inkwell -> 6;
+            case Resource.Empty -> 7;
+            case Resource.Blocked -> 8;
+        };
+        list.set(selector, list.get(selector) + 1);
     }
 
     /**
@@ -235,6 +186,10 @@ public class PlayerArea {
      * @return True if at the given position a card can be placed
      */
     public boolean checkPosition(int x, int y) {
+        //Basic check: if a position is already taken
+        if(this.getCard(x,y) != null)
+            return false;
+
         /*
           The cells to check are:
           (x  , y  )
@@ -242,7 +197,7 @@ public class PlayerArea {
           (x+1, y  )
           (x+1, y+1)
          */
-        //Obtain the existing cells
+        //Obtains the existing cells
         ArrayList<Cell> position = new ArrayList<>();
 
         if(this.contains(x, y))
@@ -265,7 +220,7 @@ public class PlayerArea {
         if (position.stream().filter(Cell::isAvailable).count() < position.size())
             return false;
 
-        //checks if cells share the same bottom card
+        //checks if some cells share the same bottom card
         if(position.stream().map(Cell::getBottomCard).distinct().count() < position.size())
             return false;
 
@@ -283,38 +238,46 @@ public class PlayerArea {
      */
     public PlaceableCard getCard(int x, int y) {
         /*
-          The cells to check are:
-          (x  , y  )
-          (x  , y+1)
-          (x+1, y  )
-          (x+1, y+1)
+          There are two candidate for the return: the topCard and the bottomCard
+          in the cell at coordinates (x,y)
          */
-        //Obtain the existing cells
-        ArrayList<Cell> position = new ArrayList<>();
-
-        if(this.contains(x, y))
-            position.add(getCell(x,y));
-
-        if(this.contains(x, y+1))
-            position.add(getCell(x,y+1));
-
-        if(this.contains(x+1, y))
-            position.add(getCell(x+1,y));
-
-        if(this.contains(x+1, y+1))
-            position.add(getCell(x+1,y+1));
-
-        //check if there are existing cells
-        if(position.isEmpty())
+        Cell cell = getCell(x,y);
+        if (cell == null)
             return null;
 
-        Set<PlaceableCard> commonCards = new HashSet<>();
+        PlaceableCard topCard = cell.getTopCard();
+        PlaceableCard bottomCard = cell.getBottomCard();
 
-        return position.stream()
-                .flatMap(cell -> Stream.of(cell.getBottomCard(), cell.getTopCard()))
-                .filter(card -> card != null || !commonCards.add(card)) // to add a duplicate card in the set returns false
-                .findFirst()
-                .orElse(null);
+        if(topCard != null
+                && topCard.getCells().getFirst().getRow() == cell.getRow()
+                && topCard.getCells().getFirst().getColumn() == cell.getColumn())
+            return topCard;
+
+
+        if(bottomCard != null
+                && bottomCard.getCells().getFirst().getRow() == cell.getRow()
+                && bottomCard.getCells().getFirst().getColumn() == cell.getColumn())
+            return bottomCard;
+
+        return null;
+    }
+
+    /**
+     * Places the starter card
+     * @param card StarterCard
+     * @param front Side of the starter card
+     */
+    public void placeStarterCard(PlaceableCard card, boolean front)
+    {
+        card.setFront(front);
+        card.getPermanentResource().forEach(this::addPermanentResource);
+        ArrayList<Cell> cells = new ArrayList<>();
+        cells.add(new Cell(0,0,card));
+        cells.add(new Cell(0,1,card));
+        cells.add(new Cell(1,0,card));
+        cells.add(new Cell(1,1,card));
+        card.setCells(cells);
+        cells.forEach(this::addCell);
     }
 
     /**
@@ -429,297 +392,143 @@ public class PlayerArea {
             }
         }
 
+
+        //Setting up the new positions
         for (int i=0; i < position.size(); i++) {
             if(position.get(i) != null)
             {
-                position.get(i).linkCard(card,card.getResource().get(i));
+                position.get(i).linkCard(card);
 
             } else {
                 int ro = 0;
-                int co = 0;
-                switch (i) {
-                    case 0:
+                int co = switch (i) {
+                    case 0 -> {
                         ro = x;
-                        co = y;
-                        break;
-                    case 1:
+                        yield y;
+                    }
+                    case 1 -> {
                         ro = x;
-                        co = y+1;
-                        break;
-                    case 2:
-                        ro = x+1;
-                        co = y;
-                        break;
-                    case 3:
-                        ro = x+1;
-                        co = y+1;
-                }
-                this.addCell(new Cell(ro, co, card, card.getResource().get(i)));
+                        yield y + 1;
+                    }
+                    case 2 -> {
+                        ro = x + 1;
+                        yield y;
+                    }
+                    case 3 -> {
+                        ro = x + 1;
+                        yield y + 1;
+                    }
+                    default -> y;
+                };
+                this.addCell(new Cell(ro, co, card));
             }
         }
 
-        ArrayList<Resource> permanent = card.getPermanentResource();
-        for(Resource r : permanent)
-            this.addPermanentResource(r);
+        // Eventually adds the permanent resources
+        card.getPermanentResource().forEach(this::addPermanentResource);
 
         return points;
     }
 
     /**
+     * Returns a sorted list of all cards: first the card on top and on the left
+     * @return Ordered list of all cards
+     */
+    private ArrayList<PlaceableCard> getAllCards() {
+        return CellMatrix.values().stream()
+                .flatMap(cell -> Stream.of(cell.getBottomCard(), cell.getTopCard()))
+                .distinct()
+                .sorted(Comparator.comparing((PlaceableCard card) ->  card.getCells().getFirst().getRow())
+                        .thenComparing(card -> card.getCells().getFirst().getColumn()))
+                .collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    /**
      * Check if there are pattern of the given ID
-     * @param ID Identifier of the pattern to identify
+     * @param card Reference to the objective to identify
      * @return Number of points generated by the patterns
      */
-    public int checkPattern(int ID) {
+    public int checkPattern(ObjectiveCard card) {
         HashSet<PlaceableCard> checkedCards = new HashSet<>();
-        HashSet<PlaceableCard> allCards;
+        ArrayList<PlaceableCard> allCards;
         int points = 0;
-        switch (ID) {
-            case 87:
-                allCards = (HashSet<PlaceableCard>) CellMatrix.values().stream()
-                       .flatMap(cell -> Stream.of(cell.getBottomCard(), cell.getTopCard()))
-                       .collect(Collectors.toSet());
 
-                // fungus diagonal
-                for(PlaceableCard card : allCards) {
-                    if(card.getReign() == Reign.Fungus && !checkedCards.contains(card)) {
-                        int row = card.getCells().getFirst().getRow();
-                        int column = card.getCells().getFirst().getColumn();
-                        PlaceableCard card1 = this.getCard(row - 1, column + 1);
-                        PlaceableCard card2 = this.getCard(row - 2, column + 2);
-                        Reign reignToCheck = Reign.Fungus;
+        if(card == null)
+            return 0;
 
-                        if (card1 != null && card2 != null && card1.getReign() == reignToCheck && card2.getReign() == reignToCheck) {
-                            points = points + 2;
-                            checkedCards.add(card);
-                            checkedCards.add(card1);
-                            checkedCards.add(card2);
-                        }
+        if(!card.getPattern().isEmpty()) {
+            allCards = getAllCards();
+            ArrayList<Integer[]> pattern = card.getPattern();
+            ArrayList<Reign> reigns = card.getReignCards();
+            for(PlaceableCard card0 : allCards) {
+                if(!checkedCards.contains(card0) && card0.getReign().equals(reigns.getFirst())) {
+                    int row = card0.getCells().getFirst().getRow();
+                    int column = card0.getCells().getFirst().getColumn();
+                    PlaceableCard card1 = this.getCard(row + pattern.get(0)[0], column + pattern.get(0)[1]);
+                    PlaceableCard card2 = this.getCard(row + pattern.get(1)[0], column + pattern.get(1)[1]);
+
+                    if( card1 != null && card2 != null
+                            && card1.getReign() == reigns.get(1) && card2.getReign() == reigns.get(2)
+                            && !checkedCards.contains(card1) && !checkedCards.contains(card2)) {
+                        points = points +2;
+                        checkedCards.add(card0);
+                        checkedCards.add(card1);
+                        checkedCards.add(card2);
                     }
+
                 }
+            }
+            return points;
+        }
+
+        if(!card.getRequirements().isEmpty()) {
+            ArrayList<Resource> requirements = card.getRequirements();
+            boolean endCount = false;
+            ArrayList<Integer> resources = this.getResources();
+
+            if(requirements.stream().distinct().count() == 1)
+            {
+                int index = switch (requirements.getFirst()) {
+                    case Fungus -> 0;
+                    case Insect -> 1;
+                    case Animal -> 2;
+                    case Plant -> 3;
+                    case Manuscript -> 4;
+                    case Quill -> 5;
+                    case Inkwell -> 6;
+                    case Empty -> 7;
+                    case Blocked -> 8;
+                };
+
+                if(index < 4)
+                    points = 2 * (resources.get(index) / 3);
+                else
+                    points = 2 * (resources.get(index) / 2);
+                return points;
+            }
+
+            if(card.getID() == 99) {
+                if(resources.get(4) < resources.get(5)) {
+                    if(resources.get(4) < resources.get(6))
+                        return 2 * resources.get(4);
+                    else
+                        return 2 * resources.get(6);
+                }
+                else {
+                    if(resources.get(5) < resources.get(6))
+                        return 2 * resources.get(5);
+                    else
+                        return 2 * resources.get(6);
+                }
+            }
 
 
-               break;
-
-           case 88:
-
-               allCards = (HashSet<PlaceableCard>) CellMatrix.values().stream()
-                       .flatMap(cell -> Stream.of(cell.getBottomCard(), cell.getTopCard()))
-                       .collect(Collectors.toSet());
-
-               // plant diagonal
-               for(PlaceableCard card : allCards) {
-                   if(card.getReign() == Reign.Plant && !checkedCards.contains(card)) {
-                       int row = card.getCells().getFirst().getRow();
-                       int column = card.getCells().getFirst().getColumn();
-                       PlaceableCard card1 = this.getCard(row + 1, column + 1);
-                       PlaceableCard card2 = this.getCard(row + 2, column + 2);
-                       Reign reignToCheck = Reign.Plant;
-
-                       if (card1 != null && card2 != null && card1.getReign() == reignToCheck && card2.getReign() == reignToCheck) {
-                           points = points + 2;
-                           checkedCards.add(card);
-                           checkedCards.add(card1);
-                           checkedCards.add(card2);
-                       }
-                   }
-               }
 
 
-               break;
+            return points;
+        }
 
-           case 89:
+        return 0;
 
-               allCards = (HashSet<PlaceableCard>) CellMatrix.values().stream()
-                       .flatMap(cell -> Stream.of(cell.getBottomCard(), cell.getTopCard()))
-                       .collect(Collectors.toSet());
-
-
-               // animal diagonal
-               for(PlaceableCard card : allCards) {
-                   if(card.getReign() == Reign.Animal && !checkedCards.contains(card)) {
-                       int row = card.getCells().getFirst().getRow();
-                       int column = card.getCells().getFirst().getColumn();
-                       PlaceableCard card1 = this.getCard(row - 1, column + 1);
-                       PlaceableCard card2 = this.getCard(row - 2, column + 2);
-                       Reign reignToCheck = Reign.Animal;
-
-                       if (card1 != null && card2 != null && card1.getReign() == reignToCheck && card2.getReign() == reignToCheck) {
-                           points = points + 2;
-                           checkedCards.add(card);
-                           checkedCards.add(card1);
-                           checkedCards.add(card2);
-                       }
-                   }
-               }
-
-               break;
-
-           case 90:
-
-               allCards = (HashSet<PlaceableCard>) CellMatrix.values().stream()
-                       .flatMap(cell -> Stream.of(cell.getBottomCard(), cell.getTopCard()))
-                       .collect(Collectors.toSet());
-
-
-               // insect diagonal
-               for(PlaceableCard card : allCards) {
-                   if(card.getReign() == Reign.Insect && !checkedCards.contains(card)) {
-                       int row = card.getCells().getFirst().getRow();
-                       int column = card.getCells().getFirst().getColumn();
-                       PlaceableCard card1 = this.getCard(row + 1, column + 1);
-                       PlaceableCard card2 = this.getCard(row + 2, column + 2);
-                       Reign reignToCheck = Reign.Insect;
-
-                       if (card1 != null && card2 != null && card1.getReign() == reignToCheck && card2.getReign() == reignToCheck) {
-                           points = points + 2;
-                           checkedCards.add(card);
-                           checkedCards.add(card1);
-                           checkedCards.add(card2);
-                       }
-                   }
-               }
-
-               break;
-
-           case 91:
-
-               allCards = (HashSet<PlaceableCard>) CellMatrix.values().stream()
-                       .flatMap(cell -> Stream.of(cell.getBottomCard(), cell.getTopCard()))
-                       .collect(Collectors.toSet());
-
-               // fungus-plant vertical
-               for(PlaceableCard card : allCards) {
-                   if(card.getReign() == Reign.Fungus && !checkedCards.contains(card)) {
-                       int row = card.getCells().getFirst().getRow();
-                       int column = card.getCells().getFirst().getColumn();
-                       PlaceableCard card1 = this.getCard(row + 2, column);
-                       PlaceableCard card2 = this.getCard(row + 3, column + 1);
-
-                       if (card1 != null && card2 != null && card1.getReign() == Reign.Fungus && card2.getReign() == Reign.Plant) {
-                           points = points + 3;
-                           checkedCards.add(card);
-                           checkedCards.add(card1);
-                           checkedCards.add(card2);
-                       }
-                   }
-               }
-               break;
-
-           case 92:
-
-               allCards = (HashSet<PlaceableCard>) CellMatrix.values().stream()
-                       .flatMap(cell -> Stream.of(cell.getBottomCard(), cell.getTopCard()))
-                       .collect(Collectors.toSet());
-
-               // plant-insect vertical
-               for(PlaceableCard card : allCards) {
-                   if(card.getReign() == Reign.Insect && !checkedCards.contains(card)) {
-                       int row = card.getCells().getFirst().getRow();
-                       int column = card.getCells().getFirst().getColumn();
-                       PlaceableCard card1 = this.getCard(row - 1, column + 1);
-                       PlaceableCard card2 = this.getCard(row - 3, column + 1);
-
-                       if (card1 != null && card2 != null && card1.getReign() == Reign.Plant && card2.getReign() == Reign.Plant) {
-                           points = points + 3;
-                           checkedCards.add(card);
-                           checkedCards.add(card1);
-                           checkedCards.add(card2);
-                       }
-                   }
-               }
-               break;
-
-
-           case 93:
-
-               allCards = (HashSet<PlaceableCard>) CellMatrix.values().stream()
-                       .flatMap(cell -> Stream.of(cell.getBottomCard(), cell.getTopCard()))
-                       .collect(Collectors.toSet());
-
-               // animal-fungus vertical
-               for(PlaceableCard card : allCards) {
-                   if(card.getReign() == Reign.Fungus && !checkedCards.contains(card)) {
-                       int row = card.getCells().getFirst().getRow();
-                       int column = card.getCells().getFirst().getColumn();
-                       PlaceableCard card1 = this.getCard(row + 1, column - 1);
-                       PlaceableCard card2 = this.getCard(row + 3, column - 1);
-
-                       if (card1 != null && card2 != null && card1.getReign() == Reign.Animal && card2.getReign() == Reign.Animal) {
-                           points = points + 3;
-                           checkedCards.add(card);
-                           checkedCards.add(card1);
-                           checkedCards.add(card2);
-                       }
-                   }
-               }
-               break;
-
-           case 94:
-
-               allCards = (HashSet<PlaceableCard>) CellMatrix.values().stream()
-                       .flatMap(cell -> Stream.of(cell.getBottomCard(), cell.getTopCard()))
-                       .collect(Collectors.toSet());
-
-               // insect-animal vertical
-               for(PlaceableCard card : allCards) {
-                   if(card.getReign() == Reign.Animal && !checkedCards.contains(card)) {
-                       int row = card.getCells().getFirst().getRow();
-                       int column = card.getCells().getFirst().getColumn();
-                       PlaceableCard card1 = this.getCard(row + 1, column + 1);
-                       PlaceableCard card2 = this.getCard(row + 3, column + 1);
-
-                       if (card1 != null && card2 != null && card1.getReign() == Reign.Insect && card2.getReign() == Reign.Insect) {
-                           points = points + 3;
-                           checkedCards.add(card);
-                           checkedCards.add(card1);
-                           checkedCards.add(card2);
-                       }
-                   }
-               }
-               break;
-
-           case 95:
-               points = (int) (this.getResources().get(0) / 3 * 2);
-               break;
-
-           case 96:
-               points = (int) (this.getResources().get(3) / 3 * 2);
-               break;
-
-           case 97:
-               points = (int) (this.getResources().get(2) / 3 * 2);
-               break;
-
-           case 98:
-               points = (int) (this.getResources().get(1) / 3 * 2);
-               break;
-
-           case 99:
-               points = (int) (3 * this.getResources().stream()
-                       .skip(4)
-                       .limit(3)
-                       .min(Integer::compare)
-                       .orElse(0)
-               );
-               break;
-
-           case 100:
-               points = (int) (((int) (this.getResources().get(4) / 2)) * 2);
-               break;
-
-           case 101:
-               points = (int) (((int) (this.getResources().get(6) / 2)) * 2);
-               break;
-
-           case 102:
-               points = (int) (((int) (this.getResources().get(5) / 2)) * 2);
-               break;
-
-           default:
-               return 0;
-       }
-
-       return points;
     }
 }

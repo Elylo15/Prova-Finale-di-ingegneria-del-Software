@@ -1,11 +1,21 @@
 package it.polimi.ingsw.model.cards;
 
+import it.polimi.ingsw.model.cards.enumeration.Reign;
+import it.polimi.ingsw.model.cards.enumeration.Resource;
 import it.polimi.ingsw.model.cards.exceptions.InvalidIdException;
+
+import java.util.ArrayList;
 
 
 public class ObjectiveCard extends Card{
 
     private int points;
+
+    private ArrayList<Resource> requirements;
+
+    private ArrayList<Integer[]> pattern;
+
+    private ArrayList<Reign> reignCards;
 
     /**
      * Creates a new objective card based on ID
@@ -35,5 +45,30 @@ public class ObjectiveCard extends Card{
      */
     public int getPoints() {
         return points;
+    }
+
+    /**
+     * Returns the resources required to get points, or null if the objective doesn't require resources.
+     * @return List of resource or null il the objective requires no resources
+     */
+    public ArrayList<Resource> getRequirements() {
+        return requirements;
+    }
+
+    /**
+     * If the objective requires a pattern, and taking as reference the position of the most top-left card,
+     * returns the relative positions of the other cards.
+     * @return List of coordinates of the two cards or null if the objective requires no pattern
+     */
+    public ArrayList<Integer[]> getPattern() {
+        return pattern;
+    }
+
+    /**
+     * If the objective requires a pattern, returns the reign of all cards involved in the pattern
+     * @return List of Reign or null if the objective requires no pattern
+     */
+    public ArrayList<Reign> getReignCards() {
+        return reignCards;
     }
 }

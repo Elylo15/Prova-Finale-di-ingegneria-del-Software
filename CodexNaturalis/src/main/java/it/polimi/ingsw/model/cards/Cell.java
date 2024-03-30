@@ -7,7 +7,7 @@ public class Cell {
     private int row;
     private int column;
     private boolean available;
-    private Resource resource;
+
     private PlaceableCard bottomCard;
     private PlaceableCard topCard;
 
@@ -16,37 +16,44 @@ public class Cell {
      * @param row row coordinate of the matrix of cells
      * @param column column coordinate of the matrix of cells
      * @param bottomCard pointer to the card on the bottom
-     * @param resource pointer to the card on the top
      */
-    public Cell(int row, int column, PlaceableCard bottomCard, Resource resource)
+    public Cell(int row, int column, PlaceableCard bottomCard)
     {
         this.row = row;
         this.column = column;
-        this.resource = resource;
         this.bottomCard = bottomCard;
         this.topCard = null;
-        this.available = !resource.equals(Resource.Blocked);
+        this.available = !getResource().equals(Resource.Blocked);
 
     }
 
     /**
      * Initialize the pointer to the card on top and update the stored resource
      * @param topCard pointer to the card on top
-     * @param resource new stored resource
      */
-    public void linkCard(PlaceableCard topCard, Resource resource)
+    public void linkCard(PlaceableCard topCard)
     {
         this.topCard = topCard;
-        this.resource = resource;
         this.available = false;
     }
 
     /**
-     * Returns the stored resource
-     * @return stored resource
+     * Returns the resource of the existing card on top
+     * @return resource
      */
     public Resource getResource() {
-        return resource;
+
+        PlaceableCard referenceCard;
+        if(this.topCard == null)
+            referenceCard = this.bottomCard;
+        else
+            referenceCard = this.topCard;
+
+        for(int i = 0; i<referenceCard.getCells().size(); i++) {
+            if(referenceCard.getCells().get(i).equals(this))
+                return referenceCard.getResource().get(i);
+        }
+        return null;
     }
 
     /**
