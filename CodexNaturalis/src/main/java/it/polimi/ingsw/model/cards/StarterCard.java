@@ -6,6 +6,8 @@ import it.polimi.ingsw.model.cards.exceptions.InvalidIdException;
 import java.util.ArrayList;
 
 public class StarterCard extends PlaceableCard{
+    private ArrayList<Resource> permanentResource;
+    private ArrayList<Resource> bottomResource;
     /**
      * Constructor
      * @param ID, it must be >=81 and <=86
@@ -22,37 +24,5 @@ public class StarterCard extends PlaceableCard{
                     }
     }
 
-    /**
-     *
-     * @return an ArrayList with the permanent resources based on the ID of the card
-     */
-    @Override
-    public ArrayList<Resource> getPermanentResource() {
-        ArrayList<Resource> resources = new ArrayList<Resource>();
-        if(ID==81){
-            resources.add(Resource.Insect);
-        }
-        else if(ID==82) {
-             resources.add(Resource.Fungus);
-        }
-        else if(ID==83) {
-             resources.add(Resource.Plant);
-             resources.add(Resource.Fungus);
-        }
-        else if(ID==84) {
-             resources.add(Resource.Animal);
-             resources.add(Resource.Insect);
-        }
-        else if(ID==85) {
-              resources.add(Resource.Animal);
-              resources.add(Resource.Insect);
-              resources.add(Resource.Plant);
-        }
-        else if(ID==86) {
-              resources.add(Resource.Plant);
-              resources.add(Resource.Animal);
-              resources.add(Resource.Fungus);
-        }
-        return resources;
-    }
+
 }

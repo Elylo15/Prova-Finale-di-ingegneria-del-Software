@@ -106,21 +106,76 @@ public abstract class PlaceableCard extends Card{
 
         }
     }
+    /**
+     * returns an ArrayList containing the resources you must have to place the card,
+     * @return an ArrayList<Resource>
+     */
+    public ArrayList<Resource> getRequirement() {
+        return requirement;
+    }
 
-    public ArrayList<Resource> getRequirement() {}
+    /**
+     * check if the requirement to place the card is met, return true if the player possesses the
+     * necessary resources in his PlayerArea
+     * the requirement applies only if the player wants to play the front of the card
+     * @param req it receives as parameter an ArrayList containing the number of resources of each type
+     * the player possesses in his PlayerArea
+     * @return a boolean
+     */
+    @Override
+    public boolean checkRequirement(ArrayList<Integer> req) {
+        if(front==true) {
+            int playgroundFungus = req.get(0);
+            int playgroundPlant = req.get(1);
+            int playgroundAnimal = req.get(2);
+            int playgroundInsect = req.get(3);
+            int cardFungus = 0;
+            int cardPlant = 0;
+            int cardAnimal = 0;
+            int cardInsect = 0;
+            ArrayList<Resource> requirement = this.getRequirement();
+            for (int i = 0; i < requirement.size(); i++) {
+                if (requirement.get(i) == Resource.Fungus) {
+                    cardFungus++;
+                }
+                if (requirement.get(i) == Resource.Plant) {
+                    cardPlant++;
+                }
+                if (requirement.get(i) == Resource.Animal) {
+                    cardAnimal++;
+                }
+                if (requirement.get(i) == Resource.Insect) {
+                    cardInsect++;
+                }
+            }
+            if (cardFungus <= playgroundFungus && cardPlant <= playgroundPlant && cardAnimal <= playgroundAnimal && cardInsect <= playgroundInsect) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        if(front==false){
+            return true;
+        }
+    }
 
-    public boolean checkRequirement(ArrayList<Integer> req) {}
 
     public void setCells(ArrayList<Cell> cells) {}
 
     public Reign getReign() {
+        return reign;
     }
 
     public boolean isFront() {
+        return front;
     }
 
     public ArrayList<Cell> getCells() {}
 
+    /**
+     *
+     * @return the point associated with the card
+     */
     public int getPoints() {
         return points;
     }
@@ -697,8 +752,57 @@ public abstract class PlaceableCard extends Card{
         }
         return resource;
     }
+    /**
+     * Gold and Resource cards contain only one permanent resources in their back
+     * Starter cards contain from one to three permanent resources in their front
+     * @return an Arraylist containing the permanent resources based on the ID of the card
+     */
+    public ArrayList<Resource> getPermanentResource(){
+        ArrayList<Resource> resources = new ArrayList<Resource>();
+        if(front==false) {
 
-    public ArrayList<Resource> getPermanentResource();
+            if (this.ID >=1 && this.ID <= 10 || this.ID >= 41 && this.ID <= 50) {
+                resources.add(Resource.Fungus);
+            }
+            if (this.ID >=11 && this.ID <= 20 || this.ID >= 51 && this.ID <= 60) {
+                resources.add(Resource.Plant);
+            }
+            if (this.ID >=21 && this.ID <= 30 || this.ID >= 61 && this.ID <= 70) {
+                resources.add(Resource.Animal);
+            }
+            if (this.ID >=31 && this.ID <=40 || this.ID >= 71 && this.ID <= 80) {
+                resources.add(Resource.Insect);
+            }
+        }
+        if(front==true){
+            if(ID==81){
+                resources.add(Resource.Insect);
+            }
+            else if(ID==82) {
+                resources.add(Resource.Fungus);
+            }
+            else if(ID==83) {
+                resources.add(Resource.Plant);
+                resources.add(Resource.Fungus);
+            }
+            else if(ID==84) {
+                resources.add(Resource.Animal);
+                resources.add(Resource.Insect);
+            }
+            else if(ID==85) {
+                resources.add(Resource.Animal);
+                resources.add(Resource.Insect);
+                resources.add(Resource.Plant);
+            }
+            else if(ID==86) {
+                resources.add(Resource.Plant);
+                resources.add(Resource.Animal);
+                resources.add(Resource.Fungus);
+            }
+        }
+        return resources;
+
+    }
 
     public boolean isResource() {
         if(this.ID >= 1 && this.ID <=40){

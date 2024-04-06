@@ -22,20 +22,11 @@ public class ResourceCard extends PlaceableCard{
             throw new InvalidIdException("ID is too big");
         }
     }
-    /**
-     * returns an ArrayList containing the resources you must have to place the card,
-     * it will always be empty as resource cards have no requirement
-     * @return an empty ArrayList<Resource>
-     */
-    @Override
-    public ArrayList<Resource> getRequirement() {
-        ArrayList<Resource> requirement = new ArrayList<Resource>();
-        return requirement;
-    }
+
 
     /**
      * check if the requirement to place the card is met, it always returns true as resource cards have no requirement
-     * @param req
+     * @param req it receives as parameter an ArrayList containing the number of resources of each type the player possesses in his PlayerArea
      * @return true
      */
     @Override
@@ -43,41 +34,7 @@ public class ResourceCard extends PlaceableCard{
         return true;
     }
 
-    /**
-     *
-     * @return the points associated with the card
-     */
-    @Override
-    public int getPoints() {
-        if(ID >= 8 && ID <=10 || ID >=18 && ID <= 20 || ID >= 28 && ID <=30 || ID >=38 && ID <=40){
-            return 1;
-        }
-        else {
-            return 0;
-        }
 
-    }
 
-    /**
-     * Resource cards contain only one permanent resource
-     * @return an Arraylist containing the permanent resource in the back of the card
-     */
-    @Override
-    public ArrayList<Resource> getPermanentResource() {
-        ArrayList<Resource> resources = new ArrayList<Resource>();
-        if(this.ID >=1 && this.ID <= 10){
-            resources.add(Resource.Fungus);
-        }
-        if(this.ID >=11 && this.ID <= 20){
-            resources.add(Resource.Plant);
-        }
-        if(this.ID >=21 && this.ID <= 30){
-            resources.add(Resource.Animal);
-        }
-        if(this.ID >=31 && this.ID <=40){
-            resources.add(Resource.Insect);
-        }
-        return resources;
 
-    }
 }
