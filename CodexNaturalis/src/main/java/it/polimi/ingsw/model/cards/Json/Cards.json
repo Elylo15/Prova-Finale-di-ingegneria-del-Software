@@ -2,325 +2,364 @@
   "resourceCard": [
     {
       "ID": 1,
-      "requirement": null,
+      "requirement": [],
       "points": 0,
       "reign": "Fungus",
       "front": true,
-      "cells": null,
+      "cells": [],
       "resources": ["Fungus", "Empty", "Fungus", "Blocked"]
 
     },
     {
       "ID": 2,
+      "requirement": [],
       "points": 0,
       "reign": "Fungus",
       "front": true,
-      "cells": null,
+      "cells": [],
       "resources": ["Fungus", "Fungus", "Blocked", "Empty"]
 
     },
     {
       "ID": 3,
+      "requirement": [],
       "points": 0,
       "reign": "Fungus",
       "front": true,
-      "cells": null,
+      "cells": [],
       "resources": ["Empty", "Blocked", "Fungus", "Fungus"]
     },
     {
       "ID": 4,
+      "requirement": [],
       "points": 0,
       "reign": "Fungus",
       "front": true,
-      "cells": null,
+      "cells": [],
       "resources": ["Blocked", "Fungus", "Empty", "Fungus"]
     },
     {
       "ID": 5,
+      "requirement": [],
       "points": 0,
       "reign": "Fungus",
       "front": true,
-      "cells": null,
+      "cells": [],
       "resources": ["Blocked", "Quill", "Plant", "Fungus"]
     },
     {
       "ID": 6,
+      "requirement": [],
       "points": 0,
       "reign": "Fungus",
       "front": true,
-      "cells": null,
+      "cells": [],
       "resources": ["Inkwell", "Fungus", "Blocked", "Animal"]
     },
     {
       "ID": 7,
+      "requirement": [],
       "points": 0,
       "reign": "Fungus",
       "front": true,
-      "cells": null,
+      "cells": [],
       "resources": ["Fungus", "Insect", "Manuscript", "Empty"]
     },
     {
       "ID": 8,
+      "requirement": [],
       "points": 1,
       "reign": "Fungus",
       "front": true,
-      "cells": null,
+      "cells": [],
       "resources": ["Empty", "Fungus", "Empty", "Blocked"]
     },
     {
       "ID": 9,
+      "requirement": [],
       "points": 1,
       "reign": "Fungus",
       "front": true,
-      "cells": null,
+      "cells": [],
       "resources": ["Fungus", "Blocked", "Empty", "Empty"]
     },
     {
       "ID": 10,
+      "requirement": [],
       "points": 1,
       "reign": "Fungus",
       "front": true,
-      "cells": null,
+      "cells": [],
       "resources": ["Blocked", "Empty", "Fungus", "Empty"]
     },
     {
       "ID": 11,
+      "requirement": [],
       "points": 0,
       "reign": "Plant",
       "front": true,
-      "cells": null,
+      "cells": [],
       "resources": ["Plant", "Empty", "Plant", "Blocked"]
     },
     {
       "ID": 12,
+      "requirement": [],
       "points": 0,
       "reign": "Plant",
       "front": true,
-      "cells": null,
+      "cells": [],
       "resources": ["Plant", "Plant", "Blocked", "Empty"]
     },
     {
       "ID": 13,
+      "requirement": [],
       "points": 0,
       "reign": "Plant",
       "front": true,
-      "cells": null,
+      "cells": [],
       "resources": ["Empty", "Blocked", "Plant", "Plant"]
     },
     {
       "ID": 14,
+      "requirement": [],
       "points": 0,
       "reign": "Plant",
       "front": true,
-      "cells": null,
+      "cells": [],
       "resources": ["Blocked", "Plant", "Empty", "Plant"]
     },
     {
       "ID": 15,
+      "requirement": [],
       "points": 0,
       "reign": "Plant",
       "front": true,
-      "cells": null,
+      "cells": [],
       "resources": ["Blocked", "Insect", "Quill", "Plant"]
     },
     {
       "ID": 16,
+      "requirement": [],
       "points": 0,
       "reign": "Plant",
       "front": true,
-      "cells": null,
+      "cells": [],
       "resources": ["Fungus", "Plant", "Blocked", "Inkwell"]
     },
     {
       "ID": 17,
+      "requirement": [],
       "points": 0,
       "reign": "Plant",
       "front": true,
-      "cells": null,
+      "cells": [],
       "resources": ["Manuscript", "Blocked", "Plant", "Animal"]
     },
     {
       "ID": 18,
+      "requirement": [],
       "points": 1,
       "reign": "Plant",
       "front": true,
-      "cells": null,
+      "cells": [],
       "resources": ["Empty", "Empty", "Plant", "Blocked"]
     },
     {
       "ID": 19,
+      "requirement": [],
       "points": 1,
       "reign": "Plant",
       "front": true,
-      "cells": null,
+      "cells": [],
       "resources": ["Empty", "Empty", "Blocked", "Plant"]
     },
     {
       "ID": 20,
+      "requirement": [],
       "points": 1,
       "reign": "Plant",
       "front": true,
-      "cells": null,
+      "cells": [],
       "resources": ["Blocked", "Plant", "Empty", "Empty"]
     },
     {
       "ID": 21,
+      "requirement": [],
       "points": 0,
       "reign": "Animal",
       "front": true,
-      "cells": null,
+      "cells": [],
       "resources": ["Animal", "Animal", "Empty", "Blocked"]
     },
     {
       "ID": 22,
+      "requirement": [],
       "points": 0,
       "reign": "Animal",
       "front": true,
-      "cells": null,
+      "cells": [],
       "resources": ["Blocked", "Empty", "Animal", "Animal"]
     },
     {
       "ID": 23,
+      "requirement": [],
       "points": 0,
       "reign": "Animal",
       "front": true,
-      "cells": null,
+      "cells": [],
       "resources": ["Animal", "Blocked", "Animal", "Empty"]
     },
     {
       "ID": 24,
+      "requirement": [],
       "points": 0,
       "reign": "Animal",
       "front": true,
-      "cells": null,
+      "cells": [],
       "resources": ["Empty", "Animal", "Blocked", "Animal"]
     },
     {
       "ID": 25,
+      "requirement": [],
       "points": 0,
       "reign": "Animal",
       "front": true,
-      "cells": null,
+      "cells": [],
       "resources": ["Blocked", "Insect", "Inkwell", "Animal"]
     },
     {
       "ID": 26,
+      "requirement": [],
       "points": 0,
       "reign": "Animal",
       "front": true,
-      "cells": null,
+      "cells": [],
       "resources": ["Plant", "Animal", "Blocked", "Manuscript"]
     },
     {
       "ID": 27,
+      "requirement": [],
       "points": 0,
       "reign": "Animal",
       "front": true,
-      "cells": null,
+      "cells": [],
       "resources": ["Quill", "Blocked", "Animal", "Fungus"]
     },
     {
       "ID": 28,
+      "requirement": [],
       "points": 1,
       "reign": "Animal",
       "front": true,
-      "cells": null,
+      "cells": [],
       "resources": ["Blocked", "Empty", "Animal", "Empty"]
     },
     {
       "ID": 29,
+      "requirement": [],
       "points": 1,
       "reign": "Animal",
       "front": true,
-      "cells": null,
+      "cells": [],
       "resources": ["Empty", "Blocked", "Empty", "Animal"]
     },
     {
       "ID": 30,
+      "requirement": [],
       "points": 1,
       "reign": "Animal",
       "front": true,
-      "cells": null,
+      "cells": [],
       "resources": ["Empty", "Animal", "Empty", "Blocked"]
     },
     {
       "ID": 31,
+      "requirement": [],
       "points": 0,
       "reign": "Insect",
       "front": true,
-      "cells": null,
+      "cells": [],
       "resources": ["Insect", "Insect", "Empty", "Blocked"]
     },
     {
       "ID": 32,
+      "requirement": [],
       "points": 0,
       "reign": "Insect",
       "front": true,
-      "cells": null,
+      "cells": [],
       "resources": ["Blocked", "Empty", "Insect", "Insect"]
     },
     {
       "ID": 33,
+      "requirement": [],
       "points": 0,
       "reign": "Insect",
       "front": true,
-      "cells": null,
+      "cells": [],
       "resources": ["Insect", "Blocked", "Insect", "Empty"]
     },
     {
       "ID": 34,
+      "requirement": [],
       "points": 0,
       "reign": "Insect",
       "front": true,
-      "cells": null,
+      "cells": [],
       "resources": ["Empty", "Insect", "Blocked", "Insect"]
     },
     {
       "ID": 35,
+      "requirement": [],
       "points": 0,
       "reign": "Insect",
       "front": true,
-      "cells": null,
+      "cells": [],
       "resources": ["Blocked", "Quill", "Animal", "Insect"]
     },
     {
       "ID": 36,
+      "requirement": [],
       "points": 0,
       "reign": "Insect",
       "front": true,
-      "cells": null,
+      "cells": [],
       "resources": ["Manuscript", "Insect", "Blocked", "Fungus"]
     },
     {
       "ID": 37,
+      "requirement": [],
       "points": 0,
       "reign": "Insect",
       "front": true,
-      "cells": null,
+      "cells": [],
       "resources": ["Insect", "Plant", "Inkwell", "Blocked"]
     },
     {
       "ID": 38,
+      "requirement": [],
       "points": 1,
       "reign": "Insect",
       "front": true,
-      "cells": null,
+      "cells": [],
       "resources": ["Insect", "Blocked", "Empty", "Empty"]
     },
     {
       "ID": 39,
+      "requirement": [],
       "points": 1,
       "reign": "Insect",
       "front": true,
-      "cells": null,
+      "cells": [],
       "resources": ["Empty", "Empty", "Blocked", "Insect"]
     },
     {
       "ID": 40,
+      "requirement": [],
       "points": 1,
       "reign": "Insect",
       "front": true,
-      "cells": null,
+      "cells": [],
       "resources": ["Blocked", "Insect", "Empty", "Empty"]
     }
   ],
@@ -332,7 +371,7 @@
       "points": 1,
       "reign": "Fungus",
       "front": true,
-      "cells":null,
+      "cells":[],
       "resources": ["Blocked", "Empty", "Empty", "Quill"]
     },
     {
@@ -341,7 +380,7 @@
       "points": 1,
       "reign": "Fungus",
       "front": true,
-      "cells":null,
+      "cells":[],
       "resources": ["Empty", "Inkwell", "Blocked", "Empty"]
     },
     {
@@ -350,7 +389,7 @@
       "points": 1,
       "reign": "Fungus",
       "front": true,
-      "cells":null,
+      "cells":[],
       "resources": ["Manuscript", "Empty", "Empty", "Blocked"]
     },
     {
@@ -359,7 +398,7 @@
       "points": 2,
       "reign": "Fungus",
       "front": true,
-      "cells":null,
+      "cells":[],
       "resources": ["Empty", "Empty", "Blocked", "Empty"]
     },
     {
@@ -368,7 +407,7 @@
       "points": 2,
       "reign": "Fungus",
       "front": true,
-      "cells":null,
+      "cells":[],
       "resources": ["Empty", "Empty", "Empty", "Blocked"]
     },
     {
@@ -377,7 +416,7 @@
       "points": 2,
       "reign": "Fungus",
       "front": true,
-      "cells":null,
+      "cells":[],
       "resources": ["Empty", "Blocked", "Empty", "Empty"]
     },
     {
@@ -386,7 +425,7 @@
       "points": 3,
       "reign": "Fungus",
       "front": true,
-      "cells":null,
+      "cells":[],
       "resources": ["Empty", "Blocked", "Inkwell", "Blocked"]
     },
     {
@@ -395,7 +434,7 @@
       "points": 3,
       "reign": "Fungus",
       "front": true,
-      "cells":null,
+      "cells":[],
       "resources": ["Quill", "Empty", "Blocked", "Blocked"]
     },
     {
@@ -404,7 +443,7 @@
       "points": 3,
       "reign": "Fungus",
       "front": true,
-      "cells":null,
+      "cells":[],
       "resources": ["Blocked", "Manuscript", "Blocked", "Empty"]
     },
     {
@@ -413,7 +452,7 @@
       "points": 5,
       "reign": "Fungus",
       "front": true,
-      "cells":null,
+      "cells":[],
       "resources": ["Empty", "Blocked", "Empty", "Blocked"]
     },
     {
@@ -422,7 +461,7 @@
       "points": 1,
       "reign": "Plant",
       "front": true,
-      "cells":null,
+      "cells":[],
       "resources": ["Quill", "Empty", "Empty", "Blocked"]
     },
     {
@@ -431,7 +470,7 @@
       "points": 1,
       "reign": "Plant",
       "front": true,
-      "cells":null,
+      "cells":[],
       "resources": ["Empty", "Manuscript", "Blocked", "Empty"]
     },
     {
@@ -440,7 +479,7 @@
       "points": 1,
       "reign": "Plant",
       "front": true,
-      "cells":null,
+      "cells":[],
       "resources": ["Empty", "Blocked", "Inkwell", "Empty"]
     },
     {
@@ -449,7 +488,7 @@
       "points": 2,
       "reign": "Plant",
       "front": true,
-      "cells":null,
+      "cells":[],
       "resources": ["Blocked", "Empty", "Empty", "Empty"]
     },
     {
@@ -458,7 +497,7 @@
       "points": 2,
       "reign": "Plant",
       "front": true,
-      "cells":null,
+      "cells":[],
       "resources": ["Empty", "Empty", "Empty", "Blocked"]
     },
     {
@@ -467,7 +506,7 @@
       "points": 2,
       "reign": "Plant",
       "front": true,
-      "cells":null,
+      "cells":[],
       "resources": ["Empty", "Blocked", "Empty", "Empty"]
     },
     {
@@ -476,7 +515,7 @@
       "points": 3,
       "reign": "Plant",
       "front": true,
-      "cells":null,
+      "cells":[],
       "resources": ["Empty", "Blocked", "Quill", "Blocked"]
     },
     {
@@ -485,7 +524,7 @@
       "points": 3,
       "reign": "Plant",
       "front": true,
-      "cells":null,
+      "cells":[],
       "resources": ["Manuscript", "Empty", "Blocked", "Blocked"]
     },
     {
@@ -494,7 +533,7 @@
       "points": 3,
       "reign": "Plant",
       "front": true,
-      "cells":null,
+      "cells":[],
       "resources": ["Blocked", "Inkwell", "Blocked", "Empty"]
     },
     {
@@ -503,7 +542,7 @@
       "points": 5,
       "reign": "Plant",
       "front": true,
-      "cells":null,
+      "cells":[],
       "resources": ["Empty", "Empty", "Blocked", "Blocked"]
     },
     {
@@ -512,7 +551,7 @@
       "points": 1,
       "reign": "Animal",
       "front": true,
-      "cells":null,
+      "cells":[],
       "resources": ["Inkwell", "Empty", "Empty", "Blocked"]
     },
     {
@@ -521,7 +560,7 @@
       "points": 1,
       "reign": "Animal",
       "front": true,
-      "cells":null,
+      "cells":[],
       "resources": ["Inkwell", "Empty", "Empty", "Blocked"]
     },
     {
@@ -530,7 +569,7 @@
       "points": 1,
       "reign": "Animal",
       "front": true,
-      "cells":null,
+      "cells":[],
       "resources": ["Blocked", "Empty", "Empty", "Manuscript"]
     },
     {
@@ -539,7 +578,7 @@
       "points": 1,
       "reign": "Animal",
       "front": true,
-      "cells":null,
+      "cells":[],
       "resources": ["Empty", "Blocked", "Quill", "Empty"]
     },
     {
@@ -548,7 +587,7 @@
       "points": 2,
       "reign": "Animal",
       "front": true,
-      "cells":null,
+      "cells":[],
       "resources": ["Empty", "Empty", "Blocked", "Empty"]
     },
     {
@@ -557,7 +596,7 @@
       "points": 2,
       "reign": "Animal",
       "front": true,
-      "cells":null,
+      "cells":[],
       "resources": ["Empty", "Blocked", "Empty", "Empty"]
     },
     {
@@ -566,7 +605,7 @@
       "points": 2,
       "reign": "Animal",
       "front": true,
-      "cells":null,
+      "cells":[],
       "resources": ["Blocked", "Empty", "Empty", "Empty"]
     },
     {
@@ -575,7 +614,7 @@
       "points": 3,
       "reign": "Animal",
       "front": true,
-      "cells":null,
+      "cells":[],
       "resources": ["Empty", "Blocked", "Manuscript", "Blocked"]
     },
     {
@@ -584,7 +623,7 @@
       "points": 3,
       "reign": "Animal",
       "front": true,
-      "cells":null,
+      "cells":[],
       "resources": ["Empty", "Inkwell", "Blocked", "Blocked"]
     },
     {
@@ -593,7 +632,7 @@
       "points": 3,
       "reign": "Animal",
       "front": true,
-      "cells":null,
+      "cells":[],
       "resources": ["Blocked", "Empty", "Blocked", "Quill"]
     },
     {
@@ -602,7 +641,7 @@
       "points": 5,
       "reign": "Animal",
       "front": true,
-      "cells":null,
+      "cells":[],
       "resources": ["Blocked", "Empty", "Blocked", "Empty"]
     },
     {
@@ -611,7 +650,7 @@
       "points": 1,
       "reign": "Insect",
       "front": true,
-      "cells":null,
+      "cells":[],
       "resources": ["Empty", "Quill", "Blocked", "Empty"]
     },{
       "ID": 72,
@@ -619,7 +658,7 @@
       "points": 1,
       "reign": "Insect",
       "front": true,
-      "cells":null,
+      "cells":[],
       "resources": ["Empty", "Blocked", "Manuscript", "Empty"]
     },
     {
@@ -628,7 +667,7 @@
       "points": 1,
       "reign": "Insect",
       "front": true,
-      "cells":null,
+      "cells":[],
       "resources": ["Blocked", "Empty", "Empty", "Inkwell"]
     },
     {
@@ -637,7 +676,7 @@
       "points": 2,
       "reign": "Insect",
       "front": true,
-      "cells":null,
+      "cells":[],
       "resources": ["Empty", "Empty", "Blocked", "Empty"]
     },
     {
@@ -646,7 +685,7 @@
       "points": 2,
       "reign": "Insect",
       "front": true,
-      "cells":null,
+      "cells":[],
       "resources": ["Empty", "Empty", "Empty", "Blocked"]
     },
     {
@@ -655,7 +694,7 @@
       "points": 2,
       "reign": "Insect",
       "front": true,
-      "cells":null,
+      "cells":[],
       "resources": ["Empty", "Blocked", "Empty", "Empty"]
     },
     {
@@ -664,7 +703,7 @@
       "points": 3,
       "reign": "Insect",
       "front": true,
-      "cells":null,
+      "cells":[],
       "resources": ["Inkwell", "Blocked", "Empty", "Blocked"]
     },
     {
@@ -673,7 +712,7 @@
       "points": 3,
       "reign": "Insect",
       "front": true,
-      "cells":null,
+      "cells":[],
       "resources": ["Empty", "Manuscript", "Blocked", "Blocked"]
     },
     {
@@ -682,7 +721,7 @@
       "points": 3,
       "reign": "Insect",
       "front": true,
-      "cells":null,
+      "cells":[],
       "resources": ["Blocked", "Blocked", "Quill", "Empty"]
     },
     {
@@ -691,7 +730,7 @@
       "points": 3,
       "reign": "Insect",
       "front": true,
-      "cells":null,
+      "cells":[],
       "resources": ["Empty", "Empty", "Blocked", "Blocked"]
     }
   ],
@@ -699,66 +738,66 @@
   "StarterCard": [
     {
       "ID": 81,
-      "requirement": null,
+      "requirement": [],
       "points": 0,
       "reign": null,
       "front": true,
-      "cells":null,
+      "cells":[],
       "resources": ["Fungus", "Plant", "Insect", "Animal"],
       "permanentResource": ["Insect"],
       "bottomResource": ["Empty", "Plant", "Insect", "Empty"]
     },
     {
       "ID": 82,
-      "requirement": null,
+      "requirement": [],
       "points": 0,
       "reign": null,
       "front": true,
-      "cells":null,
+      "cells":[],
       "resources": ["Plant", "Animal", "Fungus", "Insect"],
       "permanentResource": ["Fungus"],
       "bottomResource": ["Animal", "Empty", "Empty", "Fungus"]
     },
     {
       "ID": 83,
-      "requirement": null,
+      "requirement": [],
       "points": 0,
       "reign": null,
       "front": true,
-      "cells":null,
+      "cells":[],
       "resources": ["Insect", "Animal", "Fungus", "Plant"],
       "permanentResource": ["Plant", "Fungus"],
       "bottomResource": ["Empty", "Empty", "Empty", "Empty"]
     },
     {
       "ID": 84,
-      "requirement": null,
+      "requirement": [],
       "points": 0,
       "reign": null,
       "front": true,
-      "cells":null,
+      "cells":[],
       "resources": ["Plant", "Insect", "Animal", "Fungus"],
       "permanentResource": ["Animal", "Insect"],
       "bottomResource": ["Empty", "Empty", "Empty", "Empty"]
     },
     {
       "ID": 85,
-      "requirement": null,
+      "requirement": [],
       "points": 0,
       "reign": null,
       "front": true,
-      "cells":null,
+      "cells":[],
       "resources": ["Insect", "Fungus", "Plant", "Animal"],
       "permanentResource": ["Animal", "Insect", "Plant"],
       "bottomResource": ["Empty", "Empty", "Blocked", "Blocked"]
     },
     {
       "ID": 86,
-      "requirement": null,
+      "requirement": [],
       "points": 0,
       "reign": null,
       "front": true,
-      "cells":null,
+      "cells":[],
       "resources": ["Fungus", "Animal", "Plant", "Insect"],
       "permanentResource": ["Plant", "Animal", "Fungus"],
       "bottomResource": ["Empty", "Empty", "Blocked", "Blocked"]

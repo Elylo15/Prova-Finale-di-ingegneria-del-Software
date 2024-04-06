@@ -16,20 +16,19 @@ public class  Player {
     private int score;
     private final PlayerHand deck;
     private final PlayerArea playerArea;
-    private CommonArea commonArea;
+    private final CommonArea commonArea;
     private ObjectiveCard objective;
 
     /**
      * Constructs a new {@code Player} object with the specified {@param nickname} and {@param color}.
      */
-    public Player(String nickname, String color){
+    public Player(String nickname, String color, CommonArea commonArea){
         this.nickname = nickname;
         this.color = color;
         this.score = 0;
         this.deck = new PlayerHand();
         this.playerArea = new PlayerArea();
-        if(commonArea == null)
-            commonArea =  new CommonArea();
+        this.commonArea =  commonArea;
     }
 
     /**
@@ -39,7 +38,7 @@ public class  Player {
      */
     public void initialHand(){
 
-        playerArea.placeStarterCard((PlaceableCard)commonArea.drawFromToPlayer(3), pickSide()); //starterCard
+        playerArea.placeStarterCard(commonArea.drawFromToPlayer(3), pickSide()); //starterCard
 
         deck.addNewplaceableCard(commonArea.drawFromToPlayer(1)); //draw resource
         deck.addNewplaceableCard(commonArea.drawFromToPlayer(1)); //draw resource
@@ -59,6 +58,7 @@ public class  Player {
         Scanner scanner = new Scanner(System.in);
 
         //show cards
+        //This will be moved
 
         System.out.print("""
                 Pick an Objective Card:
@@ -66,10 +66,12 @@ public class  Player {
                     -2
                 """);
         int pick = scanner.nextInt();
+        scanner.nextLine();// if letter in input?
 
-        while(pick!=1 && pick!=2) { // if letter in input?
+        while(pick!=1 && pick!=2) {
             System.out.println("You entered a wrong value. Try Again:");
             pick = scanner.nextInt();
+            scanner.nextLine();
         }
 
         if(pick==1)
@@ -85,6 +87,8 @@ public class  Player {
      */
     private boolean pickSide(){
         Scanner scanner = new Scanner(System.in);
+
+        //This will be moved
 
         System.out.print("""
                 Place the card:
@@ -136,6 +140,8 @@ public class  Player {
         Scanner scanner = new Scanner(System.in);
         int[] position = new int[2];
 
+        //This will be moved
+
         System.out.println("Available positions:");     //print the available positions
         for(int i=0; i<availablePosition.size(); i=i+2){
             System.out.println("x: "+Arrays.toString(availablePosition.get(i))+", y: "+Arrays.toString(availablePosition.get(i+1)));
@@ -158,6 +164,7 @@ public class  Player {
         Scanner scanner = new Scanner(System.in);
 
         //show the cards
+        //This will be moved
 
         System.out.println("""
                 Pick the card you want to place:
@@ -189,8 +196,9 @@ public class  Player {
         Scanner scanner = new Scanner(System.in);
 
         //show cards
+        //This will be moved
 
-            System.out.println("""
+        System.out.println("""
                     Do you want to draw from:
                          -1 Resource Deck
                          -2 Gold Deck
@@ -227,4 +235,17 @@ public class  Player {
         return score;
     }
 
+    public void setScore(int newScore){
+        score = newScore;
+    }
+
+    public PlayerArea getPlayerArea(){
+        return playerArea;
+    }
+
+    public ObjectiveCard getObjective() {
+        return objective;
+    }
+
 }
+

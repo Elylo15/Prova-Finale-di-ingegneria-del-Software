@@ -7,7 +7,7 @@ import it.polimi.ingsw.model.cards.enumeration.Reign;
 import it.polimi.ingsw.model.cards.enumeration.Resource;
 import it.polimi.ingsw.model.cards.exceptions.noPlaceCardException;
 
-import javax.swing.plaf.metal.MetalBorders;
+
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -53,7 +53,7 @@ public class PlayerArea {
      * @param y Column coordinate
      * @return A reference to the Cell, if the cell exists; null otherwise
      */
-    public Cell getCell(int x, int y) {
+    private Cell getCell(int x, int y) {
         ArrayList<Integer> coordinates = new ArrayList<>();
         coordinates.add(x);
         coordinates.add(y);
@@ -64,7 +64,7 @@ public class PlayerArea {
      * Add a cell to the PlayerArea
      * @param cell Reference to the cell to add
      */
-    public void addCell(Cell cell) {
+    private void addCell(Cell cell) {
         ArrayList<Integer> coordinates = new ArrayList<>();
         coordinates.add(cell.getRow());
         coordinates.add(cell.getColumn());
@@ -75,7 +75,7 @@ public class PlayerArea {
      * Returns a list of all existing cells
      * @return List of all cell
      */
-    public ArrayList<Cell> cellList() {
+    private ArrayList<Cell> cellList() {
         return new ArrayList<>(CellMatrix.values());
     }
 
@@ -83,7 +83,7 @@ public class PlayerArea {
      * Increase of 1 the stored counter of the given resource
      * @param resource Resource to increase
      */
-    public void addPermanentResource(Resource resource) {
+    private void addPermanentResource(Resource resource) {
         int selector = switch (resource) {
             case Resource.Fungus -> 0;
             case Resource.Insect -> 1;
@@ -113,7 +113,7 @@ public class PlayerArea {
      */
     public ArrayList<Integer> getResources() {
         ArrayList<Integer> resourceList = (ArrayList<Integer>) this.permanentResource.clone();
-        CellMatrix.values().forEach((x)->{addResourceToList(resourceList, x.getResource());});
+        CellMatrix.values().forEach((x)-> addResourceToList(resourceList, x.getResource()));
         return resourceList;
     }
 
@@ -236,9 +236,9 @@ public class PlayerArea {
      * @param y Column coordinate
      * @return Reference to the placed card or null if there is no card at the given position
      */
-    public PlaceableCard getCard(int x, int y) {
+    private PlaceableCard getCard(int x, int y) {
         /*
-          There are two candidate for the return: the topCard and the bottomCard
+          There are two candidates for the return: the topCard and the bottomCard
           in the cell at coordinates (x,y)
          */
         Cell cell = getCell(x,y);
@@ -355,7 +355,7 @@ public class PlayerArea {
 
 
                 if(pointsOnResource.contains(card.getID())) {
-                    ArrayList<Integer> resource = this.getResources();
+                    //ArrayList<Integer> resource = this.getResources();
 
                     // Quill
                     if (card.getID() == 41 || card.getID() == 51 || card.getID() == 63 || card.getID() == 71) {
@@ -456,7 +456,7 @@ public class PlayerArea {
         if(card == null)
             return 0;
 
-        if(!card.getPattern().isEmpty()) {
+        if(card.getPattern() != null && !card.getPattern().isEmpty()) {
             allCards = getAllCards();
             ArrayList<Integer[]> pattern = card.getPattern();
             ArrayList<Reign> reigns = card.getReignCards();
@@ -481,9 +481,8 @@ public class PlayerArea {
             return points;
         }
 
-        if(!card.getRequirements().isEmpty()) {
+        if(card.getRequirements() != null && !card.getRequirements().isEmpty()) {
             ArrayList<Resource> requirements = card.getRequirements();
-            boolean endCount = false;
             ArrayList<Integer> resources = this.getResources();
 
             if(requirements.stream().distinct().count() == 1)
@@ -510,25 +509,30 @@ public class PlayerArea {
             if(card.getID() == 99) {
                 if(resources.get(4) < resources.get(5)) {
                     if(resources.get(4) < resources.get(6))
-                        return 2 * resources.get(4);
+                        return 3 * resources.get(4);
                     else
-                        return 2 * resources.get(6);
+                        return 3 * resources.get(6);
                 }
                 else {
                     if(resources.get(5) < resources.get(6))
-                        return 2 * resources.get(5);
+                        return 3 * resources.get(5);
                     else
-                        return 2 * resources.get(6);
+                        return 3 * resources.get(6);
                 }
             }
 
-
-
-
             return points;
         }
-
         return 0;
+    }
 
+    /**
+     * Counts the number of times a pattern is achieved
+     * @param card Identifies the pattern to search for
+     * @return number of times a pattern is encountered
+     */
+    public int countPattern(ObjectiveCard card) {
+        return this.checkPattern(card) / card.getPoints();
     }
 }
+
