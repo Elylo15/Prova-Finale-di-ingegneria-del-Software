@@ -112,7 +112,8 @@ public class PlayerArea {
      * 8. Counter for BLOCKED
      */
     public ArrayList<Integer> getResources() {
-        ArrayList<Integer> resourceList = (ArrayList<Integer>) this.permanentResource.clone();
+        //ArrayList<Integer> resourceList = (ArrayList<Integer>) this.permanentResource.clone();
+        ArrayList<Integer> resourceList = new ArrayList<>(permanentResource);
         CellMatrix.values().forEach((x)-> addResourceToList(resourceList, x.getResource()));
         return resourceList;
     }

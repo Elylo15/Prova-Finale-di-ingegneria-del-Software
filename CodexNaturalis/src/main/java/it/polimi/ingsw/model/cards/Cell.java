@@ -2,6 +2,8 @@ package it.polimi.ingsw.model.cards;
 
 import it.polimi.ingsw.model.cards.enumeration.Resource;
 
+import java.util.Objects;
+
 public class Cell {
 
     private int row;
@@ -25,6 +27,19 @@ public class Cell {
         this.topCard = null;
         this.available = !getResource().equals(Resource.Blocked);
 
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Cell cell = (Cell) o;
+        return row == cell.row && column == cell.column && available == cell.available && Objects.equals(bottomCard, cell.bottomCard) && Objects.equals(topCard, cell.topCard);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(row, column, available, bottomCard, topCard);
     }
 
     /**
