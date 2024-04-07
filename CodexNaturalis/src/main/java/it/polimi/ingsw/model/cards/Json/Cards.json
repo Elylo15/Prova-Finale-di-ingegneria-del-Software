@@ -8,7 +8,6 @@
       "front": true,
       "cells": [],
       "resources": ["Fungus", "Empty", "Fungus", "Blocked"]
-
     },
     {
       "ID": 2,
@@ -18,7 +17,6 @@
       "front": true,
       "cells": [],
       "resources": ["Fungus", "Fungus", "Blocked", "Empty"]
-
     },
     {
       "ID": 3,
@@ -363,7 +361,6 @@
       "resources": ["Blocked", "Insect", "Empty", "Empty"]
     }
   ],
-
   "GoldCard": [
     {
       "ID": 41,
@@ -734,7 +731,6 @@
       "resources": ["Empty", "Empty", "Blocked", "Blocked"]
     }
   ],
-
   "StarterCard": [
     {
       "ID": 81,
@@ -801,10 +797,8 @@
       "resources": ["Fungus", "Animal", "Plant", "Insect"],
       "permanentResource": ["Plant", "Animal", "Fungus"],
       "bottomResource": ["Empty", "Empty", "Blocked", "Blocked"]
-
     }
   ],
-
   "ObjectiveCard": [
     {
       "ID": 87,
@@ -875,7 +869,6 @@
       "requirement": ["Plant", "Plant", "Plant"],
       "pattern": null,
       "reignCards": null
-
     },
     {
       "ID": 97,
@@ -918,7 +911,6 @@
       "requirement": ["Quill", "Quill"],
       "pattern": null,
       "reignCards": null
-
     }
   ]
 }
