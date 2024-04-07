@@ -810,21 +810,21 @@
       "ID": 87,
       "points": 2,
       "requirement": null,
-      "pattern": [[-1,1],[-2,2]],
+      "pattern": [[1,-1],[2,-2]],
       "reignCards": ["Fungus", "Fungus","Fungus"]
     },
     {
       "ID": 88,
       "points": 2,
       "requirement": null,
-      "pattern": [[1,1],[2,-2]],
+      "pattern": [[1,1],[2,2]],
       "reignCards": ["Plant", "Plant","Plant"]
     },
     {
       "ID": 89,
       "points": 2,
       "requirement": null,
-      "pattern": [[-1,1],[-2,2]],
+      "pattern": [[1,-1],[2,-2]],
       "reignCards": ["Animal", "Animal","Animal"]
     },
     {
@@ -852,14 +852,14 @@
       "ID": 93,
       "points": 3,
       "requirement": null,
-      "pattern": [],
+      "pattern": [[1,-1], [3,-1]],
       "reignCards": ["Fungus", "Animal","Animal"]
     },
     {
       "ID": 94,
       "points": 3,
       "requirement": null,
-      "pattern": [],
+      "pattern": [[1,1], [3,1]],
       "reignCards": ["Animal", "Insect","Insect"]
     },
     {
