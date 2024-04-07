@@ -20,7 +20,7 @@ public class LoadDecks {
         CommonArea c = new CommonArea();
         try {
             // Read the JSON file into a Reader object
-            FileReader reader = new FileReader("Cards.json");
+            FileReader reader = new FileReader("C:\\Users\\lolel\\IdeaProjects\\ing-sw-2024-Lollino-Ianosel-Locatelli-Martini\\CodexNaturalis\\src\\main\\java\\it\\polimi\\ingsw\\model\\cards\\Json\\Cards.json");
 
             //Parse the JSON file into a JsonObject
             JsonObject jsonObject = JsonParser.parseReader(reader).getAsJsonObject();
@@ -32,18 +32,6 @@ public class LoadDecks {
                 ResourceCard resourceCard = new Gson().fromJson(y, ResourceCard.class);
                 c.getD1().addCard(resourceCard);
             }
-
-            //test
-            /*JsonArray x= jsonObject.getAsJsonArray("resourceCard");
-            JsonElement y = x.get(0);
-            ResourceCard resourceCard = new Gson().fromJson(y, ResourceCard.class);
-            resourceCard.getID();
-            resourceCard.getRequirement();
-            resourceCard.getPoints();
-            resourceCard.getReign();
-            resourceCard.isFront();
-            resourceCard.getCells();
-            resourceCard.getResource();*/
 
             //for Goldcard
             JsonArray ArrayGoldCard = jsonObject.getAsJsonArray("GoldCard");
@@ -72,6 +60,8 @@ public class LoadDecks {
         }
         return c;
     }
+
+
 }
 
 

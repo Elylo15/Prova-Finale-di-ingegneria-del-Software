@@ -24,7 +24,7 @@ public class StarterCard extends PlaceableCard{
             throw new InvalidIdException("ID is too small");
         } else if (ID>86) {
             throw new InvalidIdException("ID is too big");
-                    }
+        }
     }
 
     public StarterCard(int ID, int points, Reign reign, boolean front, ArrayList<Resource> resources, ArrayList<Resource> permanentResource, ArrayList<Resource> bottomResource) throws InvalidIdException {

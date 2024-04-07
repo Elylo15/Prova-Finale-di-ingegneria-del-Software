@@ -1,6 +1,8 @@
 package it.polimi.ingsw.model.cards;
 
 import java.util.ArrayList;
+import java.util.Objects;
+
 /**
  * PlayerHand class
  * @author elylo
@@ -45,4 +47,16 @@ public class PlayerHand {
         placeableCards.add(card);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PlayerHand that = (PlayerHand) o;
+        return Objects.equals(placeableCards, that.placeableCards);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(placeableCards);
+    }
 }

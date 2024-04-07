@@ -28,16 +28,21 @@ public class CommonArea {
      * method pickTableCard: remove a face-up card
      * @param cardNumber: card you want to take from the exposed cards
      * @return PlaceableCard: card removed from those discovered and which will go to a player
+     * @throws IllegalArgumentException: if the card is a StarterCard
      */
     public PlaceableCard pickTableCard(int cardNumber){
+        PlaceableCard c;
         for (PlaceableCard tableCard : tableCards) {
             if (cardNumber == tableCard.getID()) {
-                tableCards.remove(cardNumber);
+                if (tableCard instanceof StarterCard)
+                    throw new IllegalArgumentException("Cannot pick StarterCard");
+                c = tableCard;
+                tableCards.remove(c);
                 if (tableCard.getClass() == ResourceCard.class)
                     drawFromDeck(1);
                 else
-                    drawFromDeck(1);
-                return tableCard;
+                    drawFromDeck(2);
+                return c;
             }
         }
 
@@ -66,6 +71,7 @@ public class CommonArea {
             case 1 -> c= d1.removeCard();
             case 2 -> c= d2.removeCard();
             case 3 -> c = d3.removeCard();
+            case 4 -> throw new IllegalArgumentException("Cannot draw from ObjectiveCardDeck");
         };
         return c;
     }
@@ -117,5 +123,8 @@ public class CommonArea {
         return d4;
     }
 
-
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
+    }
 }

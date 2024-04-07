@@ -552,15 +552,6 @@
       "resources": ["Inkwell", "Empty", "Empty", "Blocked"]
     },
     {
-      "ID": 61,
-      "requirement": ["Animal", "Animal", "Insect"],
-      "points": 1,
-      "reign": "Animal",
-      "front": true,
-      "cells":[],
-      "resources": ["Inkwell", "Empty", "Empty", "Blocked"]
-    },
-    {
       "ID": 62,
       "requirement": ["Animal", "Animal", "Plant"],
       "points": 1,

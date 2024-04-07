@@ -13,6 +13,7 @@ public class ResourceCard extends PlaceableCard{
      * @throws InvalidIdException if the condition on ID is not met
      */
     public ResourceCard(int ID) throws InvalidIdException {
+        super(ID);
         if(ID>=1 && ID <=40) {
             this.ID = ID;
         } else if (ID <1) {

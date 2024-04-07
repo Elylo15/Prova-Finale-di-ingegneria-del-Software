@@ -195,4 +195,15 @@ public abstract class PlaceableCard extends Card{
         }
     }
 
+    @Override
+    public String toString() {
+        return "PlaceableCard{" +
+                "ID=" + ID +
+                ", requirement=" + requirement +
+                ", points=" + points +
+                ", reign=" + reign +
+                ", front=" + front +
+                ", resources=" + resources +
+                '}';
+    }
 }

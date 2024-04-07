@@ -12,7 +12,9 @@ public class GoldCard extends PlaceableCard{
      * @param ID, it must be >=41  and =<80
      * @throws InvalidIdException if the condition on ID is not met
      */
-    public GoldCard(int ID) throws InvalidIdException {
+    public GoldCard(int ID) throws InvalidIdException
+    {
+        super(ID);
         if(ID>=41 && ID <=80) {
             this.ID = ID;
         } else if (ID <40) {

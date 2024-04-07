@@ -43,7 +43,7 @@ public class Deck<E extends Card> {
      * method getCardNumber: return the number of cards in the decks
      * @return int: number of cards in the decks
      */
-    public int getCardNumber(){
+    public int getSize(){
         return list.size();
     }
 
@@ -67,5 +67,10 @@ public class Deck<E extends Card> {
     public ArrayList<E> getList() {
 
         return (ArrayList<E>) list.clone();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
     }
 }
