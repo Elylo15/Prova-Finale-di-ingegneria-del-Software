@@ -148,7 +148,7 @@ public abstract class PlaceableCard extends Card{
      * @return an Arraylist containing the permanent resources based on the ID of the card
      */
     public ArrayList<Resource> getPermanentResource(){
-        ArrayList<Resource> resources = new ArrayList<Resource>();
+        ArrayList<Resource> resources = new ArrayList<>();
         if(!front) {
 
             if(this.reign == Reign.Fungus)
