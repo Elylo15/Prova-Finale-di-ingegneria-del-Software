@@ -14,6 +14,8 @@ public abstract class PlaceableCard extends Card{
     private boolean front;
     private ArrayList<Cell> cells;
 
+    private ArrayList<Resource> resources;
+
     public PlaceableCard(int ID) throws InvalidIdException
     {
         super(ID);
@@ -160,7 +162,13 @@ public abstract class PlaceableCard extends Card{
     }
 
 
-    public void setCells(ArrayList<Cell> cells) {}
+    public void setCells(ArrayList<Cell> cells) {
+        this.cells = cells;
+    }
+
+    public void setFront(boolean front) {
+        this.front = front;
+    }
 
     public Reign getReign() {
         return reign;
