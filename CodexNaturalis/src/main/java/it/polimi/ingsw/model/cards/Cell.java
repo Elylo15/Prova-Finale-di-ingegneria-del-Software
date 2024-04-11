@@ -8,7 +8,7 @@ public class Cell {
 
     private int row;
     private int column;
-    private boolean available;
+
 
     private PlaceableCard bottomCard;
     private PlaceableCard topCard;
@@ -25,8 +25,6 @@ public class Cell {
         this.column = column;
         this.bottomCard = bottomCard;
         this.topCard = null;
-        this.available = !getResource().equals(Resource.Blocked);
-
     }
 
     @Override
@@ -34,12 +32,12 @@ public class Cell {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Cell cell = (Cell) o;
-        return row == cell.row && column == cell.column && available == cell.available && Objects.equals(bottomCard, cell.bottomCard) && Objects.equals(topCard, cell.topCard);
+        return row == cell.row && column == cell.column && Objects.equals(bottomCard, cell.bottomCard) && Objects.equals(topCard, cell.topCard);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(row, column, available, bottomCard, topCard);
+        return Objects.hash(row, column, bottomCard, topCard);
     }
 
     /**
@@ -49,7 +47,6 @@ public class Cell {
     public void linkCard(PlaceableCard topCard)
     {
         this.topCard = topCard;
-        this.available = false;
     }
 
     /**
@@ -65,7 +62,7 @@ public class Cell {
             referenceCard = this.topCard;
 
         for(int i = 0; i<referenceCard.getCells().size(); i++) {
-            if(referenceCard.getCells().get(i).equals(this))
+            if(referenceCard.getCells().get(i) != null && referenceCard.getCells().get(i).equals(this))
                 return referenceCard.getResource().get(i);
         }
         return null;
@@ -76,7 +73,10 @@ public class Cell {
      * @return true if the pointer to the top card is null and if the stored resource is not "Blocked"
      */
     public boolean isAvailable() {
-        return available;
+        if(this.topCard == null && this.getResource() != Resource.Blocked)
+            return true;
+        else
+            return false;
     }
 
     /**

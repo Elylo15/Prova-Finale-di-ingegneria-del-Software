@@ -1,5 +1,6 @@
 package it.polimi.ingsw.model.cards;
 
+import it.polimi.ingsw.model.cards.enumeration.Reign;
 import it.polimi.ingsw.model.cards.enumeration.Resource;
 import it.polimi.ingsw.model.cards.exceptions.InvalidIdException;
 
@@ -22,6 +23,11 @@ public class ResourceCard extends PlaceableCard{
         else if(ID >40){
             throw new InvalidIdException("ID is too big");
         }
+    }
+
+
+    public ResourceCard(int ID, int points, Reign reign, boolean front, ArrayList<Resource> resources) throws InvalidIdException {
+        super(ID,points,reign,front,resources);
     }
 
 

@@ -39,6 +39,15 @@ public class ObjectiveCard extends Card{
         }
     }
 
+    public ObjectiveCard(int ID, int points, ArrayList<Resource> requirements, ArrayList<Integer[]> pattern, ArrayList<Reign> reignCards) {
+        super();
+        this.ID = ID;
+        this.points = points;
+        this.requirements = requirements;
+        this.pattern = pattern;
+        this.reignCards = reignCards;
+    }
+
     /**
      * Returns the points given by a single identified pattern
      * @return points

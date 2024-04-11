@@ -112,7 +112,6 @@ public class PlayerArea {
      * 8. Counter for BLOCKED
      */
     public ArrayList<Integer> getResources() {
-        //ArrayList<Integer> resourceList = (ArrayList<Integer>) this.permanentResource.clone();
         ArrayList<Integer> resourceList = new ArrayList<>(permanentResource);
         CellMatrix.values().forEach((x)-> addResourceToList(resourceList, x.getResource()));
         return resourceList;
@@ -394,6 +393,7 @@ public class PlayerArea {
         }
 
 
+
         //Setting up the new positions
         for (int i=0; i < position.size(); i++) {
             if(position.get(i) != null)
@@ -421,9 +421,12 @@ public class PlayerArea {
                     }
                     default -> y;
                 };
-                this.addCell(new Cell(ro, co, card));
+                Cell tmpCell = new Cell(ro, co, card);
+                this.addCell(tmpCell);
+                position.set(i, tmpCell);
             }
         }
+        card.setCells(position);
 
         // Eventually adds the permanent resources
         card.getPermanentResource().forEach(this::addPermanentResource);
