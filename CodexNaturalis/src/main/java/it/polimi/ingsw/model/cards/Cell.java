@@ -35,11 +35,11 @@ public class Cell {
         return row == cell.row && column == cell.column && Objects.equals(bottomCard, cell.bottomCard) && Objects.equals(topCard, cell.topCard);
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(row, column, bottomCard, topCard);
-    }
-
+//    @Override
+//    public int hashCode() {
+//        return Objects.hash(row, column, bottomCard, topCard);
+//    }
+//
     /**
      * Initialize the pointer to the card on top and update the stored resource
      * @param topCard pointer to the card on top

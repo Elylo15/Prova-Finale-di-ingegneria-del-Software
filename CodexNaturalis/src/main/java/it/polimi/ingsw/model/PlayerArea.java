@@ -441,6 +441,7 @@ public class PlayerArea {
     private ArrayList<PlaceableCard> getAllCards() {
         return CellMatrix.values().stream()
                 .flatMap(cell -> Stream.of(cell.getBottomCard(), cell.getTopCard()))
+                .filter(Objects::nonNull)
                 .distinct()
                 .sorted(Comparator.comparing((PlaceableCard card) ->  card.getCells().getFirst().getRow())
                         .thenComparing(card -> card.getCells().getFirst().getColumn()))
@@ -465,16 +466,17 @@ public class PlayerArea {
             ArrayList<Integer[]> pattern = card.getPattern();
             ArrayList<Reign> reigns = card.getReignCards();
             for(PlaceableCard card0 : allCards) {
-                if(!checkedCards.contains(card0) && card0.getReign().equals(reigns.getFirst())) {
+                if(!checkedCards.contains(card0) && card0.getReign() != null && card0.getReign().equals(reigns.getFirst())) {
                     int row = card0.getCells().getFirst().getRow();
                     int column = card0.getCells().getFirst().getColumn();
                     PlaceableCard card1 = this.getCard(row + pattern.get(0)[0], column + pattern.get(0)[1]);
                     PlaceableCard card2 = this.getCard(row + pattern.get(1)[0], column + pattern.get(1)[1]);
 
                     if( card1 != null && card2 != null
+                            && card1.getReign() != null && card2.getReign() != null
                             && card1.getReign() == reigns.get(1) && card2.getReign() == reigns.get(2)
                             && !checkedCards.contains(card1) && !checkedCards.contains(card2)) {
-                        points = points +2;
+                        points = points + card.getPoints();
                         checkedCards.add(card0);
                         checkedCards.add(card1);
                         checkedCards.add(card2);
@@ -504,9 +506,9 @@ public class PlayerArea {
                 };
 
                 if(index < 4)
-                    points = 2 * (resources.get(index) / 3);
+                    points = card.getPoints() * (resources.get(index) / 3);
                 else
-                    points = 2 * (resources.get(index) / 2);
+                    points = card.getPoints() * (resources.get(index) / 2);
                 return points;
             }
 
@@ -538,5 +540,10 @@ public class PlayerArea {
     public int countPattern(ObjectiveCard card) {
         return this.checkPattern(card) / card.getPoints();
     }
+
+
 }
+
+
+
 

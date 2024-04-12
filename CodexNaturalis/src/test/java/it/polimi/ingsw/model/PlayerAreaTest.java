@@ -1,9 +1,6 @@
 package it.polimi.ingsw.model;
 
-import it.polimi.ingsw.model.cards.Cell;
-import it.polimi.ingsw.model.cards.PlaceableCard;
-import it.polimi.ingsw.model.cards.ResourceCard;
-import it.polimi.ingsw.model.cards.StarterCard;
+import it.polimi.ingsw.model.cards.*;
 import it.polimi.ingsw.model.cards.enumeration.Reign;
 import it.polimi.ingsw.model.cards.enumeration.Resource;
 import it.polimi.ingsw.model.cards.exceptions.InvalidIdException;
@@ -13,6 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -171,7 +169,7 @@ class PlayerAreaTest {
         boolean found = true;
         for(Integer[] position : counts) {
             if(checks.stream()
-                    .noneMatch(check -> check[0] == position[0] && check[1] == position[1])) {
+                    .noneMatch(check -> Objects.equals(check[0], position[0]) && Objects.equals(check[1], position[1]))) {
                 found = false;
             }
 
@@ -338,66 +336,173 @@ class PlayerAreaTest {
         }
 
         //Objective card pattern 91
+        ObjectiveCard obj1;
+        ArrayList<Integer[]> pattern = new ArrayList<>();
+        pattern.add(new Integer[]{2,0});
+        pattern.add(new Integer[]{3,1});
+        ArrayList<Reign> reigns = new ArrayList<>();
+        reigns.add(Reign.Fungus);
+        reigns.add(Reign.Fungus);
+        reigns.add(Reign.Plant);
+        obj1 = new ObjectiveCard(91,3,null,pattern,reigns);
 
         //Objective card pattern 95
+        ObjectiveCard obj2;
+        resources = new ArrayList<>();
+        resources.add(Resource.Fungus);
+        resources.add(Resource.Fungus);
+        resources.add(Resource.Fungus);
+        obj2 = new ObjectiveCard(95,2,resources,null,null);
 
         //objective card pattern 96
+        ObjectiveCard obj3;
+        resources = new ArrayList<>();
+        resources.add(Resource.Plant);
+        resources.add(Resource.Plant);
+        resources.add(Resource.Plant);
+        obj3 = new ObjectiveCard(96,2,resources,null,null);
 
         // Fungus card
-        PlaceableCard fungusCard;
+        ArrayList<PlaceableCard> fungusCard = new ArrayList<>();
         resources = new ArrayList<>();
         resources.add(Resource.Fungus);
         resources.add(Resource.Fungus);
         resources.add(Resource.Blocked);
         resources.add(Resource.Empty);
         try {
-            fungusCard = new ResourceCard(2, 0, Reign.Fungus, true, resources);
+            for(int i=0; i<5; i++)
+                fungusCard.add(new ResourceCard(2, 0, Reign.Fungus, false, resources));
         } catch (InvalidIdException e) {
             throw new RuntimeException(e);
         }
 
         //Plant card
-        PlaceableCard plantCard;
+        ArrayList<PlaceableCard> plantCard = new ArrayList<>();
         resources = new ArrayList<>();
         resources.add(Resource.Plant);
         resources.add(Resource.Plant);
         resources.add(Resource.Blocked);
         resources.add(Resource.Empty);
         try {
-            plantCard = new ResourceCard(12, 0, Reign.Plant, true, resources);
+            for(int i=0; i<4; i++)
+                plantCard.add(new ResourceCard(12, 0, Reign.Plant, false, resources));
         } catch (InvalidIdException e) {
             throw new RuntimeException(e);
         }
 
         playerArea.placeStarterCard(starterCard, true);
 
-        playerArea.placeCard(fungusCard, 1, 1, false);
-        playerArea.placeCard(fungusCard, -1, 1, false);
-        playerArea.placeCard(plantCard, 2, 2, false);
+        playerArea.placeCard(fungusCard.get(0), 1, 1, false);
+        playerArea.placeCard(fungusCard.get(1), -1, 1, false);
+        playerArea.placeCard(plantCard.get(0), 2, 2, false);
 
-        playerArea.placeCard(fungusCard, 1, 1, false);
-        playerArea.placeCard(fungusCard, -1, 1, false);
-        playerArea.placeCard(plantCard, 2, 2, false);
+        playerArea.placeCard(fungusCard.get(2), -2, 2, false);
+        playerArea.placeCard(fungusCard.get(3), 0, 2, false);
+        playerArea.placeCard(plantCard.get(1), 1, 3, false);
 
-        playerArea.placeCard(fungusCard, -2, 2, false);
-        playerArea.placeCard(fungusCard, 0, 2, false);
-        playerArea.placeCard(plantCard, 1, 3, false);
-
-        playerArea.placeCard(plantCard, -3, 1, false);
-        playerArea.placeCard(fungusCard, -4, 2, false);
-        playerArea.placeCard(plantCard, -1, 3, false);
+        playerArea.placeCard(plantCard.get(2), -3, 1, false);
+        playerArea.placeCard(fungusCard.get(4), -4, 2, false);
+        playerArea.placeCard(plantCard.get(3), -1, 3, false);
 
 
-        //TODO
-
-
-
-
-
+        Assertions.assertEquals(6,playerArea.checkPattern(obj1));
+        Assertions.assertEquals(2,playerArea.checkPattern(obj2));
+        Assertions.assertEquals(2,playerArea.checkPattern(obj3));
     }
 
     @Test
-    void countPattern() {
+    void countPattern() throws noPlaceCardException {
+        //starter card
+        ArrayList<Resource> resources = new ArrayList<>();
+        resources.add(Resource.Empty);
+        resources.add(Resource.Plant);
+        resources.add(Resource.Insect);
+        resources.add(Resource.Empty);
+        ArrayList<Resource> permanentResources = new ArrayList<>();
+        permanentResources.add(Resource.Insect);
+        ArrayList<Resource> bottomResources = new ArrayList<>();
+        bottomResources.add(Resource.Fungus);
+        bottomResources.add(Resource.Plant);
+        bottomResources.add(Resource.Insect);
+        bottomResources.add(Resource.Animal);
+        PlaceableCard starterCard;
+        try {
+            starterCard = new StarterCard(81, 0, null, true, resources, permanentResources, bottomResources);
+        } catch (InvalidIdException e) {
+            throw new RuntimeException(e);
+        }
 
+        //Objective card pattern 91
+        ObjectiveCard obj1;
+        ArrayList<Integer[]> pattern = new ArrayList<>();
+        pattern.add(new Integer[]{2,0});
+        pattern.add(new Integer[]{3,1});
+        ArrayList<Reign> reigns = new ArrayList<>();
+        reigns.add(Reign.Fungus);
+        reigns.add(Reign.Fungus);
+        reigns.add(Reign.Plant);
+        obj1 = new ObjectiveCard(91,3,null,pattern,reigns);
+
+        //Objective card pattern 95
+        ObjectiveCard obj2;
+        resources = new ArrayList<>();
+        resources.add(Resource.Fungus);
+        resources.add(Resource.Fungus);
+        resources.add(Resource.Fungus);
+        obj2 = new ObjectiveCard(95,2,resources,null,null);
+
+        //objective card pattern 96
+        ObjectiveCard obj3;
+        resources = new ArrayList<>();
+        resources.add(Resource.Plant);
+        resources.add(Resource.Plant);
+        resources.add(Resource.Plant);
+        obj3 = new ObjectiveCard(96,2,resources,null,null);
+
+        // Fungus card
+        ArrayList<PlaceableCard> fungusCard = new ArrayList<>();
+        resources = new ArrayList<>();
+        resources.add(Resource.Fungus);
+        resources.add(Resource.Fungus);
+        resources.add(Resource.Blocked);
+        resources.add(Resource.Empty);
+        try {
+            for(int i=0; i<5; i++)
+                fungusCard.add(new ResourceCard(2, 0, Reign.Fungus, false, resources));
+        } catch (InvalidIdException e) {
+            throw new RuntimeException(e);
+        }
+
+        //Plant card
+        ArrayList<PlaceableCard> plantCard = new ArrayList<>();
+        resources = new ArrayList<>();
+        resources.add(Resource.Plant);
+        resources.add(Resource.Plant);
+        resources.add(Resource.Blocked);
+        resources.add(Resource.Empty);
+        try {
+            for(int i=0; i<4; i++)
+                plantCard.add(new ResourceCard(12, 0, Reign.Plant, false, resources));
+        } catch (InvalidIdException e) {
+            throw new RuntimeException(e);
+        }
+
+        playerArea.placeStarterCard(starterCard, true);
+
+        playerArea.placeCard(fungusCard.get(0), 1, 1, false);
+        playerArea.placeCard(fungusCard.get(1), -1, 1, false);
+        playerArea.placeCard(plantCard.get(0), 2, 2, false);
+
+        playerArea.placeCard(fungusCard.get(2), -2, 2, false);
+        playerArea.placeCard(fungusCard.get(3), 0, 2, false);
+        playerArea.placeCard(plantCard.get(1), 1, 3, false);
+
+        playerArea.placeCard(plantCard.get(2), -3, 1, false);
+        playerArea.placeCard(fungusCard.get(4), -4, 2, false);
+        playerArea.placeCard(plantCard.get(3), -1, 3, false);
+
+        Assertions.assertEquals(2,playerArea.countPattern(obj1));
+        Assertions.assertEquals(1,playerArea.countPattern(obj2));
+        Assertions.assertEquals(1,playerArea.countPattern(obj3));
     }
 }

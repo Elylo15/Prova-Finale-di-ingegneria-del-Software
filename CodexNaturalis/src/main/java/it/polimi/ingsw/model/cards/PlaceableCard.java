@@ -41,12 +41,12 @@ public abstract class PlaceableCard extends Card{
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         PlaceableCard that = (PlaceableCard) o;
-        return points == that.points && front == that.front && Objects.equals(requirement, that.requirement) && reign == that.reign && Objects.equals(resources, that.resources);
+        return points == that.points && front == that.front && Objects.equals(requirement, that.requirement) && reign == that.reign && Objects.equals(cells, that.cells) && Objects.equals(resources, that.resources);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(requirement, points, reign, front, resources);
+        return Objects.hash(requirement, points, reign, front, cells, resources);
     }
 
     /**
