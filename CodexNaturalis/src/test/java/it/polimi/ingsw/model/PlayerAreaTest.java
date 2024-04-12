@@ -372,9 +372,6 @@ class PlayerAreaTest {
         playerArea.placeCard(fungusCard.get(4), -4, 2, false);
         playerArea.placeCard(plantCard.get(3), -1, 3, false);
 
-
-        System.out.println(playerArea.getResources());
-
         Assertions.assertEquals(2, playerArea.placeCard(goldCard1,-2,4,true));
         Assertions.assertEquals(6, playerArea.placeCard(goldCard2,-3,3,true));
         Assertions.assertEquals(0,playerArea.placeCard(fungusCard.get(0), -4, 4, true));
