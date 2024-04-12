@@ -38,8 +38,12 @@ class CellTest {
         resources.add(Resource.Empty);
         resources.add(Resource.Empty);
         resources.add(Resource.Blocked);
+        ArrayList<Resource> requirements = new ArrayList<>();
+        requirements.add(Resource.Fungus);
+        requirements.add(Resource.Fungus);
+        requirements.add(Resource.Insect);
         try {
-            card2 = new GoldCard(43, 1, Reign.Fungus, false, resources);
+            card2 = new GoldCard(43, 1, Reign.Fungus, false, resources, requirements);
         } catch (InvalidIdException e) {
             throw new RuntimeException(e);
         }

@@ -27,13 +27,14 @@ public abstract class PlaceableCard extends Card{
 
     }
 
-    public PlaceableCard(int ID, int points, Reign reign, boolean front, ArrayList<Resource> resources) throws InvalidIdException
+    public PlaceableCard(int ID, int points, Reign reign, boolean front, ArrayList<Resource> resources, ArrayList<Resource> requirement) throws InvalidIdException
     {
         super(ID);
         this.points = points;
         this.reign = reign;
         this.front = front;
         this.resources = resources;
+        this.requirement = requirement;
     }
 
     @Override
@@ -76,17 +77,17 @@ public abstract class PlaceableCard extends Card{
             int cardAnimal = 0;
             int cardInsect = 0;
             ArrayList<Resource> requirement = this.getRequirement();
-            for (int i = 0; i < requirement.size(); i++) {
-                if (requirement.get(i) == Resource.Fungus) {
+            for (Resource resource : requirement) {
+                if (resource == Resource.Fungus) {
                     cardFungus++;
                 }
-                if (requirement.get(i) == Resource.Plant) {
+                if (resource == Resource.Plant) {
                     cardPlant++;
                 }
-                if (requirement.get(i) == Resource.Animal) {
+                if (resource == Resource.Animal) {
                     cardAnimal++;
                 }
-                if (requirement.get(i) == Resource.Insect) {
+                if (resource == Resource.Insect) {
                     cardInsect++;
                 }
             }
@@ -101,7 +102,10 @@ public abstract class PlaceableCard extends Card{
         }
     }
 
-
+    /**
+     * Given a list of cells, it updates the references to the new cells.
+     * @param cells ArryList of Cells
+     */
     public void setCells(ArrayList<Cell> cells) {
         this.cells = cells;
     }

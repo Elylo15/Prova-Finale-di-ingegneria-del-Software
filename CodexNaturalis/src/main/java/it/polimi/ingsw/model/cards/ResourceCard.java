@@ -27,7 +27,7 @@ public class ResourceCard extends PlaceableCard{
 
 
     public ResourceCard(int ID, int points, Reign reign, boolean front, ArrayList<Resource> resources) throws InvalidIdException {
-        super(ID,points,reign,front,resources);
+        super(ID,points,reign,front,resources, null);
     }
 
 

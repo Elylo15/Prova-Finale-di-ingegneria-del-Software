@@ -28,7 +28,7 @@ public class StarterCard extends PlaceableCard{
     }
 
     public StarterCard(int ID, int points, Reign reign, boolean front, ArrayList<Resource> resources, ArrayList<Resource> permanentResource, ArrayList<Resource> bottomResource) throws InvalidIdException {
-        super(ID,points,reign,front,resources);
+        super(ID,points,reign,front,resources,null);
         this.permanentResource = permanentResource;
         this.bottomResource = bottomResource;
     }

@@ -311,6 +311,73 @@ class PlayerAreaTest {
         Assertions.assertTrue(playerArea.contains(2,2));
 
         Assertions.assertFalse(playerArea.contains(2,0));
+
+
+        PlaceableCard goldCard1, goldCard2;
+        resources = new ArrayList<>();
+        resources.add(Resource.Empty);
+        resources.add(Resource.Empty);
+        resources.add(Resource.Empty);
+        resources.add(Resource.Blocked);
+        ArrayList<Resource> requirements = new ArrayList<>();
+        requirements.add(Resource.Fungus);
+        requirements.add(Resource.Fungus);
+        requirements.add(Resource.Fungus);
+        requirements.add(Resource.Plant);
+        try {
+            goldCard1 = new GoldCard(45, 2,Reign.Fungus,true,resources,requirements);
+            goldCard2 = new GoldCard(45, 2,Reign.Fungus,true,resources,requirements);
+        } catch (InvalidIdException e) {
+            throw new RuntimeException(e);
+        }
+
+        // Fungus card
+        ArrayList<PlaceableCard> fungusCard = new ArrayList<>();
+        resources = new ArrayList<>();
+        resources.add(Resource.Fungus);
+        resources.add(Resource.Fungus);
+        resources.add(Resource.Blocked);
+        resources.add(Resource.Empty);
+        try {
+            for(int i=0; i<5; i++)
+                fungusCard.add(new ResourceCard(2, 0, Reign.Fungus, false, resources));
+        } catch (InvalidIdException e) {
+            throw new RuntimeException(e);
+        }
+
+        //Plant card
+        ArrayList<PlaceableCard> plantCard = new ArrayList<>();
+        resources = new ArrayList<>();
+        resources.add(Resource.Plant);
+        resources.add(Resource.Plant);
+        resources.add(Resource.Blocked);
+        resources.add(Resource.Empty);
+        try {
+            for(int i=0; i<4; i++)
+                plantCard.add(new ResourceCard(12, 0, Reign.Plant, false, resources));
+        } catch (InvalidIdException e) {
+            throw new RuntimeException(e);
+        }
+
+
+        //playerArea.placeCard(fungusCard.get(0), 1, 1, false);
+        playerArea.placeCard(fungusCard.get(1), -1, 1, false);
+        playerArea.placeCard(plantCard.get(0), 2, 2, false);
+
+        playerArea.placeCard(fungusCard.get(2), -2, 2, false);
+        playerArea.placeCard(fungusCard.get(3), 0, 2, false);
+        playerArea.placeCard(plantCard.get(1), 1, 3, false);
+
+        playerArea.placeCard(plantCard.get(2), -3, 1, false);
+        playerArea.placeCard(fungusCard.get(4), -4, 2, false);
+        playerArea.placeCard(plantCard.get(3), -1, 3, false);
+
+
+        System.out.println(playerArea.getResources());
+
+        Assertions.assertEquals(2, playerArea.placeCard(goldCard1,-2,4,true));
+        Assertions.assertEquals(6, playerArea.placeCard(goldCard2,-3,3,true));
+        Assertions.assertEquals(0,playerArea.placeCard(fungusCard.get(0), -4, 4, true));
     }
 
     @Test

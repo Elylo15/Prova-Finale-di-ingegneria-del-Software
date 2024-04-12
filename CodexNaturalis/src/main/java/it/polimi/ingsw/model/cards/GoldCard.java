@@ -26,8 +26,8 @@ public class GoldCard extends PlaceableCard{
         }
     }
 
-    public GoldCard(int ID, int points, Reign reign, boolean front, ArrayList<Resource> resources) throws InvalidIdException {
-        super(ID,points,reign,front,resources);
+    public GoldCard(int ID, int points, Reign reign, boolean front, ArrayList<Resource> resources, ArrayList<Resource> requirements) throws InvalidIdException {
+        super(ID,points,reign,front,resources, requirements);
     }
 
 
