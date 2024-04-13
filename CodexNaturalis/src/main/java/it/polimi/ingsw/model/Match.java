@@ -42,10 +42,10 @@ public class Match {
             return false;
         }
 
-        commonArea.d1.shuffle();
-        commonArea.d2.shuffle();
-        commonArea.d3.shuffle();
-        commonArea.d4.shuffle();
+        commonArea.getD1().shuffle();
+        commonArea.getD2().shuffle();
+        commonArea.getD3().shuffle();
+        commonArea.getD4().shuffle();
 
         drawCommonObjective();
 

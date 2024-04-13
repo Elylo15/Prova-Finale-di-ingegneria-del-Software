@@ -8,11 +8,11 @@ import java.util.ArrayList;
  * @author elylo
  */
 public class CommonArea {
-    Deck<ResourceCard> d1;
-    Deck<GoldCard> d2;
-    Deck<StarterCard> d3;
-    Deck<ObjectiveCard> d4;
-    ArrayList<PlaceableCard> tableCards;
+    private final Deck<ResourceCard> d1;
+    private final Deck<GoldCard> d2;
+    private final Deck<StarterCard> d3;
+    private final Deck<ObjectiveCard> d4;
+    private final ArrayList<PlaceableCard> tableCards;
     /**
      * Class costructor
      */
@@ -57,7 +57,7 @@ public class CommonArea {
         switch (d) {
             case 1 -> c= d1.removeCard();
             case 2 -> c= d2.removeCard();
-        };
+        }
         tableCards.add(c);
     }
     /**
@@ -72,7 +72,7 @@ public class CommonArea {
             case 2 -> c= d2.removeCard();
             case 3 -> c = d3.removeCard();
             case 4 -> throw new IllegalArgumentException("Cannot draw from ObjectiveCardDeck");
-        };
+        }
         return c;
     }
     /**
