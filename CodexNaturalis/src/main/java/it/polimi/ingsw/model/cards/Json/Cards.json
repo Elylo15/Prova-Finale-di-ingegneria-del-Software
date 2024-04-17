@@ -730,9 +730,9 @@
       "reign": null,
       "front": true,
       "cells":[],
-      "resources": ["Fungus", "Plant", "Insect", "Animal"],
+      "resources": ["Empty", "Plant", "Insect", "Empty"],
       "permanentResource": ["Insect"],
-      "bottomResource": ["Empty", "Plant", "Insect", "Empty"]
+      "bottomResource": ["Fungus", "Plant", "Insect", "Animal"]
     },
     {
       "ID": 82,
@@ -741,9 +741,9 @@
       "reign": null,
       "front": true,
       "cells":[],
-      "resources": ["Plant", "Animal", "Fungus", "Insect"],
+      "resources": ["Animal", "Empty", "Empty", "Fungus"],
       "permanentResource": ["Fungus"],
-      "bottomResource": ["Animal", "Empty", "Empty", "Fungus"]
+      "bottomResource": ["Plant", "Animal", "Fungus", "Insect"]
     },
     {
       "ID": 83,
@@ -752,9 +752,9 @@
       "reign": null,
       "front": true,
       "cells":[],
-      "resources": ["Insect", "Animal", "Fungus", "Plant"],
+      "resources": ["Empty", "Empty", "Empty", "Empty"],
       "permanentResource": ["Plant", "Fungus"],
-      "bottomResource": ["Empty", "Empty", "Empty", "Empty"]
+      "bottomResource": ["Insect", "Animal", "Fungus", "Plant"]
     },
     {
       "ID": 84,
@@ -763,9 +763,9 @@
       "reign": null,
       "front": true,
       "cells":[],
-      "resources": ["Plant", "Insect", "Animal", "Fungus"],
+      "resources": ["Empty", "Empty", "Empty", "Empty"],
       "permanentResource": ["Animal", "Insect"],
-      "bottomResource": ["Empty", "Empty", "Empty", "Empty"]
+      "bottomResource": ["Plant", "Insect", "Animal", "Fungus"]
     },
     {
       "ID": 85,
@@ -774,9 +774,9 @@
       "reign": null,
       "front": true,
       "cells":[],
-      "resources": ["Insect", "Fungus", "Plant", "Animal"],
+      "resources": ["Empty", "Empty", "Blocked", "Blocked"],
       "permanentResource": ["Animal", "Insect", "Plant"],
-      "bottomResource": ["Empty", "Empty", "Blocked", "Blocked"]
+      "bottomResource": ["Insect", "Fungus", "Plant", "Animal"]
     },
     {
       "ID": 86,
@@ -785,9 +785,9 @@
       "reign": null,
       "front": true,
       "cells":[],
-      "resources": ["Fungus", "Animal", "Plant", "Insect"],
+      "resources": ["Empty", "Empty", "Blocked", "Blocked"],
       "permanentResource": ["Plant", "Animal", "Fungus"],
-      "bottomResource": ["Empty", "Empty", "Blocked", "Blocked"]
+      "bottomResource": ["Fungus", "Animal", "Plant", "Insect"]
     }
   ],
   "ObjectiveCard": [
