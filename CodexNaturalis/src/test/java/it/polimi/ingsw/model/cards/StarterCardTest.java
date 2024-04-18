@@ -1,5 +1,6 @@
 package it.polimi.ingsw.model.cards;
 
+import it.polimi.ingsw.model.cards.enumeration.Reign;
 import it.polimi.ingsw.model.cards.enumeration.Resource;
 import it.polimi.ingsw.model.cards.exceptions.InvalidIdException;
 import org.junit.jupiter.api.Assertions;
@@ -11,13 +12,13 @@ import java.util.ArrayList;
 import static org.junit.jupiter.api.Assertions.*;
 
 class StarterCardTest {
-    ArrayList<Resource> resources = new ArrayList<Resource>();
-    ArrayList<Resource> permanentResources = new ArrayList<Resource>();
-    ArrayList<Resource> bottomResources = new ArrayList<Resource>();
+    private ArrayList<Resource> resources = new ArrayList<Resource>();
+    private ArrayList<Resource> permanentResources = new ArrayList<Resource>();
+    private ArrayList<Resource> bottomResources = new ArrayList<Resource>();
     private  int id;
 
     private boolean front;
-    private Resource reign;
+    private Reign reign;
     private  int points;
 
     @Test
@@ -264,6 +265,15 @@ class StarterCardTest {
         for(int i=81; i<87;i++){
             StarterCard starterCard = new StarterCard(i,0,null,front,resources,permanentResources,bottomResources);
             Assertions.assertNotEquals(false, starterCard.isStarter());
+        }
+
+
+    }
+    @Test
+    void checkclass() throws InvalidIdException {
+        for(int i=81; i<87;i++){
+            StarterCard starterCard = new StarterCard(i,0,null,front,resources,permanentResources,bottomResources);
+            assertInstanceOf(StarterCard.class, starterCard);
         }
 
 
