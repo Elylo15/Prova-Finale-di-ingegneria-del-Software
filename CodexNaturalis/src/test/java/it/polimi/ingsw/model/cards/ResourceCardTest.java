@@ -13,12 +13,34 @@ import static org.junit.jupiter.api.Assertions.*;
 class ResourceCardTest {
 
     private ArrayList<Resource> resources = new ArrayList<Resource>();
+    private ArrayList<Resource> requirement;
 
     private int id;
 
     private boolean front;
     private Reign reign;
     private int points;
+
+    private ArrayList<Cell> cells;
+
+    @Test
+    void checkIsEqual() throws InvalidIdException{
+        reign = Reign.Fungus;
+        points = 0;
+        front = true;
+        resources.add(Resource.Fungus);
+        resources.add(Resource.Empty);
+        resources.add(Resource.Fungus);
+        resources.add(Resource.Blocked);
+        ArrayList<Resource> test = new ArrayList<Resource>();
+        test.add(Resource.Fungus);
+        test.add(Resource.Empty);
+        test.add(Resource.Fungus);
+        test.add(Resource.Blocked);
+        ResourceCard resourceCard = new ResourceCard(1,points,reign,front,resources);
+        ResourceCard testCard = new ResourceCard(1,0,Reign.Fungus,true,test);
+        Assertions.assertEquals(true,resourceCard.equals(testCard));
+    }
 
     @Test
     void checkGetPoints_true() throws InvalidIdException{
@@ -177,7 +199,7 @@ class ResourceCardTest {
 
 
     @Test
-    void checkIsStarter_true() throws InvalidIdException {
+    void checkIsResource_true() throws InvalidIdException {
         for (int i = 1; i < 41; i++) {
             ResourceCard resourceCard = new ResourceCard(i, points, reign, front, resources);
             Assertions.assertEquals(true, resourceCard.isResource());
@@ -187,7 +209,7 @@ class ResourceCardTest {
     }
 
     @Test
-    void checkIsStarter_false() throws InvalidIdException {
+    void checkIsResource_false() throws InvalidIdException {
         for (int i = 1; i < 41; i++) {
             ResourceCard resourceCard = new ResourceCard(i, points, reign, front, resources);
             Assertions.assertNotEquals(false, resourceCard.isResource());
