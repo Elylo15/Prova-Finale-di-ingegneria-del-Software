@@ -53,9 +53,9 @@ public class Deck<E extends Card> {
      * @return Card: get the card that matches with that ID
      */
     public Card getCard(int ID){
-        for (int i = 0; i < list.size(); i++) {
-            if (ID== list.get(i).ID) {
-                return list.get(i);
+        for (E e : list) {
+            if (ID == e.ID) {
+                return e;
             }
         }
         return null;
@@ -73,4 +73,6 @@ public class Deck<E extends Card> {
     public boolean equals(Object obj) {
         return super.equals(obj);
     }
+
+
 }
