@@ -47,12 +47,17 @@ public class StarterCard extends PlaceableCard{
         return Objects.hash(super.hashCode(), permanentResource, bottomResource);
     }
 
+    /**
+     *
+     * @return the resources in the front of the card if front is true, the resources in the back of the card
+     * if front is false
+     */
     @Override
     public ArrayList<Resource> getResource() {
         if(this.isFront()) {
             return super.getResource();
         } else {
-            return new ArrayList<>(this.permanentResource);
+            return new ArrayList<>(this.bottomResource);
         }
     }
 
