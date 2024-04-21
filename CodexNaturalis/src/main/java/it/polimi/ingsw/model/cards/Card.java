@@ -7,7 +7,6 @@ public abstract class Card {
 
     /**
      * Constructs a new {@code Card} object with the specified {@param ID}.
-     *
      * @param ID must be <103 and >0
      * @throws InvalidIdException if ID´s condition is not met.
      */
