@@ -4,6 +4,7 @@ import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.cards.ObjectiveCard;
 import it.polimi.ingsw.model.cards.PlaceableCard;
 import it.polimi.ingsw.model.cards.PlayerHand;
+import it.polimi.ingsw.model.cards.exceptions.InvalidIdException;
 import it.polimi.ingsw.model.cards.exceptions.noPlaceCardException;
 
 import java.util.ArrayList;
@@ -80,8 +81,9 @@ public class  Player {
      * @param side integer that indicates the side chosen.
      * @param drawPick integer that indicates the card chosen.
      * @throws noPlaceCardException if there is an error placing the card.
+     * @throws InvalidIdException if there is an error in pickNewCard.
      */
-    public void playTurn(int cardPick, int x, int y, int side, int drawPick) throws noPlaceCardException{
+    public void playTurn(int cardPick, int x, int y, int side, int drawPick) throws noPlaceCardException, InvalidIdException {
         int[] position;
         int cardID;
         Card card;
@@ -91,6 +93,8 @@ public class  Player {
         position = pickPosition(x, y);
         try {
             score = getScore() + playerArea.placeCard(deck.removeplaceableCard(cardID), position[0], position[1], pickSide(side));
+            if(score > 29)
+                score = 29;
         } catch (noPlaceCardException e) {
             throw new noPlaceCardException();
         }
@@ -132,7 +136,10 @@ public class  Player {
      * method {@code pickNewCard}: the player draws a card which is added to his personal deck.
      * @param drawPick integer that indicates the card chosen.
      */
-    public void pickNewCard(int drawPick) {
+    public void pickNewCard(int drawPick) throws InvalidIdException {
+
+        if(drawPick < 1 || drawPick > 6)
+            throw new InvalidIdException();
 
         if (drawPick == 1)
             deck.addNewplaceableCard(commonArea.drawFromToPlayer(1));
@@ -175,6 +182,13 @@ public class  Player {
      */
     public ObjectiveCard getObjective() {
         return objective;
+    }
+
+    /**
+     *
+     */
+    protected PlayerHand getPlayerHand(){
+        return deck;
     }
 
 }

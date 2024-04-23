@@ -1,5 +1,6 @@
 package it.polimi.ingsw.model;
 import it.polimi.ingsw.model.cards.*;
+import it.polimi.ingsw.model.cards.Json.LoadDecks;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -15,7 +16,7 @@ public class Match {
     public Match() {
         this.players = new ArrayList<>();
         this.commonObjective = new ObjectiveCard[2];
-        this.commonArea = new CommonArea();
+        this.commonArea = (new LoadDecks()).load();
     }
 
     /**
@@ -55,24 +56,24 @@ public class Match {
             player.initialHand(initialSide, initialPick);
     }
 
-    /**
-     * method {@code playerTurn}: the player plays its turn.
-     * @param player int that indicates the player that has to play.
-     * @param cardPick  integer that indicates the card chosen.
-     * @param x position.
-     * @param y  position.
-     * @param side integer that indicates the side chosen.
-     * @param drawPick integer that indicates the card chosen.
-     * @throws Exception if there are no more cards on the commonArea, or if there is an error in playTurn.
-     */
-    public void playerTurn(int player, int cardPick, int x, int y, int side, int drawPick) throws Exception {
-
-        if (players.get(player).getScore() < 20 && (commonArea.drawFromToPlayer(1) != null ||
-                commonArea.drawFromToPlayer(2) != null || commonArea.getTableCards() != null)) // || to check all the cond are false, no cards available
-               players.get(player).playTurn(cardPick, x, y, side, drawPick);
-        else
-            throw new Exception("No more cards to play, match ended."); //Starts last turn
-        }
+//    /**
+//     * method {@code playerTurn}: the player plays its turn.
+//     * @param player int that indicates the player that has to play.
+//     * @param cardPick  integer that indicates the card chosen.
+//     * @param x position.
+//     * @param y  position.
+//     * @param side integer that indicates the side chosen.
+//     * @param drawPick integer that indicates the card chosen.
+//     * @throws Exception if there are no more cards on the commonArea, or if there is an error in playTurn.
+//     */
+//    public void playerTurn(int player, int cardPick, int x, int y, int side, int drawPick) throws Exception {
+//
+//        if (players.get(player).getScore() < 20 && (commonArea.drawFromToPlayer(1) != null ||
+//                commonArea.drawFromToPlayer(2) != null || commonArea.getTableCards() != null)) // || to check all the cond are false, no cards available
+//               players.get(player).playTurn(cardPick, x, y, side, drawPick);
+//        else
+//            throw new Exception("No more cards to play, match ended."); //Starts last turn
+//    }
 
     /**
      *  method {@code lastTurn}: the player plays its last turn.
@@ -85,15 +86,15 @@ public class Match {
      * @throws Exception if there is an error in playTurn.
      */
 
-    public void lastTurn(int player, int cardPick, int x, int y, int side, int drawPick) throws Exception {
-        players.get(player).playTurn(cardPick, x, y, side, drawPick);
-        addObjectivePoints(players.get(player));
-    }
+//    public void lastTurn(int player, int cardPick, int x, int y, int side, int drawPick) throws Exception {
+//        players.get(player).playTurn(cardPick, x, y, side, drawPick);
+//        addObjectivePoints(players.get(player));
+//    }
 
     /**
      * Method {@code drawCommonObjective} draws the two commonObjective cards;
      */
-    private void drawCommonObjective() {
+    protected void drawCommonObjective() {
         commonObjective[0] = commonArea.drawObjectiveCard();
         commonObjective[1] = commonArea.drawObjectiveCard();
     }
@@ -139,7 +140,7 @@ public class Match {
     /**
      * Method {@code addObjectivePoints}: adds the objective points to the players score.
      */
-    private void addObjectivePoints(Player player) {
+    protected void addObjectivePoints(Player player) {
         int score = player.getScore();
 
         score += player.getPlayerArea().checkPattern(player.getObjective());
@@ -150,7 +151,12 @@ public class Match {
 
     }
 
-    private int totalObjective(Player player) {
+    /**
+     * Method {@code totalObjective}: counts how many times the objectives were completed by the player.
+     * @param player of which the times are calculated.
+     * @return integer;
+     */
+    protected int totalObjective(Player player) {
         int times = player.getPlayerArea().countPattern(player.getObjective());
         times += player.getPlayerArea().countPattern(commonObjective[0]);
         times += player.getPlayerArea().countPattern(commonObjective[1]);

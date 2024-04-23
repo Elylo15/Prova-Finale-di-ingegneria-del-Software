@@ -74,30 +74,6 @@ class MatchTest {
         assertEquals(player1, match.nextPlayer(player4));
     }
 
-    //@test
-    void turnPlayed( ) throws Exception {
-        player1.setScore(14);
-        int player = 0;
-        int cardPick = 2;
-        int x = 3;
-        int y = 4;
-        int side = 1;
-        int drawPick = 3;
-
-        match.playerTurn(player, cardPick, x, y, side, drawPick);
-    }
-
-    //@Test
-    void lastTurnPlayed() throws Exception {
-        int player = 0;
-        int cardPick = 2;
-        int x = 3;
-        int y = 4;
-        int side = 1;
-        int drawPick = 3;
-        match.lastTurn(player, cardPick, x, y, side, drawPick);
-    }
-
     @Test
     void winnerHasMorePoints() throws Exception {
         match.addPlayer(player1);
@@ -134,7 +110,7 @@ class MatchTest {
         match.addPlayer(player1);
         this.commonObjective = new ObjectiveCard[2];
 
-        //load deck
+
         match.drawCommonObjective();
         //simulated match?
 
@@ -144,15 +120,21 @@ class MatchTest {
         assertEquals(expectedObjectives, totalObjectives);
     }
 
-    //@Test
-    void drawCommonObj(){
-        //Load deck
+    @Test
+    void drawCommonObj1(){
+        match.drawCommonObjective();
+        int objectiveId = commonObjective[0].getID();
+        boolean isInRange = objectiveId >= 87 && objectiveId <= 102;
+        assertTrue(isInRange);
+    }
+
+    @Test
+    void drawCommonObj2(){
         this.commonObjective = new ObjectiveCard[2];
         match.drawCommonObjective();
-        assertTrue(commonObjective[0].getID() >= 86, "Error,ID too high");
-        assertTrue(commonObjective[0].getID()  <= 102, "Error, ID too low");
-        assertTrue(commonObjective[1].getID() >= 86, "Error,ID too high");
-        assertTrue(commonObjective[1].getID()  <= 102, "Error, ID too low");
+        int objectiveId = commonObjective[1].getID();
+        boolean isInRange = objectiveId >= 87 && objectiveId <= 102;
+        assertTrue(isInRange);
     }
 
     //@Test
