@@ -20,7 +20,7 @@ public class LoadDecks {
         CommonArea c = new CommonArea();
         try {
             // Read the JSON file into a Reader object
-            FileReader reader = new FileReader("C:\\Users\\lolel\\IdeaProjects\\ing-sw-2024-Lollino-Ianosel-Locatelli-Martini\\CodexNaturalis\\src\\main\\java\\it\\polimi\\ingsw\\model\\cards\\Json\\Cards.json");
+            FileReader reader = new FileReader("src/main/java/it/polimi/ingsw/model/cards/Json/Cards.json");
 
             //Parse the JSON file into a JsonObject
             JsonObject jsonObject = JsonParser.parseReader(reader).getAsJsonObject();
@@ -56,10 +56,21 @@ public class LoadDecks {
             }
 
         } catch (Exception e) {
-            System.out.println(e.toString());
+            System.out.println(e.getMessage());
         }
         return c;
+
     }
+
+   /* public static void main(String[] args) {
+        LoadDecks loadDecks = new LoadDecks();
+        CommonArea commonArea = new CommonArea();
+        commonArea = loadDecks.load();
+        System.out.println(commonArea.getD1().getSize());
+        System.out.println(commonArea.getD2().getSize());
+        System.out.println(commonArea.getD3().getSize());
+        System.out.println(commonArea.getD4().getSize());
+    }*/
 
 
 }
