@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ResourceCardTest {
 
-    private ArrayList<Resource> resources = new ArrayList<Resource>();
+    private ArrayList<Resource> resources = new ArrayList<>();
     private ArrayList<Resource> requirement;
 
     private int id;
@@ -28,16 +28,17 @@ class ResourceCardTest {
         reign = Reign.Fungus;
         points = 0;
         front = true;
+        id = 1;
         resources.add(Resource.Fungus);
         resources.add(Resource.Empty);
         resources.add(Resource.Fungus);
         resources.add(Resource.Blocked);
-        ArrayList<Resource> test = new ArrayList<Resource>();
+        ArrayList<Resource> test = new ArrayList<>();
         test.add(Resource.Fungus);
         test.add(Resource.Empty);
         test.add(Resource.Fungus);
         test.add(Resource.Blocked);
-        ResourceCard resourceCard = new ResourceCard(1,points,reign,front,resources);
+        ResourceCard resourceCard = new ResourceCard(id,points,reign,front,resources);
         ResourceCard testCard = new ResourceCard(1,0,Reign.Fungus,true,test);
         Assertions.assertEquals(true,resourceCard.equals(testCard));
     }
@@ -62,7 +63,7 @@ class ResourceCardTest {
 
     @Test
     void checkGetResourceFRONT_true() throws InvalidIdException{
-        ArrayList<Resource> test = new ArrayList<Resource>();
+        ArrayList<Resource> test = new ArrayList<>();
         test.add(Resource.Fungus);
         test.add(Resource.Empty);
         test.add(Resource.Fungus);
@@ -77,7 +78,7 @@ class ResourceCardTest {
     }
     @Test
     void checkGetResourceFRONT_false() throws InvalidIdException{
-        ArrayList<Resource> test = new ArrayList<Resource>();
+        ArrayList<Resource> test = new ArrayList<>();
         test.add(Resource.Animal);
         test.add(Resource.Empty);
         test.add(Resource.Fungus);
@@ -93,7 +94,7 @@ class ResourceCardTest {
 
     @Test
     void checkGetResourceBACK_true() throws InvalidIdException{
-        ArrayList<Resource> test = new ArrayList<Resource>();
+        ArrayList<Resource> test = new ArrayList<>();
         test.add(Resource.Empty);
         test.add(Resource.Empty);
         test.add(Resource.Empty);
@@ -105,7 +106,7 @@ class ResourceCardTest {
     }
     @Test
     void checkGetResourceBACK_false() throws InvalidIdException{
-        ArrayList<Resource> test = new ArrayList<Resource>();
+        ArrayList<Resource> test = new ArrayList<>();
         test.add(Resource.Plant);
         test.add(Resource.Insect);
         test.add(Resource.Animal);
@@ -120,7 +121,7 @@ class ResourceCardTest {
     @Test
     void checkGetPermanentResourceFungus() throws InvalidIdException{
         reign = Reign.Fungus;
-        ArrayList<Resource> test = new ArrayList<Resource>();
+        ArrayList<Resource> test = new ArrayList<>();
         test.add(Resource.Fungus);
         for (int i = 1; i < 11; i++) {
             ResourceCard resourceCard = new ResourceCard(i, points, reign, false, resources);
@@ -131,7 +132,7 @@ class ResourceCardTest {
     @Test
     void checkGetPermanentResourcePlant() throws InvalidIdException{
         reign = Reign.Plant;
-        ArrayList<Resource> test = new ArrayList<Resource>();
+        ArrayList<Resource> test = new ArrayList<>();
         test.add(Resource.Plant);
         for (int i = 11; i < 21; i++) {
             ResourceCard resourceCard = new ResourceCard(i, points, reign, false, resources);
@@ -142,7 +143,7 @@ class ResourceCardTest {
     @Test
     void checkGetPermanentResourceAnimal() throws InvalidIdException{
         reign = Reign.Animal;
-        ArrayList<Resource> test = new ArrayList<Resource>();
+        ArrayList<Resource> test = new ArrayList<>();
         test.add(Resource.Animal);
         for (int i = 21; i < 31; i++) {
             ResourceCard resourceCard = new ResourceCard(i, points, reign, false, resources);
@@ -153,7 +154,7 @@ class ResourceCardTest {
     @Test
     void checkGetPermanentResourceInsect() throws InvalidIdException{
         reign = Reign.Insect;
-        ArrayList<Resource> test = new ArrayList<Resource>();
+        ArrayList<Resource> test = new ArrayList<>();
         test.add(Resource.Insect);
         for (int i = 31; i < 41; i++) {
             ResourceCard resourceCard = new ResourceCard(i, points, reign, false, resources);
@@ -174,11 +175,11 @@ class ResourceCardTest {
     @Test
     void checkRequirement_true() throws InvalidIdException{
         for(int i=1; i<41;i++){
-            ArrayList<Integer> requirementTest = new ArrayList<Integer>();
+            ArrayList<Integer> requirementTest = new ArrayList<>();
             requirementTest.add(2);
             requirementTest.add(1);
             requirementTest.add(0);
-            requirementTest.add(0);           ;
+            requirementTest.add(0);
             ResourceCard resourceCard = new ResourceCard(i, points, reign, true, resources);
             Assertions.assertEquals(true, resourceCard.checkRequirement(requirementTest));
 
@@ -187,11 +188,11 @@ class ResourceCardTest {
     @Test
     void checkRequirement_false() throws InvalidIdException{
         for(int i=1; i<41;i++){
-            ArrayList<Integer> requirementTest = new ArrayList<Integer>();
+            ArrayList<Integer> requirementTest = new ArrayList<>();
             requirementTest.add(3);
             requirementTest.add(1);
             requirementTest.add(0);
-            requirementTest.add(0);           ;
+            requirementTest.add(0);
             ResourceCard resourceCard = new ResourceCard(i, points, reign, true, resources);
             Assertions.assertNotEquals(false, resourceCard.checkRequirement(requirementTest));
         }

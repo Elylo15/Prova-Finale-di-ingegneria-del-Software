@@ -4,7 +4,7 @@ import it.polimi.ingsw.model.cards.enumeration.Reign;
 import it.polimi.ingsw.model.cards.enumeration.Resource;
 import it.polimi.ingsw.model.cards.exceptions.InvalidIdException;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
+
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -12,9 +12,9 @@ import java.util.ArrayList;
 import static org.junit.jupiter.api.Assertions.*;
 
 class StarterCardTest {
-    private ArrayList<Resource> resources = new ArrayList<Resource>();
-    private ArrayList<Resource> permanentResources = new ArrayList<Resource>();
-    private ArrayList<Resource> bottomResources = new ArrayList<Resource>();
+    private ArrayList<Resource> resources = new ArrayList<>();
+    private ArrayList<Resource> permanentResources = new ArrayList<>();
+    private ArrayList<Resource> bottomResources = new ArrayList<>();
     private  int id;
 
     private boolean front;
@@ -23,19 +23,22 @@ class StarterCardTest {
 
     @Test
     void cardIsEqual81_true() throws InvalidIdException{
+        points = 0;
+        reign = null;
+        id = 81;
         permanentResources.add(Resource.Insect);
         bottomResources.add(Resource.Fungus);
         bottomResources.add(Resource.Plant);
         bottomResources.add(Resource.Insect);
         bottomResources.add(Resource.Animal);
-        ArrayList<Resource> testPermanentResources = new ArrayList<Resource>();
-        ArrayList<Resource> testBottomResources = new ArrayList<Resource>();
+        ArrayList<Resource> testPermanentResources = new ArrayList<>();
+        ArrayList<Resource> testBottomResources = new ArrayList<>();
         testPermanentResources.add(Resource.Insect);
         testBottomResources.add(Resource.Fungus);
         testBottomResources.add(Resource.Plant);
         testBottomResources.add(Resource.Insect);
         testBottomResources.add(Resource.Animal);
-        StarterCard card81 = new StarterCard(81,0,null,front,resources,permanentResources,bottomResources);
+        StarterCard card81 = new StarterCard(id,points,reign,front,resources,permanentResources,bottomResources);
         StarterCard test = new StarterCard(id,points,null,front,resources,testPermanentResources,testBottomResources);
         Assertions.assertEquals(true, card81.equals(test));
 
@@ -43,20 +46,23 @@ class StarterCardTest {
     }
     @Test
     void cardIsEqual81_false() throws InvalidIdException{
+        points = 0;
+        reign = null;
+        id = 81;
         permanentResources.add(Resource.Insect);
         bottomResources.add(Resource.Fungus);
         bottomResources.add(Resource.Plant);
         bottomResources.add(Resource.Insect);
         bottomResources.add(Resource.Animal);
-        ArrayList<Resource> testPermanentResouces = new ArrayList<Resource>();
-        ArrayList<Resource> testBottomResources = new ArrayList<Resource>();
-        testPermanentResouces.add(Resource.Fungus);
+        ArrayList<Resource> testPermanentResources = new ArrayList<>();
+        ArrayList<Resource> testBottomResources = new ArrayList<>();
+        testPermanentResources.add(Resource.Fungus);
         testBottomResources.add(Resource.Plant);
         testBottomResources.add(Resource.Animal);
         testBottomResources.add(Resource.Insect);
         testBottomResources.add(Resource.Empty);
-        StarterCard card81 = new StarterCard(81,0,null,front,resources,permanentResources,bottomResources);
-        StarterCard test = new StarterCard(id,points,null,front,resources,testPermanentResouces,testBottomResources);
+        StarterCard card81 = new StarterCard(id,points,reign,front,resources,permanentResources,bottomResources);
+        StarterCard test = new StarterCard(id,points,null,front,resources,testPermanentResources,testBottomResources);
         Assertions.assertNotEquals(true, card81.equals(test));
 
 
@@ -66,7 +72,7 @@ class StarterCardTest {
     void checkPermanentResourcesCard81_true() throws InvalidIdException{
         permanentResources.add(Resource.Insect);
         StarterCard card81 = new StarterCard(81,0,null,true,resources,permanentResources,bottomResources);
-        ArrayList<Resource> test = new ArrayList<Resource>();
+        ArrayList<Resource> test = new ArrayList<>();
         test.add(Resource.Insect);
         Assertions.assertEquals(test, card81.getPermanentResource());
 
@@ -75,7 +81,7 @@ class StarterCardTest {
     void checkPermanentResourcesCard81_false() throws InvalidIdException{
         permanentResources.add(Resource.Insect);
         StarterCard card81 = new StarterCard(81,0,null,true,resources,permanentResources,bottomResources);
-        ArrayList<Resource> test = new ArrayList<Resource>();
+        ArrayList<Resource> test = new ArrayList<>();
         test.add(Resource.Fungus);
         Assertions.assertNotEquals(test, card81.getPermanentResource());
 
@@ -86,7 +92,7 @@ class StarterCardTest {
         permanentResources.add(Resource.Animal);
         permanentResources.add(Resource.Fungus);
         StarterCard card86 = new StarterCard(86,0,null,true,resources,permanentResources,bottomResources);
-        ArrayList<Resource> test = new ArrayList<Resource>();
+        ArrayList<Resource> test = new ArrayList<>();
         test.add(Resource.Plant);
         test.add(Resource.Animal);
         test.add(Resource.Fungus);
@@ -99,7 +105,7 @@ class StarterCardTest {
         permanentResources.add(Resource.Animal);
         permanentResources.add(Resource.Fungus);
         StarterCard card86 = new StarterCard(86,0,null,true,resources,permanentResources,bottomResources);
-        ArrayList<Resource> test = new ArrayList<Resource>();
+        ArrayList<Resource> test = new ArrayList<>();
         test.add(Resource.Fungus);
         test.add(Resource.Insect);
         Assertions.assertNotEquals(test, card86.getPermanentResource());
@@ -112,7 +118,7 @@ class StarterCardTest {
         resources.add(Resource.Insect);
         resources.add(Resource.Empty);
         StarterCard card81 = new StarterCard(81,0,null,true,resources,permanentResources,bottomResources);
-        ArrayList<Resource> test = new ArrayList<Resource>();
+        ArrayList<Resource> test = new ArrayList<>();
         test.add(Resource.Empty);
         test.add(Resource.Plant);
         test.add(Resource.Insect);
@@ -126,7 +132,7 @@ class StarterCardTest {
         resources.add(Resource.Insect);
         resources.add(Resource.Empty);
         StarterCard card81 = new StarterCard(81,0,null,true,resources,permanentResources,bottomResources);
-        ArrayList<Resource> test = new ArrayList<Resource>();
+        ArrayList<Resource> test = new ArrayList<>();
         test.add(Resource.Fungus);
         test.add(Resource.Animal);
         test.add(Resource.Insect);
@@ -140,7 +146,7 @@ class StarterCardTest {
         bottomResources.add(Resource.Insect);
         bottomResources.add(Resource.Animal);
         StarterCard card81 = new StarterCard(81,0,null,false,resources,permanentResources,bottomResources);
-        ArrayList<Resource> test = new ArrayList<Resource>();
+        ArrayList<Resource> test = new ArrayList<>();
         test.add(Resource.Fungus);
         test.add(Resource.Plant);
         test.add(Resource.Insect);
@@ -154,7 +160,7 @@ class StarterCardTest {
         bottomResources.add(Resource.Insect);
         bottomResources.add(Resource.Animal);
         StarterCard card81 = new StarterCard(81,0,null,false,resources,permanentResources,bottomResources);
-        ArrayList<Resource> test = new ArrayList<Resource>();
+        ArrayList<Resource> test = new ArrayList<>();
         test.add(Resource.Plant);
         test.add(Resource.Fungus);
         test.add(Resource.Insect);
@@ -172,7 +178,7 @@ class StarterCardTest {
         resources.add(Resource.Blocked);
         resources.add(Resource.Blocked);
         StarterCard card86 = new StarterCard(86,0,null,true,resources,permanentResources,bottomResources);
-        ArrayList<Resource> test = new ArrayList<Resource>();
+        ArrayList<Resource> test = new ArrayList<>();
         test.add(Resource.Empty);
         test.add(Resource.Empty);
         test.add(Resource.Blocked);
@@ -186,7 +192,7 @@ class StarterCardTest {
         resources.add(Resource.Blocked);
         resources.add(Resource.Blocked);
         StarterCard card86 = new StarterCard(86,0,null,true,resources,permanentResources,bottomResources);
-        ArrayList<Resource> test = new ArrayList<Resource>();
+        ArrayList<Resource> test = new ArrayList<>();
         test.add(Resource.Fungus);
         test.add(Resource.Animal);
         test.add(Resource.Insect);
@@ -202,7 +208,7 @@ class StarterCardTest {
         bottomResources.add(Resource.Plant);
         bottomResources.add(Resource.Insect);
         StarterCard card86 = new StarterCard(86,0,null,false,resources,permanentResources,bottomResources);
-        ArrayList<Resource> test = new ArrayList<Resource>();
+        ArrayList<Resource> test = new ArrayList<>();
         test.add(Resource.Fungus);
         test.add(Resource.Animal);
         test.add(Resource.Plant);
@@ -216,7 +222,7 @@ class StarterCardTest {
         bottomResources.add(Resource.Plant);
         bottomResources.add(Resource.Insect);
         StarterCard card86 = new StarterCard(86,0,null,false,resources,permanentResources,bottomResources);
-        ArrayList<Resource> test = new ArrayList<Resource>();
+        ArrayList<Resource> test = new ArrayList<>();
         test.add(Resource.Plant);
         test.add(Resource.Fungus);
         test.add(Resource.Insect);
@@ -227,11 +233,11 @@ class StarterCardTest {
     @Test
     void checkRequirement_true() throws InvalidIdException{
         for(int i=81; i<87;i++){
-            ArrayList<Integer> requirementTest = new ArrayList<Integer>();
+            ArrayList<Integer> requirementTest = new ArrayList<>();
             requirementTest.add(2);
             requirementTest.add(1);
             requirementTest.add(0);
-            requirementTest.add(0);           ;
+            requirementTest.add(0);
             StarterCard starterCard = new StarterCard(i,0,null,true,resources,permanentResources,bottomResources);
             Assertions.assertEquals(true, starterCard.checkRequirement(requirementTest));
         }
@@ -239,11 +245,11 @@ class StarterCardTest {
     @Test
     void checkRequirement_false() throws InvalidIdException{
         for(int i=81; i<87;i++){
-            ArrayList<Integer> requirementTest = new ArrayList<Integer>();
+            ArrayList<Integer> requirementTest = new ArrayList<>();
             requirementTest.add(3);
             requirementTest.add(1);
             requirementTest.add(0);
-            requirementTest.add(0);           ;
+            requirementTest.add(0);
             StarterCard starterCard = new StarterCard(i,0,null,true,resources,permanentResources,bottomResources);
             Assertions.assertNotEquals(false, starterCard.checkRequirement(requirementTest));
         }
