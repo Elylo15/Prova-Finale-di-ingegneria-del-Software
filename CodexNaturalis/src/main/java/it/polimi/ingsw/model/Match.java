@@ -2,10 +2,11 @@ package it.polimi.ingsw.model;
 import it.polimi.ingsw.model.cards.*;
 import it.polimi.ingsw.model.cards.Json.LoadDecks;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class Match {
+public class Match implements Serializable {
     protected final ArrayList<Player> players;
     private final ObjectiveCard[] commonObjective;
     protected final CommonArea commonArea;

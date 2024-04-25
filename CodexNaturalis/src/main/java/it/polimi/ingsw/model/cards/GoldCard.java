@@ -4,9 +4,10 @@ import it.polimi.ingsw.model.cards.enumeration.Reign;
 import it.polimi.ingsw.model.cards.enumeration.Resource;
 import it.polimi.ingsw.model.cards.exceptions.InvalidIdException;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class GoldCard extends PlaceableCard{
+public class GoldCard extends PlaceableCard implements Serializable {
     /**
      * Constructor
      *

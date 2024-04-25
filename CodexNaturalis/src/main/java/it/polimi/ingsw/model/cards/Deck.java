@@ -1,5 +1,6 @@
 package it.polimi.ingsw.model.cards;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -7,7 +8,7 @@ import java.util.Collections;
  * Deck class
  * @author elylo
  */
-public class Deck<E extends Card> {
+public class Deck<E extends Card> implements Serializable {
     ArrayList<E> list;
     /**
      * Class costructor

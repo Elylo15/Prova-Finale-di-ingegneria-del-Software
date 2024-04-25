@@ -8,11 +8,12 @@ import it.polimi.ingsw.model.cards.enumeration.Resource;
 import it.polimi.ingsw.model.cards.exceptions.noPlaceCardException;
 
 
+import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class PlayerArea {
+public class PlayerArea implements Serializable {
 
     private final HashMap<ArrayList<Integer>, Cell> CellMatrix;
     private final ArrayList<Integer> permanentResource;

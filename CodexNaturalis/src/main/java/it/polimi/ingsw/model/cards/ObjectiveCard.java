@@ -4,10 +4,11 @@ import it.polimi.ingsw.model.cards.enumeration.Reign;
 import it.polimi.ingsw.model.cards.enumeration.Resource;
 import it.polimi.ingsw.model.cards.exceptions.InvalidIdException;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 
-public class ObjectiveCard extends Card{
+public class ObjectiveCard extends Card implements Serializable {
 
     private int points;
 

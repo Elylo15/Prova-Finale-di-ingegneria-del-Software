@@ -7,9 +7,10 @@ import it.polimi.ingsw.model.cards.PlayerHand;
 import it.polimi.ingsw.model.cards.exceptions.InvalidIdException;
 import it.polimi.ingsw.model.cards.exceptions.noPlaceCardException;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class  Player {
+public class  Player implements Serializable {
     private final String nickname;
     private final String color;
     private int score;

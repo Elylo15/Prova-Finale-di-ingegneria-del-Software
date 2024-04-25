@@ -2,9 +2,10 @@ package it.polimi.ingsw.model.cards;
 
 import it.polimi.ingsw.model.cards.enumeration.Resource;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class Cell {
+public class Cell implements Serializable {
 
     private int row;
     private int column;

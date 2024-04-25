@@ -1,5 +1,6 @@
 package it.polimi.ingsw.model.cards;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -7,7 +8,7 @@ import java.util.Objects;
  * PlayerHand class
  * @author elylo
  */
-public class PlayerHand {
+public class PlayerHand implements Serializable {
     ArrayList<PlaceableCard> placeableCards;
 
     /**

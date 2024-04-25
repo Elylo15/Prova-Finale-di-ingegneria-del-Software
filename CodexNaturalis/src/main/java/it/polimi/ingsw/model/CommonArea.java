@@ -1,13 +1,15 @@
 package it.polimi.ingsw.model;
 
 import it.polimi.ingsw.model.cards.*;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * CommonArea class
  * @author elylo
  */
-public class CommonArea {
+public class CommonArea implements Serializable {
     private final Deck<ResourceCard> d1;
     private final Deck<GoldCard> d2;
     private final Deck<StarterCard> d3;

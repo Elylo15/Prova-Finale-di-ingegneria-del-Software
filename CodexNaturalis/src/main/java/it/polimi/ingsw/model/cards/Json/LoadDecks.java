@@ -3,13 +3,16 @@ package it.polimi.ingsw.model.cards.Json;
 import com.google.gson.*;
 import it.polimi.ingsw.model.CommonArea;
 import it.polimi.ingsw.model.cards.*;
+
+import java.awt.*;
 import java.io.FileReader;
+import java.io.Serializable;
 
 /**
  * LoadDeck class
  * @author elylo
  */
-public class LoadDecks {
+public class LoadDecks implements Serializable {
     /**
      * method load: takes the cards that are collected in the Cards.json file
      * and converts them into PlaceableCard/ObjectiveCard and places them in the various decks.
