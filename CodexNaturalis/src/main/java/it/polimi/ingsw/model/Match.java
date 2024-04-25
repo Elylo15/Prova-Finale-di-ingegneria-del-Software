@@ -7,9 +7,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class Match implements Serializable {
-    protected final ArrayList<Player> players;
+    private final ArrayList<Player> players;
     private final ObjectiveCard[] commonObjective;
-    protected final CommonArea commonArea;
+    private final CommonArea commonArea;
 
     /**
      * Constructs a new {@code Match} object.
@@ -38,7 +38,7 @@ public class Match implements Serializable {
      * @param initialPick integer that indicates the objective card chosen.
      * @throws Exception if player are less than 2.
      */
-    public void start(boolean initialSide, int initialPick) throws Exception {
+    public void start(int initialSide, int initialPick) throws Exception {
 
         if (players.size() < 2) {
             throw new Exception("Not enough players to start the match");
@@ -57,45 +57,10 @@ public class Match implements Serializable {
             player.initialHand(initialSide, initialPick);
     }
 
-//    /**
-//     * method {@code playerTurn}: the player plays its turn.
-//     * @param player int that indicates the player that has to play.
-//     * @param cardPick  integer that indicates the card chosen.
-//     * @param x position.
-//     * @param y  position.
-//     * @param side integer that indicates the side chosen.
-//     * @param drawPick integer that indicates the card chosen.
-//     * @throws Exception if there are no more cards on the commonArea, or if there is an error in playTurn.
-//     */
-//    public void playerTurn(int player, int cardPick, int x, int y, int side, int drawPick) throws Exception {
-//
-//        if (players.get(player).getScore() < 20 && (commonArea.drawFromToPlayer(1) != null ||
-//                commonArea.drawFromToPlayer(2) != null || commonArea.getTableCards() != null)) // || to check all the cond are false, no cards available
-//               players.get(player).playTurn(cardPick, x, y, side, drawPick);
-//        else
-//            throw new Exception("No more cards to play, match ended."); //Starts last turn
-//    }
-
-    /**
-     *  method {@code lastTurn}: the player plays its last turn.
-     * @param player int that indicates the player that has to play.
-     * @param cardPick  integer that indicates the card chosen.
-     * @param x position.
-     * @param y  position.
-     * @param side integer that indicates the side chosen.
-     * @param drawPick integer that indicates the card chosen.
-     * @throws Exception if there is an error in playTurn.
-     */
-
-//    public void lastTurn(int player, int cardPick, int x, int y, int side, int drawPick) throws Exception {
-//        players.get(player).playTurn(cardPick, x, y, side, drawPick);
-//        addObjectivePoints(players.get(player));
-//    }
-
     /**
      * Method {@code drawCommonObjective} draws the two commonObjective cards;
      */
-    protected void drawCommonObjective() {
+    public void drawCommonObjective() {
         commonObjective[0] = commonArea.drawObjectiveCard();
         commonObjective[1] = commonArea.drawObjectiveCard();
     }
@@ -141,7 +106,7 @@ public class Match implements Serializable {
     /**
      * Method {@code addObjectivePoints}: adds the objective points to the players score.
      */
-    protected void addObjectivePoints(Player player) {
+    public void addObjectivePoints(Player player) {
         int score = player.getScore();
 
         score += player.getPlayerArea().checkPattern(player.getObjective());
@@ -171,4 +136,19 @@ public class Match implements Serializable {
     public CommonArea getCommonArea(){
         return commonArea;
     }
+
+    /**
+     * @return commonObjective.
+     */
+    public ObjectiveCard[] getCommonObjective(){
+        return commonObjective;
+    }
+
+    /**
+     * @return player.
+     */
+    public ArrayList<Player> getPlayers(){
+        return players;
+    }
+
 }

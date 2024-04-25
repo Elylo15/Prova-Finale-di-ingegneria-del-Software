@@ -1,6 +1,7 @@
 package it.polimi.ingsw.model;
 
 import it.polimi.ingsw.model.cards.Card;
+import it.polimi.ingsw.model.cards.Json.LoadDecks;
 import it.polimi.ingsw.model.cards.ObjectiveCard;
 import it.polimi.ingsw.model.cards.PlaceableCard;
 import it.polimi.ingsw.model.cards.PlayerHand;
@@ -8,7 +9,6 @@ import it.polimi.ingsw.model.cards.exceptions.InvalidIdException;
 import it.polimi.ingsw.model.cards.exceptions.noPlaceCardException;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 
 public class  Player implements Serializable {
     private final String nickname;
@@ -28,7 +28,10 @@ public class  Player implements Serializable {
         this.score = 0;
         this.deck = new PlayerHand();
         this.playerArea = new PlayerArea();
-        this.commonArea =  commonArea;
+        if(commonArea == null)
+            this.commonArea = (new LoadDecks()).load();
+        else
+            this.commonArea = commonArea;
     }
 
     /**
@@ -38,14 +41,14 @@ public class  Player implements Serializable {
      * @param pick integer that indicates the objective card chosen.
      * @param side integer that indicates the side chosen.
      */
-    public void initialHand(boolean side, int pick){
+    public void initialHand(int side, int pick){
 
-        playerArea.placeStarterCard(commonArea.drawFromToPlayer(3), side);
+        playerArea.placeStarterCard(commonArea.drawFromToPlayer(3), pickSide(side));
         deck.addNewplaceableCard(commonArea.drawFromToPlayer(3)); //starterCard
         deck.addNewplaceableCard(commonArea.drawFromToPlayer(1)); //draw resource
         deck.addNewplaceableCard(commonArea.drawFromToPlayer(1)); //draw resource
         deck.addNewplaceableCard(commonArea.drawFromToPlayer(2)); //draw gold
-        objective = pickObjectiveCard(pick);
+        this.objective = pickObjectiveCard(pick);
     }
 
     /**
@@ -123,14 +126,13 @@ public class  Player implements Serializable {
      * @return PlaceableCard.
      */
     public PlaceableCard pickPlaceableCard(int cardPick){
-        ArrayList<PlaceableCard> cards = deck.getPlaceableCards();
 
         if(cardPick==1)
-            return cards.get(0);
+            return deck.getPlaceableCards().get(1);
         if(cardPick==2)
-            return cards.get(1);
+            return deck.getPlaceableCards().get(2);
         else
-            return cards.get(2);
+            return deck.getPlaceableCards().get(3);
     }
 
     /**
@@ -172,6 +174,13 @@ public class  Player implements Serializable {
     }
 
     /**
+     * @param newObjective score.
+     */
+    public void setObjective(ObjectiveCard newObjective){
+        objective = newObjective;
+    }
+
+    /**
      * @return playerArea related to the player.
      */
     public PlayerArea getPlayerArea(){
@@ -186,9 +195,9 @@ public class  Player implements Serializable {
     }
 
     /**
-     *
+     * @return playerHand related to the player.
      */
-    protected PlayerHand getPlayerHand(){
+    public PlayerHand getPlayerHand(){
         return deck;
     }
 
