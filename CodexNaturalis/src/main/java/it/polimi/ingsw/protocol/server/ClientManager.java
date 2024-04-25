@@ -174,7 +174,7 @@ public class ClientManager implements Runnable{
                         }
                     });
 
-                    players.keySet().forEach(Player::initialPlayerHand);
+                    players.keySet().forEach(Player::initialHand);
 
                     this.FSM.transition(Event.AllStarterCardPlaced);
                 }
