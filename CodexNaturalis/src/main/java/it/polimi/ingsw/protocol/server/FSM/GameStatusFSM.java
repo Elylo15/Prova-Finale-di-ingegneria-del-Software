@@ -12,14 +12,21 @@ public class GameStatusFSM {
 
     /**
      * Start the FSM from a custom state.
-     * @param state
+     * @param state defines the custom starting state
      */
     public GameStatusFSM(State state) {
         this.state = state;
     }
 
+    /**
+     * @return state attribute
+     */
     public State getState() {return this.state;}
 
+    /**
+     * Manages the transitions of the FSM
+     * @param event that eventually triggers a transition
+     */
     public void transition(Event event) {
         switch (this.state) {
             case Creation -> {
@@ -36,7 +43,7 @@ public class GameStatusFSM {
             }
             case Objective -> {
                 if(event == Event.AllObjectivePicked)
-                    this.state = State.Player1Turn
+                    this.state = State.Player1Turn;
             }
             case Player1Turn -> {
                 if(event == Event.SkipPlayer1 || event == Event.Player1TurnEnded)

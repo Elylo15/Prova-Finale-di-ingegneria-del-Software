@@ -1,6 +1,8 @@
 package it.polimi.ingsw.protocol.server.FSM;
 
-public enum State {
+import java.io.Serializable;
+
+public enum State implements Serializable {
     Creation,
     WaitingForNewPlayers,
     StarterCard,
