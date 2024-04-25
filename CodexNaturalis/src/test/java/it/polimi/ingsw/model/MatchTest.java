@@ -65,7 +65,7 @@ class MatchTest {
     void notStartingIfLessThanTwo() throws Exception {
         match.addPlayer(player1);
 
-        Exception exception = assertThrows(Exception.class, () -> match.start(0, 1));
+        Exception exception = assertThrows(Exception.class, () -> match.start());
         assertEquals("Not enough players to start the match", exception.getMessage());
     }
 
