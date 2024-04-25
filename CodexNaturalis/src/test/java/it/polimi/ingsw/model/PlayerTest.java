@@ -34,32 +34,28 @@ class PlayerTest {
 
     @Test
     void initialHandNumberCards() {
-        int side = 1;
-        int pick = 2;
 
-        player.initialHand(side, pick);
+        player.initialHand();
         assertEquals(4, deck.getPlaceableCards().size());
     }
 
     @Test
-    void initialHandObjective() {
-        int side = 1;
-        int pick = 2;
+    void Objective() {
 
-        player.initialHand(side, pick);
+        player.setObjective(player.pickObjectiveCard(2));
         int objectiveId = player.getObjective().getID();
         boolean isInRange = objectiveId >= 86 && objectiveId <= 102;
         assertTrue(isInRange);
     }
 
     @Test
-    void playTurnTest() throws InvalidIdException {
-        player.initialHand(0, 3);
+    void playTurnTest() {
+        player.initialHand();
         try {
-            player.playTurn(1, 2, 3, 1, 3);
-            assertEquals(4, deck.getPlaceableCards().size());
+            player.playTurn(1, 2, 3, 1);
+            assertEquals(3, deck.getPlaceableCards().size());
         } catch (noPlaceCardException e) {
-            assertThrows(noPlaceCardException.class, () -> player.playTurn(1, 2, 3, 1, 3));
+            assertThrows(noPlaceCardException.class, () -> player.playTurn(1, 2, 3, 1));
         }
 
     }
@@ -99,7 +95,7 @@ class PlayerTest {
 
     @Test
     void correctPickedCard1(){
-        player.initialHand(1, 1);
+        player.initialHand();
         PlaceableCard card = player.pickPlaceableCard(1);
         int cardId = card.getID();
         boolean isInRange = cardId >= 1 && cardId <= 80 ;
@@ -107,7 +103,7 @@ class PlayerTest {
     }
     @Test
     void correctPickedCard2(){
-        player.initialHand(1, 1);
+        player.initialHand();
         PlaceableCard card = player.pickPlaceableCard(2);
         int cardId = card.getID();
         boolean isInRange = cardId >= 1 && cardId <= 80 ;
@@ -116,7 +112,7 @@ class PlayerTest {
 
     @Test
     void correctPickedCard3(){
-        player.initialHand(0, 1);
+        player.initialHand();
         PlaceableCard card = player.pickPlaceableCard(3);
         int cardId = card.getID();
         boolean isInRange = cardId >= 1 && cardId <= 80 ;

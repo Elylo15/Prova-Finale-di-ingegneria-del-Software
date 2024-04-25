@@ -33,12 +33,10 @@ public class Match implements Serializable {
     }
 
     /**
-     * method {@code start}: start the match. Each player plays its turn.
-     * @param initialSide integer that indicates the side chosen.
-     * @param initialPick integer that indicates the objective card chosen.
+     * method {@code start}: set up and start the match.
      * @throws Exception if player are less than 2.
      */
-    public void start(int initialSide, int initialPick) throws Exception {
+    public void start() throws Exception {
 
         if (players.size() < 2) {
             throw new Exception("Not enough players to start the match");
@@ -49,12 +47,7 @@ public class Match implements Serializable {
         commonArea.getD3().shuffle();
         commonArea.getD4().shuffle();
 
-        drawCommonObjective();
-
         Collections.shuffle(players); //randomizes the order of the players
-
-        for (Player player : players)
-            player.initialHand(initialSide, initialPick);
     }
 
     /**

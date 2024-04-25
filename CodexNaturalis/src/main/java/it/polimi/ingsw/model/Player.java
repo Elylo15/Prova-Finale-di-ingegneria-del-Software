@@ -35,20 +35,22 @@ public class  Player implements Serializable {
     }
 
     /**
-     * method {@code initialHand}: the player draws one starterCard and chooses if he wants to place it front or back.
-     * The player draws two resourceCard, one goldCard, two objectiveCard.
-     * The player chooses one between the two objectiveCard.
-     * @param pick integer that indicates the objective card chosen.
+     * method {@code placeStarter}: The player places the starter card.
      * @param side integer that indicates the side chosen.
      */
-    public void initialHand(int side, int pick){
 
+    public void placeStarter(int side){
         playerArea.placeStarterCard(commonArea.drawFromToPlayer(3), pickSide(side));
+    }
+
+    /**
+     * method {@code initialHand}: The player draws two resourceCard, one goldCard, two objectiveCard.
+     */
+    public void initialHand(){
         deck.addNewplaceableCard(commonArea.drawFromToPlayer(3)); //starterCard
         deck.addNewplaceableCard(commonArea.drawFromToPlayer(1)); //draw resource
         deck.addNewplaceableCard(commonArea.drawFromToPlayer(1)); //draw resource
         deck.addNewplaceableCard(commonArea.drawFromToPlayer(2)); //draw gold
-        this.objective = pickObjectiveCard(pick);
     }
 
     /**
@@ -83,11 +85,9 @@ public class  Player implements Serializable {
      * @param x position.
      * @param y position.
      * @param side integer that indicates the side chosen.
-     * @param drawPick integer that indicates the card chosen.
      * @throws noPlaceCardException if there is an error placing the card.
-     * @throws InvalidIdException if there is an error in pickNewCard.
      */
-    public void playTurn(int cardPick, int x, int y, int side, int drawPick) throws noPlaceCardException, InvalidIdException {
+    public void playTurn(int cardPick, int x, int y, int side) throws noPlaceCardException {
         int[] position;
         int cardID;
         Card card;
@@ -102,8 +102,6 @@ public class  Player implements Serializable {
         } catch (noPlaceCardException e) {
             throw new noPlaceCardException();
         }
-
-        pickNewCard(drawPick);
     }
 
     /**
@@ -170,14 +168,14 @@ public class  Player implements Serializable {
      * @param newScore updated score.
      */
     public void setScore(int newScore){
-        score = newScore;
+        this.score = newScore;
     }
 
     /**
      * @param newObjective score.
      */
     public void setObjective(ObjectiveCard newObjective){
-        objective = newObjective;
+        this.objective = newObjective;
     }
 
     /**
