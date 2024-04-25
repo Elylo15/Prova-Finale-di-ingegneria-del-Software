@@ -17,7 +17,6 @@ class PlayerTest {
     PlayerHand deck;
     PlayerArea playerArea;
     CommonArea commonArea;
-    ObjectiveCard objective;
 
     @BeforeEach
     void setUp() {
@@ -31,21 +30,27 @@ class PlayerTest {
         commonArea.getD4().shuffle();
     }
 
+    @Test
+    void drawStarterTest() {
+
+        player.drawStarter();
+        assertEquals(1, deck.getPlaceableCards().size());
+    }
+
+    @Test
+    void PlaceStarterTest() {
+
+        player.drawStarter();
+        player.placeStarter(1);
+        assertEquals(0, deck.getPlaceableCards().size());
+    }
+
 
     @Test
     void initialHandNumberCards() {
 
         player.initialHand();
-        assertEquals(4, deck.getPlaceableCards().size());
-    }
-
-    @Test
-    void Objective() {
-
-        player.setObjective(player.pickObjectiveCard(2));
-        int objectiveId = player.getObjective().getID();
-        boolean isInRange = objectiveId >= 86 && objectiveId <= 102;
-        assertTrue(isInRange);
+        assertEquals(3, deck.getPlaceableCards().size());
     }
 
     @Test
@@ -53,7 +58,7 @@ class PlayerTest {
         player.initialHand();
         try {
             player.playTurn(1, 2, 3, 1);
-            assertEquals(3, deck.getPlaceableCards().size());
+            assertEquals(2, deck.getPlaceableCards().size());
         } catch (noPlaceCardException e) {
             assertThrows(noPlaceCardException.class, () -> player.playTurn(1, 2, 3, 1));
         }
@@ -61,11 +66,24 @@ class PlayerTest {
     }
 
     @Test
-    void pickObjective() {
+    void drawObjectivesTest() {
+        ObjectiveCard[] objective = player.drawObjectives();
+        int objectiveId0 = objective[0].getID();
+        int objectiveId1 = objective[1].getID();
+        boolean isInRange0 = objectiveId0 >= 86 && objectiveId0 <= 102;
+        boolean isInRange1 = objectiveId1 >= 86 && objectiveId1 <= 102;
+        assertTrue(isInRange0);
+        assertTrue(isInRange1);
+    }
+
+
+    @Test
+    void pickObjective1() {
         int pick = 1;
 
-        objective = player.pickObjectiveCard(pick);
-        int objectiveId = objective.getID();
+        ObjectiveCard[] objective = player.drawObjectives();
+        player.pickObjectiveCard(pick, objective);
+        int objectiveId = player.getObjective().getID();
         boolean isInRange = objectiveId >= 86 && objectiveId <= 102;
         assertTrue(isInRange);
     }
@@ -74,8 +92,9 @@ class PlayerTest {
     void pickObjective2() {
         int pick = 2;
 
-        objective = player.pickObjectiveCard(pick);
-        int objectiveId = objective.getID();
+        ObjectiveCard[] objective = player.drawObjectives();
+        player.pickObjectiveCard(pick, objective);
+        int objectiveId = player.getObjective().getID();
         boolean isInRange = objectiveId >= 86 && objectiveId <= 102;
         assertTrue(isInRange);
     }
@@ -279,5 +298,28 @@ class PlayerTest {
     public void getPlayerHandTest() {
         assertNotNull(player.getPlayerHand());
     }
+
+    @Test
+    public void getNicknameTest() {
+        assertEquals("Bianca", player.getNickname());
+    }
+
+    @Test
+    public void setNicknameTest() {
+        player.setNickname("Bia");
+        assertEquals("Bia", player.getNickname());
+    }
+
+    @Test
+    public void getColorTest() {
+        assertEquals("Blue", player.getColor());
+    }
+
+    @Test
+    public void setColorTest() {
+        player.setColor("Red");
+        assertEquals("Red", player.getColor());
+    }
+
 
 }

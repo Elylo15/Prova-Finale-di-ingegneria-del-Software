@@ -11,8 +11,8 @@ import it.polimi.ingsw.model.cards.exceptions.noPlaceCardException;
 import java.io.Serializable;
 
 public class  Player implements Serializable {
-    private final String nickname;
-    private final String color;
+    private String nickname;
+    private String color;
     private int score;
     private final PlayerHand deck;
     private final PlayerArea playerArea;
@@ -35,37 +35,52 @@ public class  Player implements Serializable {
     }
 
     /**
-     * method {@code placeStarter}: The player places the starter card.
-     * @param side integer that indicates the side chosen.
+     * method {@code drawStarter}: draws a starter card.
      */
-
-    public void placeStarter(int side){
-        playerArea.placeStarterCard(commonArea.drawFromToPlayer(3), pickSide(side));
+    public void drawStarter(){
+        deck.addNewplaceableCard(commonArea.drawFromToPlayer(3));
     }
 
     /**
-     * method {@code initialHand}: The player draws two resourceCard, one goldCard, two objectiveCard.
+     * method {@code placeStarter}: The player places the starter card.
+     * @param side integer that indicates the side chosen.
+     */
+    public void placeStarter(int side){
+        playerArea.placeStarterCard(deck.removeplaceableCard(0), pickSide(side));
+    }
+
+    /**
+     * method {@code initialHand}: The player draws two resourceCard, one goldCard.
      */
     public void initialHand(){
-        deck.addNewplaceableCard(commonArea.drawFromToPlayer(3)); //starterCard
         deck.addNewplaceableCard(commonArea.drawFromToPlayer(1)); //draw resource
         deck.addNewplaceableCard(commonArea.drawFromToPlayer(1)); //draw resource
         deck.addNewplaceableCard(commonArea.drawFromToPlayer(2)); //draw gold
     }
 
     /**
+     * method {@code drawObjectives}: two objectiveCards are draw.
+     * @return array of objectiveCards drawn.
+     */
+    public ObjectiveCard[] drawObjectives(){
+        ObjectiveCard[] objective = new ObjectiveCard[2];
+        objective[0] = commonArea.drawObjectiveCard();
+        objective[1] = commonArea.drawObjectiveCard();
+
+        return objective;
+    }
+
+    /**
      * method {@code pickObjectiveCard}: the player picks one of the two ObjectiveCard drawn.
      * @param pick integer that indicates the objective card chosen.
-     * @return ObjectiveCard.
+     * @param objective array of two objectiveCards.
      */
-    public ObjectiveCard pickObjectiveCard(int pick){
-        ObjectiveCard objective1 = commonArea.drawObjectiveCard();
-        ObjectiveCard objective2 = commonArea.drawObjectiveCard();
+    public void pickObjectiveCard(int pick, ObjectiveCard[] objective){
 
         if(pick==1)
-            return objective1;
+            setObjective(objective[0]);
         else
-            return objective2;
+            setObjective(objective[1]);
     }
 
     /**
@@ -197,6 +212,34 @@ public class  Player implements Serializable {
      */
     public PlayerHand getPlayerHand(){
         return deck;
+    }
+
+    /**
+     * @return nickname related to the player.
+     */
+    public String getNickname(){
+        return nickname;
+    }
+
+    /**
+     * @return color related to the player.
+     */
+    public String getColor(){
+        return color;
+    }
+
+    /**
+     * @param newNickname related to the player.
+     */
+    public void setNickname(String newNickname){
+        this.nickname = newNickname;
+    }
+
+    /**
+     * @param newColor related to the player.
+     */
+    public void setColor(String newColor){
+        this.color = newColor;
     }
 
 }
