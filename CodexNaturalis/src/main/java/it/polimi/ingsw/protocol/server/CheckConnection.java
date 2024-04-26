@@ -5,7 +5,7 @@ import java.util.TimerTask;
 
 public abstract class CheckConnection {
     private int timeOut;
-    private boolean isAlive;
+    private final boolean isAlive;
 
     /**
      * constructs a new method {@code checkConnection}.
