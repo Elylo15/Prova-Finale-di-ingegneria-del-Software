@@ -24,6 +24,7 @@ public abstract class ClientConnection implements Runnable {
         this.IP = IP;
         this.port = port;
         this.timeOut = timeOut;
+        this.connection = new CheckConnection(timeOut);
     }
 
     /**

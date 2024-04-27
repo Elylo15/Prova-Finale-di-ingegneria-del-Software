@@ -3,7 +3,7 @@ package it.polimi.ingsw.protocol.server;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public abstract class CheckConnection {
+public class CheckConnection {
     private int timeOut;
     private final boolean isAlive;
 
