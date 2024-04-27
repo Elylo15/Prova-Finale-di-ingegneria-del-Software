@@ -3,8 +3,8 @@ package it.polimi.ingsw.protocol.server;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class CheckConnection {
-    private int timeOut;
+public abstract class CheckConnection {
+    private final int timeOut;
     private final boolean isAlive;
 
     /**
@@ -18,9 +18,8 @@ public class CheckConnection {
 
     /**
      * method {@code startCheckConnection}: starts to ping the client.
-     * @param timeOut time after which, if not responding, the player will be disconnected.
      */
-    public void startConnectionCheck(int timeOut, boolean isAlive) {
+    public void startConnectionCheck() {
         Timer timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
@@ -29,36 +28,22 @@ public class CheckConnection {
                     checkIsAlive();
                 } else {
                     timer.cancel();
-                    aliveResponse();
                 }
             }
         }, 0, timeOut);
     }
 
     /**
-     *
-     * @param timeOut: new timeOut.
+     * @return boolean isAlive.
      */
-    public void setTimeOut(int timeOut) {
-        this.timeOut = timeOut;
+    public boolean getIsAlive() {
+        return isAlive;
     }
-
-    /**
-     * @return timeOut.
-     */
-    public int getTimeOut() {
-        return timeOut;
-    }
-
-    /**
-     * Sends a response to let the client know if he has been disconnected.
-     */
-    public void aliveResponse(){}
 
     /**
      * method {@code checkIsAlive}: pings the client to check if alive.Changes the state
      * of isAlive to true if the client responds, false elsewhere.
      */
-    public void checkIsAlive() {}
+    public abstract void checkIsAlive();
 
 }
