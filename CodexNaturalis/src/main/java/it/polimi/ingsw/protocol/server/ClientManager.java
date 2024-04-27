@@ -5,10 +5,7 @@ import it.polimi.ingsw.model.Match;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.cards.PlaceableCard;
 import it.polimi.ingsw.model.cards.exceptions.noPlaceCardException;
-import it.polimi.ingsw.protocol.messages.ObjectiveCardMessage;
-import it.polimi.ingsw.protocol.messages.PlaceableCardMessage;
-import it.polimi.ingsw.protocol.messages.StarterCardMessage;
-import it.polimi.ingsw.protocol.messages.TurnMessage;
+import it.polimi.ingsw.protocol.messages.*;
 import it.polimi.ingsw.protocol.server.FSM.Event;
 import it.polimi.ingsw.protocol.server.FSM.GameStatusFSM;
 import it.polimi.ingsw.protocol.server.FSM.State;
@@ -224,8 +221,9 @@ public class ClientManager implements Runnable{
                         Future<PlaceableCardMessage> future;
                         boolean correctChoise = false;
                         while(!correctChoise) {
-                            future = executor.submit(ClientConnection::getPlaceCard);
-                            PlaceableCardMessage response
+                            ClientConnection connection = players.get(currentPlayer);
+                            future = executor.submit(connection::getPlaceCard);
+                            PlaceableCardMessage response;
                             try {
                                  response = future.get();
                             } catch (InterruptedException | ExecutionException e) {
@@ -238,11 +236,15 @@ public class ClientManager implements Runnable{
                                     correctChoise = true;
                                 } catch (noPlaceCardException e) {
                                     correctChoise = false;
-
                                 }
+
+                                placeCardResponseMessage responseMessage = new placeCardResponseMessage(correctChoise);
+                                players.get(currentPlayer).sendAnswerToPlaceCard(responseMessage);
 
                             }
                         }
+
+
 
 
 
