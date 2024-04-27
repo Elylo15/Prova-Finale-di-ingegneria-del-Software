@@ -124,9 +124,4 @@ public class CommonArea implements Serializable {
     public Deck<ObjectiveCard> getD4() {
         return d4;
     }
-
-    @Override
-    public boolean equals(Object obj) {
-        return super.equals(obj);
-    }
 }

@@ -69,11 +69,4 @@ public class Deck<E extends Card> implements Serializable {
 
         return (ArrayList<E>) list.clone();
     }
-
-    @Override
-    public boolean equals(Object obj) {
-        return super.equals(obj);
-    }
-
-
 }
