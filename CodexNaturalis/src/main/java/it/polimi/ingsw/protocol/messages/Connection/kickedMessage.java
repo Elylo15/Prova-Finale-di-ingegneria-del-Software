@@ -2,5 +2,21 @@ package it.polimi.ingsw.protocol.messages.Connection;
 
 import it.polimi.ingsw.protocol.messages.Message;
 
-public class kickedMessage extends Message {
+import java.io.Serializable;
+
+public class kickedMessage implements Message, Serializable {
+    @Override
+    public void setLock() {
+
+    }
+
+    @Override
+    public boolean isLocked() {
+        return false;
+    }
+
+    @Override
+    public void unlock() {
+
+    }
 }

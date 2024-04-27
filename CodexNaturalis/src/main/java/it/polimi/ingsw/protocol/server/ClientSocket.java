@@ -1,248 +1,174 @@
 package it.polimi.ingsw.protocol.server;
 
 
-import it.polimi.ingsw.protocol.messages.*;
+import it.polimi.ingsw.protocol.messages.Connection.*;
+import it.polimi.ingsw.protocol.messages.CurrentStateMessage;
+import it.polimi.ingsw.protocol.messages.EndGame.DeclareWinnerMessage;
+import it.polimi.ingsw.protocol.messages.ObjectiveState.ObjectiveCardMessage;
+import it.polimi.ingsw.protocol.messages.PlayerTurn.*;
+import it.polimi.ingsw.protocol.messages.StaterCardState.StarterCardMessage;
+
+import java.util.ArrayList;
 
 public class ClientSocket extends ClientConnection {
 
-    public ClientSocket(String IP, String port, int timeOut) {
-        super(IP, port, timeOut);
+    /**
+     * Class constructor
+     *
+     * @param IP   the IP address of the server.
+     * @param port the port of the server.
+     */
+    public ClientSocket(String IP, String port) {
+        super(IP, port);
     }
 
     /**
-     * Method return the custom player size of this match
+     * Method asks the host if the match should start and return the answer
+     *
+     * @param hostNickname
      */
     @Override
-    int getExpectedPlayers() {
-        return 0;
-    }
-
-    /**
-     * Method asks the host if the match should start
-     */
-    @Override
-    boolean getStart() {
+    public boolean getStart(String hostNickname) {
         return false;
+    }
+
+    /**
+     * Method that creates a message with whom the host is and whether the game can start or not
+     *
+     * @param hostNickname
+     * @param startSignal
+     */
+    @Override
+    public void sendNewHostMessage(String hostNickname, boolean startSignal) {
+
     }
 
     /**
      * Method start the connection
      */
     @Override
-    void startCheckConnection() {
-
+    public void startCheckConnection() {
+        getConnection().startConnectionCheck();
     }
 
     /**
-     * Method retun the name of the player
+     * Method sends a message with unavailable names and receives the name chosen by the client as a response
+     *
+     * @param unavailableNames
      */
     @Override
-    String getName() {
+    public String getName(ArrayList<String> unavailableNames) {
         return "";
     }
 
     /**
-     * Method return the color of the player
+     * Method sends a message with the available colors and receives as a response the color chosen by the client
+     *
+     * @param availableColors
      */
     @Override
-    String getColor() {
+    public String getColor(ArrayList<String> availableColors) {
         return "";
     }
 
     /**
-     * Method return the chosen ObjectiveCard
+     * Method creates a currentState message and receives the ObjectiveCard chosen by the client as a response
+     *
+     * @param currentState
      */
     @Override
-    ObjectiveCardMessage getChosenObjective() {
+    public ObjectiveCardMessage getChosenObjective(CurrentStateMessage currentState) {
         return null;
     }
 
     /**
-     * Method return the chosen StarterCard
+     * Method creates a currentState message and receives the StarterCard assigned to the client as a response
+     *
+     * @param currentState
      */
     @Override
-    StarterCardMessage getStarterCard() {
+    public StarterCardMessage getStarterCard(CurrentStateMessage currentState) {
         return null;
     }
 
     /**
-     * Method return the chosen Placeablecard
+     * Method creates a currentState message and receives the PlaceCard chosen by the client as a response
+     *
+     * @param currentState
      */
     @Override
-    PlaceableCardMessage getPlaceCard() {
+    public PlaceCardMessage getPlaceCard(CurrentStateMessage currentState) {
         return null;
     }
 
     /**
-     * Method return the chosen pickCard
+     * Method creates an UpdatePlayer message and receives the card drawn by the client as a response
+     *
+     * @param message
      */
     @Override
-    pickCardMessage getPickCard() {
+    public pickCardMessage getChosenPick(UpdatePlayerMessage message) {
         return null;
     }
 
     /**
-     * Method sends StarterCard information
-     *
-     * @param starterCardMessage
-     */
-    @Override
-    void sendStateStarterCard(StarterCardMessage starterCardMessage) {
-
-    }
-
-    /**
-     * Method sends two ObjectiveCard information of witch the player can choose one
+     * Method send a message to establish the connection
      *
      * @param message
      */
     @Override
-    void sendStateChooseObjective(ObjectiveCardMessage message) {
+    public void sendAnswerToConnection(answerConnectionMessage message) {
 
     }
 
     /**
-     * Method sends all game information
+     * Method send a message to ask for the name
      *
-     * @param message
+     * @param correctChoice
      */
     @Override
-    void sendStateTurn(TurnMessage message) {
+    public void sendAnswerToChosenName(boolean correctChoice) {
 
     }
 
     /**
-     * Method sends all game information when the match is finished
+     * Method send a message to ask for the color
      *
-     * @param message
+     * @param correctChoice
      */
     @Override
-    void sendStateFinishMatch(endGameMessage message) {
-
-    }
-
-    @Override
-    void sendAnswerToConnection(answerConnectionMessage message) {
+    public void sendAnswerToChosenColor(boolean correctChoice) {
 
     }
 
     /**
-     * Method retun all unavailable names
+     * Method send a message to ask for the PlaceCard
      *
      * @param message
      */
     @Override
-    void sendUnavailableNames(unavailableNamesMessage message) {
+    public void sendShowAnswerToPlaceCard(placeCardResponseMessage message) {
 
     }
 
     /**
-     * Method asks the player to choose a name
+     * Method send a message to ask for the drawn card
      *
      * @param message
      */
     @Override
-    void sendAnswerToChosenName(choseNameMessage message) {
+    public void sendShowAnswerToPickCard(pickCardResponseMessage message) {
 
     }
 
     /**
-     * Method asks the player to choose a color
+     * Method send a message to let you know who won
      *
-     * @param message
+     * @param currentState
+     * @param winner
      */
     @Override
-    void sendAnswerToChosenColor(choseColorMessage message) {
-
-    }
-
-    /**
-     * Method tells the client the available colors
-     *
-     * @param message
-     */
-    @Override
-    void sendAvailableColors(availableColorsMessage message) {
-
-    }
-
-    /**
-     * Method send information about the player's hand
-     *
-     * @param message
-     */
-    @Override
-    void sendShowYourHand(playerHandMessage message) {
-
-    }
-
-    /**
-     * Method send all the players' points
-     *
-     * @param message
-     */
-    @Override
-    void sendShowAllPoints(allPointsMessage message) {
-
-    }
-
-    /**
-     * Method send all available positions to place cards
-     *
-     * @param message
-     */
-    @Override
-    void sendAvailablePositions(availablePositionMessage message) {
-
-    }
-
-    /**
-     * Method asks the client to choose one of the cards in his hand to place
-     *
-     * @param message
-     */
-    @Override
-    void sendShowAnswerToPlaceCard(placeCardResponseMessage message) {
-
-    }
-
-    /**
-     * Method asks the client to choose one of the cards to pick
-     *
-     * @param message
-     */
-    @Override
-    void sendShowAnswerToPickCard(pickCardResponseMessage message) {
-
-    }
-
-    /**
-     * Method sends end of game information
-     *
-     * @param message
-     */
-    @Override
-    void sendEndGame(endGameMessage message) {
-
-    }
-
-    /**
-     * Method sends the number of completed ObjectiveCards
-     *
-     * @param message
-     */
-    @Override
-    void senCountObjectives(countObjectivesMessage message) {
-
-    }
-
-    /**
-     * Method sends the winner of the match
-     *
-     * @param message
-     */
-    @Override
-    void sendDeclareWinner(declareWinnerMessage message) {
+    public void sendEndGame(CurrentStateMessage currentState, DeclareWinnerMessage winner) {
 
     }
 
