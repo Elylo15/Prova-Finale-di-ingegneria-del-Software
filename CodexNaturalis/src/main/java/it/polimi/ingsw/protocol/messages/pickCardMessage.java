@@ -1,4 +1,6 @@
 package it.polimi.ingsw.protocol.messages;
 
-public class pickCardMessage extends Message{
+import java.io.Serializable;
+
+public class pickCardMessage extends Message implements Serializable {
 }

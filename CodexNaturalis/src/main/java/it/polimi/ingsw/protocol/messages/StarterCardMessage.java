@@ -4,7 +4,9 @@ import it.polimi.ingsw.model.CommonArea;
 import it.polimi.ingsw.model.cards.PlaceableCard;
 import it.polimi.ingsw.model.cards.StarterCard;
 
-public class StarterCardMessage {
+import java.io.Serializable;
+
+public class StarterCardMessage extends Message implements Serializable {
     private String playerName;
     private CommonArea commonArea;
     private PlaceableCard starterCard;

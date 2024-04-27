@@ -3,11 +3,12 @@ package it.polimi.ingsw.protocol.server;
 import it.polimi.ingsw.model.CommonArea;
 import it.polimi.ingsw.model.Match;
 import it.polimi.ingsw.model.Player;
-import it.polimi.ingsw.model.cards.ObjectiveCard;
 import it.polimi.ingsw.model.cards.PlaceableCard;
-import it.polimi.ingsw.model.cards.StarterCard;
+import it.polimi.ingsw.model.cards.exceptions.noPlaceCardException;
 import it.polimi.ingsw.protocol.messages.ObjectiveCardMessage;
+import it.polimi.ingsw.protocol.messages.PlaceableCardMessage;
 import it.polimi.ingsw.protocol.messages.StarterCardMessage;
+import it.polimi.ingsw.protocol.messages.TurnMessage;
 import it.polimi.ingsw.protocol.server.FSM.Event;
 import it.polimi.ingsw.protocol.server.FSM.GameStatusFSM;
 import it.polimi.ingsw.protocol.server.FSM.State;
@@ -28,12 +29,15 @@ public class ClientManager implements Runnable{
 
     private GameStatusFSM FSM;
 
+    private boolean lastTurn;
+
 
 
     public ClientManager(Match match, int expectedPlayers, String matchFolderPath) {
         this.match = match;
         this.expectedPlayers = expectedPlayers;
         this.matchFolderPath = matchFolderPath;
+        this.lastTurn = false;
 
         int corePoolSize = 15;
         int maximumPoolSize = 50;
@@ -138,11 +142,11 @@ public class ClientManager implements Runnable{
                     CommonArea commonArea = match.getCommonArea();
 
                     // Set up of common area
-                    commonArea.getD1().shuffle();
-                    commonArea.getD2().shuffle();
-                    commonArea.getD3().shuffle();
-                    commonArea.getD4().shuffle();
-                    match.drawCommonObjective();
+                    try {
+                        match.start();
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
 
                     players.values().forEach(connection -> {
                         cards.add(commonArea.drawFromToPlayer(3));
@@ -164,14 +168,10 @@ public class ClientManager implements Runnable{
                     }
 
                     players.keySet().forEach(player -> {
-                        StarterCardMessage message = messages.stream()
+                        messages.stream()
                                 .filter(msg -> msg.getPlayerName().equals(player.getNickname()))
-                                .findFirst()
-                                .orElse(null);
+                                .findFirst().ifPresent(message -> player.getPlayerArea().placeStarterCard(message.getStarterCard(), message.isFront()));
 
-                        if(message != null) {
-                            player.getPlayerArea().placeStarterCard(message.getStarterCard(), message.isFront());
-                        }
                     });
 
                     players.keySet().forEach(Player::initialHand);
@@ -183,6 +183,9 @@ public class ClientManager implements Runnable{
                     HashMap<Player, ObjectiveCardMessage> objectives = new HashMap<>();
                     ArrayList<Future<ObjectiveCardMessage>> futures = new ArrayList<>();
                     CommonArea commonArea = match.getCommonArea();
+
+                    // Set up common objectives
+                    match.drawCommonObjective();
 
                     players.keySet().forEach(player -> {
                        objectives.put(player, new ObjectiveCardMessage(commonArea.drawObjectiveCard(), commonArea.drawObjectiveCard(), player));
@@ -200,10 +203,53 @@ public class ClientManager implements Runnable{
                     }
 
                     this.FSM.transition(Event.AllObjectivePicked);
+                    // TODO implement save match
                     this.saveMatch();
                 }
                 // TODO implement main game cycle, saving and loading
                 case Player1Turn -> {
+                    if(players.keySet().stream().anyMatch(player -> player.getScore() >= 20)) {
+                        this.lastTurn = true;
+                    }
+
+                    if(players.containsKey(match.getPlayers().getFirst()))
+                    {
+                        Player currentPlayer = match.getPlayers().getFirst();
+                        TurnMessage message = new TurnMessage(currentPlayer, match.getCommonArea(), this.lastTurn);
+
+                        // Start turn data
+                        players.values().forEach(connection -> connection.sendStateTurn(message));
+
+                        // Current player has to choose a card
+                        Future<PlaceableCardMessage> future;
+                        boolean correctChoise = false;
+                        while(!correctChoise) {
+                            future = executor.submit(ClientConnection::getPlaceCard);
+                            PlaceableCardMessage response
+                            try {
+                                 response = future.get();
+                            } catch (InterruptedException | ExecutionException e) {
+                                throw new RuntimeException(e);
+                            }
+
+                            if(response.getPlayer().equals(currentPlayer)) {
+                                try {
+                                    currentPlayer.getPlayerArea().placeCard(response.getPlaceableCard(), response.getX(), response.getY(), response.isFront());
+                                    correctChoise = true;
+                                } catch (noPlaceCardException e) {
+                                    correctChoise = false;
+
+                                }
+
+                            }
+                        }
+
+
+
+                        this.FSM.transition(Event.Player1TurnEnded);
+                    } else {
+                        this.FSM.transition(Event.SkipPlayer1);
+                    }
 
                     this.saveMatch();
                 }
