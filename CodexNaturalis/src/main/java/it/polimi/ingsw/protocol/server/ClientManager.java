@@ -3,6 +3,7 @@ package it.polimi.ingsw.protocol.server;
 import it.polimi.ingsw.model.CommonArea;
 import it.polimi.ingsw.model.Match;
 import it.polimi.ingsw.model.Player;
+import it.polimi.ingsw.model.cards.ObjectiveCard;
 import it.polimi.ingsw.model.cards.PlaceableCard;
 import it.polimi.ingsw.model.cards.exceptions.noPlaceCardException;
 import it.polimi.ingsw.protocol.messages.*;
@@ -130,6 +131,7 @@ public class ClientManager implements Runnable{
 
                     }
                     this.FSM.transition(Event.AllPlayerReady);
+                    this.saveMatch();
                 }
 
                 case StarterCard -> {
@@ -145,9 +147,9 @@ public class ClientManager implements Runnable{
                         throw new RuntimeException(e);
                     }
 
-                    players.values().forEach(connection -> {
-                        cards.add(commonArea.drawFromToPlayer(3));
-                        connection.sendStateStarterCard(new StarterCardMessage(commonArea, cards.getLast()));
+                    players.keySet().forEach(player -> {
+                        player.drawStarter();
+                        players.get(player).sendStateStarterCard(new StarterCardMessage(player, true));
                     });
 
                     players.values().forEach(connection -> {
@@ -166,8 +168,8 @@ public class ClientManager implements Runnable{
 
                     players.keySet().forEach(player -> {
                         messages.stream()
-                                .filter(msg -> msg.getPlayerName().equals(player.getNickname()))
-                                .findFirst().ifPresent(message -> player.getPlayerArea().placeStarterCard(message.getStarterCard(), message.isFront()));
+                                .filter(msg -> msg.getPlayer().getNickname().equals(player.getNickname()))
+                                .findFirst().ifPresent(message -> player.placeStarter(message.isFront()));
 
                     });
 
@@ -177,27 +179,35 @@ public class ClientManager implements Runnable{
                 }
 
                 case Objective -> {
-                    HashMap<Player, ObjectiveCardMessage> objectives = new HashMap<>();
+                    // HashMap<Player, ObjectiveCardMessage> objectives = new HashMap<>();
                     ArrayList<Future<ObjectiveCardMessage>> futures = new ArrayList<>();
                     CommonArea commonArea = match.getCommonArea();
 
                     // Set up common objectives
                     match.drawCommonObjective();
 
-                    players.keySet().forEach(player -> {
-                       objectives.put(player, new ObjectiveCardMessage(commonArea.drawObjectiveCard(), commonArea.drawObjectiveCard(), player));
-                       players.get(player).sendStateChooseObjective(objectives.get(player));
-                    });
+//                    players.keySet().forEach(player -> {
+//                       objectives.put(player, new ObjectiveCardMessage(commonArea.drawObjectiveCard(), commonArea.drawObjectiveCard(), player));
+//                       players.get(player).sendStateChooseObjective(objectives.get(player));
+//                    });
+//
+//                    players.values().forEach(connection -> futures.add(executor.submit(connection::getChosenObjective)));
+//
+//                    for(Future<ObjectiveCardMessage> future : futures) {
+//                        try {
+//                            future.get().getPlayer().setObjective(future.get().getChosenObjectiveCard());
+//                        } catch (InterruptedException | ExecutionException e) {
+//                            throw new RuntimeException(e);
+//                        }
+//                    }
 
-                    players.values().forEach(connection -> futures.add(executor.submit(connection::getChosenObjective)));
-
-                    for(Future<ObjectiveCardMessage> future : futures) {
-                        try {
-                            future.get().getPlayer().setObjective(future.get().getChosenObjectiveCard());
-                        } catch (InterruptedException | ExecutionException e) {
-                            throw new RuntimeException(e);
-                        }
+                    for(Player player : players.keySet()) {
+                        ObjectiveCard[] objectives = player.drawObjectives();
+                        ObjectiveCardMessage message = new ObjectiveCardMessage(objectives[0], objectives[1], player);
+                        //TODO message
                     }
+
+
 
                     this.FSM.transition(Event.AllObjectivePicked);
                     // TODO implement save match
@@ -232,8 +242,10 @@ public class ClientManager implements Runnable{
 
                             if(response.getPlayer().equals(currentPlayer)) {
                                 try {
-                                    currentPlayer.getPlayerArea().placeCard(response.getPlaceableCard(), response.getX(), response.getY(), response.isFront());
-                                    correctChoise = true;
+                                    PlaceableCard pick = currentPlayer.pickPlaceableCard(response.getPositionInHand());
+
+                                    currentPlayer.getPlayerArea().placeCard(pick, response.getX(), response.getY(), response.isFront());
+                                    correctChoise = true;+
                                 } catch (noPlaceCardException e) {
                                     correctChoise = false;
                                 }
@@ -243,6 +255,13 @@ public class ClientManager implements Runnable{
 
                             }
                         }
+
+                        // Message to update the view
+                        message = new TurnMessage(currentPlayer, match.getCommonArea(), this.lastTurn);
+                        players.values().forEach(connection -> connection.sendStateTurn(message));
+
+                        // Current player hat to pick a card
+
 
 
 

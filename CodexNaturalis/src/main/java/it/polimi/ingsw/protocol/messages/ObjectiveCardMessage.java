@@ -7,6 +7,7 @@ import java.io.Serializable;
 
 
 public class ObjectiveCardMessage extends Message implements Serializable {
+
     private final ObjectiveCard obj1;
     private final ObjectiveCard obj2;
     private final ObjectiveCard chosenObjectiveCard;

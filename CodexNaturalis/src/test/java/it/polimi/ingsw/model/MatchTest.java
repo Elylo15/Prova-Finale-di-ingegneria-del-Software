@@ -14,7 +14,6 @@ import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-
 class MatchTest {
     Match match;
     CommonArea commonArea;
@@ -59,14 +58,6 @@ class MatchTest {
         match.addPlayer(player2);
 
         assertEquals(players.size(), 2);
-    }
-
-    @Test
-    void notStartingIfLessThanTwo() throws Exception {
-        match.addPlayer(player1);
-
-        Exception exception = assertThrows(Exception.class, () -> match.start());
-        assertEquals("Not enough players to start the match", exception.getMessage());
     }
 
     @Test

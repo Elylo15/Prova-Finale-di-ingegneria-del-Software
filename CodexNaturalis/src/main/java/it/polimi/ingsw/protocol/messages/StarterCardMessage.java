@@ -1,46 +1,29 @@
 package it.polimi.ingsw.protocol.messages;
 
-import it.polimi.ingsw.model.CommonArea;
-import it.polimi.ingsw.model.cards.PlaceableCard;
-import it.polimi.ingsw.model.cards.StarterCard;
+import it.polimi.ingsw.model.Player;
 
 import java.io.Serializable;
 
 public class StarterCardMessage extends Message implements Serializable {
-    private String playerName;
-    private CommonArea commonArea;
-    private PlaceableCard starterCard;
+    private Player player;
     private boolean front;
 
     /**
-     * Constructor used for the messages from client to server.
-     * @param playerName nickname of the player.
-     * @param starterCard starterCard
-     * @param front side of the starterCard
+     * Constructor used for the messages from client to server and vice versa.
+     * @param player player that has to choose the starter card
+     * @param front side of the starter card
      */
-    public StarterCardMessage(String playerName,PlaceableCard starterCard, boolean front) {
-        this.playerName = playerName;
-        this.commonArea = null;
-        this.starterCard = starterCard;
+    public StarterCardMessage(Player player, boolean front) {
+        this.player = player;
         this.front = front;
     }
 
-    /**
-     * Constructor used for the messages from server to client.
-     * @param commonArea commonArea
-     * @param starterCard starterCard
-     */
-    public StarterCardMessage(CommonArea commonArea, PlaceableCard starterCard) {
-        this.playerName = null;
-        this.commonArea = commonArea;
-        this.starterCard = starterCard;
-        this.front = true;
-    }
 
-    public String getPlayerName() {return playerName;}
-    public CommonArea getCommonArea() {return commonArea;}
-    public PlaceableCard getStarterCard() {return starterCard;}
-    public boolean isFront() {return front;}
+    public Player getPlayer() {return player;}
+    public int isFront() {
+        if (front) return 1;
+        return 0;
+    }
 
     public void setFront(boolean front) {this.front = front;}
 }

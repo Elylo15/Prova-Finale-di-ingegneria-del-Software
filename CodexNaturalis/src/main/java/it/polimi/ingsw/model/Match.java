@@ -34,13 +34,8 @@ public class Match implements Serializable {
 
     /**
      * method {@code start}: set up and start the match.
-     * @throws Exception if player are less than 2.
      */
-    public void start() throws Exception {
-
-        if (players.size() < 2) {
-            throw new Exception("Not enough players to start the match");
-        }
+    public void start() {
 
         commonArea.getD1().shuffle();
         commonArea.getD2().shuffle();
