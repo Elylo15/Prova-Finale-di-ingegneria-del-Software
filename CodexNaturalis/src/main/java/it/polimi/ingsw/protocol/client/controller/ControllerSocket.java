@@ -109,12 +109,12 @@ public class ControllerSocket  extends Controller implements Runnable {
 
     @Override
     public boolean placeCard(int card, int side, int x, int y) {
-            // return true if placed Correctly
+        // return true if placed Correctly
     }
 
     @Override
     public boolean pickCard( int card) {
-            // return true if picked correctly
+        // return true if picked correctly
     }
 
     @Override
