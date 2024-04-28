@@ -189,7 +189,7 @@ public class ViewCLI extends View{
      * @param message
      */
     public void youAreKickedPlayer(kickedMessage message){
-        System.out.println(message);
+        System.out.println(message.toString());
     }
 
 

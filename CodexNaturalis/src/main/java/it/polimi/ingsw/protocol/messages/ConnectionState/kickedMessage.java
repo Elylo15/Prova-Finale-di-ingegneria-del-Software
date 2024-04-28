@@ -8,6 +8,10 @@ public class kickedMessage implements Message, Serializable {
 
     String messagge = "You have been kicked from the game";
 
+    public String toString(){
+        return messagge.toString();
+    }
+
     @Override
     public void setLock() {
 
