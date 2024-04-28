@@ -233,4 +233,14 @@ public class ControllerSocket  extends Controller implements Runnable {
             return null;
         }
     }
+
+    @Override
+    public disconnectedMessage disconnected() throws IOException {
+        try {
+            return (disconnectedMessage) inputStream.readObject();
+        } catch (IOException | ClassNotFoundException e){
+            // Handle exceptions
+            return null;
+        }
+    }
 }

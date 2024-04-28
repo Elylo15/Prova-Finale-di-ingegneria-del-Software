@@ -1,15 +1,18 @@
 package it.polimi.ingsw.protocol.client;
 
 import it.polimi.ingsw.protocol.client.controller.*;
+import it.polimi.ingsw.protocol.client.view.*;
 import it.polimi.ingsw.protocol.messages.ConnectionState.*;
 import it.polimi.ingsw.protocol.messages.ObjectiveState.*;
 import it.polimi.ingsw.protocol.messages.StaterCardState.starterCardResponseMessage;
 import it.polimi.ingsw.protocol.messages.WaitingforPlayerState.*;
 import it.polimi.ingsw.protocol.messages.PlayerTurnState.*;
 import it.polimi.ingsw.protocol.messages.EndGameState.*;
+import it.polimi.ingsw.protocol.messages.*;
 
 import java.io.IOException;
 import java.net.SocketTimeoutException;
+import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.Random;
@@ -18,8 +21,7 @@ public class Client {
     private String serverIP;
     private String serverPort;
     private boolean isSocket;
-    private boolean guiEnabled;
-    private boolean isConnected;
+    private boolean isGUI;
     private String name;
     private final ControllerSocket controller;
     private final ViewGUI view;
@@ -50,7 +52,8 @@ public class Client {
     public void run() {
         try {
             while (true) {
-                String state = controller.getCurrent().getStateName();
+                currentStateMessage current = controller.getCurrent();
+                String state = current.getStateName();
 
                 switch (state) {
                     case "ConnectionState": {
@@ -59,39 +62,38 @@ public class Client {
                         break;
                     }
                     case "WaitingForPlayerState": {
-
                         waitingPlayer();
                         break;
                     }
                     case "StarterCardState": {
-
-                        starter();
+                        if(Objects.equals(current.getPlayer().getNickname(), name)) starter();
                         break;
                     }
                     case "ObjectiveState": {
-
-                        pickObjective();
+                        if(Objects.equals(current.getPlayer().getNickname(), name)) pickObjective();
                         break;
                     }
                     case "PlayerTurnState": {
-                        placeCard();
-
-                        pickCard();
-
+                        if(Objects.equals(current.getPlayer().getNickname(), name)) {
+                            placeCard();
+                            pickCard();
+                        }
                         break;
                     }
                     case "LastTurnState": {
                         view.lastTurn();
-                        placeCard();
+                        if(Objects.equals(current.getPlayer().getNickname(), name)) placeCard();
                         break;
                     }
-                    case "EndGameState":
+                    case "EndGameState": {
                         declareWinnerMessage end = controller.endGame();
                         view.endGame(end);
                         break;
-                    default:
-                        // Handle
-                        break;
+                    }
+                    case "PlayerDisconnectedState":{
+                        disconnectedMessage disconnectedPlayer = controller.disconnected();
+                        view.disconnected(disconnectedPlayer);
+                    }
                 }
             }
         } catch (IOException | ClassNotFoundException e) {
@@ -102,7 +104,7 @@ public class Client {
     private void name() throws IOException {
         while (true) {
             unavailableNamesMessage unavailableName = controller.getUnavailableName();
-            name = view.unavailableNames(unavailableName);
+            name = view.unavaibleNames(unavailableName);
             controller.chooseName(name);
             answerNameMessage answer = controller.CorrectName();
             if(view.answerToNameChosen(answer))
@@ -131,8 +133,7 @@ public class Client {
         while (newHostName.equals(name) && matchStart[0] != 1) {
             TimerTask task = new TimerTask() {
                 public void run() {
-                    Random rand = new Random();
-                    matchStart[0] = rand.nextInt(2);
+                    matchStart[0] = 1;
                 }
             };
 
@@ -267,6 +268,6 @@ public class Client {
     }
 
     public void enableGUI(boolean guiEnabled) {
-        this.guiEnabled = guiEnabled;
+        this.isGUI = guiEnabled;
     }
 }
