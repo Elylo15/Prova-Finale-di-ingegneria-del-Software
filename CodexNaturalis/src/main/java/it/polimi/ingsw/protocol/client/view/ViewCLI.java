@@ -1,11 +1,12 @@
 package it.polimi.ingsw.protocol.client.view;
 
-import it.polimi.ingsw.protocol.messages.Connection.*;
-import it.polimi.ingsw.protocol.messages.EndGame.DeclareWinnerMessage;
-import it.polimi.ingsw.protocol.messages.PlayerTurn.PlaceCardMessage;
-import it.polimi.ingsw.protocol.messages.PlayerTurn.pickCardMessage;
-import it.polimi.ingsw.protocol.messages.PlayerTurn.pickCardResponseMessage;
-import it.polimi.ingsw.protocol.messages.PlayerTurn.placeCardResponseMessage;
+import it.polimi.ingsw.model.cards.StarterCard;
+import it.polimi.ingsw.protocol.messages.ConnectionState.*;
+import it.polimi.ingsw.protocol.messages.PlayerDisconnectedState.disconnectedMessage;
+import it.polimi.ingsw.protocol.messages.PlayerTurnState.*;
+import it.polimi.ingsw.protocol.messages.EndGameState.*;
+import it.polimi.ingsw.protocol.messages.StaterCardState.*;
+import it.polimi.ingsw.protocol.messages.ObjectiveState.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -44,9 +45,9 @@ public class ViewCLI extends View{
         BufferedReader buf = new BufferedReader(input);
         try {
 
-                System.out.println("You need to choose a nickname to play the game");
+            System.out.println("You need to choose a nickname to play the game");
 
-                name = buf.readLine();
+            name = buf.readLine();
 
         }
         catch (IOException e){
@@ -70,12 +71,12 @@ public class ViewCLI extends View{
      */
     public void answerToNameChose(boolean choice){
         //the client will call view.answerToNameChose(true) if he received a positive response, else view.answerToNameChose(false)
-       if(choice){
-           System.out.println("You have entered a correct choice");
-       }
-       else{
-           System.out.println("You didn't entered a correct choice, please try again");
-       }
+        if(choice){
+            System.out.println("You have entered a correct choice");
+        }
+        else{
+            System.out.println("You didn't entered a correct choice, please try again");
+        }
     }
 
 
@@ -135,22 +136,51 @@ public class ViewCLI extends View{
         }
     }
 
+    /**
+     * this method tells the user it's his turn to play
+     * @param turn
+     */
+    public void yourTurnStarts(yourTurnStarts turn){
+        System.out.println(turn.toString());
+    }
 
-    public void placeCard(PlaceCardMessage message){
+    /**
+     * this method tells the user it is not his turn to play
+     * @param turn
+     */
+    public void notYourTurnStarts(notYourTurnStarts turn){
+        System.out.println(turn.toString());
+    }
+    public int placeStarter(){
+
+    }
+    public boolean answerToPlaceStarter(starterCardResponseMessage message){
+
+    }
+    public int chooseObjective(){
+
+    }
+    public boolean answerToChooseObjective(objectiveCardResponseMessage message){
 
     }
 
-    public void drawCard(pickCardMessage message){
+
+    public  int[] placeCard(){
+
+    }
+    public  boolean answerToPlaceCard(placeCardResponseMessage message){
 
     }
 
-    public boolean answerToPlaceCard(placeCardResponseMessage message){
+
+    public  int pickCard(){
 
     }
-    public boolean answerToPickCard(pickCardResponseMessage message){
+
+    public  boolean answerToPickCard(pickCardResponseMessage message){
 
     }
-    public void endGame(DeclareWinnerMessage message){
+    public void endGame(declareWinnerMessage message){
 
     }
 
