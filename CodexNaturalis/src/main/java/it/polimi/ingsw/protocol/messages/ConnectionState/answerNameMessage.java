@@ -1,10 +1,10 @@
-package it.polimi.ingsw.protocol.messages.Connection;
+package it.polimi.ingsw.protocol.messages.ConnectionState;
 
 import it.polimi.ingsw.protocol.messages.Message;
 
 import java.io.Serializable;
 
-public class choseNameMessage implements Message, Serializable {
+public class answerNameMessage implements Message, Serializable {
     @Override
     public void setLock() {
 

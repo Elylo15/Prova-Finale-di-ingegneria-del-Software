@@ -1,14 +1,14 @@
-package it.polimi.ingsw.protocol.messages.PlayerTurn;
+package it.polimi.ingsw.protocol.messages.PlayerTurnState;
 
 import it.polimi.ingsw.protocol.messages.Message;
 
 import java.io.Serializable;
 
-public class UpdatePlayerMessage implements Message, Serializable {
+public class updatePlayerMessage implements Message, Serializable {
     private final String player;
 
 
-    public UpdatePlayerMessage(String player) {
+    public updatePlayerMessage(String player) {
         this.player = player;
 
     }

@@ -2,12 +2,12 @@ package it.polimi.ingsw.protocol.messages;
 
 import it.polimi.ingsw.model.Player;
 
-public class CurrentStateMessage implements Message{
+public class currentStateMessage implements Message{
     private final Player player;
     private final String stateName;
     private boolean lastTurn;
 
-    public CurrentStateMessage(Player player, String stateName, boolean lastTurn){
+    public currentStateMessage(Player player, String stateName, boolean lastTurn){
         this.player = player;
         this.stateName = stateName;
         this.lastTurn = lastTurn;

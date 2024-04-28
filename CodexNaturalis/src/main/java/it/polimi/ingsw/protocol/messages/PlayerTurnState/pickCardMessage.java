@@ -1,4 +1,4 @@
-package it.polimi.ingsw.protocol.messages.PlayerTurn;
+package it.polimi.ingsw.protocol.messages.PlayerTurnState;
 
 import it.polimi.ingsw.protocol.messages.Message;
 
@@ -15,16 +15,10 @@ public class pickCardMessage implements Message, Serializable {
         this.position = position;
     }
 
-    public boolean isGold() {
-        return gold;
-    }
-    public boolean getFaceUp() {
-        return faceUp;
+    public pickCardMessage(int card) {
+
     }
 
-    public int getPosition() {
-        return position;
-    }
 
     @Override
     public void setLock() {

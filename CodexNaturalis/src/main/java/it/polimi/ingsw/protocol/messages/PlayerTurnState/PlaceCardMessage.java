@@ -1,4 +1,4 @@
-package it.polimi.ingsw.protocol.messages.PlayerTurn;
+package it.polimi.ingsw.protocol.messages.PlayerTurnState;
 
 import it.polimi.ingsw.protocol.messages.Message;
 

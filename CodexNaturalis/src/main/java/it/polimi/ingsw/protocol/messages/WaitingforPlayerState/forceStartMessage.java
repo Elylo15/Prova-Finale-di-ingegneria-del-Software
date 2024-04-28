@@ -1,12 +1,15 @@
-package it.polimi.ingsw.protocol.messages.WaitingforPlayer;
+package it.polimi.ingsw.protocol.messages.WaitingforPlayerState;
 
 import it.polimi.ingsw.protocol.messages.Message;
 
 import java.io.Serializable;
 
-public class ForceStartMessage implements Message, Serializable {
+public class forceStartMessage implements Message, Serializable {
     private String hostNickname;
     private boolean startSignal;
+
+    public forceStartMessage(String name, boolean startSignal) {
+    }
 
     public String getHostNickname() {
         return hostNickname;

@@ -1,11 +1,18 @@
 package it.polimi.ingsw.protocol.client;
 
-import it.polimi.ingsw.model.cards.ObjectiveCard;
 import it.polimi.ingsw.protocol.client.controller.*;
-import it.polimi.ingsw.protocol.client.view.*;
+import it.polimi.ingsw.protocol.messages.ConnectionState.*;
+import it.polimi.ingsw.protocol.messages.ObjectiveState.*;
+import it.polimi.ingsw.protocol.messages.StaterCardState.starterCardResponseMessage;
+import it.polimi.ingsw.protocol.messages.WaitingforPlayerState.*;
+import it.polimi.ingsw.protocol.messages.PlayerTurnState.*;
+import it.polimi.ingsw.protocol.messages.EndGameState.*;
 
-import java.util.ArrayList;
-import java.util.concurrent.*;
+import java.io.IOException;
+import java.net.SocketTimeoutException;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.Random;
 
 public class Client {
     private String serverIP;
@@ -13,211 +20,238 @@ public class Client {
     private boolean isSocket;
     private boolean guiEnabled;
     private boolean isConnected;
-    private final Controller controller;
-    private final View view;
+    private String name;
+    private final ControllerSocket controller;
+    private final ViewGUI view;
 
-    public Client(View view, Controller controller) {
-    this.view = view;
-    this.controller = controller;
+    public Client(ViewGUI view, ControllerSocket controller) {
+        this.view = view; //GUI default poi ask
+        this.controller = controller;
     }
 
-    public void startGame() throws InterruptedException {
+    public void startGame() throws  IOException {
         connection();
-
-        boolean isHost = controller.isHost(); //ask controller if first player connected, return true if it is
-        if(isHost)
-            view.displayYouAreHost();
-
-        choseNickname();
-        choseColor();
-
-        if(isHost)
-            startIfHost();
-
-        playingFirstTurn();
-
-        playingTurn();
-
-        playingLastTurn();
-
+        run();
     }
 
-    private void playingLastTurn() throws InterruptedException {
-        while(controller.lastTurnSignal()) {
-            if (controller.yourLastTurnSignal()) {
-                view.yourLastTurnStarts();
-                playLastTurn();
-            } else
-                view.notYourTurn();
-        }
-        Thread.sleep(2000);
-    }
-
-    private void playingTurn() throws InterruptedException {
-        while(!controller.yourLastTurnSignal()) {
-            if (controller.yourTurnSignal()) {
-                view.yourTurnStarts();
-                playYourTurn();
-            } else
-                view.notYourTurn();
-            
-            Thread.sleep(2000);
-        }
-    }
-
-    private void playingFirstTurn() throws InterruptedException {
-        while(controller.firstTurnSignal()) {
-            if (controller.yourFirstTurnSignal()) {
-                view.yourFirstTurnStarts();
-                playFirstTurn();
-            } else
-                view.notYourTurn();
-            
-            Thread.sleep(2000);
-        }
-    }
-
-    private void connection(){
+    private void connection() throws IOException {
         setSocket(view.askSocket());
         enableGUI(view.askGui());
 
-        controller.connectToServer(serverIP, serverPort);
-        String connectionMessage = controller.sendAnswerToConnection();
-        view.answerToConnection(connectionMessage);
-        isConnected = true;
-    }
-
-    private void choseNickname(){
-        String nickname;
-        ArrayList<String> unavailableNickname;
-        boolean validNickname;
-
-        do {
-            unavailableNickname = controller.unaviableNicknames();
-            view.displayUnaviableNicknames(unavailableNickname);
-            nickname = view.askNickname();
-            controller.chooseNickname(nickname);
-            validNickname = controller.nicknameConfirmation();
-
-            if (!validNickname)
-                view.nicknameError();
-
-            validNickname = view.nicknameCorrect();
-
-        } while (!validNickname);
-    }
-
-    public void choseColor(){
-        String color;
-        ArrayList<String> availableColor;
-        boolean validColor;
-
-        do {
-            availableColor = controller.aviableColors();
-            view.displayAviableColors(availableColor);
-            color = view.askColor();
-            controller.chooseColor(color);
-            validColor = controller.colorConfirmation();
-
-            if (!validColor)
-                view.colorError();
-
-            validColor = view.colorCorrect();
-
-        } while (!validColor);
-    }
-
-    public void startIfHost(){
-            boolean startMatch = false;
-
-            do {
-                boolean moreThanTwo = controller.enoughPlayers();
-                boolean everyoneReady = controller.everyoneCorrectColor();
-                if(moreThanTwo && everyoneReady) {
-                    boolean readyStartMatch = waitForMatchStart(); //player chooses if he wants to start
-                    startMatch = controller.startingMatch(readyStartMatch); //the controller checks if the match should start
-                    //it returns false for example if another player connected, and will ask again the host
-                }
-
-            }  while (!startMatch);
-    }
-
-    private boolean waitForMatchStart() {
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-
         try {
-            Future<Boolean> result = executor.submit(() -> view.displayStartMatch());
-            return result.get(5, TimeUnit.MINUTES); // Wait for 5 minutes for user input
-        } catch (InterruptedException | ExecutionException | TimeoutException e) {
-            return true;
-        } finally {
-            executor.shutdown();
+            controller.connectToServer(serverIP, serverPort);
+            controller.answerConnection();
+            view.answerToConnection();
+        } catch (SocketTimeoutException e) {
+            //handle
         }
     }
 
-    public void playFirstTurn() {
+    public void run() {
+        try {
+            while (true) {
+                String state = controller.getCurrent().getStateName();
 
-        boolean placedCorrectly;
-        do {
-            view.displayStarter();
-            int side = view.getSideStarter();
-            placedCorrectly = controller.placeStarter(side);
-            view.answerToPlaceStarter();
-        } while(!placedCorrectly);
+                switch (state) {
+                    case "ConnectionState": {
+                        name();
+                        color();
+                        break;
+                    }
+                    case "WaitingForPlayerState": {
 
-        boolean pickedCorrectly;
-        do {
-            ArrayList<ObjectiveCard> objective = controller.getObjectives();
-            int pick = view.pickObjective(objective);
-            pickedCorrectly = controller.pickedObjective(pick);
-            view.answerToPickObjective(pickedCorrectly);
-        } while (!pickedCorrectly);
+                        waitingPlayer();
+                        break;
+                    }
+                    case "StarterCardState": {
 
+                        starter();
+                        break;
+                    }
+                    case "ObjectiveState": {
+
+                        pickObjective();
+                        break;
+                    }
+                    case "PlayerTurnState": {
+                        placeCard();
+
+                        pickCard();
+
+                        break;
+                    }
+                    case "LastTurnState": {
+                        view.lastTurn();
+                        placeCard();
+                        break;
+                    }
+                    case "EndGameState":
+                        declareWinnerMessage end = controller.endGame();
+                        view.endGame(end);
+                        break;
+                    default:
+                        // Handle
+                        break;
+                }
+            }
+        } catch (IOException | ClassNotFoundException e) {
+            // Handle exceptions
+        }
     }
 
-    public void playYourTurn(){
-
-        placeCard();
-
-        boolean pickedCorrectly;
-        do{
-            view.displayOptionsDraw();
-            int pick = view.getOptionDraw();
-            pickedCorrectly = controller.pickCard(pick);
-            view.answerToPickCard();
-        } while (!pickedCorrectly);
+    private void name() throws IOException {
+        while (true) {
+            unavailableNamesMessage unavailableName = controller.getUnavailableName();
+            name = view.unavailableNames(unavailableName);
+            controller.chooseName(name);
+            answerNameMessage answer = controller.CorrectName();
+            if(view.answerToNameChosen(answer))
+                break;
+        }
     }
 
-    public void playLastTurn(){
-        placeCard();
+    private void color() throws IOException {
+        while (true) {
+            availableColorsMessage availableColor = controller.getAvailableColor();
+            String color = view.availableColors(availableColor);
+            controller.chooseColor(color);
+            answerColorMessage colorAnswer = controller.correctColor();
+            if(view.answerToColorChosen(colorAnswer))
+                break;
+        }
     }
 
-    private void placeCard() {
-        boolean placedCorrectly;
-        do {
-            view.displayPlayerHand();
-            int card = view.getCard();
-            int side = view.getSide();
-            String position = controller.getAvailablePosition();
-            view.displayAvailablePosition(availablePosition);
-            int x = view.getPosition();
-            int y = view.getPosition();
-            placedCorrectly = controller.placeCard(card, side, x, y);
-            view.answerToPlaceStarter(placedCorrectly);
-        } while(!placedCorrectly);
+    private void waitingPlayer() throws IOException {
+        final int[] matchStart = new int[1];
+        Timer timer = new Timer();
+
+        newHostMessage newHost = controller.newHost();
+        String newHostName = newHost.getName();
+
+        while (newHostName.equals(name) && matchStart[0] != 1) {
+            TimerTask task = new TimerTask() {
+                public void run() {
+                    Random rand = new Random();
+                    matchStart[0] = rand.nextInt(2);
+                }
+            };
+
+            timer.schedule(task, 240000); //2 min
+
+            matchStart[0] = view.newHost();
+            timer.cancel();
+            controller.startSignal(this.name, (matchStart[0] == 1));
+        }
+
+        timer.cancel();
     }
 
+    private void starter() throws IOException {
+        final int[] side = new int[1];
+        Timer timer = new Timer();
+
+        while (true) {
+            TimerTask task = new TimerTask() {
+                public void run() {
+                    Random rand = new Random();
+                    side[0] = rand.nextInt(2);
+                }
+            };
+
+            timer.schedule(task, 240000); //2 min
+
+            side[0] = view.placeStarter();
+            timer.cancel();
+            controller.placeStarter(side[0]);
+            starterCardResponseMessage answer = controller.correctStarter();
+            if(view.answerToPlaceStarter(answer))
+                break;
+        }
+
+        timer.cancel();
+    }
+
+    private void pickObjective() throws IOException {
+        final int[] pick = new int[1];
+        Timer timer = new Timer();
+
+        while (true) {
+            TimerTask task = new TimerTask() {
+                public void run() {
+                    Random rand = new Random();
+                    pick[0] = rand.nextInt(2);
+                }
+            };
+
+            timer.schedule(task, 240000); //2 min
+
+            pick[0] = view.chooseObjective();
+            timer.cancel();
+            controller.chooseObjective(pick[0]);
+            objectiveCardResponseMessage answer = controller.correctObjective();
+            if(view.answerToChooseObjective(answer))
+                break;
+        }
+
+        timer.cancel();
+    }
+
+    private void pickCard() throws IOException {
+        final int[] card = new int[1];
+        Timer timer = new Timer();
+
+        while (true) {
+            TimerTask task = new TimerTask() {
+                public void run() {
+                    Random rand = new Random();
+                    card[0] = rand.nextInt(7);
+                }
+            };
+
+            timer.schedule(task, 240000); //2 min
+
+            card[0] = view.pickCard();
+            timer.cancel();
+            controller.pickCard(card[0]);
+            pickCardResponseMessage answer = controller.correctPicked();
+            if(view.answerToPickCard(answer))
+                break;
+        }
+
+        timer.cancel();
+    }
+
+    private void placeCard() throws IOException {
+        final int[] card = new int[4];
+        Timer timer = new Timer();
+
+        while (true) {
+            TimerTask task = new TimerTask() {
+                public void run() {
+                    Random rand = new Random();
+                    card[0] = rand.nextInt(3);
+                    card[1] = rand.nextInt(2);
+                    //get available position and chose from there
+                    //card[2] = rand.nextInt(3);
+                    //card[3] = rand.nextInt(3);
+                }
+            };
+
+            timer.schedule(task, 240000); //2 min
+
+            card = view.placeCard();
+            timer.cancel();
+            controller.placeCard(card[0], card[1], card[2], card[3]);
+            placeCardResponseMessage answer = controller.correctPlaced();
+            if(view.answerToPlaceCard(answer))
+                break;
+        }
+
+        timer.cancel();
+    }
 
     public void setIP(String serverIP) {
         this.serverIP = serverIP;
-    }
-
-    public void setSocket(boolean isSocket) {
-        this.isSocket = isSocket;
-    }
-
-    public void enableGUI(boolean guiEnabled) {
-        this.guiEnabled = guiEnabled;
     }
 
     public String getIP() {
@@ -226,5 +260,13 @@ public class Client {
 
     public String getPort() {
         return serverPort;
+    }
+
+    public void setSocket(boolean isSocket) {
+        this.isSocket = isSocket;
+    }
+
+    public void enableGUI(boolean guiEnabled) {
+        this.guiEnabled = guiEnabled;
     }
 }

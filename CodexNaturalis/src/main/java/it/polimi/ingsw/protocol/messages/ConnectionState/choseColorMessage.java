@@ -1,11 +1,10 @@
-package it.polimi.ingsw.protocol.messages.PlayerTurn;
+package it.polimi.ingsw.protocol.messages.ConnectionState;
 
 import it.polimi.ingsw.protocol.messages.Message;
 
 import java.io.Serializable;
 
-public class pickCardResponseMessage implements Message, Serializable {
-
+public class choseColorMessage implements Message, Serializable {
     @Override
     public void setLock() {
 

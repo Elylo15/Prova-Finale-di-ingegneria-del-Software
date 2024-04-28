@@ -1,10 +1,10 @@
-package it.polimi.ingsw.protocol.messages.WaitingforPlayer;
+package it.polimi.ingsw.protocol.messages.WaitingforPlayerState;
 
 import it.polimi.ingsw.protocol.messages.Message;
 
 import java.io.Serializable;
 
-public class NewHostMessage implements Message, Serializable {
+public class newHostMessage implements Message, Serializable {
     private String newHostNickname;
     private boolean matchStarts;
 
@@ -30,4 +30,8 @@ public class NewHostMessage implements Message, Serializable {
     public void unlock() {
 
     }
+
+    public String getName() {
+    }
+
 }
