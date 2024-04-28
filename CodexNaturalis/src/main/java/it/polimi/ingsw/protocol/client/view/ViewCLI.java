@@ -151,35 +151,79 @@ public class ViewCLI extends View{
     public void notYourTurnStarts(notYourTurnStarts turn){
         System.out.println(turn.toString());
     }
+
+    /**
+     *
+     *
+     */
     public int placeStarter(){
 
     }
+
+    /**
+     *
+     * @param message
+     * @return
+     */
     public boolean answerToPlaceStarter(starterCardResponseMessage message){
 
     }
+
+    /**
+     *
+     * @return
+     */
     public int chooseObjective(){
 
     }
+
+    /**
+     *
+     * @param message
+     * @return
+     */
     public boolean answerToChooseObjective(objectiveCardResponseMessage message){
 
     }
 
-
+    /**
+     *
+     * @return
+     */
     public  int[] placeCard(){
 
     }
+
+    /**
+     *
+     * @param message
+     * @return
+     */
     public  boolean answerToPlaceCard(placeCardResponseMessage message){
 
     }
 
-
+    /**
+     *
+     * @return
+     */
     public  int pickCard(){
 
     }
 
+    /**
+     *
+     * @param message
+     * @return
+     */
     public  boolean answerToPickCard(pickCardResponseMessage message){
 
     }
+
+    /**
+     *
+     * @param message
+     */
     public void endGame(declareWinnerMessage message){
 
     }
