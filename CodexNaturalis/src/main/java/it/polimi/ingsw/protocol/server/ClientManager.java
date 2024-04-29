@@ -6,9 +6,6 @@ import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.cards.ObjectiveCard;
 import it.polimi.ingsw.model.cards.PlaceableCard;
 import it.polimi.ingsw.model.cards.exceptions.noPlaceCardException;
-import it.polimi.ingsw.protocol.messages.*;
-import it.polimi.ingsw.protocol.server.FSM.Event;
-import it.polimi.ingsw.protocol.server.FSM.GameStatusFSM;
 import it.polimi.ingsw.protocol.server.FSM.State;
 
 import java.util.ArrayList;
@@ -18,7 +15,6 @@ import java.util.concurrent.*;
 public class ClientManager implements Runnable{
     private Match match;
     private HashMap<Player, ClientConnection> players; // Only online players, total players are stored in Match
-    private int expectedPlayers;
     private final String matchFolderPath;
     private String portSocket;
     private String portRMI;
@@ -30,10 +26,13 @@ public class ClientManager implements Runnable{
     private boolean lastTurn;
 
 
-
-    public ClientManager(Match match, int expectedPlayers, String matchFolderPath) {
+    /**
+     * Standard constructor for ClientManager
+     * @param match object representing the model
+     * @param matchFolderPath path where the game is saved
+     */
+    public ClientManager(Match match,  String matchFolderPath) {
         this.match = match;
-        this.expectedPlayers = expectedPlayers;
         this.matchFolderPath = matchFolderPath;
         this.lastTurn = false;
 
@@ -50,8 +49,16 @@ public class ClientManager implements Runnable{
 
     }
 
+    /**
+     * Sets the new ports for the protocols.
+     * @param portSocket port for Socket
+     * @param portRMI port for RMI
+     */
     public void setPorts(String portSocket, String portRMI) {
-
+        if(portSocket != portRMI) {
+            this.portSocket = portSocket;
+            this.portRMI = portRMI;
+        }
     }
 
     public void acceptConnectionSocket() {
@@ -66,14 +73,12 @@ public class ClientManager implements Runnable{
 
     }
 
-    public void startGame() {
-
-    }
-
+    // Maybe should be eliminated
     public void closeGame() {
 
     }
 
+    // Maybe should be eliminated
     public void startLoadedGame() {
 
     }
