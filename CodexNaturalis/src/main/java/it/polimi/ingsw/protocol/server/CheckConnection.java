@@ -5,7 +5,7 @@ import java.util.TimerTask;
 
 public abstract class CheckConnection {
     private final int timeOut;
-    private final boolean isAlive;
+    private boolean isAlive;
 
     /**
      * constructs a new method {@code checkConnection}.
@@ -33,12 +33,7 @@ public abstract class CheckConnection {
         }, 0, timeOut);
     }
 
-    /**
-     * @return boolean isAlive.
-     */
-    public boolean getIsAlive() {
-        return isAlive;
-    }
+
 
     /**
      * method {@code checkIsAlive}: pings the client to check if alive.Changes the state
@@ -46,4 +41,18 @@ public abstract class CheckConnection {
      */
     public abstract void checkIsAlive();
 
+    public int getTimeOut() {
+        return timeOut;
+    }
+
+    /**
+     * @return boolean isAlive.
+     */
+    public boolean getIsAlive() {
+        return isAlive;
+    }
+
+    public void setAlive(boolean alive) {
+        isAlive = alive;
+    }
 }

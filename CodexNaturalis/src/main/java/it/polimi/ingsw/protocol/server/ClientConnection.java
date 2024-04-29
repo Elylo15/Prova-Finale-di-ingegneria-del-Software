@@ -1,13 +1,22 @@
 package it.polimi.ingsw.protocol.server;
 
-import it.polimi.ingsw.protocol.messages.Connection.*;
-import it.polimi.ingsw.protocol.messages.CurrentStateMessage;
-import it.polimi.ingsw.protocol.messages.EndGame.DeclareWinnerMessage;
-import it.polimi.ingsw.protocol.messages.ObjectiveState.ObjectiveCardMessage;
-import it.polimi.ingsw.protocol.messages.PlayerTurn.*;
-import it.polimi.ingsw.protocol.messages.StaterCardState.StarterCardMessage;
 
+
+
+import it.polimi.ingsw.protocol.messages.ConnectionState.choseColorMessage;
+import it.polimi.ingsw.protocol.messages.ConnectionState.choseNameMessage;
+import it.polimi.ingsw.protocol.messages.ConnectionState.connectionResponseMessage;
+import it.polimi.ingsw.protocol.messages.ConnectionState.unavailableNamesMessage;
+import it.polimi.ingsw.protocol.messages.EndGameState.declareWinnerMessage;
+import it.polimi.ingsw.protocol.messages.ObjectiveState.objectiveCardMessage;
+import it.polimi.ingsw.protocol.messages.PlayerTurnState.*;
+import it.polimi.ingsw.protocol.messages.StaterCardState.starterCardMessage;
+import it.polimi.ingsw.protocol.messages.WaitingforPlayerState.expectedPlayerMessage;
+import it.polimi.ingsw.protocol.messages.currentStateMessage;
+
+import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * ClientConnection class
@@ -18,6 +27,7 @@ public abstract class ClientConnection implements Runnable {
     private String IP;
     private String port;
     private CheckConnection connection;
+    private final Socket socket;
 
     /**
      * Class constructor
@@ -25,9 +35,10 @@ public abstract class ClientConnection implements Runnable {
      * @param IP the IP address of the server.
      * @param port the port of the server.
      */
-    public ClientConnection(String IP, String port) {
+    public ClientConnection(String IP, String port, Socket socket) {
         this.IP = IP;
         this.port = port;
+        this.socket = socket;
     }
 
     /**
@@ -50,96 +61,66 @@ public abstract class ClientConnection implements Runnable {
         return port;
     }
 
-    /**
-     * Method return the connection.
-     */
+
     public CheckConnection getConnection(){
         return connection;
     }
 
-    /**
-     * Method asks the host if the match should start and return the answer
-     */
-    public abstract boolean getStart(String hostNickname);
+    public Socket getSocket() {
+        return socket;
+    }
 
-    /**
-     * Method that creates a message with whom the host is and whether the game can start or not
-     */
-    public abstract void sendNewHostMessage(String hostNickname, boolean startSignal);
+    //manda il nome dell'host
+    public abstract void sendNewHostMessage(String hostNickname);
 
-    /**
-     * Method start the connection
-     */
+    //ricevi il numero dei player per la partita
+    public abstract expectedPlayerMessage getExpectedPlayer();
+    //manda feedback al client
+    public  abstract void sendAnswerToExpected (boolean correct);
+
+    //crea un thread e fai partire il checkConnection
     public abstract void startCheckConnection();
 
-    /**
-     * Method sends a message with unavailable names and receives the name chosen by the client as a response
-     */
-    public abstract String getName(ArrayList<String> unavailableNames);
+    public abstract void sendAnswerToConnection(connectionResponseMessage message);
 
-    /**
-     *Method sends a message with the available colors and receives as a response the color chosen by the client
-     */
-    public abstract String getColor(ArrayList<String> availableColors);
+    //manda la lista dei nomi già usati
+    public abstract void sendUnvailableName(ArrayList<String> unavailableNames);
 
-    /**
-     * Method creates a currentState message and receives the ObjectiveCard chosen by the client as a response
-     */
-    public abstract ObjectiveCardMessage getChosenObjective(CurrentStateMessage currentState);
+    //ricevi il nome del client
+    public abstract choseNameMessage getName();
 
-    /**
-     * Method creates a currentState message and receives the StarterCard assigned to the client as a response
-     */
-    public abstract StarterCardMessage getStarterCard(CurrentStateMessage currentState);
+    //manda la lista dei colori disponibili
+    public abstract void sendAvailableColor(ArrayList<String> availableColors);
 
-    /**
-     * Method creates a currentState message and receives the PlaceCard chosen by the client as a response
-     */
-    public abstract PlaceCardMessage getPlaceCard(CurrentStateMessage currentState);
+    //ricevi il colore scelto
+    public abstract choseColorMessage getColor();
 
-    /**
-     * Method creates an UpdatePlayer message and receives the card drawn by the client as a response
-     */
-    public abstract pickCardMessage getChosenPick(UpdatePlayerMessage message);
+    //manda lo stato al client
+    public abstract void sendCurrentState(currentStateMessage currentState);
 
-    /**
-     * Method send a message to establish the connection
-     */
-    public abstract void sendAnswerToConnection(answerConnectionMessage message);
+    //riceve StarterCardMessage dal client
+    public abstract starterCardMessage getStaterCard();
 
+    //riceve ObjectiveCardMessage dal client
+    public abstract objectiveCardMessage getChosenObjective();
 
-    /**
-     * Method send a message to ask for the name
-     */
+    //riceve PlaceCardMessage dal client
+    public abstract PlaceCardMessage getPlaceCard();
+
+    //riceve pickCardMessage dal client
+    public abstract pickCardMessage getChosenPick();
+
+    //mandi al client il feedback del server (crea il messaggio che si chiama uguale ma con Response)
     public abstract void sendAnswerToChosenName(boolean correctChoice);
-
-    /**
-     * Method send a message to ask for the color
-     */
     public abstract void sendAnswerToChosenColor(boolean correctChoice);
-
-    /**
-     * Method send a message to ask for the PlaceCard
-     */
-    public abstract void sendShowAnswerToPlaceCard(placeCardResponseMessage message);
-
-    /**
-     * Method send a message to ask for the drawn card
-     */
-    public abstract void sendShowAnswerToPickCard(pickCardResponseMessage message);
-
-    /**
-     * Method send a message to let you know who won
-     */
-    public abstract void sendEndGame(CurrentStateMessage currentState, DeclareWinnerMessage winner);
-
-    /**
-     * Method sends a message to throw the client out
-     */
-    abstract void sendKicked(kickedMessage message);
+    public abstract void sendAnswerToStaterCard(boolean correctChoice);
+    public abstract void sendAnswerToObjectiveCard(boolean correctChoice);
+    public abstract void sendAnswerToPlaceCard(boolean correctChoice);
+    public abstract void sendAnswerToPickCard(boolean correctChoice);
 
 
-
+    //crea il decleareWinnerMessage con i valori nei paramentri
+    public abstract void sendEndGame(HashMap<String, Integer> scores,HashMap<String, Integer> numberOfObjectives);
 
 
 
