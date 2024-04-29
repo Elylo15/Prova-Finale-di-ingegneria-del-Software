@@ -7,13 +7,9 @@ import java.io.Serializable;
 
 
 public class objectiveCardMessage implements Message, Serializable {
-
-    private final ObjectiveCard[] objectives;
-    private final int choice;
-
+    private int choice;
 
     public objectiveCardMessage(int choice) {
-        this.objectives = objectives;
         this.choice = choice;
     }
 
@@ -21,14 +17,8 @@ public class objectiveCardMessage implements Message, Serializable {
         return choice;
     }
 
-    public ObjectiveCard[] getObjectives() {
-        return objectives;
-    }
-
     @Override
-    public void setLock() {
-
-    }
+    public void setLock() {}
 
     @Override
     public boolean isLocked() {
@@ -36,7 +26,5 @@ public class objectiveCardMessage implements Message, Serializable {
     }
 
     @Override
-    public void unlock() {
-
-    }
+    public void unlock() {}
 }

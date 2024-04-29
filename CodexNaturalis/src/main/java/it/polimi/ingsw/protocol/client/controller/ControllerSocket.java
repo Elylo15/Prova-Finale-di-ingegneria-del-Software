@@ -26,23 +26,21 @@ public class ControllerSocket  extends Controller implements Runnable {
     }
 
     @Override
-    public void connectToServer(String serverIP, String serverPort) {
+    public void connectToServer(String serverIP, String serverPort) throws IOException {
         try {
             socket = new Socket(serverIP, Integer.parseInt(serverPort));
             outputStream = new ObjectOutputStream(socket.getOutputStream());
             inputStream = new ObjectInputStream(socket.getInputStream());
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new IOException(e);
         }
     }
 
     @Override
-    public void answerConnection() throws IOException {
+    public connectionResponseMessage answerConnection() {
         try {
-            outputStream.writeObject(new answerConnectionMessage());
-            outputStream.flush();
-        } catch (IOException e) {
-            // Handle exceptions
+            return (connectionResponseMessage) inputStream.readObject();
+        } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
@@ -52,8 +50,7 @@ public class ControllerSocket  extends Controller implements Runnable {
         try {
             return (currentStateMessage) inputStream.readObject();
         } catch (IOException | ClassNotFoundException e) {
-                // Handle exceptions
-            return null;
+            throw new RuntimeException(e);
         }
     }
 
@@ -62,216 +59,195 @@ public class ControllerSocket  extends Controller implements Runnable {
         try {
             return (serverOptionMessage) inputStream.readObject();
         } catch (IOException | ClassNotFoundException e) {
-            // Handle exceptions
-            return null;
+            throw new RuntimeException(e);
         }
     }
 
     @Override
-    public void sendOptions(serverOptionMessage options) throws IOException {
+    public void sendOptions(serverOptionMessage options) {
         try {
             outputStream.writeObject(options);
             outputStream.flush();
         } catch (IOException e) {
-            // Handle exceptions
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    public answerServerOptionMessage correctOption() {
+    public serverOptionResponseMessage correctOption() {
         try {
-            return (answerServerOptionMessage) inputStream.readObject();
+            return (serverOptionResponseMessage) inputStream.readObject();
         } catch (IOException | ClassNotFoundException e) {
-            // Handle exceptions
-            return null;
+            throw new RuntimeException(e);
         }
     }
 
     @Override
-    public unavailableNamesMessage getUnavailableName() throws IOException {
+    public unavailableNamesMessage getUnavailableName() {
         try {
             return (unavailableNamesMessage) inputStream.readObject();
         } catch (IOException | ClassNotFoundException e){
-            // Handle exceptions
-            return null;
+            throw new RuntimeException(e);
         }
     }
 
     @Override
-    public void chooseName(String name) throws IOException {
+    public void chooseName(String name) {
         try {
             outputStream.writeObject(new choseNameMessage(name));
             outputStream.flush();
         } catch (IOException e) {
-            // Handle exceptions
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    public answerNameMessage correctName() throws IOException {
+    public nameResponseMessage correctName() {
         try {
-            return (answerNameMessage) inputStream.readObject();
+            return (nameResponseMessage) inputStream.readObject();
         } catch (IOException | ClassNotFoundException e){
-            // Handle exceptions
-            return null;
+            throw new RuntimeException(e);
         }
     }
 
     @Override
-    public availableColorsMessage getAvailableColor() throws IOException {
+    public availableColorsMessage getAvailableColor() {
         try {
             return (availableColorsMessage) inputStream.readObject();
         } catch (IOException | ClassNotFoundException e){
-            // Handle exceptions
-            return null;
+            throw new RuntimeException(e);
         }
     }
 
     @Override
-    public void chooseColor(String color) throws IOException {
+    public void chooseColor(String color) {
         try {
             outputStream.writeObject(new choseNameMessage(color));
             outputStream.flush();
         } catch (IOException e) {
-            // Handle exceptions
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    public answerColorMessage correctColor() throws IOException {
+    public colorResponseMessage correctColor() {
         try {
-            return (answerColorMessage) inputStream.readObject();
+            return (colorResponseMessage) inputStream.readObject();
         } catch (IOException | ClassNotFoundException e){
-            // Handle exceptions
-            return null;
+            throw new RuntimeException(e);
         }
     }
 
     @Override
-    public newHostMessage newHost() throws IOException {
+    public newHostMessage newHost() {
         try {
             return (newHostMessage) inputStream.readObject();
         } catch (IOException | ClassNotFoundException e){
-            // Handle exceptions
-            return null;
+            throw new RuntimeException(e);
         }
     }
 
     @Override
-    public void expectedPlayers(int expected) throws IOException {
+    public void expectedPlayers(int expected) {
         try {
             outputStream.writeObject(new expectedPlayersMessage (expected));
             outputStream.flush();
         } catch (IOException e) {
-            // Handle exceptions
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    public answerExpectedPlayersMessage correctExpectedPlayers() throws IOException {
+    public expectedPlayersResponseMessage correctExpectedPlayers() {
         try {
-            return (answerExpectedPlayersMessage) inputStream.readObject();
+            return (expectedPlayersResponseMessage) inputStream.readObject();
         } catch (IOException | ClassNotFoundException e){
-            // Handle exceptions
-            return null;
+            throw new RuntimeException(e);
         }
     }
 
     @Override
-    public void placeStarter(int side) throws IOException {
+    public void placeStarter(int side) {
         try {
             outputStream.writeObject(new starterCardMessage(side));
             outputStream.flush();
         } catch (IOException e) {
-            // Handle exceptions
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    public starterCardResponseMessage correctStarter() throws IOException {
+    public starterCardResponseMessage correctStarter() {
         try {
             return (starterCardResponseMessage) inputStream.readObject();
         } catch (IOException | ClassNotFoundException e){
-            // Handle exceptions
-            return null;
+            throw new RuntimeException(e);
         }
     }
 
     @Override
-    public void chooseObjective(int pick) throws IOException {
+    public void chooseObjective(int pick) {
         try {
             outputStream.writeObject(new objectiveCardMessage(pick));
             outputStream.flush();
         } catch (IOException e) {
-            // Handle exceptions
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    public objectiveCardResponseMessage correctObjective() throws IOException {
+    public objectiveCardResponseMessage correctObjective() {
         try {
             return (objectiveCardResponseMessage) inputStream.readObject();
         } catch (IOException | ClassNotFoundException e){
-            // Handle exceptions
-            return null;
+            throw new RuntimeException(e);
         }
     }
 
     @Override
-    public void placeCard(int card, int side, int x, int y) throws IOException {
+    public void placeCard(int card, int side, int x, int y) {
         try {
             outputStream.writeObject(new PlaceCardMessage(card, side, x, y));
             outputStream.flush();
         } catch (IOException e) {
-            // Handle exceptions
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    public placeCardResponseMessage correctPlaced() throws IOException {
+    public placeCardResponseMessage correctPlaced() {
         try {
             return (placeCardResponseMessage) inputStream.readObject();
         } catch (IOException | ClassNotFoundException e){
-            // Handle exceptions
-            return null;
+            throw new RuntimeException(e);
         }
     }
 
     @Override
-    public void pickCard(int card) throws IOException {
+    public void pickCard(int card) {
         try {
             outputStream.writeObject(new pickCardMessage(card));
             outputStream.flush();
         } catch (IOException e) {
-            // Handle exceptions
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    public pickCardResponseMessage correctPicked() throws IOException {
+    public pickCardResponseMessage correctPicked() {
         try {
             return (pickCardResponseMessage) inputStream.readObject();
         } catch (IOException | ClassNotFoundException e){
-            // Handle exceptions
-            return null;
+            throw new RuntimeException(e);
         }
     }
 
     @Override
-    public declareWinnerMessage endGame() throws IOException {
+    public declareWinnerMessage endGame() {
         try {
             return (declareWinnerMessage) inputStream.readObject();
         } catch (IOException | ClassNotFoundException e){
-            // Handle exceptions
-            return null;
+            throw new RuntimeException(e);
         }
     }
 

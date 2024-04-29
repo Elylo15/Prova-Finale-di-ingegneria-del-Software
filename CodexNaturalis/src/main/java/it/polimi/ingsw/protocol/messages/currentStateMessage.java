@@ -5,7 +5,7 @@ import it.polimi.ingsw.model.Player;
 public class currentStateMessage implements Message{
     private final Player player;
     private final String stateName;
-    private boolean lastTurn;
+    private final boolean lastTurn;
 
     public currentStateMessage(Player player, String stateName, boolean lastTurn){
         this.player = player;
@@ -20,11 +20,13 @@ public class currentStateMessage implements Message{
     public String getStateName() {
         return stateName;
     }
+    
+    public boolean isLastTurn() {
+        return lastTurn;
+    }
 
     @Override
-    public void setLock() {
-
-    }
+    public void setLock() {}
 
     @Override
     public boolean isLocked() {
@@ -32,7 +34,5 @@ public class currentStateMessage implements Message{
     }
 
     @Override
-    public void unlock() {
-
-    }
+    public void unlock() {}
 }

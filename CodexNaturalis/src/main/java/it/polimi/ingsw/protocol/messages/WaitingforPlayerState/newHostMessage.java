@@ -8,6 +8,11 @@ public class newHostMessage implements Message, Serializable {
     private String newHostNickname;
     private boolean matchStarts;
 
+    public newHostMessage(String newHostNickname, boolean matchStarts) {
+        this.newHostNickname = newHostNickname;
+        this.matchStarts = matchStarts;
+    }
+
     public String getNewHostNickname() {
         return newHostNickname;
     }
@@ -16,10 +21,16 @@ public class newHostMessage implements Message, Serializable {
         return matchStarts;
     }
 
-    @Override
-    public void setLock() {
-
+    public void setNewHostNickname(String newHostNickname) {
+        this.newHostNickname = newHostNickname;
     }
+
+    public void setMatchStarts(boolean matchStarts) {
+        this.matchStarts = matchStarts;
+    }
+
+    @Override
+    public void setLock() {}
 
     @Override
     public boolean isLocked() {
@@ -27,11 +38,6 @@ public class newHostMessage implements Message, Serializable {
     }
 
     @Override
-    public void unlock() {
-
-    }
-
-    public String getName() {
-    }
+    public void unlock() {}
 
 }

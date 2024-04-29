@@ -5,24 +5,17 @@ import it.polimi.ingsw.protocol.messages.Message;
 import java.io.Serializable;
 
 public class expectedPlayersMessage implements Message, Serializable {
-    private String hostNickname;
-    private boolean startSignal;
+    private int expectedPlayers;
 
-    public expectedPlayersMessage(String name, boolean startSignal) {
+    public expectedPlayersMessage(int expectedPlayers) {
     }
 
-    public String getHostNickname() {
-        return hostNickname;
-    }
-
-    public boolean getStartSignal() {
-        return startSignal;
+    public int getExpectedPlayers() {
+        return expectedPlayers;
     }
 
     @Override
-    public void setLock() {
-
-    }
+    public void setLock() {}
 
     @Override
     public boolean isLocked() {
@@ -30,7 +23,5 @@ public class expectedPlayersMessage implements Message, Serializable {
     }
 
     @Override
-    public void unlock() {
-
-    }
+    public void unlock() {}
 }

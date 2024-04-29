@@ -5,10 +5,10 @@ import it.polimi.ingsw.protocol.messages.Message;
 import java.io.Serializable;
 
 public class starterCardMessage implements Message,Serializable {
-    private int side;
+    private final int side;
 
     public starterCardMessage(int side) {
-
+        this.side = side;
     }
 
     public int getSide() {
@@ -16,9 +16,7 @@ public class starterCardMessage implements Message,Serializable {
     }
 
     @Override
-    public void setLock() {
-
-    }
+    public void setLock() {}
 
     @Override
     public boolean isLocked() {
@@ -26,7 +24,5 @@ public class starterCardMessage implements Message,Serializable {
     }
 
     @Override
-    public void unlock() {
-
-    }
+    public void unlock() {}
 }

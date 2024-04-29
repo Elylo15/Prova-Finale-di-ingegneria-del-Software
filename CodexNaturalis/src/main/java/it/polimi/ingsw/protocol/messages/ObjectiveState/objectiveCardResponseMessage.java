@@ -5,10 +5,22 @@ import it.polimi.ingsw.protocol.messages.Message;
 import java.io.Serializable;
 
 public class objectiveCardResponseMessage implements Message, Serializable {
-    @Override
-    public void setLock() {
+    private boolean correct;
 
+    public objectiveCardResponseMessage(boolean correct) {
+        this.correct = correct;
     }
+
+    public boolean getCorrect() {
+        return correct;
+    }
+
+    public void setCorrect(boolean correct) {
+        this.correct = correct;
+    }
+
+    @Override
+    public void setLock() {}
 
     @Override
     public boolean isLocked() {
@@ -16,7 +28,5 @@ public class objectiveCardResponseMessage implements Message, Serializable {
     }
 
     @Override
-    public void unlock() {
-
-    }
+    public void unlock() {}
 }

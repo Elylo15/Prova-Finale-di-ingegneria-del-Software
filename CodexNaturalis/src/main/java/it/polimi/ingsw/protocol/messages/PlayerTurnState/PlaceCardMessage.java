@@ -10,18 +10,31 @@ public class PlaceCardMessage implements Message, Serializable {
     private int column;
     private int front;
 
-    public PlaceCardMessage(int card, int row, int column, int front) {
+    public PlaceCardMessage(int card, int front, int row, int column) {
         this.card = card;
         this.row = row;
         this.column = column;
         this.front = front;
     }
 
+    public int getCard() {
+        return card;
+    }
+
+    public int getRow() {
+        return row;
+    }
+
+    public int getColumn() {
+        return column;
+    }
+
+    public int getFront() {
+        return front;
+    }
 
     @Override
-    public void setLock() {
-
-    }
+    public void setLock() {}
 
     @Override
     public boolean isLocked() {
@@ -29,7 +42,5 @@ public class PlaceCardMessage implements Message, Serializable {
     }
 
     @Override
-    public void unlock() {
-
-    }
+    public void unlock() {}
 }

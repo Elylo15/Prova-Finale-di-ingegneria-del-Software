@@ -13,10 +13,8 @@ import it.polimi.ingsw.protocol.messages.ObjectiveState.*;
 
 import java.io.IOException;
 import java.net.SocketTimeoutException;
-import java.util.Objects;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.Random;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicIntegerArray;
 
 public class Client {
     private String serverIP;
@@ -83,7 +81,7 @@ public class Client {
                     case "PlayerTurnState": {
                         view.updatePlayer(current);
                         if(Objects.equals(current.getPlayer().getNickname(), name)) {
-                            placeCard();
+                            placeCard(current);
                             pickCard();
                         }
                         break;
@@ -110,7 +108,7 @@ public class Client {
             serverOptionMessage options = controller.serverOptions();
             options = view.serverOptions(options);
             controller.sendOptions(options);
-            answerServerOptionMessage answer = controller.correctOption();
+            serverOptionResponseMessage answer = controller.correctOption();
             view.answerToOption();
             if (answer.getCorrect())
                 break;
@@ -122,7 +120,7 @@ public class Client {
             unavailableNamesMessage unavailableName = controller.getUnavailableName();
             name = view.unavaibleNames(unavailableName);
             controller.chooseName(name);
-            answerNameMessage answer = controller.correctName();
+            nameResponseMessage answer = controller.correctName();
             view.answerToNameChosen(answer);
             if(answer.getCorrect())
                 break;
@@ -134,7 +132,7 @@ public class Client {
             availableColorsMessage availableColor = controller.getAvailableColor();
             String color = view.availableColors(availableColor);
             controller.chooseColor(color);
-            answerColorMessage answer = controller.correctColor();
+            colorResponseMessage answer = controller.correctColor();
             view.answerToColorChosen(answer);
             if(answer.getCorrect())
                 break;
@@ -143,6 +141,7 @@ public class Client {
 
     private void waitingPlayer() throws IOException {
         int[] expected = new int[1];
+        Timer timer = new Timer();
 
         newHostMessage newHost = controller.newHost();
         String newHostName = newHost.getName();
@@ -159,7 +158,7 @@ public class Client {
             expected[0] = view.expectedPlayers();
             timer.cancel();
             controller.expectedPlayers(expected[0]);
-            answerExpectedPlayersMessage answer = controller.correctExpectedPlayers();
+            expectedPlayersResponseMessage answer = controller.correctExpectedPlayers();
             view.answerToExpectedPlayers(answer);
             if(answer.getCorrect())
                 break;
@@ -246,27 +245,31 @@ public class Client {
         timer.cancel();
     }
 
-    private void placeCard() throws IOException {
-        final int[] card = new int[4];
+    private void placeCard(currentStateMessage current) throws IOException {
+        AtomicIntegerArray card = new AtomicIntegerArray(4);
         Timer timer = new Timer();
 
         while (true) {
             TimerTask task = new TimerTask() {
                 public void run() {
                     Random rand = new Random();
-                    card[0] = rand.nextInt(3);
-                    card[1] = rand.nextInt(2);
-                    //get available position and chose from there
-                    //card[2] = rand.nextInt(3);
-                    //card[3] = rand.nextInt(3);
+                    card.set(0, rand.nextInt(3));
+                    card.set(1, rand.nextInt(2));
+                    ArrayList<Integer[]> position = current.getPlayer().getPlayerArea().getAvailablePosition();
+                    card.set(2, position.getFirst()[0]);
+                    card.set(3, position.getFirst()[1]);
                 }
             };
 
             timer.schedule(task, 240000); //2 min
 
-            card = view.placeCard();
+            int[] cardArray = view.placeCard();
+            card.set(0, cardArray[0]);
+            card.set(1, cardArray[1]);
+            card.set(2, cardArray[2]);
+            card.set(3, cardArray[3]);
             timer.cancel();
-            controller.placeCard(card[0], card[1], card[2], card[3]);
+            controller.placeCard(card.get(0), card.get(1), card.get(2), card.get(3));
             placeCardResponseMessage answer = controller.correctPlaced();
             view.answerToPlaceCard(answer);
             if(answer.getCorrect())

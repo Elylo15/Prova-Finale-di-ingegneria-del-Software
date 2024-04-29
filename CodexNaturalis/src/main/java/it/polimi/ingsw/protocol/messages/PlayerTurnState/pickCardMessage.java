@@ -5,25 +5,18 @@ import it.polimi.ingsw.protocol.messages.Message;
 import java.io.Serializable;
 
 public class pickCardMessage implements Message, Serializable {
-    private boolean gold;
-    private boolean faceUp;
-    private int position;
-
-    public pickCardMessage(boolean gold, boolean faceUp, int position) {
-        this.gold = gold;
-        this.faceUp = faceUp;
-        this.position = position;
-    }
+    private final int card;
 
     public pickCardMessage(int card) {
-
+        this.card = card;
     }
 
+    public int getCard() {
+        return card;
+    }
 
     @Override
-    public void setLock() {
-
-    }
+    public void setLock() {}
 
     @Override
     public boolean isLocked() {
@@ -31,7 +24,5 @@ public class pickCardMessage implements Message, Serializable {
     }
 
     @Override
-    public void unlock() {
-
-    }
+    public void unlock() {}
 }
