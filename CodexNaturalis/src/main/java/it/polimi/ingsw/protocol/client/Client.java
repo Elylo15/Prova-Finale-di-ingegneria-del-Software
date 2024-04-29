@@ -12,7 +12,7 @@ import it.polimi.ingsw.protocol.messages.WaitingforPlayerState.*;
 import it.polimi.ingsw.protocol.messages.ObjectiveState.*;
 
 import java.io.IOException;
-import java.net.SocketTimeoutException;
+import java.rmi.RemoteException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicIntegerArray;
 
@@ -22,12 +22,12 @@ public class Client {
     private boolean isSocket;
     private boolean isGUI;
     private String name;
-    private final ControllerSocket controller;
-    private final ViewGUI view;
+    private Controller controller;
+    private View view;
 
     public Client(ViewGUI view, ControllerSocket controller) {
-        this.view = view; //GUI default poi ask
-        this.controller = controller;
+        this.view = view; //GUI default
+        this.controller = controller; //Socket default
     }
 
     public void startGame() throws  IOException {
@@ -35,16 +35,28 @@ public class Client {
         run();
     }
 
-    private void connection() throws IOException {
+    private void connection()  {
         setSocket(view.askSocket());
         enableGUI(view.askGui());
 
-        try {
-            controller.connectToServer(serverIP, serverPort);
-            controller.answerConnection();
-            view.answerToConnection();
-        } catch (SocketTimeoutException e) {
-            //handle
+        if(isSocket) {
+            try {
+                controller.connectToServer(serverIP, serverPort);
+                connectionResponseMessage answer = controller.answerConnection();
+                view.answerToConnection(answer);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            try {
+                controller = new ControllerRMI(serverIP, serverPort);
+            } catch (RemoteException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        if(!isGUI) {
+            view = new ViewCLI();
         }
     }
 
@@ -88,7 +100,7 @@ public class Client {
                     }
                     case "LastTurnState": {
                         view.updatePlayer(current);
-                        if(Objects.equals(current.getPlayer().getNickname(), name)) placeCard();
+                        if(Objects.equals(current.getPlayer().getNickname(), name)) placeCard(current);
                         break;
                     }
                     case "EndGameState": {

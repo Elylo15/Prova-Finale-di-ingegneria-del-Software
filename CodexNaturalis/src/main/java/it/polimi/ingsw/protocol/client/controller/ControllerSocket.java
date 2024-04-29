@@ -13,7 +13,7 @@ import it.polimi.ingsw.protocol.messages.ObjectiveState.*;
 import java.io.*;
 import java.net.*;
 
-public class ControllerSocket  extends Controller implements Runnable {
+public class ControllerSocket  extends Controller {
     private final String serverIP;
     private final String serverPort;
     private Socket socket;
@@ -26,13 +26,13 @@ public class ControllerSocket  extends Controller implements Runnable {
     }
 
     @Override
-    public void connectToServer(String serverIP, String serverPort) throws IOException {
+    public void connectToServer(String serverIP, String serverPort) {
         try {
             socket = new Socket(serverIP, Integer.parseInt(serverPort));
             outputStream = new ObjectOutputStream(socket.getOutputStream());
             inputStream = new ObjectInputStream(socket.getInputStream());
         } catch (IOException e) {
-            throw new IOException(e);
+            throw new RuntimeException(e);
         }
     }
 
