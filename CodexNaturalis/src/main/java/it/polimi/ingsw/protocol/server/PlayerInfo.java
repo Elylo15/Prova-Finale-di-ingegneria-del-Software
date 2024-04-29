@@ -4,11 +4,13 @@ import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.protocol.server.FSM.PlayerFSM;
 
 import java.io.Serializable;
+import java.net.Socket;
 
 public class PlayerInfo implements Serializable {
     private Player player;
     private PlayerFSM fsm;
     private ClientConnection connection;
+    private Socket socket;
 
     public PlayerInfo(Player player, PlayerFSM fsm, ClientConnection connection) {
         this.player = player;
@@ -16,7 +18,15 @@ public class PlayerInfo implements Serializable {
         this.connection = connection;
     }
 
+
+    public void setSocket(Socket socket) {
+        this.socket = socket;
+    }
+
+
     public Player getPlayer() { return player;}
     public PlayerFSM getFsm() { return fsm;}
     public ClientConnection getConnection() { return connection;}
+    public Socket getSocket() { return socket;}
+
 }
