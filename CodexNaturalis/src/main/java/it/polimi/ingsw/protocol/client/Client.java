@@ -2,13 +2,14 @@ package it.polimi.ingsw.protocol.client;
 
 import it.polimi.ingsw.protocol.client.controller.*;
 import it.polimi.ingsw.protocol.client.view.*;
-import it.polimi.ingsw.protocol.messages.ConnectionState.*;
-import it.polimi.ingsw.protocol.messages.ObjectiveState.*;
-import it.polimi.ingsw.protocol.messages.StaterCardState.starterCardResponseMessage;
-import it.polimi.ingsw.protocol.messages.WaitingforPlayerState.*;
-import it.polimi.ingsw.protocol.messages.PlayerTurnState.*;
-import it.polimi.ingsw.protocol.messages.EndGameState.*;
 import it.polimi.ingsw.protocol.messages.*;
+import it.polimi.ingsw.protocol.messages.ConnectionState.*;
+import it.polimi.ingsw.protocol.messages.EndGameState.*;
+import it.polimi.ingsw.protocol.messages.PlayerTurnState.*;
+import it.polimi.ingsw.protocol.messages.ServerOptionState.*;
+import it.polimi.ingsw.protocol.messages.StaterCardState.*;
+import it.polimi.ingsw.protocol.messages.WaitingforPlayerState.*;
+import it.polimi.ingsw.protocol.messages.ObjectiveState.*;
 
 import java.io.IOException;
 import java.net.SocketTimeoutException;
@@ -56,6 +57,10 @@ public class Client {
                 String state = current.getStateName();
 
                 switch (state) {
+                    case "ServerOptionState":{
+                        serverOptions();
+                    break;
+                    }
                     case "ConnectionState": {
                         name();
                         color();
@@ -66,14 +71,17 @@ public class Client {
                         break;
                     }
                     case "StarterCardState": {
+                        view.updatePlayer(current);
                         if(Objects.equals(current.getPlayer().getNickname(), name)) starter();
                         break;
                     }
                     case "ObjectiveState": {
+                        view.updatePlayer(current);
                         if(Objects.equals(current.getPlayer().getNickname(), name)) pickObjective();
                         break;
                     }
                     case "PlayerTurnState": {
+                        view.updatePlayer(current);
                         if(Objects.equals(current.getPlayer().getNickname(), name)) {
                             placeCard();
                             pickCard();
@@ -81,7 +89,7 @@ public class Client {
                         break;
                     }
                     case "LastTurnState": {
-                        view.lastTurn();
+                        view.updatePlayer(current);
                         if(Objects.equals(current.getPlayer().getNickname(), name)) placeCard();
                         break;
                     }
@@ -90,14 +98,22 @@ public class Client {
                         view.endGame(end);
                         break;
                     }
-                    case "PlayerDisconnectedState":{
-                        disconnectedMessage disconnectedPlayer = controller.disconnected();
-                        view.disconnected(disconnectedPlayer);
-                    }
                 }
             }
         } catch (IOException | ClassNotFoundException e) {
             // Handle exceptions
+        }
+    }
+
+    private void serverOptions() throws IOException {
+        while(true) {
+            serverOptionMessage options = controller.serverOptions();
+            options = view.serverOptions(options);
+            controller.sendOptions(options);
+            answerServerOptionMessage answer = controller.correctOption();
+            view.answerToOption();
+            if (answer.getCorrect())
+                break;
         }
     }
 
@@ -106,8 +122,9 @@ public class Client {
             unavailableNamesMessage unavailableName = controller.getUnavailableName();
             name = view.unavaibleNames(unavailableName);
             controller.chooseName(name);
-            answerNameMessage answer = controller.CorrectName();
-            if(view.answerToNameChosen(answer))
+            answerNameMessage answer = controller.correctName();
+            view.answerToNameChosen(answer);
+            if(answer.getCorrect())
                 break;
         }
     }
@@ -117,31 +134,35 @@ public class Client {
             availableColorsMessage availableColor = controller.getAvailableColor();
             String color = view.availableColors(availableColor);
             controller.chooseColor(color);
-            answerColorMessage colorAnswer = controller.correctColor();
-            if(view.answerToColorChosen(colorAnswer))
+            answerColorMessage answer = controller.correctColor();
+            view.answerToColorChosen(answer);
+            if(answer.getCorrect())
                 break;
         }
     }
 
     private void waitingPlayer() throws IOException {
-        final int[] matchStart = new int[1];
-        Timer timer = new Timer();
+        int[] expected = new int[1];
 
         newHostMessage newHost = controller.newHost();
         String newHostName = newHost.getName();
 
-        while (newHostName.equals(name) && matchStart[0] != 1) {
+        while (newHostName.equals(name)) {
             TimerTask task = new TimerTask() {
                 public void run() {
-                    matchStart[0] = 1;
+                    expected[0] = 4;
                 }
             };
 
             timer.schedule(task, 240000); //2 min
 
-            matchStart[0] = view.newHost();
+            expected[0] = view.expectedPlayers();
             timer.cancel();
-            controller.startSignal(this.name, (matchStart[0] == 1));
+            controller.expectedPlayers(expected[0]);
+            answerExpectedPlayersMessage answer = controller.correctExpectedPlayers();
+            view.answerToExpectedPlayers(answer);
+            if(answer.getCorrect())
+                break;
         }
 
         timer.cancel();
@@ -165,7 +186,8 @@ public class Client {
             timer.cancel();
             controller.placeStarter(side[0]);
             starterCardResponseMessage answer = controller.correctStarter();
-            if(view.answerToPlaceStarter(answer))
+            view.answerToPlaceStarter(answer);
+            if(answer.getCorrect())
                 break;
         }
 
@@ -190,7 +212,8 @@ public class Client {
             timer.cancel();
             controller.chooseObjective(pick[0]);
             objectiveCardResponseMessage answer = controller.correctObjective();
-            if(view.answerToChooseObjective(answer))
+            view.answerToChooseObjective(answer);
+            if(answer.getCorrect())
                 break;
         }
 
@@ -215,7 +238,8 @@ public class Client {
             timer.cancel();
             controller.pickCard(card[0]);
             pickCardResponseMessage answer = controller.correctPicked();
-            if(view.answerToPickCard(answer))
+            view.answerToPickCard(answer);
+            if(answer.getCorrect())
                 break;
         }
 
@@ -244,7 +268,8 @@ public class Client {
             timer.cancel();
             controller.placeCard(card[0], card[1], card[2], card[3]);
             placeCardResponseMessage answer = controller.correctPlaced();
-            if(view.answerToPlaceCard(answer))
+            view.answerToPlaceCard(answer);
+            if(answer.getCorrect())
                 break;
         }
 

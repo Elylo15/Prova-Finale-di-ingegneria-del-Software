@@ -3,10 +3,10 @@ package it.polimi.ingsw.protocol.client.controller;
 
 import it.polimi.ingsw.protocol.messages.*;
 import it.polimi.ingsw.protocol.messages.ConnectionState.*;
-import it.polimi.ingsw.protocol.messages.EndGameState.declareWinnerMessage;
+import it.polimi.ingsw.protocol.messages.EndGameState.*;
 import it.polimi.ingsw.protocol.messages.PlayerTurnState.*;
-import it.polimi.ingsw.protocol.messages.StaterCardState.starterCardMessage;
-import it.polimi.ingsw.protocol.messages.StaterCardState.starterCardResponseMessage;
+import it.polimi.ingsw.protocol.messages.ServerOptionState.*;
+import it.polimi.ingsw.protocol.messages.StaterCardState.*;
 import it.polimi.ingsw.protocol.messages.WaitingforPlayerState.*;
 import it.polimi.ingsw.protocol.messages.ObjectiveState.*;
 
@@ -58,6 +58,37 @@ public class ControllerSocket  extends Controller implements Runnable {
     }
 
     @Override
+    public serverOptionMessage serverOptions() {
+        try {
+            return (serverOptionMessage) inputStream.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            // Handle exceptions
+            return null;
+        }
+    }
+
+    @Override
+    public void sendOptions(serverOptionMessage options) throws IOException {
+        try {
+            outputStream.writeObject(options);
+            outputStream.flush();
+        } catch (IOException e) {
+            // Handle exceptions
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public answerServerOptionMessage correctOption() {
+        try {
+            return (answerServerOptionMessage) inputStream.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            // Handle exceptions
+            return null;
+        }
+    }
+
+    @Override
     public unavailableNamesMessage getUnavailableName() throws IOException {
         try {
             return (unavailableNamesMessage) inputStream.readObject();
@@ -79,7 +110,7 @@ public class ControllerSocket  extends Controller implements Runnable {
     }
 
     @Override
-    public answerNameMessage CorrectName() throws IOException {
+    public answerNameMessage correctName() throws IOException {
         try {
             return (answerNameMessage) inputStream.readObject();
         } catch (IOException | ClassNotFoundException e){
@@ -130,13 +161,23 @@ public class ControllerSocket  extends Controller implements Runnable {
     }
 
     @Override
-    public void startSignal(String name, boolean start) throws IOException {
+    public void expectedPlayers(int expected) throws IOException {
         try {
-            outputStream.writeObject(new forceStartMessage(name, start));
+            outputStream.writeObject(new expectedPlayersMessage (expected));
             outputStream.flush();
         } catch (IOException e) {
             // Handle exceptions
             throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public answerExpectedPlayersMessage correctExpectedPlayers() throws IOException {
+        try {
+            return (answerExpectedPlayersMessage) inputStream.readObject();
+        } catch (IOException | ClassNotFoundException e){
+            // Handle exceptions
+            return null;
         }
     }
 
@@ -234,13 +275,4 @@ public class ControllerSocket  extends Controller implements Runnable {
         }
     }
 
-    @Override
-    public disconnectedMessage disconnected() throws IOException {
-        try {
-            return (disconnectedMessage) inputStream.readObject();
-        } catch (IOException | ClassNotFoundException e){
-            // Handle exceptions
-            return null;
-        }
-    }
 }
