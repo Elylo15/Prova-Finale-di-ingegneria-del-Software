@@ -76,7 +76,7 @@ public class Client {
                         break;
                     }
                     case "WaitingForPlayerState": {
-                        waitingPlayer();
+                        waitingPlayer(current);
                         break;
                     }
                     case "StarterCardState": {
@@ -150,14 +150,13 @@ public class Client {
         }
     }
 
-    private void waitingPlayer() throws IOException {
+    private void waitingPlayer(currentStateMessage current) throws IOException {
         int[] expected = new int[1];
         Timer timer = new Timer();
 
         newHostMessage newHost = controller.newHost();
-        String newHostName = newHost.getName();
 
-        while (newHostName.equals(name)) {
+        while (Objects.equals(current.getCurrentPlayer().getNickname(), current.getPlayer().getNickname())) {
             TimerTask task = new TimerTask() {
                 public void run() {
                     expected[0] = 4;

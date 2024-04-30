@@ -102,15 +102,6 @@ public class ControllerSocket  extends Controller {
     }
 
     @Override
-    public nameResponseMessage correctName() {
-        try {
-            return (nameResponseMessage) inputStream.readObject();
-        } catch (IOException | ClassNotFoundException e){
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
     public availableColorsMessage getAvailableColor() {
         try {
             return (availableColorsMessage) inputStream.readObject();
@@ -125,15 +116,6 @@ public class ControllerSocket  extends Controller {
             outputStream.writeObject(new chosenNameMessage(color));
             outputStream.flush();
         } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    public colorResponseMessage correctColor() {
-        try {
-            return (colorResponseMessage) inputStream.readObject();
-        } catch (IOException | ClassNotFoundException e){
             throw new RuntimeException(e);
         }
     }
@@ -158,29 +140,11 @@ public class ControllerSocket  extends Controller {
     }
 
     @Override
-    public expectedPlayersResponseMessage correctExpectedPlayers() {
-        try {
-            return (expectedPlayersResponseMessage) inputStream.readObject();
-        } catch (IOException | ClassNotFoundException e){
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
     public void placeStarter(int side) {
         try {
             outputStream.writeObject(new starterCardMessage(side));
             outputStream.flush();
         } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    public starterCardResponseMessage correctStarter() {
-        try {
-            return (starterCardResponseMessage) inputStream.readObject();
-        } catch (IOException | ClassNotFoundException e){
             throw new RuntimeException(e);
         }
     }
@@ -196,15 +160,6 @@ public class ControllerSocket  extends Controller {
     }
 
     @Override
-    public objectiveCardResponseMessage correctObjective() {
-        try {
-            return (objectiveCardResponseMessage) inputStream.readObject();
-        } catch (IOException | ClassNotFoundException e){
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
     public void placeCard(int card, int side, int x, int y) {
         try {
             outputStream.writeObject(new PlaceCardMessage(card, side, x, y));
@@ -215,29 +170,11 @@ public class ControllerSocket  extends Controller {
     }
 
     @Override
-    public placeCardResponseMessage correctPlaced() {
-        try {
-            return (placeCardResponseMessage) inputStream.readObject();
-        } catch (IOException | ClassNotFoundException e){
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
     public void pickCard(int card) {
         try {
             outputStream.writeObject(new pickCardMessage(card));
             outputStream.flush();
         } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    public pickCardResponseMessage correctPicked() {
-        try {
-            return (pickCardResponseMessage) inputStream.readObject();
-        } catch (IOException | ClassNotFoundException e){
             throw new RuntimeException(e);
         }
     }
