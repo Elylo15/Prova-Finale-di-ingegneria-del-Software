@@ -1,13 +1,13 @@
-package it.polimi.ingsw.protocol.messages.PlayerTurnState;
-
-import it.polimi.ingsw.protocol.messages.Message;
+package it.polimi.ingsw.protocol.messages;
 
 import java.io.Serializable;
 
-public class placeCardResponseMessage implements Message, Serializable {
+public class responseMessage implements Message, Serializable {
     private boolean correct;
 
-    public placeCardResponseMessage(boolean correct) {}
+    public responseMessage(boolean correct) {
+        this.correct = correct;
+    }
 
     public boolean getCorrect() {
         return correct;

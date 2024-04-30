@@ -119,8 +119,8 @@ public class Client {
             serverOptionMessage options = controller.serverOptions();
             options = view.serverOptions(options);
             controller.sendOptions(options);
-            serverOptionResponseMessage answer = controller.correctOption();
-            view.answerToOption();
+            responseMessage answer = controller.correctAnswer();
+            view.answer(answer);
             if (answer.getCorrect())
                 break;
         }
@@ -131,8 +131,8 @@ public class Client {
             unavailableNamesMessage unavailableName = controller.getUnavailableName();
             String name = view.unavaibleNames(unavailableName);
             controller.chooseName(name);
-            nameResponseMessage answer = controller.correctName();
-            view.answerToNameChosen(answer);
+            responseMessage answer = controller.correctAnswer();
+            view.answer(answer);
             if(answer.getCorrect())
                 break;
         }
@@ -143,8 +143,8 @@ public class Client {
             availableColorsMessage availableColor = controller.getAvailableColor();
             String color = view.availableColors(availableColor);
             controller.chooseColor(color);
-            colorResponseMessage answer = controller.correctColor();
-            view.answerToColorChosen(answer);
+            responseMessage answer = controller.correctAnswer();
+            view.answer(answer);
             if(answer.getCorrect())
                 break;
         }
@@ -169,8 +169,8 @@ public class Client {
             expected[0] = view.expectedPlayers();
             timer.cancel();
             controller.expectedPlayers(expected[0]);
-            expectedPlayersResponseMessage answer = controller.correctExpectedPlayers();
-            view.answerToExpectedPlayers(answer);
+            responseMessage answer = controller.correctAnswer();
+            view.answer(answer);
             if(answer.getCorrect())
                 break;
         }
@@ -195,8 +195,8 @@ public class Client {
             side[0] = view.placeStarter();
             timer.cancel();
             controller.placeStarter(side[0]);
-            starterCardResponseMessage answer = controller.correctStarter();
-            view.answerToPlaceStarter(answer);
+            responseMessage answer = controller.correctAnswer();
+            view.answer(answer);
             if(answer.getCorrect())
                 break;
         }
@@ -221,8 +221,8 @@ public class Client {
             pick[0] = view.chooseObjective();
             timer.cancel();
             controller.chooseObjective(pick[0]);
-            objectiveCardResponseMessage answer = controller.correctObjective();
-            view.answerToChooseObjective(answer);
+            responseMessage answer = controller.correctAnswer();
+            view.answer(answer);
             if(answer.getCorrect())
                 break;
         }
@@ -247,8 +247,8 @@ public class Client {
             card[0] = view.pickCard();
             timer.cancel();
             controller.pickCard(card[0]);
-            pickCardResponseMessage answer = controller.correctPicked();
-            view.answerToPickCard(answer);
+            responseMessage answer = controller.correctAnswer();
+            view.answer(answer);
             if(answer.getCorrect())
                 break;
         }
@@ -281,8 +281,8 @@ public class Client {
             card.set(3, cardArray[3]);
             timer.cancel();
             controller.placeCard(card.get(0), card.get(1), card.get(2), card.get(3));
-            placeCardResponseMessage answer = controller.correctPlaced();
-            view.answerToPlaceCard(answer);
+            responseMessage answer = controller.correctAnswer();
+            view.answer(answer);
             if(answer.getCorrect())
                 break;
         }

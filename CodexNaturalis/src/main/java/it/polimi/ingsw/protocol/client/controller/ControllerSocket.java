@@ -74,9 +74,9 @@ public class ControllerSocket  extends Controller {
     }
 
     @Override
-    public serverOptionResponseMessage correctOption() {
+    public responseMessage correctAnswer() {
         try {
-            return (serverOptionResponseMessage) inputStream.readObject();
+            return (responseMessage) inputStream.readObject();
         } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }

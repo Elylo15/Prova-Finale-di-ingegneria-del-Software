@@ -1,5 +1,6 @@
-package it.polimi.ingsw.protocol.controller.*;
+package it.polimi.ingsw.protocol.controller;
 
+import it.polimi.ingsw.protocol.client.controller.ControllerSocket;
 import it.polimi.ingsw.protocol.messages.*;
 import it.polimi.ingsw.protocol.messages.ConnectionState.*;
 import it.polimi.ingsw.protocol.messages.EndGameState.*;
@@ -15,7 +16,7 @@ import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class ControllerSocket {
+public class ControllerSocketTest {
     ControllerSocket controllerSocket;
     String serverPort;
     String serverIp;
@@ -52,7 +53,7 @@ public class ControllerSocket {
 
     @Test
     void correctOptionTest() {
-        serverOptionsMessage correct = controllerSocket.correctOption();
+        serverOptionResponseMessage correct = controllerSocket.correctOption();
         assertEquals();
     }
 
@@ -66,10 +67,56 @@ public class ControllerSocket {
     void chooseNameTest() {
         controllerSocket.chooseName("Bianca");
     }
+
     @Test
     void correctNameTest(){
         nameResponseMessage correct = controllerSocket.correctName();
         assertEquals();
     }
+
+    @Test
+    void getAvailableColorTest(){
+        availableColorsMessage colors = controllerSocket.getAvailableColor();
+    }
+
+    @Test
+    void chooseColorTest(){
+        controllerSocket.chooseColor("Blue");
+    }
+
+    @Test
+    void correctColorTest(){
+        colorResponseMessage correct = controllerSocket.correctColor();
+        assertEquals();
+    }
+
+    @Test
+    void newHostTest(){
+        newHostMessage host = controllerSocket.newHost();
+        assertEquals();
+    }
+
+    @Test
+    void expectedPlayersTest(){
+        controllerSocket.expectedPlayers(4);
+    }
+
+    @Test
+    void correctExpectedPlayers(){
+        expectedPlayersResponseMessage correct = controllerSocket.correctExpectedPlayers();
+
+    }
+
+    @Test
+    void placeStarterTest(){
+        controllerSocket.placeStarter(1);
+
+    }
+
+    @Test
+    void correctStarter(){
+        starterCardResponseMessage correct =
+    }
+
 
 }

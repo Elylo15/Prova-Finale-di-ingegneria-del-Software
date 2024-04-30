@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class ControllerSocket{
+public class ControllerSoct{
 
     @Test
     void connection() {
@@ -16,6 +16,6 @@ public class ControllerSocket{
 
     @Test
     void answerConnectionTest(){
-        answer = controllerSocket.answerConnection();
+
     }
 }
