@@ -5,13 +5,13 @@ import it.polimi.ingsw.protocol.messages.Message;
 import java.io.Serializable;
 
 public class serverOptionMessage implements Message, Serializable {
-    private final boolean newMatch;
-    private final String startedMatchID;
-    private final String Nickname;
-    private final boolean loadMatch;
+    private final boolean newMatch;         // true if the client wants to join a new game
+    private final Integer  startedMatchID;  // ID of the started match the client wants to join
+    private final String Nickname;          // Nickname of the player that the client wants to play as
+    private final boolean loadMatch;        // true if the client wants to
     private final String pathToLoad;
 
-   public serverOptionMessage(boolean newMatch, String startedMatchID, String Nickname, boolean loadMatch, String pathToLoad) {
+   public serverOptionMessage(boolean newMatch, Integer startedMatchID, String Nickname, boolean loadMatch, String pathToLoad) {
        this.newMatch = newMatch;
        this.startedMatchID = startedMatchID;
        this.Nickname = Nickname;
@@ -23,7 +23,7 @@ public class serverOptionMessage implements Message, Serializable {
        return newMatch;
    }
 
-   public String getStartedMatchID() {
+   public Integer getStartedMatchID() {
        return startedMatchID;
    }
 

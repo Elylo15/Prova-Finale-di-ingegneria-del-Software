@@ -258,14 +258,11 @@ public class Server implements Runnable {
         }
 
         // Add the new player to the waiting list if expexted
-        synchronized(lobbyManager) {
-            if(lobbyManager.getMatchInfo().getExpectedPlayers() > lobbyManager.getPlayersInfo().size()) {
-                Player player = new Player(name, color, lobbyManager.getMatchInfo().getMatch().getCommonArea());
-                PlayerInfo playerInfo = new PlayerInfo(player, new PlayerFSM(), connection);
-
-            } else {
-                connection.getSocket().close();
-            }
+        try {
+            Player player = new Player(name, color, lobbyManager.getMatchInfo().getMatch().getCommonArea());
+            PlayerInfo playerInfo = new PlayerInfo(player, new PlayerFSM(), connection);
+        } catch(Exception e) {
+            connection.closeConnection();
         }
 
 

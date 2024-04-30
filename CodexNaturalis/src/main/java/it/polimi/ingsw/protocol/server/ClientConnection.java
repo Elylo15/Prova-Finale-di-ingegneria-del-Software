@@ -122,6 +122,8 @@ public abstract class ClientConnection implements Runnable {
     //crea il decleareWinnerMessage con i valori nei paramentri
     public abstract void sendEndGame(HashMap<String, Integer> scores,HashMap<String, Integer> numberOfObjectives);
 
+    //Nuovo metodo
+    public abstract void closeConnection();
 
 
 }

@@ -43,7 +43,7 @@ public class ClientManager implements Runnable{
 
     }
 
-    public void addPlayerInfo(PlayerInfo playerInfo) throws Exception {
+    public synchronized void addPlayerInfo(PlayerInfo playerInfo) throws Exception {
         if(playerInfo != null && matchInfo.getExpectedPlayers() > this.playersInfo.size())
         {
             this.playersInfo.add(playerInfo);
