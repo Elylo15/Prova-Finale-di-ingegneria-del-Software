@@ -9,6 +9,7 @@ import it.polimi.ingsw.protocol.messages.StaterCardState.*;
 import it.polimi.ingsw.protocol.messages.ObjectiveState.*;
 import it.polimi.ingsw.protocol.messages.WaitingforPlayerState.*;
 import it.polimi.ingsw.protocol.messages.currentStateMessage;
+import it.polimi.ingsw.protocol.messages.responseMessage;
 
 
 import java.io.BufferedReader;
@@ -165,15 +166,15 @@ public class ViewCLI extends View{
     }
 
     /**
-     * the server will send a response to the client about its nickname choice
+     * visualize the response about the value entered
      * @param message
      */
-    public void answerToNameChosen(nameResponseMessage message){
+    public void answer(responseMessage message){
         if(message.getCorrect()){
-            System.out.println("You have entered a valid name");
+            System.out.println("You have entered a valid value");
         }
         else{
-            System.out.println("You didn't entered a valid name, please try again");
+            System.out.println("You didn't entered a valid value, please try again");
         }
     }
 
@@ -214,14 +215,14 @@ public class ViewCLI extends View{
      *the server will send a response to the client about its color choice
      * @param message
      */
-    public void answerToColorChosen(colorResponseMessage message){
+   /* public void answerToColorChosen(colorResponseMessage message){
         if(message.getCorrect()){
             System.out.println("You have entered a correct color");
         }
         else {
             System.out.println("You didn't entered a correct color, please try again");
         }
-    }
+    }*/
 
 
     /**
@@ -248,14 +249,14 @@ public class ViewCLI extends View{
      * @param message
      * @return
      */
-    public void answerToPlaceStarter(starterCardResponseMessage message){
+    /*public void answerToPlaceStarter(starterCardResponseMessage message){
        if(message.getCorrect()){
            System.out.println("You placed the starter card correctly");
        }
        else{
            System.out.println("You didn't place the starter card correctly, please try again");
        }
-    }
+    }*/
 
     /**
      * allow the user to choose how many players will play
@@ -278,11 +279,11 @@ public class ViewCLI extends View{
      *
      * @param message
      */
-    public void answerToExpectedPlayers(expectedPlayersResponseMessage message){
+   /* public void answerToExpectedPlayers(expectedPlayersResponseMessage message){
         if(message.getCorrect()){
             System.out.println("the number of players has been set correctly");
         }
-    }
+    }*/
 
     /**
      * allow the user to choose his secret objective
@@ -306,7 +307,7 @@ public class ViewCLI extends View{
      * the user visualize the response about his objective choice
      * @param message
      */
-    public void answerToChooseObjective(objectiveCardResponseMessage message){
+   /* public void answerToChooseObjective(objectiveCardResponseMessage message){
         if(message.getCorrect()){
             System.out.println("you have chosen your secret objective correctly");
         }
@@ -314,7 +315,7 @@ public class ViewCLI extends View{
             System.out.println("You didn't chosen your secret objective correctly");
         }
 
-    }
+    }*/
 
     /**
      * allow the user to say what card he wants to play, front or back, and in which position
@@ -361,14 +362,14 @@ public class ViewCLI extends View{
      * the user visualize the response about the card he placed
      * @param message
      */
-    public void answerToPlaceCard(placeCardResponseMessage message){
+    /*public void answerToPlaceCard(placeCardResponseMessage message){
        if(message.getCorrect()){
            System.out.println("you placed the card correctly");
        }
        else{
            System.out.println("you didn't placed the card correctly");
        }
-    }
+    }*/
 
     /**
      * allow the user to say what card he wants to pick

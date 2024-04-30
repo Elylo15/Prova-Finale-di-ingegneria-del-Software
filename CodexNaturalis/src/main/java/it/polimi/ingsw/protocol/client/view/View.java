@@ -9,7 +9,7 @@ import it.polimi.ingsw.protocol.messages.StaterCardState.*;
 import it.polimi.ingsw.protocol.messages.ObjectiveState.*;
 import it.polimi.ingsw.protocol.messages.WaitingforPlayerState.*;
 import it.polimi.ingsw.protocol.messages.currentStateMessage;
-
+import it.polimi.ingsw.protocol.messages.responseMessage;
 
 
 import java.util.ArrayList;
@@ -25,25 +25,19 @@ public abstract class View {
     public abstract serverOptionMessage serverOptions(serverOptionMessage message);
     public abstract void answerToOption(serverOptionResponseMessage message);
     public abstract String unavaibleNames(unavailableNamesMessage message);
-    public abstract void answerToNameChosen(nameResponseMessage message);
+    public abstract void answer(responseMessage message);
     public abstract String availableColors(availableColorsMessage message);
-    public abstract void answerToColorChosen(colorResponseMessage message);
 
     public abstract int placeStarter();
-    public abstract void answerToPlaceStarter(starterCardResponseMessage message);
 
     public abstract int expectedPlayers();
-    public abstract void answerToExpectedPlayers(expectedPlayersResponseMessage message);
     public abstract int chooseObjective();
-    public abstract void answerToChooseObjective(objectiveCardResponseMessage message);
 
 
     public abstract int[] placeCard();
-    public abstract void answerToPlaceCard(placeCardResponseMessage message);
 
 
     public abstract int pickCard();
 
-    public abstract void answerToPickCard(pickCardResponseMessage message);
     public abstract void endGame(declareWinnerMessage message);
 }
