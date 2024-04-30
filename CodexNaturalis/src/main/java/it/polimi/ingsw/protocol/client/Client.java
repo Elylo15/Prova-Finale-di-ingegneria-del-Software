@@ -21,7 +21,6 @@ public class Client {
     private String serverPort;
     private boolean isSocket;
     private boolean isGUI;
-    private String name;
     private Controller controller;
     private View view;
 
@@ -82,17 +81,17 @@ public class Client {
                     }
                     case "StarterCardState": {
                         view.updatePlayer(current);
-                        if(Objects.equals(current.getPlayer().getNickname(), name)) starter();
+                        if(Objects.equals(current.getCurrentPlayer().getNickname(), current.getPlayer().getNickname())) starter();
                         break;
                     }
                     case "ObjectiveState": {
                         view.updatePlayer(current);
-                        if(Objects.equals(current.getPlayer().getNickname(), name)) pickObjective();
+                        if(Objects.equals(current.getCurrentPlayer().getNickname(), current.getPlayer().getNickname())) pickObjective();
                         break;
                     }
                     case "PlayerTurnState": {
                         view.updatePlayer(current);
-                        if(Objects.equals(current.getPlayer().getNickname(), name)) {
+                        if(Objects.equals(current.getCurrentPlayer().getNickname(), current.getPlayer().getNickname())) {
                             placeCard(current);
                             pickCard();
                         }
@@ -100,7 +99,7 @@ public class Client {
                     }
                     case "LastTurnState": {
                         view.updatePlayer(current);
-                        if(Objects.equals(current.getPlayer().getNickname(), name)) placeCard(current);
+                        if(Objects.equals(current.getCurrentPlayer().getNickname(), current.getPlayer().getNickname())) placeCard(current);
                         break;
                     }
                     case "EndGameState": {
@@ -110,8 +109,8 @@ public class Client {
                     }
                 }
             }
-        } catch (IOException | ClassNotFoundException e) {
-            // Handle exceptions
+        } catch (RuntimeException | IOException | ClassNotFoundException e) {
+            view.playerDisconnected();
         }
     }
 
@@ -130,7 +129,7 @@ public class Client {
     private void name() throws IOException {
         while (true) {
             unavailableNamesMessage unavailableName = controller.getUnavailableName();
-            name = view.unavaibleNames(unavailableName);
+            String name = view.unavaibleNames(unavailableName);
             controller.chooseName(name);
             nameResponseMessage answer = controller.correctName();
             view.answerToNameChosen(answer);
