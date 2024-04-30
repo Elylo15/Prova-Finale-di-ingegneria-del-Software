@@ -182,8 +182,11 @@ public class Server implements Runnable {
 
                     if(savedPlayer != null) {
                         PlayerInfo savedPlayerInfo = new PlayerInfo(savedPlayer, new PlayerFSM(State.EndGame), connection);
-                        // TODO use synchronized and if it falis kickThePlayer
-                        lobbyManager.addPlayerInfo(savedPlayerInfo);
+                        try {
+                            lobbyManager.addPlayerInfo(savedPlayerInfo);
+                        } catch (Exception e) {
+                            connection.closeConnection();
+                        }
                     } else {
                         socket.close();
                     }
