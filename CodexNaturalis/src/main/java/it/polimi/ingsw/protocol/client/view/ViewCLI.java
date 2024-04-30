@@ -87,10 +87,15 @@ public class ViewCLI extends View{
         catch(Exception e){
             System.out.println("you didn't enter a boolean");
         }
-        String startedMatchID;
-
+        int startedMatchID=1000;
+        try {
             System.out.println("enter the started match ID");
-            startedMatchID = scanner.nextLine();
+            startedMatchID = scanner.nextInt();
+            scanner.nextLine();
+        }
+        catch(Exception e){
+            System.out.println("you didn't enter an int value");
+        }
 
         String nickname;
             System.out.println("enter your nickname");
