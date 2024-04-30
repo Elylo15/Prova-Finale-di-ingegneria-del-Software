@@ -78,7 +78,7 @@ public class Server implements Runnable {
         }
     }
 
-
+    // TODO add status information
     private void handleConnectionSocket(Socket socket) {
         InetAddress clientAddress = socket.getInetAddress();
         int clientPort = socket.getPort();
@@ -124,15 +124,15 @@ public class Server implements Runnable {
                     ClientManager lobbyManager = new ClientManager(matchInfo);
                     games.add(lobbyManager);
 
-                    // TODO use synchronized and if it falis kickThePlayer
                     this.welcomeNewPlayer(lobbyManager, connection);
                 }
 
-
-
-
             } else if (msg.getStartedMatchID() != null && msg.getNickname() != null ) {
+                // TODO finish this part
                 // Player wants to join an already started game
+
+
+                // TODO add status information
 
                 // Find the game
                 ClientManager lobbyManager = games.stream()
@@ -147,7 +147,7 @@ public class Server implements Runnable {
                 }
                 synchronized (lobbyManager) {
 
-                    // Game not found or lobby full
+                    // Lobby full
                     if (lobbyManager.getMatchInfo().getExpectedPlayers() <= lobbyManager.getPlayersInfo().size() || lobbyManager.getMatchInfo().getStatus() == MatchState.Waiting) {
                         connection.sendAnswerToServerOption(false, 0);
                         socket.close();
