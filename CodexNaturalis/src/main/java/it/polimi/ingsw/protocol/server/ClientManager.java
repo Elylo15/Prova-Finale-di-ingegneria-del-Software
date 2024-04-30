@@ -56,6 +56,15 @@ public class ClientManager implements Runnable{
 
     }
 
+    /**
+     * Checks if new players can join. If the number of player meets with expectedPlayers, the eventually new player is kicked
+     * @param connection
+     */
+    public synchronized void checkAvailability(ClientConnection connection) {
+        if(this.matchInfo.getExpectedPlayers() <= this.playersInfo.size())
+            connection.closeConnection();
+    }
+
     public MatchInfo getMatchInfo() {return this.matchInfo;}
     public ArrayList<PlayerInfo> getPlayersInfo() {return this.playersInfo;}
     public Match getMatch() {return this.matchInfo.getMatch();}
