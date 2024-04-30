@@ -3,11 +3,9 @@ package it.polimi.ingsw.protocol.server;
 
 
 
-import it.polimi.ingsw.protocol.messages.ConnectionState.choseColorMessage;
-import it.polimi.ingsw.protocol.messages.ConnectionState.choseNameMessage;
+import it.polimi.ingsw.protocol.messages.ConnectionState.chosenColorMessage;
+import it.polimi.ingsw.protocol.messages.ConnectionState.chosenNameMessage;
 import it.polimi.ingsw.protocol.messages.ConnectionState.connectionResponseMessage;
-import it.polimi.ingsw.protocol.messages.ConnectionState.unavailableNamesMessage;
-import it.polimi.ingsw.protocol.messages.EndGameState.declareWinnerMessage;
 import it.polimi.ingsw.protocol.messages.ObjectiveState.objectiveCardMessage;
 import it.polimi.ingsw.protocol.messages.PlayerTurnState.*;
 import it.polimi.ingsw.protocol.messages.StaterCardState.starterCardMessage;
@@ -87,13 +85,13 @@ public abstract class ClientConnection implements Runnable {
     public abstract void sendUnvailableName(ArrayList<String> unavailableNames);
 
     //ricevi il nome del client
-    public abstract choseNameMessage getName();
+    public abstract chosenNameMessage getName();
 
     //manda la lista dei colori disponibili
     public abstract void sendAvailableColor(ArrayList<String> availableColors);
 
     //ricevi il colore scelto
-    public abstract choseColorMessage getColor();
+    public abstract chosenColorMessage getColor();
 
     //manda lo stato al client
     public abstract void sendCurrentState(currentStateMessage currentState);

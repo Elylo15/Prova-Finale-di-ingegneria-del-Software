@@ -94,7 +94,7 @@ public class ControllerSocket  extends Controller {
     @Override
     public void chooseName(String name) {
         try {
-            outputStream.writeObject(new choseNameMessage(name));
+            outputStream.writeObject(new chosenNameMessage(name));
             outputStream.flush();
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -122,7 +122,7 @@ public class ControllerSocket  extends Controller {
     @Override
     public void chooseColor(String color) {
         try {
-            outputStream.writeObject(new choseNameMessage(color));
+            outputStream.writeObject(new chosenNameMessage(color));
             outputStream.flush();
         } catch (IOException e) {
             throw new RuntimeException(e);

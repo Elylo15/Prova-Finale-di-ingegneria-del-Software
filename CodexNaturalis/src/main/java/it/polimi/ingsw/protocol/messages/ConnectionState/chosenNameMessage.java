@@ -4,7 +4,10 @@ import it.polimi.ingsw.protocol.messages.Message;
 
 import java.io.Serializable;
 
-public class choseColorMessage implements Message, Serializable {
+public class chosenNameMessage implements Message, Serializable {
+    public chosenNameMessage(String color) {
+    }
+
     @Override
     public void setLock() {
 

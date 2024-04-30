@@ -88,9 +88,9 @@ public class ClientSocket extends ClientConnection {
     }
 
     @Override
-    public choseNameMessage getName(){
+    public chosenNameMessage getName(){
         try {
-            return (choseNameMessage) inputStream.readObject();
+            return (chosenNameMessage) inputStream.readObject();
         } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
@@ -106,9 +106,9 @@ public class ClientSocket extends ClientConnection {
     }
 
     @Override
-    public choseColorMessage getColor(){
+    public chosenColorMessage getColor(){
         try {
-            return (choseColorMessage) inputStream.readObject();
+            return (chosenColorMessage) inputStream.readObject();
         } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
