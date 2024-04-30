@@ -33,7 +33,7 @@ public class ViewCLI extends View{
     public void updatePlayer(currentStateMessage message){
         System.out.println("player " + message.getPlayer() + "is in the state " + message.getStateName());
         if(message.isLastTurn()){
-            System.out.println("this is your last turn");
+            System.out.println("this is the last turn");
         }
     }
 
