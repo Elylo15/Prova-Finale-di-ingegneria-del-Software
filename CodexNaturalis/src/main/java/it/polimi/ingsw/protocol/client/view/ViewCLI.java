@@ -8,6 +8,7 @@ import it.polimi.ingsw.protocol.messages.EndGameState.*;
 import it.polimi.ingsw.protocol.messages.StaterCardState.*;
 import it.polimi.ingsw.protocol.messages.ObjectiveState.*;
 import it.polimi.ingsw.protocol.messages.WaitingforPlayerState.*;
+import it.polimi.ingsw.protocol.messages.currentStateMessage;
 
 
 import java.io.BufferedReader;
@@ -24,6 +25,18 @@ public class ViewCLI extends View{
         super();
 
     }
+
+    /**
+     *
+     * @param message
+     */
+    public void updatePlayer(currentStateMessage message){
+        System.out.println("player " + message.getPlayer() + "is in the state " + message.getStateName());
+        if(message.isLastTurn()){
+            System.out.println("this is your last turn");
+        }
+    }
+
 
     /**
      * this method allow the user to say if he wants to connect with socket or rmi

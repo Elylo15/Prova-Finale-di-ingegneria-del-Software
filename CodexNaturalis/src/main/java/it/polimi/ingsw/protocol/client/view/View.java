@@ -8,6 +8,8 @@ import it.polimi.ingsw.protocol.messages.EndGameState.*;
 import it.polimi.ingsw.protocol.messages.StaterCardState.*;
 import it.polimi.ingsw.protocol.messages.ObjectiveState.*;
 import it.polimi.ingsw.protocol.messages.WaitingforPlayerState.*;
+import it.polimi.ingsw.protocol.messages.currentStateMessage;
+
 
 
 import java.util.ArrayList;
@@ -18,6 +20,7 @@ public abstract class View {
 
     }
     public abstract boolean askSocket();
+    public abstract void updatePlayer(currentStateMessage message);
     public abstract void answerToConnection(connectionResponseMessage message);
     public abstract serverOptionMessage serverOptions(serverOptionMessage message);
     public abstract void answerToOption(serverOptionResponseMessage message);
