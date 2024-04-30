@@ -13,6 +13,13 @@ public class declareWinnerMessage implements Message, Serializable {
         this.scores = scores;
         this.numberOfObjects = numberOfObjects;
     }
+    public HashMap<String, Integer> getPlayersPoints(){
+        return scores;
+    }
+    public HashMap<String, Integer> getNumberOfObjects(){
+        return numberOfObjects;
+    }
+
     @Override
     public void setLock() {
 
