@@ -109,6 +109,7 @@ public class Server implements Runnable {
                     // Send answer
                     connection.sendAnswerToServerOption(true, lobby.getMatchInfo().getID());
 
+                    // TODO use synchronized and if it falis kickThePlayer
                     this.welcomeNewPlayer(lobby, connection);
 
                 } else {
@@ -124,6 +125,7 @@ public class Server implements Runnable {
                     ClientManager lobbyManager = new ClientManager(matchInfo);
                     games.add(lobbyManager);
 
+                    // TODO use synchronized and if it falis kickThePlayer
                     this.welcomeNewPlayer(lobbyManager, connection);
                 }
 
@@ -170,6 +172,7 @@ public class Server implements Runnable {
 
                     if(savedPlayer != null) {
                         PlayerInfo savedPlayerInfo = new PlayerInfo(savedPlayer, new PlayerFSM(State.NotPlayerTurn), connection);
+                        // TODO use synchronized and if it falis kickThePlayer
                         lobbyManager.addPlayerInfo(savedPlayerInfo);
                     } else {
                         socket.close();
@@ -179,6 +182,7 @@ public class Server implements Runnable {
 
                     if(savedPlayer != null) {
                         PlayerInfo savedPlayerInfo = new PlayerInfo(savedPlayer, new PlayerFSM(State.EndGame), connection);
+                        // TODO use synchronized and if it falis kickThePlayer
                         lobbyManager.addPlayerInfo(savedPlayerInfo);
                     } else {
                         socket.close();
@@ -192,6 +196,7 @@ public class Server implements Runnable {
                 // Player wants to load a saved game
                 // TODO implement loading of a game
                 // maybe start from here the custom loaded game and not from run
+                // TODO use synchronized and if it falis kickThePlayer
 
             }
 
@@ -243,6 +248,8 @@ public class Server implements Runnable {
             availableColors.add("Yellow");
 
         // Ask for the player color
+        if(availableColors.isEmpty())
+            connection.getSocket().close();
         String color = connection.getColor(availableColors);
         connection.sendAnswerToChosenColor(availableColors.contains(color));
         while(!availableColors.contains(color)) {
@@ -250,9 +257,16 @@ public class Server implements Runnable {
             connection.sendAnswerToChosenColor(availableColors.contains(color));
         }
 
-        // Add the new player to the waiting list
-        Player player = new Player(name, color, lobbyManager.getMatchInfo().getMatch().getCommonArea());
-        PlayerInfo playerInfo = new PlayerInfo(player, new PlayerFSM(), connection);
+        // Add the new player to the waiting list if expexted
+        synchronized(lobbyManager) {
+            if(lobbyManager.getMatchInfo().getExpectedPlayers() > lobbyManager.getPlayersInfo().size()) {
+                Player player = new Player(name, color, lobbyManager.getMatchInfo().getMatch().getCommonArea());
+                PlayerInfo playerInfo = new PlayerInfo(player, new PlayerFSM(), connection);
+
+            } else {
+                connection.getSocket().close();
+            }
+        }
 
 
     }
