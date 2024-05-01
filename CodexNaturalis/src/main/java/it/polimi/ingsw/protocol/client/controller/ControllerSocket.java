@@ -13,18 +13,28 @@ import it.polimi.ingsw.protocol.messages.ObjectiveState.*;
 import java.io.*;
 import java.net.*;
 
-public class ControllerSocket  extends Controller {
+public class ControllerSocket extends Controller {
     private final String serverIP;
     private final String serverPort;
     private Socket socket;
     private ObjectOutputStream outputStream;
     private ObjectInputStream inputStream;
 
+    /**
+     * method {@code ControllerSocket}: creates a new ControllerSocket
+     * @param serverIP: String
+     * @param serverPort: String
+     */
     public ControllerSocket (String serverIP, String serverPort) {
         this.serverIP = serverIP;
         this.serverPort = serverPort;
     }
 
+    /**
+     * method {@code connectToServer}: connects to an existing server
+     * @param serverIP: String
+     * @param serverPort: String
+     */
     @Override
     public void connectToServer(String serverIP, String serverPort) {
         try {
@@ -36,6 +46,10 @@ public class ControllerSocket  extends Controller {
         }
     }
 
+    /**
+     * method {@code answerConnection}: receives a connectionResponseMessage
+     * @return connectionResponseMessage
+     */
     @Override
     public connectionResponseMessage answerConnection() {
         try {
@@ -45,6 +59,10 @@ public class ControllerSocket  extends Controller {
         }
     }
 
+    /**
+     * method {@code getCurrent}: receives a currentStateMessage
+     * @return currentStateMessage
+     */
     @Override
     public currentStateMessage getCurrent() {
         try {
@@ -54,6 +72,10 @@ public class ControllerSocket  extends Controller {
         }
     }
 
+    /**
+     * method {@code serverOptions}: receives an empty serverOptionMessage
+     * @return serverOptionMessage
+     */
     @Override
     public serverOptionMessage serverOptions() {
         try {
@@ -63,6 +85,10 @@ public class ControllerSocket  extends Controller {
         }
     }
 
+    /**
+     *  method {@code sendOptions}: sends a serverOptionMessage
+     * @param options: serverOptionMessage
+     */
     @Override
     public void sendOptions(serverOptionMessage options) {
         try {
@@ -73,6 +99,10 @@ public class ControllerSocket  extends Controller {
         }
     }
 
+    /**
+     * method {@code correctAnswer}: receives a responseMessage
+     * @return responseMessage
+     */
     @Override
     public responseMessage correctAnswer() {
         try {
@@ -82,6 +112,10 @@ public class ControllerSocket  extends Controller {
         }
     }
 
+    /**
+     * method {@code getUnavailableName}: receives a unavailableNamesMessage
+     * @return unavailableNamesMessage
+     */
     @Override
     public unavailableNamesMessage getUnavailableName() {
         try {
@@ -91,6 +125,10 @@ public class ControllerSocket  extends Controller {
         }
     }
 
+    /**
+     *  method {@code chooseName}: sends a chosenNameMessage
+     * @param name: String
+     */
     @Override
     public void chooseName(String name) {
         try {
@@ -101,6 +139,10 @@ public class ControllerSocket  extends Controller {
         }
     }
 
+    /**
+     * method {@code getAvailableColor}: receives a availableColorsMessage
+     * @return availableColorsMessage
+     */
     @Override
     public availableColorsMessage getAvailableColor() {
         try {
@@ -110,16 +152,24 @@ public class ControllerSocket  extends Controller {
         }
     }
 
+    /**
+     *  method {@code chooseColor}: sends a chosenNameMessage
+     * @param color: String
+     */
     @Override
     public void chooseColor(String color) {
         try {
-            outputStream.writeObject(new chosenNameMessage(color));
+            outputStream.writeObject(new chosenColorMessage(color));
             outputStream.flush();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
+    /**
+     * method {@code newHost}: receives a newHostMessage
+     * @return newHostMessage
+     */
     @Override
     public newHostMessage newHost() {
         try {
@@ -129,6 +179,10 @@ public class ControllerSocket  extends Controller {
         }
     }
 
+    /**
+     *  method {@code expectedPlayers}: sends a expectedPlayersMessage
+     * @param expected: int
+     */
     @Override
     public void expectedPlayers(int expected) {
         try {
@@ -139,6 +193,10 @@ public class ControllerSocket  extends Controller {
         }
     }
 
+    /**
+     *  method {@code placeStarter}: sends a starterCardMessage
+     * @param side: int
+     */
     @Override
     public void placeStarter(int side) {
         try {
@@ -149,6 +207,10 @@ public class ControllerSocket  extends Controller {
         }
     }
 
+    /**
+     *  method {@code chooseObjective}: sends a objectiveCardMessage
+     * @param pick: int
+     */
     @Override
     public void chooseObjective(int pick) {
         try {
@@ -159,6 +221,13 @@ public class ControllerSocket  extends Controller {
         }
     }
 
+    /**
+     *  method {@code placeCard}: sends a PlaceCardMessage
+     * @param card: int
+     * @param side: int
+     * @param x: int
+     * @param y: int
+     */
     @Override
     public void placeCard(int card, int side, int x, int y) {
         try {
@@ -169,6 +238,10 @@ public class ControllerSocket  extends Controller {
         }
     }
 
+    /**
+     *  method {@code pickCard}: sends a pickCardMessage
+     * @param card: int
+     */
     @Override
     public void pickCard(int card) {
         try {
@@ -179,6 +252,10 @@ public class ControllerSocket  extends Controller {
         }
     }
 
+    /**
+     * method {@code endGame}: receives a declareWinnerMessage
+     * @return declareWinnerMessage
+     */
     @Override
     public declareWinnerMessage endGame() {
         try {

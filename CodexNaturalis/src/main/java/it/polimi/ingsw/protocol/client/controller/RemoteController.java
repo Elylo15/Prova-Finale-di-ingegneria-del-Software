@@ -14,49 +14,36 @@ import it.polimi.ingsw.protocol.messages.WaitingforPlayerState.*;
 import it.polimi.ingsw.protocol.messages.ObjectiveState.*;
 
 public interface RemoteController extends Remote {
-    connectionResponseMessage answerConnection() throws RemoteException;
+    connectionResponseMessage answerConnection();
 
-    currentStateMessage getCurrent() throws RemoteException;
+    currentStateMessage getCurrent();
 
-    serverOptionMessage serverOptions() throws RemoteException;
+    serverOptionMessage serverOptions();
 
-    void sendOptions(serverOptionMessage options) throws RemoteException;
+    void sendOptions(serverOptionMessage options);
 
-    serverOptionResponseMessage correctOption() throws RemoteException;
+    unavailableNamesMessage getUnavailableName();
 
-    unavailableNamesMessage getUnavailableName() throws RemoteException;
+    void chooseName(String name);
 
-    void chooseName(String name) throws RemoteException;
+    availableColorsMessage getAvailableColor();
 
-    nameResponseMessage correctName() throws RemoteException;
+    void chooseColor(String color);
 
-    availableColorsMessage getAvailableColor() throws RemoteException;
+    newHostMessage newHost();
 
-    void chooseColor(String color) throws RemoteException;
+    void expectedPlayers(int expected);
 
-    colorResponseMessage correctColor() throws RemoteException;
+    void placeStarter(int side);
 
-    newHostMessage newHost() throws RemoteException;
 
-    void expectedPlayers(int expected) throws RemoteException;
+    void chooseObjective(int pick);
 
-    expectedPlayersResponseMessage correctExpectedPlayers() throws RemoteException;
+    void placeCard(int card, int side, int x, int y);
 
-    void placeStarter(int side) throws RemoteException;
+    void pickCard(int card);
 
-    starterCardResponseMessage correctStarter() throws RemoteException;
+    declareWinnerMessage endGame();
 
-    void chooseObjective(int pick) throws RemoteException;
-
-    objectiveCardResponseMessage correctObjective() throws RemoteException;
-
-    void placeCard(int card, int side, int x, int y) throws RemoteException;
-
-    placeCardResponseMessage correctPlaced() throws RemoteException;
-
-    void pickCard(int card) throws RemoteException;
-
-    pickCardResponseMessage correctPicked() throws RemoteException;
-
-    declareWinnerMessage endGame() throws RemoteException;
+    responseMessage correctAnswer();
 }

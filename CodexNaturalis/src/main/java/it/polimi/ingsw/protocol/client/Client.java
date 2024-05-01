@@ -29,7 +29,7 @@ public class Client {
         this.controller = controller; //Socket default
     }
 
-    public void startGame() throws  IOException {
+    public void startGame() {
         connection();
         run();
     }
