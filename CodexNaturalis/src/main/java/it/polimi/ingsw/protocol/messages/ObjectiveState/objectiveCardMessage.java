@@ -7,14 +7,20 @@ import java.io.Serializable;
 
 
 public class objectiveCardMessage implements Message, Serializable {
-    private int choice;
+    private final int choice;
+    private final boolean noResponse;
 
-    public objectiveCardMessage(int choice) {
+    public objectiveCardMessage(int choice, boolean noResponse) {
         this.choice = choice;
+        this.noResponse = noResponse;
     }
 
     public int getChoice() {
         return choice;
+    }
+
+    public boolean isNoResponse() {
+        return noResponse;
     }
 
     @Override

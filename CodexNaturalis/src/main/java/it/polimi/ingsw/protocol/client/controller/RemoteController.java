@@ -32,16 +32,15 @@ public interface RemoteController extends Remote {
 
     newHostMessage newHost();
 
-    void expectedPlayers(int expected);
+    void expectedPlayers(int expected, boolean noResponse);
 
-    void placeStarter(int side);
+    void placeStarter(int side, boolean noResponse);
 
+    void chooseObjective(int pick, boolean noResponse);
 
-    void chooseObjective(int pick);
+    void placeCard(int card, int side, int x, int y, boolean noResponse);
 
-    void placeCard(int card, int side, int x, int y);
-
-    void pickCard(int card);
+    void pickCard(int card, boolean noResponse);
 
     declareWinnerMessage endGame();
 

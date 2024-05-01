@@ -174,9 +174,9 @@ public class ControllerRMI extends Controller implements RemoteController {
      * @param expected: int
      */
     @Override
-    public void expectedPlayers(int expected) {
+    public void expectedPlayers(int expected, boolean noResponse) {
         try {
-            remoteController.expectedPlayers(expected);
+            remoteController.expectedPlayers(expected, noResponse);
         } catch (RuntimeException e) {
             throw new RuntimeException(e);
         }
@@ -187,9 +187,9 @@ public class ControllerRMI extends Controller implements RemoteController {
      * @param side: int
      */
     @Override
-    public void placeStarter(int side) {
+    public void placeStarter(int side, boolean noResponse) {
         try {
-            remoteController.placeStarter(side);
+            remoteController.placeStarter(side, noResponse);
         } catch (RuntimeException e) {
             throw new RuntimeException(e);
         }
@@ -200,9 +200,9 @@ public class ControllerRMI extends Controller implements RemoteController {
      * @param pick: int
      */
     @Override
-    public void chooseObjective(int pick) {
+    public void chooseObjective(int pick, boolean noResponse) {
         try {
-            remoteController.chooseObjective(pick);
+            remoteController.chooseObjective(pick, noResponse);
         } catch (RuntimeException e) {
             throw new RuntimeException(e);
         }
@@ -216,9 +216,9 @@ public class ControllerRMI extends Controller implements RemoteController {
      * @param y: int
      */
     @Override
-    public void placeCard(int card, int side, int x, int y) {
+    public void placeCard(int card, int side, int x, int y, boolean noResponse) {
         try {
-            remoteController.placeCard(card, side, x, y);
+            remoteController.placeCard(card, side, x, y, noResponse);
         } catch (RuntimeException e) {
             throw new RuntimeException(e);
         }
@@ -229,9 +229,9 @@ public class ControllerRMI extends Controller implements RemoteController {
      * @param card: int
      */
     @Override
-    public void pickCard(int card) {
+    public void pickCard(int card, boolean noResponse) {
         try {
-            remoteController.pickCard(card);
+            remoteController.pickCard(card, noResponse);
         } catch (RuntimeException e) {
             throw new RuntimeException(e);
         }

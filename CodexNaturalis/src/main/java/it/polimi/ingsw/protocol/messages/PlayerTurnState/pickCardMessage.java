@@ -6,13 +6,18 @@ import java.io.Serializable;
 
 public class pickCardMessage implements Message, Serializable {
     private final int card;
+    private final boolean noResponse;
 
-    public pickCardMessage(int card) {
+    public pickCardMessage(int card, boolean noResponse) {
         this.card = card;
+        this.noResponse = noResponse;
     }
 
     public int getCard() {
         return card;
+    }
+    public boolean isNoResponse() {
+        return noResponse;
     }
 
     @Override

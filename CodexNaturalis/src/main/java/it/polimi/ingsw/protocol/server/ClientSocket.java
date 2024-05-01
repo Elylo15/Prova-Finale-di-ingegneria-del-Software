@@ -142,9 +142,9 @@ public class ClientSocket extends ClientConnection {
     }
 
     @Override
-    public PlaceCardMessage getPlaceCard(){
+    public placeCardMessage getPlaceCard(){
         try {
-            return (PlaceCardMessage) inputStream.readObject();
+            return (placeCardMessage) inputStream.readObject();
         } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }

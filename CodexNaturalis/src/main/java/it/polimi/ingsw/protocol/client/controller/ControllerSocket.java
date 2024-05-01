@@ -182,11 +182,12 @@ public class ControllerSocket extends Controller {
     /**
      *  method {@code expectedPlayers}: sends a expectedPlayersMessage
      * @param expected: int
+     * @param noResponse: boolean
      */
     @Override
-    public void expectedPlayers(int expected) {
+    public void expectedPlayers(int expected, boolean noResponse) {
         try {
-            outputStream.writeObject(new expectedPlayersMessage (expected));
+            outputStream.writeObject(new expectedPlayersMessage (expected, noResponse));
             outputStream.flush();
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -196,11 +197,12 @@ public class ControllerSocket extends Controller {
     /**
      *  method {@code placeStarter}: sends a starterCardMessage
      * @param side: int
+     * @param noResponse: boolean
      */
     @Override
-    public void placeStarter(int side) {
+    public void placeStarter(int side, boolean noResponse) {
         try {
-            outputStream.writeObject(new starterCardMessage(side));
+            outputStream.writeObject(new starterCardMessage(side, noResponse));
             outputStream.flush();
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -210,11 +212,12 @@ public class ControllerSocket extends Controller {
     /**
      *  method {@code chooseObjective}: sends a objectiveCardMessage
      * @param pick: int
+     * @param noResponse: boolean
      */
     @Override
-    public void chooseObjective(int pick) {
+    public void chooseObjective(int pick, boolean noResponse) {
         try {
-            outputStream.writeObject(new objectiveCardMessage(pick));
+            outputStream.writeObject(new objectiveCardMessage(pick, noResponse));
             outputStream.flush();
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -227,11 +230,12 @@ public class ControllerSocket extends Controller {
      * @param side: int
      * @param x: int
      * @param y: int
+     * @param noResponse: boolean
      */
     @Override
-    public void placeCard(int card, int side, int x, int y) {
+    public void placeCard(int card, int side, int x, int y, boolean noResponse) {
         try {
-            outputStream.writeObject(new PlaceCardMessage(card, side, x, y));
+            outputStream.writeObject(new placeCardMessage(card, side, x, y, noResponse));
             outputStream.flush();
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -241,11 +245,12 @@ public class ControllerSocket extends Controller {
     /**
      *  method {@code pickCard}: sends a pickCardMessage
      * @param card: int
+     * @param noResponse: boolean
      */
     @Override
-    public void pickCard(int card) {
+    public void pickCard(int card, boolean noResponse) {
         try {
-            outputStream.writeObject(new pickCardMessage(card));
+            outputStream.writeObject(new pickCardMessage(card, noResponse));
             outputStream.flush();
         } catch (IOException e) {
             throw new RuntimeException(e);
