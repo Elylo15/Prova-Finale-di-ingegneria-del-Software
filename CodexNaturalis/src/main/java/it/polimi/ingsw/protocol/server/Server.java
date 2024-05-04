@@ -2,8 +2,9 @@ package it.polimi.ingsw.protocol.server;
 
 import it.polimi.ingsw.model.Match;
 import it.polimi.ingsw.model.Player;
-import it.polimi.ingsw.protocol.messages.ConnectionState.answerConnectionMessage;
+import it.polimi.ingsw.protocol.messages.ConnectionState.connectionResponseMessage;
 import it.polimi.ingsw.protocol.messages.ServerOptionState.serverOptionMessage;
+import it.polimi.ingsw.protocol.messages.currentStateMessage;
 import it.polimi.ingsw.protocol.server.FSM.MatchState;
 import it.polimi.ingsw.protocol.server.FSM.PlayerFSM;
 import it.polimi.ingsw.protocol.server.FSM.State;
@@ -78,29 +79,59 @@ public class Server implements Runnable {
         }
     }
 
-    // TODO add status information
+
     private void handleConnectionSocket(Socket socket) {
         InetAddress clientAddress = socket.getInetAddress();
         int clientPort = socket.getPort();
         try {
             ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
             ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
-            ClientConnection connection = new ClientSocket(clientAddress, clientPort, 180, output, input);
+            ClientConnection connection = new ClientSocket(clientAddress.toString(), Integer.toString(clientPort), socket);
 
             // Confirm the connection to the client
-            connection.sendAnswerToConnection(new answerConnectionMessage());
+            connection.sendAnswerToConnection(new connectionResponseMessage(true));
+
+            // Start checking if the client is alive
             executor.submit(connection::startCheckConnection);
 
-            Future<serverOptionMessage> serverOption = executor.submit(connection::getServerOption);
+            // Send status: "ServerOptionState"
+            executor.submit(() -> connection.sendCurrentState(new currentStateMessage(null, null, "ServerOptionState", false)));
 
-            serverOptionMessage msg = serverOption.get();
+            boolean correctResponse = false;
+
+            Future<serverOptionMessage> serverOption;
+            serverOptionMessage msg = null;
+
+            while(!correctResponse) {
+                // Request the ServerOptionMessage
+                serverOption = executor.submit(connection::getServerOption);
+
+                // If client loses connection, the methods ends
+                while(!serverOption.isDone())
+                {
+                    if(!this.checkIsAlive(connection)) {
+                        socket.close();
+                        return;
+                    }
+                }
+
+                msg = serverOption.get();
+
+                // Check if the response message is valid
+                if(!msg.isNewMatch() && (msg.getNickname() == null || Objects.equals(msg.getNickname(), "") || msg.getStartedMatchID() == null) && !msg.isLoadMatch())
+                    connection.sendAnswerToServerOption(false, null);
+                else
+                    correctResponse = true;
+            }
+
+
             if(msg.isNewMatch()) {
 
                 ClientManager lobby;
                 // Player wants to join a new game
                 lobby = games.stream()
                         .filter(clientManager -> clientManager.getMatchInfo().getStatus() == MatchState.Waiting)
-                        .filter(clientManager -> clientManager.getMatchInfo().getExpectedPlayers() > clientManager.getPlayers().size())
+                        .filter(clientManager -> clientManager.getMatchInfo().getExpectedPlayers() > clientManager.getPlayersInfo().size())
                         .toList().getFirst();
 
 
@@ -110,6 +141,9 @@ public class Server implements Runnable {
                     connection.sendAnswerToServerOption(true, lobby.getMatchInfo().getID());
 
                     this.welcomeNewPlayer(lobby, connection);
+
+                    // The managing of the "host" (first player who decides the expected players number)
+                    // is implemented in ClientManager.
 
                 } else {
                     //get the other ID
@@ -212,6 +246,8 @@ public class Server implements Runnable {
                 // maybe start from here the custom loaded game and not from run
                 // TODO use synchronized and if it falis kickThePlayer
 
+
+
             }
 
 
@@ -226,7 +262,16 @@ public class Server implements Runnable {
 
     }
 
+
+    private boolean checkIsAlive(ClientConnection connection) {
+        return connection != null && connection.getStatus().equals("online");
+    }
+
     private void welcomeNewPlayer(ClientManager lobbyManager, ClientConnection connection) throws Exception {
+        // Send status information
+        currentStateMessage currState = new currentStateMessage(null,null,"ConnectionState", false);
+        connection.sendCurrentState(currState);
+
         // Obtain unavailable names
         ArrayList<String> unavailableNames = (ArrayList<String>) lobbyManager.getPlayersInfo().stream()
                 .map(playerInfo -> playerInfo.getPlayer().getNickname())
@@ -242,6 +287,7 @@ public class Server implements Runnable {
         else
             connection.sendAnswerToChosenName(true);
 
+        // Ask again until it is a valid name
         while(unavailableNames.contains(name)) {
             name = connection.getName(unavailableNames);
             if(unavailableNames.contains(name))
