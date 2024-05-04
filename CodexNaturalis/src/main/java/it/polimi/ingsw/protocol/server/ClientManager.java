@@ -2,17 +2,14 @@ package it.polimi.ingsw.protocol.server;
 
 import it.polimi.ingsw.model.Match;
 import it.polimi.ingsw.model.Player;
-import it.polimi.ingsw.protocol.server.FSM.PlayerFSM;
+import it.polimi.ingsw.protocol.messages.currentStateMessage;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.concurrent.*;
 
 public class ClientManager implements Runnable{
     private MatchInfo matchInfo;
     private ArrayList<PlayerInfo> playersInfo; // Only online players
-
-    private boolean lastTurn;
 
     private ThreadPoolExecutor executor;
 
@@ -22,9 +19,10 @@ public class ClientManager implements Runnable{
      */
     public ClientManager(MatchInfo match) {
         this.matchInfo = match;
+        this.matchInfo.setLastTurn(false);
 
         playersInfo = new ArrayList<>();
-        this.lastTurn = false;
+
 
         int corePoolSize = 15;
         int maximumPoolSize = 50;
@@ -78,6 +76,81 @@ public class ClientManager implements Runnable{
      */
     @Override
     public void run() {
+        boolean gameOver = false;
+        while(!gameOver) {
+            switch (this.matchInfo.getStatus()) {
+                case Waiting -> {
+                    this.waiting();
+                    this.saveMatch();
+                }
+                case Player1 -> {
+                    this.player(matchInfo.getMatch().getPlayers().get(0));
+                    this.saveMatch();
+                }
+                case Player2 -> {
+                    this.player(matchInfo.getMatch().getPlayers().get(1));
+                    this.saveMatch();
+                }
+                case Player3 -> {
+                    this.player(matchInfo.getMatch().getPlayers().get(2));
+                    this.saveMatch();
+                }
+                case Player4 -> {
+                    this.player(matchInfo.getMatch().getPlayers().get(3));
+                    this.saveMatch();
+                }
+                case Endgame -> {
+                    this.endgame();
+                    this.saveMatch();
+                }
+                case KickingPlayers -> {
+                    this.kickPlayer();
+                    gameOver = true;
+                }
+            }
+        }
+
+    }
+
+
+    private void waiting() {
+        int previousConnectedPlayers = this.playersInfo.size();
+        currentStateMessage currState = new currentStateMessage(null, null,"WaitingForPlayersState",false);
+
+        // Obtains the number of expected players for this match
+        while(this.matchInfo.getExpectedPlayers() == null ) {
+            /*
+            1. Mandare messaggi stato ad ogni player che si connette
+            2. Mandare messaggi host ad ogni player
+            3. Rispondere
+
+            4. Kickare player che non rispondono
+            5. Kickare player che si disconnettono
+             */
+
+
+
+        }
+
+        // Wait for the specified number of expected players
+        while(this.playersInfo.size() < this.matchInfo.getExpectedPlayers()) {
+
+        }
+
+
+
+        // Adds all players to the match (match of the model)
+    }
+
+    private void player(Player player) {
+
+    }
+
+    private void endgame() {
+
+    }
+
+    private void kickPlayer() {
 
     }
 
