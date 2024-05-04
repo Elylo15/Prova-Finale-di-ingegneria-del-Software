@@ -12,13 +12,9 @@ public class ClientManager implements Runnable{
     private MatchInfo matchInfo;
     private ArrayList<PlayerInfo> playersInfo; // Only online players
 
-
-    private ThreadPoolExecutor executor;
-
-    private PlayerFSM fsm;
-
     private boolean lastTurn;
 
+    private ThreadPoolExecutor executor;
 
     /**
      * Standard constructor for ClientManager
@@ -39,6 +35,8 @@ public class ClientManager implements Runnable{
     }
 
 
+
+    // maybe remove this method
     public void setStatus(Player player) {
 
     }
@@ -70,19 +68,17 @@ public class ClientManager implements Runnable{
     public Match getMatch() {return this.matchInfo.getMatch();}
 
 
-
-
-
     public void saveMatch() {
 
     }
 
 
     /**
-     * Runs the host session for the game
+     * Hosts a session for the current game
      */
     @Override
     public void run() {
+
     }
 
 

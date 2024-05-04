@@ -15,9 +15,7 @@ import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.nio.channels.ClosedByInterruptException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Objects;
 import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -43,7 +41,7 @@ public class Server implements Runnable {
         portSocket = 30000;
         portRMI = 40000;
         games = new ArrayList<>();
-        defaultPath = "./savedGames/";
+        defaultPath = "savedGames/";
 
         int corePoolSize = 15;
         int maximumPoolSize = 100;
@@ -88,13 +86,13 @@ public class Server implements Runnable {
             ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
             ClientConnection connection = new ClientSocket(clientAddress.toString(), Integer.toString(clientPort), socket);
 
-            // Confirm the connection to the client
+            // Confirms the connection to the client
             connection.sendAnswerToConnection(new connectionResponseMessage(true));
 
-            // Start checking if the client is alive
+            // Starts checking if the client is alive
             executor.submit(connection::startCheckConnection);
 
-            // Send status: "ServerOptionState"
+            // Sends status: "ServerOptionState"
             executor.submit(() -> connection.sendCurrentState(new currentStateMessage(null, null, "ServerOptionState", false)));
 
             boolean correctResponse = false;
@@ -103,10 +101,10 @@ public class Server implements Runnable {
             serverOptionMessage msg = null;
 
             while(!correctResponse) {
-                // Request the ServerOptionMessage
+                // Requests the ServerOptionMessage
                 serverOption = executor.submit(connection::getServerOption);
 
-                // If client loses connection, the methods ends
+                // If client loses connection, then this method ends
                 while(!serverOption.isDone())
                 {
                     if(!this.checkIsAlive(connection)) {
@@ -117,7 +115,7 @@ public class Server implements Runnable {
 
                 msg = serverOption.get();
 
-                // Check if the response message is valid
+                // Checks if the response message is valid
                 if(!msg.isNewMatch() && (msg.getNickname() == null || Objects.equals(msg.getNickname(), "") || msg.getStartedMatchID() == null) && !msg.isLoadMatch())
                     connection.sendAnswerToServerOption(false, null);
                 else
@@ -137,22 +135,24 @@ public class Server implements Runnable {
 
 
                 if (lobby != null) {
-                    // Send answer
+                    // Sends answer
                     connection.sendAnswerToServerOption(true, lobby.getMatchInfo().getID());
 
                     this.welcomeNewPlayer(lobby, connection);
 
-                    // The managing of the "host" (first player who decides the expected players number)
-                    // is implemented in ClientManager.
+                    /*
+                     The managing of the "host" (first player who decides the expected players number)
+                     is implemented in ClientManager.
+                    */
 
                 } else {
-                    //get the other ID
+                    // gets the other ID
                     Integer id = games.stream()
                             .map(clientManager -> clientManager.getMatchInfo().getID())
                             .max(Integer::compareTo)
                             .orElse(0);
 
-                    MatchInfo matchInfo = new MatchInfo(new Match(), id + 1, this.defaultPath + id.toString() ,4, MatchState.Waiting);
+                    MatchInfo matchInfo = new MatchInfo(new Match(), id + 1, this.defaultPath + id.toString() + ".savedgame" ,null, MatchState.Waiting);
 
                     connection.sendAnswerToServerOption(true, lobby.getMatchInfo().getID());
                     ClientManager lobbyManager = new ClientManager(matchInfo);
@@ -168,7 +168,7 @@ public class Server implements Runnable {
 
                 // TODO add status information
 
-                // Find the game
+                // Finds the game
                 ClientManager lobbyManager = games.stream()
                         .filter(clientManager -> clientManager.getMatchInfo().getID() == Integer.parseInt(msg.getStartedMatchID()))
                         .limit(1)
@@ -181,14 +181,14 @@ public class Server implements Runnable {
                 }
                 synchronized (lobbyManager) {
 
-                    // Lobby full
+                    // Is lobby full?
                     if (lobbyManager.getMatchInfo().getExpectedPlayers() <= lobbyManager.getPlayersInfo().size() || lobbyManager.getMatchInfo().getStatus() == MatchState.Waiting) {
                         connection.sendAnswerToServerOption(false, 0);
                         socket.close();
                     }
 
 
-                    // Check if nickname is correct and if it is available
+                    // Checks if nickname is correct and if it is available
                     ArrayList<String> onlinePlayers = (ArrayList<String>) lobbyManager.getPlayersInfo().stream()
                             .map(playerInfo -> playerInfo.getPlayer().getNickname())
                             .toList();
@@ -268,11 +268,11 @@ public class Server implements Runnable {
     }
 
     private void welcomeNewPlayer(ClientManager lobbyManager, ClientConnection connection) throws Exception {
-        // Send status information
+        // Sends status information
         currentStateMessage currState = new currentStateMessage(null,null,"ConnectionState", false);
         connection.sendCurrentState(currState);
 
-        // Obtain unavailable names
+        // Obtains unavailable names
         ArrayList<String> unavailableNames = (ArrayList<String>) lobbyManager.getPlayersInfo().stream()
                 .map(playerInfo -> playerInfo.getPlayer().getNickname())
                 .toList();
@@ -280,14 +280,14 @@ public class Server implements Runnable {
         if(unavailableNames.size() >= lobbyManager.getMatchInfo().getExpectedPlayers())
             connection.closeConnection();
 
-        // Ask for the new player name
+        // Asks for the new player name
         String name = connection.getName(unavailableNames).getName();
         if(unavailableNames.contains(name))
             connection.sendAnswerToChosenName(false);
         else
             connection.sendAnswerToChosenName(true);
 
-        // Ask again until it is a valid name
+        // Asks again until it is a valid name
         while(unavailableNames.contains(name)) {
             name = connection.getName(unavailableNames);
             if(unavailableNames.contains(name))
@@ -296,7 +296,7 @@ public class Server implements Runnable {
                 connection.sendAnswerToChosenName(true);
         }
 
-        // Obtain unavailable colors
+        // Obtains unavailable colors
         ArrayList<String> unavailableColors = (ArrayList<String>) lobbyManager.getPlayersInfo().stream()
                 .map(playerInfo -> playerInfo.getPlayer().getColor())
                 .toList();
@@ -314,18 +314,18 @@ public class Server implements Runnable {
         if(!unavailableColors.contains("Yellow"))
             availableColors.add("Yellow");
 
-        // Ask for the player color
+        // Asks for the player color
         if(availableColors.isEmpty())
             connection.getSocket().close();
         String color = connection.getColor(availableColors);
         connection.sendAnswerToChosenColor(availableColors.contains(color));
-        // Ask again until it is a valid color
+        // Asks again until it is a valid color
         while(!availableColors.contains(color)) {
             color = connection.getColor(availableColors);
             connection.sendAnswerToChosenColor(availableColors.contains(color));
         }
 
-        // Add the new player to the waiting list if the clientManager in not full
+        // Adds the new player to the waiting list if the clientManager in not full
         try {
             Player player = new Player(name, color, lobbyManager.getMatchInfo().getMatch().getCommonArea());
             PlayerInfo playerInfo = new PlayerInfo(player, new PlayerFSM(), connection);
@@ -338,29 +338,16 @@ public class Server implements Runnable {
 
 
 
-    private void waitTheEnd(Socket socket, MatchInfo lobby, ClientConnection connection) throws IOException {
-        while(lobby.getStatus() != MatchState.KickingPlayers) {
-            try {
-                Thread.sleep(10000);
-            } catch (InterruptedException ignored) {}
-        }
-
-        socket.close();
-
-    }
-
-
-
-
-
 
 
     public void closeMatch() {
-        //TODO find a way to close a match at any momenta, possibly involve executors
+        // TODO remove match from games list
+
+        //TODO find a way to close a match at any moment, possibly involve executors
     }
 
     public void loadMatch(String fileName) {
-
+        // TODO load the match
     }
 
     /**
@@ -370,5 +357,7 @@ public class Server implements Runnable {
     public void run() {
         executor.submit(this::acceptConnectionSocket);
         executor.submit(this::acceptConnectionRMI);
+
+        // TODO maybe add the remove match from list method
     }
 }

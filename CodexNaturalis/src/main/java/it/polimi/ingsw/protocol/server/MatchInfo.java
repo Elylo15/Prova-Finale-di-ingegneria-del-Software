@@ -9,10 +9,10 @@ public class MatchInfo implements Serializable {
     private Match match;
     private Integer ID;
     private String path;
-    private int expectedPlayers;
+    private Integer expectedPlayers;
     private MatchState status;
 
-    public MatchInfo(Match match, int ID, String path, int expectedPlayers, MatchState status) {
+    public MatchInfo(Match match, int ID, String path, Integer expectedPlayers, MatchState status) {
         this.match = match;
         this.ID = ID;
         this.path = path;
@@ -20,7 +20,7 @@ public class MatchInfo implements Serializable {
         this.status = status;
     }
 
-    public void setExpectedPlayers(int expectedPlayers) {this.expectedPlayers = expectedPlayers;}
+    public void setExpectedPlayers(Integer expectedPlayers) {this.expectedPlayers = expectedPlayers;}
     public void setID(Integer ID) {this.ID = ID;}
     public void setPath(String path) {this.path = path;}
     public void setStatus(MatchState status) {this.status = status;}
@@ -28,7 +28,7 @@ public class MatchInfo implements Serializable {
     public Match getMatch() {return match;}
     public Integer getID() {return ID;}
     public String getPath() {return path;}
-    public int getExpectedPlayers() {return expectedPlayers;}
+    public Integer getExpectedPlayers() {return expectedPlayers;}
     public MatchState getStatus() {return status;}
 
 }
