@@ -103,7 +103,7 @@ public abstract class ClientConnection implements Runnable {
     public abstract objectiveCardMessage getChosenObjective();
 
     //riceve PlaceCardMessage dal client
-    public abstract PlaceCardMessage getPlaceCard();
+    public abstract placeCardMessage getPlaceCard();
 
     //riceve pickCardMessage dal client
     public abstract pickCardMessage getChosenPick();

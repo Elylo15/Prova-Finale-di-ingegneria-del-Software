@@ -26,6 +26,13 @@ public class ViewCLI extends View{
         super();
 
     }
+    public boolean askGui(){
+        return false;
+    }
+    public void playerDisconnected(){
+        System.out.println("An error occurred, connection interrupted");
+    }
+
 
     /**
      *
@@ -140,28 +147,10 @@ public class ViewCLI extends View{
         //the client can call the method view.unavaibleNames passing as a parameter the arraylist of unavailable names received from server
         System.out.println("This nicknames are not avaible: " + message.toString());
 
-        String name = null;
-        InputStreamReader input = new InputStreamReader(System.in);
-        BufferedReader buf = new BufferedReader(input);
-        try {
-
-            System.out.println("You need to choose a nickname to play the game");
-
-            name = buf.readLine();
-
-        }
-        catch (IOException e){
-            e.printStackTrace();
-        }
-        finally {
-            try {
-                buf.close();
-            }
-            catch (IOException e){
-                e.printStackTrace();
-
-            }
-        }
+        String name;
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("You need to choose a nickname to play the game");
+        name = scanner.nextLine();
         return name;
     }
 
@@ -187,43 +176,12 @@ public class ViewCLI extends View{
         //the client can call the method view.avaibleColors passing as a parameter the arraylist of available colors received from server
         System.out.println("This are the colors that are available: " + message.toString());
 
-        String color=null;
-        InputStreamReader input = new InputStreamReader(System.in);
-        BufferedReader buf = new BufferedReader(input);
-        try {
-                System.out.println("You need to choose a color, please enter a valid color to play");
-
-                color = buf.readLine();
-        }
-        catch (IOException e){
-            e.printStackTrace();
-        }
-
-        finally {
-            try {
-                buf.close();
-            }
-            catch (IOException e){
-                e.printStackTrace();
-
-            }
-        }
+        String color;
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("You need to choose a color, please enter a valid color to play");
+        color = scanner.nextLine();
         return color;
     }
-
-    /**
-     *the server will send a response to the client about its color choice
-     * @param message
-     */
-   /* public void answerToColorChosen(colorResponseMessage message){
-        if(message.getCorrect()){
-            System.out.println("You have entered a correct color");
-        }
-        else {
-            System.out.println("You didn't entered a correct color, please try again");
-        }
-    }*/
-
 
     /**
      *this method allow the user to place his starter card
@@ -244,19 +202,6 @@ public class ViewCLI extends View{
         return side;
     }
 
-    /**
-     *
-     * @param message
-     * @return
-     */
-    /*public void answerToPlaceStarter(starterCardResponseMessage message){
-       if(message.getCorrect()){
-           System.out.println("You placed the starter card correctly");
-       }
-       else{
-           System.out.println("You didn't place the starter card correctly, please try again");
-       }
-    }*/
 
     /**
      * allow the user to choose how many players will play
@@ -276,16 +221,6 @@ public class ViewCLI extends View{
     }
 
     /**
-     *
-     * @param message
-     */
-   /* public void answerToExpectedPlayers(expectedPlayersResponseMessage message){
-        if(message.getCorrect()){
-            System.out.println("the number of players has been set correctly");
-        }
-    }*/
-
-    /**
      * allow the user to choose his secret objective
      * @return objective
      */
@@ -302,20 +237,6 @@ public class ViewCLI extends View{
         }
         return objective;
     }
-
-    /**
-     * the user visualize the response about his objective choice
-     * @param message
-     */
-   /* public void answerToChooseObjective(objectiveCardResponseMessage message){
-        if(message.getCorrect()){
-            System.out.println("you have chosen your secret objective correctly");
-        }
-        else {
-            System.out.println("You didn't chosen your secret objective correctly");
-        }
-
-    }*/
 
     /**
      * allow the user to say what card he wants to play, front or back, and in which position
@@ -359,19 +280,6 @@ public class ViewCLI extends View{
     }
 
     /**
-     * the user visualize the response about the card he placed
-     * @param message
-     */
-    /*public void answerToPlaceCard(placeCardResponseMessage message){
-       if(message.getCorrect()){
-           System.out.println("you placed the card correctly");
-       }
-       else{
-           System.out.println("you didn't placed the card correctly");
-       }
-    }*/
-
-    /**
      * allow the user to say what card he wants to pick
      * @return the id of the card the user wants to pick
      */
@@ -388,18 +296,6 @@ public class ViewCLI extends View{
        return choice;
     }
 
-    /**
-     * the user visualize the response about the card he picked
-     * @param message
-     */
-    public void answerToPickCard(pickCardResponseMessage message){
-        if(message.getCorrect()){
-            System.out.println("you picked the card correctly");
-        }
-        else {
-            System.out.println("you could not pick the card correctly");
-        }
-    }
 
     /**
      * visualize the final information about the game, points and number of objectives achieved by the players
