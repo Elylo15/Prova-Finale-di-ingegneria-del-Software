@@ -319,6 +319,7 @@ public class Server implements Runnable {
             connection.getSocket().close();
         String color = connection.getColor(availableColors);
         connection.sendAnswerToChosenColor(availableColors.contains(color));
+        // Ask again until it is a valid color
         while(!availableColors.contains(color)) {
             color = connection.getColor(availableColors);
             connection.sendAnswerToChosenColor(availableColors.contains(color));
