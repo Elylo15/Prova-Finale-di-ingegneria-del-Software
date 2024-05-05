@@ -1,28 +1,54 @@
 package it.polimi.ingsw.protocol.server;
 
 import it.polimi.ingsw.model.Player;
-import it.polimi.ingsw.protocol.server.FSM.PlayerFSM;
+import it.polimi.ingsw.protocol.server.FSM.State;
 
 import java.io.Serializable;
-import java.net.Socket;
 
 public class PlayerInfo implements Serializable {
-    private Player player;
-    private PlayerFSM fsm;
+    private  Player player;
+    private State state;
     private ClientConnection connection;
 
-    public PlayerInfo(Player player, PlayerFSM fsm, ClientConnection connection) {
+    /**
+     * Constructs a new PlayerInfo object with the given player, state, and connection.
+     *
+     * @param player     The player object.
+     * @param state      The current state of the player's FSM.
+     * @param connection The client connection object.
+     */
+    public PlayerInfo(Player player, State state, ClientConnection connection) {
         this.player = player;
-        this.fsm = fsm;
+        this.state = state;
         this.connection = connection;
     }
 
 
 
 
-
+    /**
+     * Retrieves the player object associated with this player information.
+     *
+     * @return The player object.
+     */
     public Player getPlayer() { return player;}
-    public PlayerFSM getFsm() { return fsm;}
+    /**
+     * Retrieves the current state of the player.
+     *
+     * @return The state object representing the player's state.
+     */
+    public State getState() { return state;}
+    /**
+     * Sets the player's state to the given state.
+     *
+     * @param state The new state.
+     */
+    public void setState(State state) {this.state = state;}
+    /**
+     * Retrieves the client connection object representing the player's connection.
+     *
+     * @return The client connection object.
+     */
     public ClientConnection getConnection() { return connection;}
 
 }

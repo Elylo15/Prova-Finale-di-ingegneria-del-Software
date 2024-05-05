@@ -212,7 +212,7 @@ public class Server implements Runnable {
                             lobbyManager.getMatchInfo().getStatus() == MatchState.Player4) {
 
                         if(savedPlayer != null) {
-                            PlayerInfo savedPlayerInfo = new PlayerInfo(savedPlayer, new PlayerFSM(State.NotPlayerTurn), connection);
+                            PlayerInfo savedPlayerInfo = new PlayerInfo(savedPlayer, State.NotPlayerTurn, connection);
                             try {
                                 lobbyManager.addPlayerInfo(savedPlayerInfo);
                             } catch (Exception e) {
@@ -225,7 +225,7 @@ public class Server implements Runnable {
                     } else if (lobbyManager.getMatchInfo().getStatus() == MatchState.Endgame) {
 
                         if(savedPlayer != null) {
-                            PlayerInfo savedPlayerInfo = new PlayerInfo(savedPlayer, new PlayerFSM(State.EndGame), connection);
+                            PlayerInfo savedPlayerInfo = new PlayerInfo(savedPlayer, State.EndGame, connection);
                             try {
                                 lobbyManager.addPlayerInfo(savedPlayerInfo);
                             } catch (Exception e) {
@@ -328,7 +328,7 @@ public class Server implements Runnable {
         // Adds the new player to the waiting list if the clientManager in not full
         try {
             Player player = new Player(name, color, lobbyManager.getMatchInfo().getMatch().getCommonArea());
-            PlayerInfo playerInfo = new PlayerInfo(player, new PlayerFSM(), connection);
+            PlayerInfo playerInfo = new PlayerInfo(player,State.WaitingForPlayers, connection);
         } catch(Exception e) {
             connection.closeConnection();
         }

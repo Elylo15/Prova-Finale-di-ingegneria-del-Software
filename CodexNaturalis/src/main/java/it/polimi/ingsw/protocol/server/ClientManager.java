@@ -6,17 +6,19 @@ import it.polimi.ingsw.protocol.messages.WaitingforPlayerState.expectedPlayersMe
 import it.polimi.ingsw.protocol.messages.WaitingforPlayerState.newHostMessage;
 import it.polimi.ingsw.protocol.messages.currentStateMessage;
 import it.polimi.ingsw.protocol.server.FSM.MatchState;
+import it.polimi.ingsw.protocol.server.FSM.State;
 
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ClientManager implements Runnable{
     private MatchInfo matchInfo;
     private ArrayList<PlayerInfo> playersInfo; // Only online players
     private int timeout;
+    private int turnNumber;
 
     private ThreadPoolExecutor executor;
 
@@ -27,6 +29,7 @@ public class ClientManager implements Runnable{
     public ClientManager(MatchInfo match) {
         this.matchInfo = match;
         this.matchInfo.setLastTurn(false);
+        this.turnNumber = 0;
 
         playersInfo = new ArrayList<>();
 
@@ -42,25 +45,22 @@ public class ClientManager implements Runnable{
     }
 
 
-
-    // maybe remove this method
-    public void setStatus(Player player) {
-
-    }
-
     public synchronized void addPlayerInfo(PlayerInfo playerInfo) throws Exception {
         if(playerInfo != null && matchInfo.getExpectedPlayers() > this.playersInfo.size())
         {
             this.playersInfo.add(playerInfo);
+            this.notifyAll();
         } else {
             throw new Exception();
         }
     }
 
+
     private void kickPlayer(PlayerInfo playerInfo) {
         this.playersInfo.remove(playerInfo);
         playerInfo.getConnection().closeConnection();
     }
+
 
     private Timer startKickTimer(PlayerInfo playerInfo, Future<?> future) {
         Timer timer = new Timer();
@@ -81,16 +81,30 @@ public class ClientManager implements Runnable{
 
 
     /**
-     * Checks if new players can join. If the number of player meets with expectedPlayers, the eventually new player is kicked
-     * @param connection
+     * Checks if new players can join. If the number of player meets with expectedPlayers, the eventually new player is kicked.
+     * @param connection connection manager of the new player.
      */
     public synchronized void checkAvailability(ClientConnection connection) {
         if(this.matchInfo.getExpectedPlayers() <= this.playersInfo.size())
             connection.closeConnection();
     }
 
+    /**
+     * Getter of MathInfo
+     * @return MatchInfo
+     */
     public MatchInfo getMatchInfo() {return this.matchInfo;}
+
+    /**
+     * Getter of PlayersInfo
+     * @return list of PlayersInfo
+     */
     public ArrayList<PlayerInfo> getPlayersInfo() {return this.playersInfo;}
+
+    /**
+     * Getter of Match (model)
+     * @return Match
+     */
     public Match getMatch() {return this.matchInfo.getMatch();}
 
 
@@ -236,13 +250,40 @@ public class ClientManager implements Runnable{
         for(PlayerInfo playerInfo : this.playersInfo) {
             try {
                 this.matchInfo.getMatch().addPlayer(playerInfo.getPlayer());
+                playerInfo.setState(State.StarterCard);
             } catch (Exception e) {
                 // TODO add logfile to write that a player has failed to join
             }
         }
+
+        // Prepares the match.
+        this.matchInfo.getMatch().start();
+        this.turnNumber = 1;
     }
 
-    private void player(Player player) {
+    private synchronized void player(Player player) {
+        PlayerInfo playerInfo = this.findPlayer(player);
+        if(playerInfo == null) {
+            // TODO log that this player skipped
+            return;
+        }
+
+        switch (playerInfo.getState()) {
+            case WaitingForPlayers -> {
+            }
+            case StarterCard -> {
+            }
+            case Objective -> {
+            }
+            case PlayerTurn -> {
+            }
+            case NotPlayerTurn -> {
+            }
+            case EndGame -> {
+            }
+        }
+
+
 
     }
 
@@ -254,6 +295,60 @@ public class ClientManager implements Runnable{
 
     }
 
+    /**
+     * Finds a player by their nickname.
+     * @param player The player object to search for.
+     * @return The player information if found, or {@code null} if not found.
+     */
+    private PlayerInfo findPlayer(Player player) {
+        return this.playersInfo.stream()
+                .filter(playerInfo -> Objects.equals(player.getNickname(), playerInfo.getPlayer().getNickname()))
+                .findAny()
+                .orElse(null);
+    }
 
 
+
+
+    // TODO check this method later
+    private void checkOnlinePlayersNumber() {
+        // This function must be used at the end of every turn
+        if(this.playersInfo.size() == 1) {
+            // Waits for a timeout.
+            // Then if a player remains, he is declared the new winner
+            Timer timer = new Timer();
+            ClientManager manager = this;
+            TimerTask task = new TimerTask() {
+                @Override
+                public void run() {
+                    synchronized (manager) {
+                        if(manager.playersInfo.size() == 1) {
+                            manager.matchInfo.setStatus(MatchState.Endgame);
+                        }
+                    }
+                }
+            };
+            timer.schedule(task, this.timeout);
+        }
+
+        synchronized (this) {
+            while (this.playersInfo.size() == 1 && (
+                    this.matchInfo.getStatus() != MatchState.Endgame
+                            || this.matchInfo.getStatus() != MatchState.KickingPlayers
+            )) {
+                try {
+                    this.wait();
+                } catch (InterruptedException e) {
+                    break;
+                }
+            }
+
+
+            if (this.playersInfo.isEmpty()) {
+                // Closes and saves the match
+                this.saveMatch();
+                this.matchInfo.setStatus(MatchState.KickingPlayers);
+            }
+        }
+    }
 }
