@@ -1,19 +1,20 @@
 package it.polimi.ingsw.protocol.messages.PlayerTurnState;
 
+import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.protocol.messages.Message;
 
 import java.io.Serializable;
 
 public class updatePlayerMessage implements Message, Serializable {
-    private final String player;
+    private final Player player;
 
 
-    public updatePlayerMessage(String player) {
+    public updatePlayerMessage(Player player) {
         this.player = player;
 
     }
 
-    public String getPlayer() {
+    public Player getPlayer() {
         return player;
     }
 
