@@ -1,6 +1,7 @@
 package it.polimi.ingsw.protocol.server;
 
 import it.polimi.ingsw.model.Player;
+import it.polimi.ingsw.model.cards.ObjectiveCard;
 import it.polimi.ingsw.protocol.server.FSM.State;
 
 import java.io.Serializable;
@@ -9,6 +10,7 @@ public class PlayerInfo implements Serializable {
     private  Player player;
     private State state;
     private ClientConnection connection;
+    private ObjectiveCard[] savedObjectives;
 
     /**
      * Constructs a new PlayerInfo object with the given player, state, and connection.
@@ -21,11 +23,22 @@ public class PlayerInfo implements Serializable {
         this.player = player;
         this.state = state;
         this.connection = connection;
+        this.savedObjectives = null;
     }
 
 
-
-
+    /**
+     * Sets the array of objective cards saved by the player.
+     *
+     * @param savedObjectives The array of saved objective cards.
+     */
+    public void setSavedObjectives(ObjectiveCard[] savedObjectives) {this.savedObjectives = savedObjectives;}
+    /**
+     * Retrieves the array of objective cards saved by the player.
+     *
+     * @return The array of saved objective cards.
+     */
+    public ObjectiveCard[] getSavedObjectives() {return savedObjectives;}
     /**
      * Retrieves the player object associated with this player information.
      *

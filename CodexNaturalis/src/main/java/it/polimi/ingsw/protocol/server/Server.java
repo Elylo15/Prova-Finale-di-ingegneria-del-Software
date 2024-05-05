@@ -6,7 +6,6 @@ import it.polimi.ingsw.protocol.messages.ConnectionState.connectionResponseMessa
 import it.polimi.ingsw.protocol.messages.ServerOptionState.serverOptionMessage;
 import it.polimi.ingsw.protocol.messages.currentStateMessage;
 import it.polimi.ingsw.protocol.server.FSM.MatchState;
-import it.polimi.ingsw.protocol.server.FSM.PlayerFSM;
 import it.polimi.ingsw.protocol.server.FSM.State;
 
 import java.io.IOException;
@@ -212,7 +211,7 @@ public class Server implements Runnable {
                             lobbyManager.getMatchInfo().getStatus() == MatchState.Player4) {
 
                         if(savedPlayer != null) {
-                            PlayerInfo savedPlayerInfo = new PlayerInfo(savedPlayer, State.NotPlayerTurn, connection);
+                            PlayerInfo savedPlayerInfo = new PlayerInfo(savedPlayer, State.LastTurn, connection);
                             try {
                                 lobbyManager.addPlayerInfo(savedPlayerInfo);
                             } catch (Exception e) {

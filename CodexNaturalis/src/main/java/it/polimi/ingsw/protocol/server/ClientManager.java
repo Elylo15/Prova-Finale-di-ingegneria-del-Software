@@ -2,6 +2,8 @@ package it.polimi.ingsw.protocol.server;
 
 import it.polimi.ingsw.model.Match;
 import it.polimi.ingsw.model.Player;
+import it.polimi.ingsw.protocol.messages.ObjectiveState.objectiveCardMessage;
+import it.polimi.ingsw.protocol.messages.StaterCardState.starterCardMessage;
 import it.polimi.ingsw.protocol.messages.WaitingforPlayerState.expectedPlayersMessage;
 import it.polimi.ingsw.protocol.messages.WaitingforPlayerState.newHostMessage;
 import it.polimi.ingsw.protocol.messages.currentStateMessage;
@@ -108,7 +110,7 @@ public class ClientManager implements Runnable{
     public Match getMatch() {return this.matchInfo.getMatch();}
 
 
-    public void saveMatch() {
+    public synchronized void saveMatch() {
 
     }
 
@@ -120,30 +122,36 @@ public class ClientManager implements Runnable{
     public void run() {
         boolean gameOver = false;
         while(!gameOver) {
+
+            // Draws common objective cards
+            if(this.turnNumber == 2) {
+                this.matchInfo.getMatch().drawCommonObjective();
+                executor.submit(this::saveMatch);
+            }
+
             switch (this.matchInfo.getStatus()) {
                 case Waiting -> {
                     this.waiting();
-                    this.saveMatch();
                 }
                 case Player1 -> {
                     this.player(matchInfo.getMatch().getPlayers().get(0));
-                    this.saveMatch();
                 }
                 case Player2 -> {
                     this.player(matchInfo.getMatch().getPlayers().get(1));
-                    this.saveMatch();
                 }
                 case Player3 -> {
                     this.player(matchInfo.getMatch().getPlayers().get(2));
-                    this.saveMatch();
                 }
                 case Player4 -> {
                     this.player(matchInfo.getMatch().getPlayers().get(3));
-                    this.saveMatch();
+                    this.turnNumber += 1;
+                    if(this.matchInfo.getMatch().getPlayers().stream()
+                            .anyMatch(player -> player.getScore() >= 20)) {
+                        matchInfo.setLastTurn(true);
+                    }
                 }
                 case Endgame -> {
                     this.endgame();
-                    this.saveMatch();
                 }
                 case KickingPlayers -> {
                     this.kickPlayers();
@@ -259,6 +267,10 @@ public class ClientManager implements Runnable{
         // Prepares the match.
         this.matchInfo.getMatch().start();
         this.turnNumber = 1;
+
+
+        // First save of the game
+        executor.submit(this::saveMatch);
     }
 
     private synchronized void player(Player player) {
@@ -269,17 +281,140 @@ public class ClientManager implements Runnable{
         }
 
         switch (playerInfo.getState()) {
-            case WaitingForPlayers -> {
-            }
             case StarterCard -> {
+                // Draw a StarterCard if player has none in hand
+                if(playerInfo.getPlayer().getPlayerHand().getPlaceableCards().stream().
+                        anyMatch(placeableCard -> placeableCard.isStarter()))
+                    playerInfo.getPlayer().drawStarter();
+
+                // Sends current state messages to all clients
+                for(PlayerInfo playerInfo1 : this.playersInfo) {
+                    currentStateMessage currState = new currentStateMessage(player, playerInfo1.getPlayer(), "StarterCardState", this.matchInfo.isLastTurn());
+                    playerInfo1.getConnection().sendCurrentState(currState);
+                }
+
+                // Obtains side of the starter card
+                boolean correctAnswer = false;
+                while(!correctAnswer) {
+                    Future<starterCardMessage> future = executor.submit(() -> playerInfo.getConnection().getStaterCard());
+                    Timer timer = startKickTimer(playerInfo, future);
+                    starterCardMessage starter = null;
+
+                    try {
+                        starter = future.get();
+                        timer.cancel();
+                    } catch (Exception e) {
+                        // TODO log here
+                    }
+
+                    if(starter != null) {
+                        // Checks if the client has properly given a response
+                        if(starter.isNoResponse()) {
+                            correctAnswer = true;
+                            this.kickPlayers();
+                        } else {
+                            // Checks if the answer is valid
+                             if(starter.getSide() == 0 || starter.getSide() == 1) {
+                                 playerInfo.getPlayer().placeStarter(starter.getSide());
+                                 correctAnswer = true;
+                                 playerInfo.getConnection().sendAnswer(true);
+                             } else {
+                                 playerInfo.getConnection().sendAnswer(false);
+                             }
+                        }
+                    }
+                }
+
+                // End turn and update states
+                playerInfo.getPlayer().initialHand();
+                if(this.matchInfo.isLastTurn())
+                    playerInfo.setState(State.LastTurn);
+                else
+                    playerInfo.setState(State.Objective);
+                switch (this.matchInfo.getStatus()) {
+                    case Player1 -> this.matchInfo.setStatus(MatchState.Player2);
+                    case Player2 -> this.matchInfo.setStatus(MatchState.Player3);
+                    case Player3 -> this.matchInfo.setStatus(MatchState.Player4);
+                    case Player4 -> this.matchInfo.setStatus(MatchState.Player1);
+                }
+
+                // Saves the progress of the game
+                executor.submit(this::saveMatch);
             }
             case Objective -> {
+                // Draw two objective cards if there are none
+                if(playerInfo.getSavedObjectives() == null)
+                    playerInfo.setSavedObjectives(playerInfo.getPlayer().drawObjectives());
+
+                // Sends current state messages to all clients
+                for(PlayerInfo playerInfo1 : this.playersInfo) {
+                    currentStateMessage currState = new currentStateMessage(player, playerInfo1.getPlayer(), "ObjectiveState", this.matchInfo.isLastTurn());
+                    playerInfo1.getConnection().sendCurrentState(currState);
+                }
+
+                boolean correctAnswer = false;
+                while(!correctAnswer) {
+                    Future<objectiveCardMessage> future = executor.submit(() -> playerInfo.getConnection().getChosenObjective(playerInfo.getSavedObjectives()));
+                    Timer timer = startKickTimer(playerInfo, future);
+                    objectiveCardMessage objective = null;
+
+                    try {
+                        objective = future.get();
+                        timer.cancel();
+                    } catch (Exception e) {
+                        // TODO log here
+                    }
+
+                    if(objective != null) {
+                        // Checks if the client has properly given a response
+                        if(objective.isNoResponse()) {
+                            correctAnswer = true;
+                            this.kickPlayers();
+                        } else {
+                            // Checks if the answer is valid
+                            if(objective.getChoice() == 0 || objective.getChoice() == 1) {
+                                playerInfo.getPlayer().pickObjectiveCard(objective.getChoice(), playerInfo.getSavedObjectives());
+                                correctAnswer = true;
+                                playerInfo.getConnection().sendAnswer(true);
+                            } else {
+                                playerInfo.getConnection().sendAnswer(false);
+                            }
+                        }
+                    }
+
+                }
+
+                // End turn and update states
+                if(this.matchInfo.isLastTurn())
+                    playerInfo.setState(State.EndGame);
+                else
+                    playerInfo.setState(State.PlayerTurn);
+                switch (this.matchInfo.getStatus()) {
+                    case Player1 -> this.matchInfo.setStatus(MatchState.Player2);
+                    case Player2 -> this.matchInfo.setStatus(MatchState.Player3);
+                    case Player3 -> this.matchInfo.setStatus(MatchState.Player4);
+                    case Player4 -> this.matchInfo.setStatus(MatchState.Player1);
+                }
+
+                // Saves the progress of the game
+                executor.submit(this::saveMatch);
             }
             case PlayerTurn -> {
+                // Sends current state messages to all clients
+                for(PlayerInfo playerInfo1 : this.playersInfo) {
+                    currentStateMessage currState = new currentStateMessage(player, playerInfo1.getPlayer(), "PlayerTurnState", this.matchInfo.isLastTurn());
+                    playerInfo1.getConnection().sendCurrentState(currState);
+                }
+
+                // Asks to place a card
+                boolean correctAnswer = false;
+                while(!correctAnswer) {
+
+                }
+
+
             }
-            case NotPlayerTurn -> {
-            }
-            case EndGame -> {
+            case LastTurn -> {
             }
         }
 
@@ -315,7 +450,7 @@ public class ClientManager implements Runnable{
         // This function must be used at the end of every turn
         if(this.playersInfo.size() == 1) {
             // Waits for a timeout.
-            // Then if a player remains, he is declared the new winner
+            // Then, if a player remains, he is declared the new winner
             Timer timer = new Timer();
             ClientManager manager = this;
             TimerTask task = new TimerTask() {
@@ -324,6 +459,7 @@ public class ClientManager implements Runnable{
                     synchronized (manager) {
                         if(manager.playersInfo.size() == 1) {
                             manager.matchInfo.setStatus(MatchState.Endgame);
+                            this.notifyAll();
                         }
                     }
                 }
@@ -338,9 +474,7 @@ public class ClientManager implements Runnable{
             )) {
                 try {
                     this.wait();
-                } catch (InterruptedException e) {
-                    break;
-                }
+                } catch (InterruptedException ignore) {}
             }
 
 
