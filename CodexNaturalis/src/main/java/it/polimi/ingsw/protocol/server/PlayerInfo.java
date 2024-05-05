@@ -10,7 +10,6 @@ public class PlayerInfo implements Serializable {
     private Player player;
     private PlayerFSM fsm;
     private ClientConnection connection;
-    private Socket socket;
 
     public PlayerInfo(Player player, PlayerFSM fsm, ClientConnection connection) {
         this.player = player;
@@ -19,14 +18,11 @@ public class PlayerInfo implements Serializable {
     }
 
 
-    public void setSocket(Socket socket) {
-        this.socket = socket;
-    }
+
 
 
     public Player getPlayer() { return player;}
     public PlayerFSM getFsm() { return fsm;}
     public ClientConnection getConnection() { return connection;}
-    public Socket getSocket() { return socket;}
 
 }

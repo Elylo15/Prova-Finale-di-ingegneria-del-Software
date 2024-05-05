@@ -176,14 +176,14 @@ public class Server implements Runnable {
 
                 // Game not found
                 if(lobbyManager == null) {
-                    connection.sendAnswerToServerOption(false, 0);
+                    connection.sendAnswer(false);
                     socket.close();
                 }
                 synchronized (lobbyManager) {
 
                     // Is lobby full?
                     if (lobbyManager.getMatchInfo().getExpectedPlayers() <= lobbyManager.getPlayersInfo().size() || lobbyManager.getMatchInfo().getStatus() == MatchState.Waiting) {
-                        connection.sendAnswerToServerOption(false, 0);
+                        connection.sendAnswer(false);
                         socket.close();
                     }
 
@@ -194,9 +194,9 @@ public class Server implements Runnable {
                             .toList();
 
                     if(lobbyManager.getMatch().getPlayers().contains(msg.getNickname()) && !onlinePlayers.contains(msg.getNickname())) {
-                        connection.sendAnswerToServerOption(true, lobbyManager.getID());
+                        connection.sendAnswer(true);
                     } else {
-                        connection.sendAnswerToServerOption(false, 0);
+                        connection.sendAnswer(false);
                         socket.close();
                     }
 
@@ -235,7 +235,7 @@ public class Server implements Runnable {
                             socket.close();
                         }
                     } else {
-                        connection.sendAnswerToServerOption(false, 0);
+                        connection.send(false);
                         socket.close();
                     }
                 }
@@ -283,17 +283,17 @@ public class Server implements Runnable {
         // Asks for the new player name
         String name = connection.getName(unavailableNames).getName();
         if(unavailableNames.contains(name))
-            connection.sendAnswerToChosenName(false);
+            connection.sendAnswer(false);
         else
-            connection.sendAnswerToChosenName(true);
+            connection.sendAnswer(true);
 
         // Asks again until it is a valid name
         while(unavailableNames.contains(name)) {
             name = connection.getName(unavailableNames);
             if(unavailableNames.contains(name))
-                connection.sendAnswerToChosenName(false);
+                connection.sendAnswer(false);
             else
-                connection.sendAnswerToChosenName(true);
+                connection.sendAnswer(true);
         }
 
         // Obtains unavailable colors

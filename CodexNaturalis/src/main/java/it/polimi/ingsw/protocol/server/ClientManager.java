@@ -2,14 +2,18 @@ package it.polimi.ingsw.protocol.server;
 
 import it.polimi.ingsw.model.Match;
 import it.polimi.ingsw.model.Player;
+import it.polimi.ingsw.protocol.messages.WaitingforPlayerState.newHostMessage;
 import it.polimi.ingsw.protocol.messages.currentStateMessage;
 
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.*;
 
 public class ClientManager implements Runnable{
     private MatchInfo matchInfo;
     private ArrayList<PlayerInfo> playersInfo; // Only online players
+    private int timeout;
 
     private ThreadPoolExecutor executor;
 
@@ -22,6 +26,8 @@ public class ClientManager implements Runnable{
         this.matchInfo.setLastTurn(false);
 
         playersInfo = new ArrayList<>();
+
+        this.timeout = 300000;
 
 
         int corePoolSize = 15;
@@ -48,8 +54,22 @@ public class ClientManager implements Runnable{
         }
     }
 
-    public void kickPlayer(String name) {
+    private void kickPlayer(PlayerInfo playerInfo) {
+        this.playersInfo.remove(playerInfo);
+        playerInfo.getConnection().closeConnection();
+    }
 
+    private Timer startTimer(PlayerInfo playerInfo) {
+        Timer timer = new Timer();
+        ClientManager manager = this;
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                manager.kickPlayer(playerInfo);
+            }
+        };
+        timer.schedule(task, this.timeout);
+        return timer;
     }
 
     /**
@@ -104,7 +124,7 @@ public class ClientManager implements Runnable{
                     this.saveMatch();
                 }
                 case KickingPlayers -> {
-                    this.kickPlayer();
+                    this.kickPlayers();
                     gameOver = true;
                 }
             }
@@ -128,12 +148,37 @@ public class ClientManager implements Runnable{
             5. Kickare player che si disconnettono
              */
 
+            // preventing new player from joining at this moment and not getting all messages correctly
+            synchronized(this) {
+                PlayerInfo host = this.playersInfo.getFirst();
+                if(host != null) {
+                    // Sends current state data
+                    this.playersInfo.stream()
+                            .parallel()
+                            .forEach(playerInfo -> {
+                                currentStateMessage curr = new currentStateMessage(null, playerInfo.getPlayer(),"WaitingForPlayersState",false);
+                                playerInfo.getConnection().sendCurrentState(curr);
+                                newHostMessage hostMessage = new newHostMessage(host.getPlayer().getNickname(), false);
+                            });
+
+                    // If the timer ends the player is kicked
+                    Timer timer = startTimer(host);
+
+
+                }
+
+            }
+
 
 
         }
 
         // Wait for the specified number of expected players
         while(this.playersInfo.size() < this.matchInfo.getExpectedPlayers()) {
+            /*
+            1. Aspettare il numero di player corretto
+            2. kickare i player che non si connettono
+             */
 
         }
 
@@ -150,7 +195,7 @@ public class ClientManager implements Runnable{
 
     }
 
-    private void kickPlayer() {
+    private void kickPlayers() {
 
     }
 
