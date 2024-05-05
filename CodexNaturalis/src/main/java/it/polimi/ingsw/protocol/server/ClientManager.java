@@ -2,13 +2,16 @@ package it.polimi.ingsw.protocol.server;
 
 import it.polimi.ingsw.model.Match;
 import it.polimi.ingsw.model.Player;
+import it.polimi.ingsw.protocol.messages.WaitingforPlayerState.expectedPlayersMessage;
 import it.polimi.ingsw.protocol.messages.WaitingforPlayerState.newHostMessage;
 import it.polimi.ingsw.protocol.messages.currentStateMessage;
+import it.polimi.ingsw.protocol.server.FSM.MatchState;
 
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ClientManager implements Runnable{
     private MatchInfo matchInfo;
@@ -59,18 +62,23 @@ public class ClientManager implements Runnable{
         playerInfo.getConnection().closeConnection();
     }
 
-    private Timer startTimer(PlayerInfo playerInfo) {
+    private Timer startKickTimer(PlayerInfo playerInfo, Future<?> future) {
         Timer timer = new Timer();
-        ClientManager manager = this;
+
         TimerTask task = new TimerTask() {
             @Override
             public void run() {
-                manager.kickPlayer(playerInfo);
+                if(!future.isDone()) {
+                    future.cancel(true);
+                    kickPlayer(playerInfo);
+                }
             }
         };
         timer.schedule(task, this.timeout);
+
         return timer;
     }
+
 
     /**
      * Checks if new players can join. If the number of player meets with expectedPlayers, the eventually new player is kicked
@@ -133,21 +141,19 @@ public class ClientManager implements Runnable{
     }
 
 
+    /**
+     * Manages the waiting state for players to join the match.
+     * It sends the current state data to all connected players, asks for the number of expected players for this match
+     * and waits for the expected number of players to join.
+     * When the number of expected players is met, it adds them to the match (model).
+     * If a player takes too long to respond or provides an invalid response, they are kicked from the match.
+     */
     private void waiting() {
         int previousConnectedPlayers = this.playersInfo.size();
         currentStateMessage currState = new currentStateMessage(null, null,"WaitingForPlayersState",false);
 
         // Obtains the number of expected players for this match
         while(this.matchInfo.getExpectedPlayers() == null ) {
-            /*
-            1. Mandare messaggi stato ad ogni player che si connette
-            2. Mandare messaggi host ad ogni player
-            3. Rispondere
-
-            4. Kickare player che non rispondono
-            5. Kickare player che si disconnettono
-             */
-
             // preventing new player from joining at this moment and not getting all messages correctly
             synchronized(this) {
                 PlayerInfo host = this.playersInfo.getFirst();
@@ -161,15 +167,51 @@ public class ClientManager implements Runnable{
                                 newHostMessage hostMessage = new newHostMessage(host.getPlayer().getNickname(), false);
                             });
 
-                    // If the timer ends the player is kicked
-                    Timer timer = startTimer(host);
+                    boolean correctAnswer = false;
+                    while(!correctAnswer){
+                        // If the timer ends the player is kicked
+                        Future<expectedPlayersMessage> future = executor.submit(() -> host.getConnection().getExpectedPlayer());
+                        Timer timer = this.startKickTimer(host,future);
+                        expectedPlayersMessage expected = null;
+                        try {
+                            expected = future.get();
+                            timer.cancel();
+                        } catch (Exception e) {
+                            // TODO add log file for the error recording
+                        /*
+                        catch (InterruptedException e) {
+                            System.err.println("Task interrupted");
+                        } catch (ExecutionException e) {
+                            System.err.println("Task threw an exception: " + e.getCause().getMessage());
+                        } catch (CancellationException e) {
+                            System.err.println("Task was cancelled due to timeout");
+                        }
+                         */
+                        }
+
+                        if (expected != null) {
+                            // Checks if the client has properly given a response
+                            if(expected.isNoResponse()) {
+                                correctAnswer = true;
+                                this.kickPlayer(host);
+                            } else {
+                                // Checks if the response is valid and answer back
+                                if(expected.getExpectedPlayers() >= 2 && expected.getExpectedPlayers() <= 4) {
+                                    this.matchInfo.setExpectedPlayers(expected.getExpectedPlayers());
+                                    correctAnswer = true;
+                                    host.getConnection().sendAnswer(true);
+                                } else {
+                                    host.getConnection().sendAnswer(false);
+                                }
+                            }
+
+                        }
+                    }
 
 
                 }
 
             }
-
-
 
         }
 
@@ -179,12 +221,25 @@ public class ClientManager implements Runnable{
             1. Aspettare il numero di player corretto
             2. kickare i player che non si connettono
              */
+            synchronized (this) {
+                if(this.playersInfo.size() == this.matchInfo.getExpectedPlayers())
+                    this.matchInfo.setStatus(MatchState.Player1);
+            }
 
+            // Gives a little of room to new players that want to join
+            try {
+                Thread.sleep(1000);
+            } catch (Exception ignore) {}
         }
 
-
-
         // Adds all players to the match (match of the model)
+        for(PlayerInfo playerInfo : this.playersInfo) {
+            try {
+                this.matchInfo.getMatch().addPlayer(playerInfo.getPlayer());
+            } catch (Exception e) {
+                // TODO add logfile to write that a player has failed to join
+            }
+        }
     }
 
     private void player(Player player) {
