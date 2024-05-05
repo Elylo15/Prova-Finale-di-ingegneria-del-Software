@@ -24,7 +24,7 @@ public class ClientManager implements Runnable{
 
     private ThreadPoolExecutor executor;
 
-    private LogCreator logCreator;
+    private LogCreator logCreator; // TODO use this
     /**
      * Standard constructor for ClientManager
      * @param match object representing the model and data related to the server
