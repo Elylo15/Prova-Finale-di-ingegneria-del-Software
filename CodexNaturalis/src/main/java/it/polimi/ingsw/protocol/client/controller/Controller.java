@@ -3,6 +3,7 @@ package it.polimi.ingsw.protocol.client.controller;
 import it.polimi.ingsw.protocol.messages.*;
 import it.polimi.ingsw.protocol.messages.ConnectionState.*;
 import it.polimi.ingsw.protocol.messages.EndGameState.*;
+import it.polimi.ingsw.protocol.messages.PlayerTurnState.updatePlayerMessage;
 import it.polimi.ingsw.protocol.messages.ServerOptionState.*;
 import it.polimi.ingsw.protocol.messages.WaitingforPlayerState.*;
 
@@ -42,6 +43,7 @@ public abstract class Controller {
 
     public abstract void placeCard(int card, int side, int x, int y, boolean noResponse);
     public abstract void pickCard(int card, boolean noResponse);
+    public abstract updatePlayerMessage updatePlayer();
 
     public abstract declareWinnerMessage endGame() throws RemoteException;
 }

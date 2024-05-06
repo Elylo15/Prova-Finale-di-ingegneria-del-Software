@@ -5,6 +5,7 @@ import it.polimi.ingsw.protocol.client.view.*;
 import it.polimi.ingsw.protocol.messages.*;
 import it.polimi.ingsw.protocol.messages.ConnectionState.*;
 import it.polimi.ingsw.protocol.messages.EndGameState.*;
+import it.polimi.ingsw.protocol.messages.PlayerTurnState.updatePlayerMessage;
 import it.polimi.ingsw.protocol.messages.ServerOptionState.*;
 import it.polimi.ingsw.protocol.messages.WaitingforPlayerState.*;
 
@@ -89,24 +90,34 @@ public class Client {
                     case "StarterCardState": {
                         view.updatePlayer(current);
                         if(Objects.equals(current.getCurrentPlayer().getNickname(), current.getPlayer().getNickname())) starter();
+                        updatePlayerMessage update = controller.updatePlayer();
+                        view.update(update);
                         break;
                     }
                     case "ObjectiveState": {
                         view.updatePlayer(current);
                         if(Objects.equals(current.getCurrentPlayer().getNickname(), current.getPlayer().getNickname())) pickObjective();
+                        updatePlayerMessage update = controller.updatePlayer();
+                        view.update(update);
                         break;
                     }
                     case "PlayerTurnState": {
                         view.updatePlayer(current);
                         if(Objects.equals(current.getCurrentPlayer().getNickname(), current.getPlayer().getNickname())) {
                             placeCard();
+                            updatePlayerMessage update = controller.updatePlayer();
+                            view.update(update);
                             pickCard();
+                            updatePlayerMessage update2 = controller.updatePlayer();
+                            view.update(update2);
                         }
                         break;
                     }
                     case "LastTurnState": {
                         view.updatePlayer(current);
                         if(Objects.equals(current.getCurrentPlayer().getNickname(), current.getPlayer().getNickname())) placeCard();
+                        updatePlayerMessage update = controller.updatePlayer();
+                        view.update(update);
                         break;
                     }
                     case "EndGameState": {

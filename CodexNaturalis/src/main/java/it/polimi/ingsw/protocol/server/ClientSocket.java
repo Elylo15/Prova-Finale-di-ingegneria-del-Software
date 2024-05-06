@@ -24,7 +24,7 @@ import java.util.HashMap;
 public class ClientSocket extends ClientConnection {
     ObjectOutputStream outputStream;
     ObjectInputStream inputStream;
-
+    private final Socket socket;
 
     /**
      * Class constructor
@@ -33,7 +33,8 @@ public class ClientSocket extends ClientConnection {
      * @param port the port of the server.
      */
     public ClientSocket(String IP, String port, Socket socket) {
-        super(IP, port, socket);
+        super(IP, port);
+        this.socket = socket;
     }
 
     @Override
@@ -220,8 +221,8 @@ public class ClientSocket extends ClientConnection {
     @Override
     public void run() {
         try {
-            outputStream = new ObjectOutputStream(getSocket().getOutputStream());
-            inputStream = new ObjectInputStream(getSocket().getInputStream());
+            outputStream = new ObjectOutputStream(socket.getOutputStream());
+            inputStream = new ObjectInputStream(socket.getInputStream());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

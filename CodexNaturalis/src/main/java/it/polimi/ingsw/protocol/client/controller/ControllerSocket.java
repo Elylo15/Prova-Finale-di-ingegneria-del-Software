@@ -258,6 +258,19 @@ public class ControllerSocket extends Controller {
     }
 
     /**
+     * method {@code updatePlayer}: sends a updatePlayerMessage
+     * @return updatePlayerMessage
+     */
+    @Override
+    public updatePlayerMessage updatePlayer(){
+        try {
+            return (updatePlayerMessage) inputStream.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
      * method {@code endGame}: receives a declareWinnerMessage
      * @return declareWinnerMessage
      */

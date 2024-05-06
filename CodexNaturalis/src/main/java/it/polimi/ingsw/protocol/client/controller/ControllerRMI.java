@@ -3,6 +3,7 @@ package it.polimi.ingsw.protocol.client.controller;
 import it.polimi.ingsw.protocol.messages.*;
 import it.polimi.ingsw.protocol.messages.ConnectionState.*;
 import it.polimi.ingsw.protocol.messages.EndGameState.*;
+import it.polimi.ingsw.protocol.messages.PlayerTurnState.updatePlayerMessage;
 import it.polimi.ingsw.protocol.messages.ServerOptionState.*;
 import it.polimi.ingsw.protocol.messages.WaitingforPlayerState.*;
 
@@ -232,6 +233,18 @@ public class ControllerRMI extends Controller implements RemoteController {
     public void pickCard(int card, boolean noResponse) {
         try {
             remoteController.pickCard(card, noResponse);
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * method {@code updatePlayer}: sends a updatePlayerMessage
+     * @return updatePlayerMessage
+     */
+    public updatePlayerMessage updatePlayer(){
+        try {
+            return remoteController.updatePlayer();
         } catch (RuntimeException e) {
             throw new RuntimeException(e);
         }
