@@ -14,8 +14,6 @@ import java.io.*;
 import java.net.*;
 
 public class ControllerSocket extends Controller {
-    private final String serverIP;
-    private final String serverPort;
     private Socket socket;
     private ObjectOutputStream outputStream;
     private ObjectInputStream inputStream;
@@ -26,8 +24,7 @@ public class ControllerSocket extends Controller {
      * @param serverPort: String
      */
     public ControllerSocket (String serverIP, String serverPort) {
-        this.serverIP = serverIP;
-        this.serverPort = serverPort;
+        super(serverIP, serverPort);
     }
 
     /**
