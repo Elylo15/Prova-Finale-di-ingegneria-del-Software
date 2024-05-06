@@ -10,35 +10,30 @@ import it.polimi.ingsw.protocol.messages.ServerOptionState.*;
 import it.polimi.ingsw.protocol.messages.WaitingforPlayerState.*;
 
 import java.io.IOException;
-import java.rmi.RemoteException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicIntegerArray;
 
 public class Client {
     private String serverIP;
     private String serverPort;
-    private boolean isSocket;
-    private boolean isGUI;
-    private Controller controller;
-    private View view;
+    private final Controller controller;
+    private final View view;
 
     /**
      * method {@code Client}: constructs a new Client
      * @param view: default ViewGUI
      * @param controller: default ControllerSocket
      */
-    public Client(ViewGUI view, ControllerSocket controller) {
-        this.view = view; //GUI default
-        this.controller = controller; //Socket default
+    public Client(View view, Controller controller) {
+        this.view = view;
+        this.controller = controller;
     }
 
     /**
      * method {@code connection}: sets socket or rmi. Enables GUI or CLI.
      * Connects to a socket server or rmi server.
      */
-    public void connection()  {
-        setSocket(view.askSocket());
-        enableGUI(view.askGui());
+    public void connection(boolean isSocket)  {
 
         if(isSocket) {
             try {
@@ -50,16 +45,11 @@ public class Client {
             }
         } else {
             try {
-                controller = new ControllerRMI(serverIP, serverPort);
                 connectionResponseMessage answer = controller.answerConnection();
                 view.answerToConnection(answer);
-            } catch (RemoteException e) {
+            } catch (RuntimeException e) {
                 throw new RuntimeException(e);
             }
-        }
-
-        if(!isGUI) {
-            view = new ViewCLI();
         }
     }
 
@@ -127,7 +117,7 @@ public class Client {
                     }
                 }
             }
-        } catch (RuntimeException | IOException | ClassNotFoundException e) {
+        } catch (RuntimeException | IOException e) {
             view.playerDisconnected();
         }
     }
@@ -370,34 +360,10 @@ public class Client {
     }
 
     /**
-     * method {@code getIP}: gets serverIP
-     * @return serverIP: String
+     * method {@code setPort}: sets serverPort
+     * @param serverPort: String
      */
-    public String getIP() {
-        return serverIP;
-    }
-
-    /**
-     * method {@code getPort}: gets serverPort
-     * @return  serverPort: String
-     */
-    public String getPort() {
-        return serverPort;
-    }
-
-    /**
-     * method {@code isSocket}: sets isSocket
-     * @param isSocket boolean
-     */
-    public void setSocket(boolean isSocket) {
-        this.isSocket = isSocket;
-    }
-
-    /**
-     * method {@code enableGUI}: sets guiEnabled
-     * @param guiEnabled boolean
-     */
-    public void enableGUI(boolean guiEnabled) {
-        this.isGUI = guiEnabled;
+    public void setPort(String serverPort) {
+        this.serverPort = serverPort;
     }
 }
