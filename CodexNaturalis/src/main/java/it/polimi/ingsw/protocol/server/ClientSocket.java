@@ -1,5 +1,6 @@
 package it.polimi.ingsw.protocol.server;
 
+import it.polimi.ingsw.model.cards.ObjectiveCard;
 import it.polimi.ingsw.protocol.messages.ConnectionState.*;
 import it.polimi.ingsw.protocol.messages.EndGameState.*;
 import it.polimi.ingsw.protocol.messages.ObjectiveState.*;
@@ -44,7 +45,7 @@ public class ClientSocket extends ClientConnection {
     }
 
     /**
-     * method {@code sendNewHostMessage}: sends a newHostMessage
+     * method {@code sendNewHostMessage}: creates and sends a newHostMessage
      * @param hostNickname: String
      */
     @Override
@@ -83,7 +84,9 @@ public class ClientSocket extends ClientConnection {
     }
 
     /**
-     * method {@code sendAnswer}: sends a responseMessage
+     * method {@code sendAnswer}:
+     * create a new responseMessage object passing in its constructor the boolean parameter of the method
+     * and sends it
      * @param correct: boolean
      */
     @Override
@@ -96,7 +99,7 @@ public class ClientSocket extends ClientConnection {
     }
 
     /**
-     * method {@code sendUnavailableName}: sends a unavailableNamesMessage
+     * method {@code sendUnavailableName}: creates and sends a unavailableNamesMessage
      * @param unavailableNames: ArrayList<String>
      */
     @Override
@@ -109,7 +112,7 @@ public class ClientSocket extends ClientConnection {
     }
 
     /**
-     * method {@code getName}: receives a chosenNameMessage
+     * method {@code getName}: receives a chosenNameMessage and returns it
      * @return chosenNameMessage
      */
     @Override
@@ -122,7 +125,7 @@ public class ClientSocket extends ClientConnection {
     }
 
     /**
-     * method {@code sendAvailableColor}: sends a availableColorsMessage
+     * method {@code sendAvailableColor}: creates and sends a availableColorsMessage
      * @param availableColors: ArrayList<String>
      */
     @Override
@@ -135,7 +138,7 @@ public class ClientSocket extends ClientConnection {
     }
 
     /**
-     * method {@code getColor}: receives a chosenColorMessage
+     * method {@code getColor}: receives a chosenColorMessage and returns it
      * @return chosenColorMessage
      */
     @Override
@@ -161,7 +164,7 @@ public class ClientSocket extends ClientConnection {
     }
 
     /**
-     * method {@code getStaterCard}: receives a starterCardMessage
+     * method {@code getStaterCard}: receives a starterCardMessage and returns it
      * @return starterCardMessage
      */
     @Override
@@ -174,11 +177,17 @@ public class ClientSocket extends ClientConnection {
     }
 
     /**
-     * method {@code getChosenObjective}: receives a objectiveCardMessage
+     * method {@code getChosenObjective}: sends the array of ObjectiveCards it receives as parameter and
+     * receives an objectiveCardMessage
      * @return objectiveCardMessage
      */
     @Override
-    public objectiveCardMessage getChosenObjective(){
+    public objectiveCardMessage getChosenObjective(ObjectiveCard[] objectiveCards){
+        try {
+            outputStream.writeObject(objectiveCards);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         try {
             return (objectiveCardMessage) inputStream.readObject();
         } catch (IOException | ClassNotFoundException e) {
@@ -186,8 +195,10 @@ public class ClientSocket extends ClientConnection {
         }
     }
 
+
+
     /**
-     * method {@code getPlaceCard}: receives a placeCardMessage
+     * method {@code getPlaceCard}: receives a placeCardMessage and returns it
      * @return placeCardMessage
      */
     @Override
@@ -200,7 +211,7 @@ public class ClientSocket extends ClientConnection {
     }
 
     /**
-     * method {@code getChosenPick}: receives a pickCardMessage
+     * method {@code getChosenPick}: receives a pickCardMessage and returns it
      * @return pickCardMessage
      */
     @Override
@@ -213,7 +224,7 @@ public class ClientSocket extends ClientConnection {
     }
 
     /**
-     * method {@code sendEndGame}: sends a declareWinnerMessage
+     * method {@code sendEndGame}: sends a declareWinnerMessage to communicate the scores and the number of objectives achieved by each player
      * @param scores: HashMap<String, Integer> score
      * @param numberOfObjectives: HashMap<String, Integer> score
      */
@@ -227,7 +238,7 @@ public class ClientSocket extends ClientConnection {
     }
 
     /**
-     * method {@code sendUpdatePlayer}: sends a updatePlayerMessage
+     * method {@code sendUpdatePlayer}: sends an updatePlayerMessage
      * @param updateMessage: updatePlayerMessage
      */
     @Override
@@ -240,7 +251,7 @@ public class ClientSocket extends ClientConnection {
     }
 
     /**
-     * method {@code closeConnection}: closes the connection
+     * method {@code closeConnection}: closes the connection closing socket, inputStream, outputStream
      */
     @Override
     public void closeConnection() {
@@ -248,6 +259,8 @@ public class ClientSocket extends ClientConnection {
             if (socket != null && !socket.isClosed()) {
                 socket.close();
             }
+            outputStream.close();
+            inputStream.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

@@ -20,7 +20,6 @@ public abstract class View {
 
     }
     public abstract void playerDisconnected();
-    public abstract boolean askGui();
     public abstract boolean askSocket();
     public abstract void updatePlayer(currentStateMessage message);
     public abstract void answerToConnection(connectionResponseMessage message);

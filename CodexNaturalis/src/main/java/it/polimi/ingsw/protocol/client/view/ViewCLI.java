@@ -26,16 +26,17 @@ public class ViewCLI extends View{
         super();
 
     }
-    public boolean askGui(){
-        return false;
-    }
+
+    /**
+     * communicates to the user he lost connection
+     */
     public void playerDisconnected(){
         System.out.println("An error occurred, connection interrupted");
     }
 
 
     /**
-     *
+     * visualizes the current state of the players
      * @param message
      */
     public void updatePlayer(currentStateMessage message){
@@ -144,7 +145,7 @@ public class ViewCLI extends View{
      * @return
      */
     public String unavaibleNames(unavailableNamesMessage message){
-        //the client can call the method view.unavaibleNames passing as a parameter the arraylist of unavailable names received from server
+        //the client can call the method view.unavailableNames passing as a parameter the arraylist of unavailable names received from server
         System.out.println("This nicknames are not avaible: " + message.toString());
 
         String name;
@@ -189,12 +190,13 @@ public class ViewCLI extends View{
      */
     public int placeStarter(){
         //if the user does not enter an int an exception is thrown and the method return the initialized value
-        int side = 10;
+        int side = 1000;
        System.out.println("You have to place your starter");
         System.out.println("Enter 1 if you want to play the front side, 0 if you want to play the back side");
         try {
             Scanner scanner = new Scanner(System.in);
             side = scanner.nextInt();
+            scanner.nextLine();
         }
         catch (Exception e){
             System.out.println("You didn't enter an integer value");
@@ -213,6 +215,7 @@ public class ViewCLI extends View{
         try {
             System.out.println("how many player do you want to be in the game");
             numExpected = scanner.nextInt();
+            scanner.nextLine();
         }catch (Exception e){
             System.out.println("you didn't enter an integer value");
         }
@@ -231,6 +234,7 @@ public class ViewCLI extends View{
         try {
             Scanner scanner = new Scanner(System.in);
             objective = scanner.nextInt();
+            scanner.nextLine();
         }
         catch (Exception e){
             System.out.println("You didn't enter an integer value");
@@ -253,24 +257,28 @@ public class ViewCLI extends View{
         try{
             System.out.println("enter the ID of the card you want to place");
             chosenCard[0]= scanner.nextInt();
+            scanner.nextLine();
         }catch (Exception e){
             System.out.println("you didn't enter an integer value");
         }
         try{
             System.out.println("enter 1 if you want to place the card front, 0 if you want to place the card back");
             chosenCard[1]= scanner.nextInt();
+            scanner.nextLine();
         }catch (Exception e){
             System.out.println("you didn't enter an integer value");
         }
         try{
             System.out.println("enter the x coordinate of the cell where you want to place the card");
             chosenCard[2]= scanner.nextInt();
+            scanner.nextLine();
         }catch (Exception e){
             System.out.println("you didn't enter an integer value");
         }
         try{
             System.out.println("enter the y coordinate of the cell where you want to place the card");
             chosenCard[3]= scanner.nextInt();
+            scanner.nextLine();
         }catch (Exception e){
             System.out.println("you didn't enter an integer value");
         }
@@ -289,6 +297,7 @@ public class ViewCLI extends View{
        try{
            System.out.println("enter the ID of the card you want to pick");
            choice = scanner.nextInt();
+           scanner.nextLine();
        }
        catch (Exception e){
            System.out.println("you didn't enter an integer value");

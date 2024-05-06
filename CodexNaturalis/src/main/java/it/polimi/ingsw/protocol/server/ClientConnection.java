@@ -1,5 +1,6 @@
 package it.polimi.ingsw.protocol.server;
 
+import it.polimi.ingsw.model.cards.ObjectiveCard;
 import it.polimi.ingsw.protocol.messages.ConnectionState.*;
 import it.polimi.ingsw.protocol.messages.ObjectiveState.*;
 import it.polimi.ingsw.protocol.messages.PlayerTurnState.*;
@@ -54,7 +55,7 @@ public abstract class ClientConnection implements Runnable {
     public abstract chosenColorMessage getColor();
     public abstract void sendCurrentState(currentStateMessage currentState);
     public abstract starterCardMessage getStaterCard();
-    public abstract objectiveCardMessage getChosenObjective();
+    public abstract objectiveCardMessage getChosenObjective(ObjectiveCard[] objectiveCards);
     public abstract placeCardMessage getPlaceCard();
     public abstract pickCardMessage getChosenPick();
     public abstract void sendEndGame(HashMap<String, Integer> score, HashMap<String, Integer> numberOfObjectives);
