@@ -1,6 +1,5 @@
 package it.polimi.ingsw.protocol.client.controller;
 
-
 import it.polimi.ingsw.protocol.messages.*;
 import it.polimi.ingsw.protocol.messages.ConnectionState.*;
 import it.polimi.ingsw.protocol.messages.EndGameState.*;
@@ -279,5 +278,4 @@ public class ControllerSocket extends Controller {
             throw new RuntimeException(e);
         }
     }
-
 }

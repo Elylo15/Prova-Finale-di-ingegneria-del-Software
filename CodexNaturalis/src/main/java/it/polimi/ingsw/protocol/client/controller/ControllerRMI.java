@@ -18,7 +18,6 @@ import java.rmi.registry.Registry;
 public class ControllerRMI extends Controller {
     private RemoteServerInterface remoteServer;
 
-
     /**
      * method {@code ControllerRMI}: constructs a new ControllerRMI
      * @param serverIP: String
@@ -269,5 +268,4 @@ public class ControllerRMI extends Controller {
             throw new RuntimeException(e);
         }
     }
-
 }

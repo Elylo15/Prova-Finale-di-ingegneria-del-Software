@@ -244,6 +244,12 @@ public class ClientSocket extends ClientConnection {
      */
     @Override
     public void closeConnection() {
-
+        try {
+            if (socket != null && !socket.isClosed()) {
+                socket.close();
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

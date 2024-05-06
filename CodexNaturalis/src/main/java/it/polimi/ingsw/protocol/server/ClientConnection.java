@@ -1,17 +1,12 @@
 package it.polimi.ingsw.protocol.server;
 
 import it.polimi.ingsw.protocol.messages.ConnectionState.*;
-import it.polimi.ingsw.protocol.messages.EndGameState.*;
 import it.polimi.ingsw.protocol.messages.ObjectiveState.*;
 import it.polimi.ingsw.protocol.messages.PlayerTurnState.*;
 import it.polimi.ingsw.protocol.messages.StaterCardState.*;
 import it.polimi.ingsw.protocol.messages.WaitingforPlayerState.*;
 import it.polimi.ingsw.protocol.messages.*;
 
-import java.net.MalformedURLException;
-import java.rmi.Naming;
-import java.rmi.NotBoundException;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
 

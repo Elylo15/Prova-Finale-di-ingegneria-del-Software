@@ -9,7 +9,6 @@ import it.polimi.ingsw.protocol.messages.WaitingforPlayerState.*;
 
 import java.rmi.RemoteException;
 
-
 /**
  * Controller is an abstract class. The methods of the Controller will be implemented
  * differently in ControllerSocket and ControllerRMI classes.
