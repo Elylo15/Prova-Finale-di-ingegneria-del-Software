@@ -196,7 +196,7 @@ public class ClientManager implements Runnable{
                     gameOver = true;
                 }
             }
-
+            this.checkOnlinePlayersNumber();
         }
 
     }
@@ -714,6 +714,12 @@ public class ClientManager implements Runnable{
                     synchronized (manager) {
                         if(manager.playersInfo.size() == 1) {
                             manager.matchInfo.setStatus(MatchState.Endgame);
+                            this.notifyAll();
+                        }
+
+                        if(manager.playersInfo.isEmpty()) {
+                            manager.matchInfo.setStatus(MatchState.KickingPlayers);
+                            manager.saveMatch();
                             this.notifyAll();
                         }
                     }
