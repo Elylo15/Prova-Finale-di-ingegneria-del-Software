@@ -304,6 +304,10 @@ public class ClientManager implements Runnable{
     }
 
     private synchronized void player(Player player) {
+        if(player == null) {
+            logCreator.log("Player is null");
+            return;
+        }
         PlayerInfo playerInfo = this.findPlayer(player);
         if(playerInfo == null) {
             logCreator.log("Player " + player.getNickname() + " not found and skipped");
