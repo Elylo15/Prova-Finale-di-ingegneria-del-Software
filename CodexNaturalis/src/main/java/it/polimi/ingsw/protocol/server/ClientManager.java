@@ -367,10 +367,7 @@ public class ClientManager implements Runnable{
 
                 // End turn and update states
                 if(this.playersInfo.contains(playerInfo)) { // Checks if the player is online
-                    if(this.matchInfo.isLastTurn())
-                        playerInfo.setState(State.LastTurn);
-                    else
-                        playerInfo.setState(State.Objective);
+                    playerInfo.setState(State.Objective); // TODO keep only objective
 
                     playerInfo.getPlayer().initialHand();
                 }
@@ -734,6 +731,7 @@ public class ClientManager implements Runnable{
                     this.wait();
                 } catch (InterruptedException ignore) {}
             }
+
 
 
             if (this.playersInfo.isEmpty()) {
