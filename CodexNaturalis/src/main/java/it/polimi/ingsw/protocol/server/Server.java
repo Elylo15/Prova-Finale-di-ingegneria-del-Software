@@ -21,7 +21,6 @@ import java.util.TimerTask;
 import java.util.concurrent.*;
 
 public class Server implements Runnable {
-    // TODO logfile
     private ArrayList<ClientManager> games;
     private int portSocket;
     private int portRMI;
@@ -38,8 +37,8 @@ public class Server implements Runnable {
 
 
     public Server() {
-        portSocket = 30000;
-        portRMI = 40000;
+        portSocket = 1024;
+        portRMI = 1099;
         games = new ArrayList<>();
         defaultPath = "savedGames/";
         logCreator = new LogCreator();

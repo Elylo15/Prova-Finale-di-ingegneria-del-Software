@@ -18,8 +18,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class ClientSocket extends ClientConnection {
-    ObjectOutputStream outputStream;
-    ObjectInputStream inputStream;
+    private ObjectOutputStream outputStream;
+    private ObjectInputStream inputStream;
     private final Socket socket;
 
     /**
