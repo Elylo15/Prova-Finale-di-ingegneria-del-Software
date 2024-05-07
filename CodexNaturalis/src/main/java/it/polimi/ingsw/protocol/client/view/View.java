@@ -41,4 +41,7 @@ public abstract class View {
     public abstract int pickCard();
 
     public abstract void endGame(declareWinnerMessage message);
+
+    public void update(updatePlayerMessage update) {
+    }
 }

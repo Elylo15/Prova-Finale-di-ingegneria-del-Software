@@ -1,9 +1,11 @@
 package it.polimi.ingsw.protocol.server;
 
+import it.polimi.ingsw.model.cards.ObjectiveCard;
 import it.polimi.ingsw.protocol.messages.ConnectionState.*;
 import it.polimi.ingsw.protocol.messages.EndGameState.*;
 import it.polimi.ingsw.protocol.messages.ObjectiveState.*;
 import it.polimi.ingsw.protocol.messages.PlayerTurnState.*;
+import it.polimi.ingsw.protocol.messages.ServerOptionState.serverOptionMessage;
 import it.polimi.ingsw.protocol.messages.StaterCardState.*;
 import it.polimi.ingsw.protocol.messages.WaitingforPlayerState.*;
 import it.polimi.ingsw.protocol.messages.*;
@@ -28,6 +30,11 @@ public class ClientRMI extends ClientConnection {
      */
     public ClientRMI(String IP, String port) {
         super(IP, port);
+    }
+
+    @Override
+    public serverOptionMessage getServerOption() {
+        return null;
     }
 
     /**
@@ -120,12 +127,13 @@ public class ClientRMI extends ClientConnection {
         }
     }
 
+
     /**
      * method {@code getName}: receives a chosenNameMessage
      * @return chosenNameMessage
      */
     @Override
-    public chosenNameMessage getName(){
+    public chosenNameMessage getName(ArrayList<String> unavailableNames){
         try {
             return remoteServer.getNameRMI();
         } catch (RuntimeException e) {
@@ -151,7 +159,7 @@ public class ClientRMI extends ClientConnection {
      * @return chosenColorMessage
      */
     @Override
-    public chosenColorMessage getColor(){
+    public chosenColorMessage getColor(ArrayList<String> availableColors){
         try {
             return remoteServer.getColorRMI();
         } catch (RuntimeException e) {
@@ -190,7 +198,7 @@ public class ClientRMI extends ClientConnection {
      * @return objectiveCardMessage
      */
     @Override
-    public objectiveCardMessage getChosenObjective(){
+    public objectiveCardMessage getChosenObjective(ObjectiveCard[] objectiveCards){
         try {
             return remoteServer.getChosenObjectiveRMI();
         } catch (RuntimeException e) {
