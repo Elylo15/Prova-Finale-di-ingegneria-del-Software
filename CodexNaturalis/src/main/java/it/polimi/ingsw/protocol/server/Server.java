@@ -87,9 +87,16 @@ public class Server implements Runnable {
         InetAddress clientAddress = socket.getInetAddress();
         int clientPort = socket.getPort();
         try {
-            ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
-            ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
-            ClientConnection connection = new ClientSocket(clientAddress.toString(), Integer.toString(clientPort), socket);
+            ClientConnection connection = null;
+            try {
+                connection = new ClientSocket(clientAddress.toString(), Integer.toString(clientPort), socket);
+            } catch (Exception e) {
+                logCreator.log("Client " + clientAddress.toString() + " not connected");
+                socket.close();
+            }
+
+            if(connection == null)
+                return;
 
             // Confirms the connection to the client
             connection.sendAnswerToConnection(new connectionResponseMessage(true));
@@ -98,7 +105,8 @@ public class Server implements Runnable {
 
 
             // Sends status: "ServerOptionState"
-            executor.submit(() -> connection.sendCurrentState(new currentStateMessage(null, null, "ServerOptionState", false)));
+            ClientConnection finalConnection = connection;
+            executor.submit(() -> finalConnection.sendCurrentState(new currentStateMessage(null, null, "ServerOptionState", false)));
 
             boolean correctResponse = false;
 
@@ -109,20 +117,19 @@ public class Server implements Runnable {
                 // Requests the ServerOptionMessage
                 serverOption = executor.submit(connection::getServerOption);
 
+                // TODO put timer here
+
                 // If client loses connection, then this method ends
                 while(!serverOption.isDone())
                 {
-                    if(!this.checkIsAlive(connection)) {
-                        socket.close();
-                        return;
-                    }
+
                 }
 
                 msg = serverOption.get();
 
                 // Checks if the response message is valid
                 if(!msg.isNewMatch() && (msg.getNickname() == null || Objects.equals(msg.getNickname(), "") || msg.getStartedMatchID() == null) && !msg.isLoadMatch())
-                    connection.sendAnswerToServerOption(false, null);
+                    connection.sendAnswer(false);
                 else
                     correctResponse = true;
             }
@@ -142,7 +149,7 @@ public class Server implements Runnable {
 
                 if (lobby != null) {
                     // Sends answer
-                    connection.sendAnswerToServerOption(true, lobby.getMatchInfo().getID());
+                    connection.sendAnswer(true);
 
                     logCreator.log("Client socket " + clientAddress.toString() + " " + clientPort + " joins a match in WaitingForPlayerState");
 
@@ -162,7 +169,7 @@ public class Server implements Runnable {
 
                     MatchInfo matchInfo = new MatchInfo(new Match(), id + 1, this.defaultPath + id.toString() + ".savedgame" ,null, MatchState.Waiting);
 
-                    connection.sendAnswerToServerOption(true, lobby.getMatchInfo().getID());
+                    connection.sendAnswer(true);
                     ClientManager lobbyManager = new ClientManager(matchInfo);
                     games.add(lobbyManager);
 
@@ -181,8 +188,9 @@ public class Server implements Runnable {
                 // TODO add status information
 
                 // Finds the game
+                serverOptionMessage finalMsg = msg;
                 ClientManager lobbyManager = games.stream()
-                        .filter(clientManager -> clientManager.getMatchInfo().getID() == Integer.parseInt(msg.getStartedMatchID()))
+                        .filter(clientManager -> Objects.equals(clientManager.getMatchInfo().getID(), finalMsg.getStartedMatchID()))
                         .limit(1)
                         .findAny().orElse(null);
 
@@ -214,8 +222,9 @@ public class Server implements Runnable {
 
 
                     // Add the player to the game
+                    serverOptionMessage finalMsg1 = msg;
                     Player savedPlayer = lobbyManager.getMatch().getPlayers().stream()
-                            .filter(player -> Objects.equals(player.getNickname(), msg.getNickname()))
+                            .filter(player -> Objects.equals(player.getNickname(), finalMsg1.getNickname()))
                             .findAny().orElse(null);
 
                     if(lobbyManager.getMatchInfo().getStatus() == MatchState.Player1 ||
@@ -247,7 +256,7 @@ public class Server implements Runnable {
                             socket.close();
                         }
                     } else {
-                        connection.send(false);
+                        connection.sendAnswer(false);
                         socket.close();
                     }
                 }
@@ -274,10 +283,6 @@ public class Server implements Runnable {
 
     }
 
-    // TODO remove this method
-    private boolean checkIsAlive(ClientConnection connection) {
-        return connection != null && connection.getStatus().equals("online");
-    }
 
     private void welcomeNewPlayer(ClientManager lobbyManager, ClientConnection connection) {
         // Sends status information
@@ -302,7 +307,7 @@ public class Server implements Runnable {
 
         // Asks again until it is a valid name
         while(unavailableNames.contains(name)) {
-            name = connection.getName(unavailableNames);
+            name = connection.getName(unavailableNames).getName();
             if(unavailableNames.contains(name))
                 connection.sendAnswer(false);
             else
@@ -331,17 +336,15 @@ public class Server implements Runnable {
 
         // Asks for the player color
         if(availableColors.isEmpty()) {
-            try {
-                connection.getSocket().close();
-                logCreator.log("Client socket " + connection.getIP() + " " + connection.getPort() + " closed connection");
-            } catch (IOException ignore) {}
+            connection.closeConnection();
+            logCreator.log("Client socket " + connection.getIP() + " " + connection.getPort() + " closed connection");
         }
-        String color = connection.getColor(availableColors);
-        connection.sendAnswerToChosenColor(availableColors.contains(color));
+        String color = connection.getColor(availableColors).getColor();
+        connection.sendAnswer(availableColors.contains(color));
         // Asks again until it is a valid color
         while(!availableColors.contains(color)) {
-            color = connection.getColor(availableColors);
-            connection.sendAnswerToChosenColor(availableColors.contains(color));
+            color = connection.getColor(availableColors).getColor();
+            connection.sendAnswer(availableColors.contains(color));
         }
 
         logCreator.log("Client " + connection.getIP() + " " + connection.getPort() + " chose color: " + color);

@@ -24,7 +24,7 @@ public class ClientManager implements Runnable{
 
     private ThreadPoolExecutor executor;
 
-    private LogCreator logCreator; // TODO use this
+    private LogCreator logCreator;
     /**
      * Standard constructor for ClientManager
      * @param match object representing the model and data related to the server
@@ -46,6 +46,8 @@ public class ClientManager implements Runnable{
         long keepAliveTime = 300;
         TimeUnit unit = TimeUnit.SECONDS;
         executor = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, unit, new LinkedBlockingQueue<Runnable>());
+
+        logCreator.log("Client manager started");
 
     }
 
@@ -219,7 +221,7 @@ public class ClientManager implements Runnable{
                             .forEach(playerInfo -> {
                                 currentStateMessage curr = new currentStateMessage(null, playerInfo.getPlayer(),"WaitingForPlayersState",false);
                                 playerInfo.getConnection().sendCurrentState(curr);
-                                newHostMessage hostMessage = new newHostMessage(host.getPlayer().getNickname(), false);
+                                newHostMessage hostMessage = new newHostMessage(host.getPlayer().getNickname());
                             });
 
                     boolean correctAnswer = false;

@@ -5,6 +5,7 @@ import it.polimi.ingsw.protocol.messages.ConnectionState.*;
 import it.polimi.ingsw.protocol.messages.EndGameState.*;
 import it.polimi.ingsw.protocol.messages.ObjectiveState.*;
 import it.polimi.ingsw.protocol.messages.PlayerTurnState.*;
+import it.polimi.ingsw.protocol.messages.ServerOptionState.serverOptionMessage;
 import it.polimi.ingsw.protocol.messages.StaterCardState.*;
 import it.polimi.ingsw.protocol.messages.WaitingforPlayerState.*;
 import it.polimi.ingsw.protocol.messages.*;
@@ -29,6 +30,12 @@ public class ClientSocket extends ClientConnection {
     public ClientSocket(String IP, String port, Socket socket) {
         super(IP, port);
         this.socket = socket;
+        try {
+            outputStream = new ObjectOutputStream(socket.getOutputStream());
+            inputStream = new ObjectInputStream(socket.getInputStream());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -36,10 +43,14 @@ public class ClientSocket extends ClientConnection {
      */
     @Override
     public void run() {
+
+    }
+
+    @Override
+    public serverOptionMessage getServerOption() {
         try {
-            outputStream = new ObjectOutputStream(socket.getOutputStream());
-            inputStream = new ObjectInputStream(socket.getInputStream());
-        } catch (IOException e) {
+            return (serverOptionMessage) inputStream.readObject();
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -116,8 +127,9 @@ public class ClientSocket extends ClientConnection {
      * @return chosenNameMessage
      */
     @Override
-    public chosenNameMessage getName(){
+    public chosenNameMessage getName(ArrayList<String> unavailableNames) {
         try {
+            this.sendUnavailableName(unavailableNames);
             return (chosenNameMessage) inputStream.readObject();
         } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException(e);
@@ -142,8 +154,9 @@ public class ClientSocket extends ClientConnection {
      * @return chosenColorMessage
      */
     @Override
-    public chosenColorMessage getColor(){
+    public chosenColorMessage getColor(ArrayList<String> color){
         try {
+            this.sendAvailableColor(color);
             return (chosenColorMessage) inputStream.readObject();
         } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException(e);

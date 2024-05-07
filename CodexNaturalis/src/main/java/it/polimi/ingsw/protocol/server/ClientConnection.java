@@ -4,6 +4,7 @@ import it.polimi.ingsw.model.cards.ObjectiveCard;
 import it.polimi.ingsw.protocol.messages.ConnectionState.*;
 import it.polimi.ingsw.protocol.messages.ObjectiveState.*;
 import it.polimi.ingsw.protocol.messages.PlayerTurnState.*;
+import it.polimi.ingsw.protocol.messages.ServerOptionState.serverOptionMessage;
 import it.polimi.ingsw.protocol.messages.StaterCardState.*;
 import it.polimi.ingsw.protocol.messages.WaitingforPlayerState.*;
 import it.polimi.ingsw.protocol.messages.*;
@@ -45,14 +46,15 @@ public abstract class ClientConnection implements Runnable {
         return port;
     }
 
+    public abstract serverOptionMessage getServerOption();
     public abstract void sendNewHostMessage(String hostNickname);
     public abstract expectedPlayersMessage getExpectedPlayer();
     public abstract void sendAnswer(boolean correct);
     public abstract void sendAnswerToConnection(connectionResponseMessage message);
     public abstract void sendUnavailableName(ArrayList<String> unavailableNames);
-    public abstract chosenNameMessage getName();
+    public abstract chosenNameMessage getName(ArrayList<String> unavailableNames);
     public abstract void sendAvailableColor(ArrayList<String> availableColors);
-    public abstract chosenColorMessage getColor();
+    public abstract chosenColorMessage getColor(ArrayList<String> availableColors);
     public abstract void sendCurrentState(currentStateMessage currentState);
     public abstract starterCardMessage getStaterCard();
     public abstract objectiveCardMessage getChosenObjective(ObjectiveCard[] objectiveCards);
