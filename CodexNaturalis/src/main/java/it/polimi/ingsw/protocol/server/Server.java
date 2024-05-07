@@ -16,10 +16,9 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Objects;
-import java.util.concurrent.Future;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.*;
 
 public class Server implements Runnable {
     // TODO logfile
@@ -112,20 +111,32 @@ public class Server implements Runnable {
 
             Future<serverOptionMessage> serverOption;
             serverOptionMessage msg = null;
-            // TODO update this part with TimerTask
+
             while(!correctResponse) {
                 // Requests the ServerOptionMessage
                 serverOption = executor.submit(connection::getServerOption);
 
-                // TODO put timer here
+                // Timer
+                Timer timer = new Timer();
+                Future<serverOptionMessage> finalServerOption = serverOption;
+                TimerTask task = new TimerTask() {
+                    @Override
+                    public void run() {
+                        if(finalServerOption.isDone()) {
+                            finalServerOption.cancel(true);
+                        }
+                    }
+                };
+                timer.schedule(task, 3*60*1000);
 
                 // If client loses connection, then this method ends
-                while(!serverOption.isDone())
-                {
-
+                try {
+                    msg = serverOption.get();
+                } catch (ExecutionException e) {
+                    socket.close();
+                    logCreator.log("Client " + clientAddress.toString() + " kicked due to no answer received");
+                    return;
                 }
-
-                msg = serverOption.get();
 
                 // Checks if the response message is valid
                 if(!msg.isNewMatch() && (msg.getNickname() == null || Objects.equals(msg.getNickname(), "") || msg.getStartedMatchID() == null) && !msg.isLoadMatch())

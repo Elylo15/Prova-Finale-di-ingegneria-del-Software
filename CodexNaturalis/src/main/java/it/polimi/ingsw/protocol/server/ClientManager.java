@@ -56,6 +56,7 @@ public class ClientManager implements Runnable{
         if(playerInfo != null && matchInfo.getExpectedPlayers() > this.playersInfo.size())
         {
             this.playersInfo.add(playerInfo);
+            logCreator.log("Player added: " + playerInfo.getPlayer().getNickname() + " " + playerInfo.getPlayer().getColor());
             this.notifyAll();
         } else {
             throw new Exception();
@@ -66,6 +67,7 @@ public class ClientManager implements Runnable{
     private void kickPlayer(PlayerInfo playerInfo) {
         this.playersInfo.remove(playerInfo);
         playerInfo.getConnection().closeConnection();
+        logCreator.log("Player kicked: " + playerInfo.getPlayer().getNickname());
     }
 
 
@@ -116,7 +118,9 @@ public class ClientManager implements Runnable{
 
 
     public synchronized void saveMatch() {
+        logCreator.log("Saving match process started");
 
+        logCreator.log("Saving match process finished");
     }
 
 
@@ -206,7 +210,7 @@ public class ClientManager implements Runnable{
      * If a player takes too long to respond or provides an invalid response, they are kicked from the match.
      */
     private void waiting() {
-        int previousConnectedPlayers = this.playersInfo.size();
+        logCreator.log("Waiting for players");
         currentStateMessage currState = new currentStateMessage(null, null,"WaitingForPlayersState",false);
 
         // Obtains the number of expected players for this match
@@ -234,16 +238,7 @@ public class ClientManager implements Runnable{
                             expected = future.get();
                             timer.cancel();
                         } catch (Exception e) {
-                            // TODO add log file for the error recording
-                        /*
-                        catch (InterruptedException e) {
-                            System.err.println("Task interrupted");
-                        } catch (ExecutionException e) {
-                            System.err.println("Task threw an exception: " + e.getCause().getMessage());
-                        } catch (CancellationException e) {
-                            System.err.println("Task was cancelled due to timeout");
-                        }
-                         */
+                            logCreator.log("Player " + host.getPlayer().getNickname() + " has not answered");
                         }
 
                         if (expected != null) {
@@ -257,8 +252,10 @@ public class ClientManager implements Runnable{
                                     this.matchInfo.setExpectedPlayers(expected.getExpectedPlayers());
                                     correctAnswer = true;
                                     host.getConnection().sendAnswer(true);
+                                    logCreator.log("Player " + host.getPlayer().getNickname() + " has correctly answered");
                                 } else {
                                     host.getConnection().sendAnswer(false);
+                                    logCreator.log("Player " + host.getPlayer().getNickname() + " has not correctly answered");
                                 }
                             }
 
@@ -272,12 +269,10 @@ public class ClientManager implements Runnable{
 
         }
 
+        logCreator.log("Expected players obtained : " + this.matchInfo.getExpectedPlayers() + " from " + this.playersInfo.getFirst().getPlayer().getNickname());
+
         // Wait for the specified number of expected players
         while(this.playersInfo.size() < this.matchInfo.getExpectedPlayers()) {
-            /*
-            1. Aspettare il numero di player corretto
-            2. kickare i player che non si connettono
-             */
             synchronized (this) {
                 if(this.playersInfo.size() == this.matchInfo.getExpectedPlayers())
                     this.matchInfo.setStatus(MatchState.Player1);
@@ -295,7 +290,7 @@ public class ClientManager implements Runnable{
                 this.matchInfo.getMatch().addPlayer(playerInfo.getPlayer());
                 playerInfo.setState(State.StarterCard);
             } catch (Exception e) {
-                // TODO add logfile to write that a player has failed to join
+                logCreator.log("Failed to add player to model: " + playerInfo.getPlayer().getNickname());
             }
         }
 
@@ -311,12 +306,13 @@ public class ClientManager implements Runnable{
     private synchronized void player(Player player) {
         PlayerInfo playerInfo = this.findPlayer(player);
         if(playerInfo == null) {
-            // TODO log that this player skipped
+            logCreator.log("Player " + player.getNickname() + " not found and skipped");
             return;
         }
 
         switch (playerInfo.getState()) {
             case StarterCard -> {
+                logCreator.log("Player " + player.getNickname() + "has to place the starter card");
                 // Draw a StarterCard if player has none in hand
                 if(playerInfo.getPlayer().getPlayerHand().getPlaceableCards().stream().
                         anyMatch(placeableCard -> placeableCard.isStarter()))
@@ -339,7 +335,7 @@ public class ClientManager implements Runnable{
                         starter = future.get();
                         timer.cancel();
                     } catch (Exception e) {
-                        // TODO log here
+                        logCreator.log("Player " + player.getNickname() + " has not answered");
                     }
 
                     if(starter != null) {
@@ -353,12 +349,17 @@ public class ClientManager implements Runnable{
                                  playerInfo.getPlayer().placeStarter(starter.getSide());
                                  correctAnswer = true;
                                  playerInfo.getConnection().sendAnswer(true);
+                                 logCreator.log("Player " + player.getNickname() + " has correctly answered");
                              } else {
                                  playerInfo.getConnection().sendAnswer(false);
+                                 logCreator.log("Player " + player.getNickname() + " has not answered correctly");
                              }
                         }
                     }
                 }
+
+
+                logCreator.log("Player " + player.getNickname() + " placed the starter card");
 
                 // End turn and update states
                 if(this.playersInfo.contains(playerInfo)) { // Checks if the player is online
@@ -380,6 +381,7 @@ public class ClientManager implements Runnable{
                 executor.submit(this::saveMatch);
             }
             case Objective -> {
+                logCreator.log("Player " + player.getNickname() + "has to choose an objective");
                 // Draw two objective cards if there are none
                 if(playerInfo.getSavedObjectives() == null)
                     playerInfo.setSavedObjectives(playerInfo.getPlayer().drawObjectives());
@@ -400,7 +402,7 @@ public class ClientManager implements Runnable{
                         objective = future.get();
                         timer.cancel();
                     } catch (Exception e) {
-                        // TODO log here
+                        logCreator.log("Player " + player.getNickname() + " has not answered");
                     }
 
                     if(objective != null) {
@@ -414,14 +416,17 @@ public class ClientManager implements Runnable{
                                 playerInfo.getPlayer().pickObjectiveCard(objective.getChoice(), playerInfo.getSavedObjectives());
                                 correctAnswer = true;
                                 playerInfo.getConnection().sendAnswer(true);
+                                logCreator.log("Player " + player.getNickname() + "has correctly answered");
                             } else {
                                 playerInfo.getConnection().sendAnswer(false);
+                                logCreator.log("Player " + player.getNickname() + "has not answered correctly");
                             }
                         }
                     }
 
                 }
 
+                logCreator.log("Player " + player.getNickname() + " has correctly chosen an objective");
                 // End turn and update states
                 if(this.playersInfo.contains(playerInfo)) {
                     if(this.matchInfo.isLastTurn())
@@ -440,6 +445,7 @@ public class ClientManager implements Runnable{
                 executor.submit(this::saveMatch);
             }
             case PlayerTurn -> {
+                logCreator.log("Player " + player.getNickname() + " starts normal turn");
                 // Sends current state messages to all clients
                 for(PlayerInfo playerInfo1 : this.playersInfo) {
                     currentStateMessage currState = new currentStateMessage(player, playerInfo1.getPlayer(), "PlayerTurnState", this.matchInfo.isLastTurn());
@@ -458,7 +464,7 @@ public class ClientManager implements Runnable{
                         placeCard = future.get();
                         timer.cancel();
                     } catch (Exception e) {
-                        // TODO log here
+                        logCreator.log("Player " + player.getNickname() + " has not answered");
                     }
 
                     if(placeCard != null) {
@@ -475,10 +481,12 @@ public class ClientManager implements Runnable{
                                 int side = placeCard.getFront();
                                 playerInfo.getPlayer().playTurn(card, x, y, side);
                                 playerInfo.getConnection().sendAnswer(true);
+                                logCreator.log("Player " + player.getNickname() + "has correctly answered");
                                 correctAnswer = true;
                             } catch (Exception e)  {
                                 correctAnswer = false;
                                 playerInfo.getConnection().sendAnswer(false);
+                                logCreator.log("Player " + player.getNickname() + "has not correctly answered");
                             }
 
                         }
@@ -492,6 +500,7 @@ public class ClientManager implements Runnable{
                     playerInfo1.getConnection().sendUpdatePlayer(update);
                 }
 
+                logCreator.log("Player " + player.getNickname() + " has to pick a card from common area");
 
                 // If the client is still online, it proceeds to ask to pick a card
                 if(this.playersInfo.contains(playerInfo)) {
@@ -505,7 +514,7 @@ public class ClientManager implements Runnable{
                             pickCard = future.get();
                             timer.cancel();
                         } catch (Exception e) {
-                            // TODO log here
+                            logCreator.log("Player " + player.getNickname() + "has not answered");
                         }
 
                         if(pickCard != null) {
@@ -519,14 +528,18 @@ public class ClientManager implements Runnable{
                                     playerInfo.getPlayer().pickNewCard(pickCard.getCard());
                                     correctAnswer = true;
                                     playerInfo.getConnection().sendAnswer(true);
+                                    logCreator.log("Player " + player.getNickname() + "has correctly answered");
                                 } catch (Exception e){
                                     playerInfo.getConnection().sendAnswer(false);
+                                    logCreator.log("Player " + player.getNickname() + "has not correctly answered");
                                 }
                             }
                         }
                     }
                 }
 
+
+                logCreator.log("Player " + player.getNickname() + " has ended his normal turn");
 
                 // End turn
                 // Update all states
@@ -550,6 +563,7 @@ public class ClientManager implements Runnable{
 
             }
             case LastTurn -> {
+                logCreator.log("Player " + player.getNickname() + " plays his last turn");
                 // Sends current state messages to all clients
                 for(PlayerInfo playerInfo1 : this.playersInfo) {
                     currentStateMessage currState = new currentStateMessage(player, playerInfo1.getPlayer(), "LastTurnState", this.matchInfo.isLastTurn());
@@ -568,7 +582,7 @@ public class ClientManager implements Runnable{
                         placeCard = future.get();
                         timer.cancel();
                     } catch (Exception e) {
-                        // TODO log here
+                        logCreator.log("Player " + player.getNickname() + "has not answered");
                     }
 
                     if(placeCard != null) {
@@ -585,15 +599,19 @@ public class ClientManager implements Runnable{
                                 int side = placeCard.getFront();
                                 playerInfo.getPlayer().playTurn(card, x, y, side);
                                 playerInfo.getConnection().sendAnswer(true);
+                                logCreator.log("Player " + player.getNickname() + "has correctly answered");
                                 correctAnswer = true;
                             } catch (Exception e)  {
                                 correctAnswer = false;
                                 playerInfo.getConnection().sendAnswer(false);
+                                logCreator.log("Player " + player.getNickname() + "has not correctly answered");
                             }
 
                         }
                     }
                 }
+
+                logCreator.log("Player " + player.getNickname() + " has ended his last turn");
 
                 // Update the state
                 if(this.playersInfo.contains(playerInfo))
@@ -620,6 +638,7 @@ public class ClientManager implements Runnable{
     }
 
     private void endgame() {
+        logCreator.log("ENDGAME");
         // Sends current state messages to all clients
         for(PlayerInfo playerInfo1 : this.playersInfo) {
             currentStateMessage currState = new currentStateMessage(null, playerInfo1.getPlayer(), "EndGameState", this.matchInfo.isLastTurn());
@@ -660,6 +679,7 @@ public class ClientManager implements Runnable{
     }
 
     private void kickPlayers() {
+        logCreator.log("Kicking out all players");
         this.playersInfo.forEach(this::kickPlayer);
     }
 
@@ -679,6 +699,7 @@ public class ClientManager implements Runnable{
 
 
     // TODO check this method later
+    // This method is to check if all players are online and to eventually declare a winner
     private void checkOnlinePlayersNumber() {
         // This function must be used at the end of every turn
         if(this.playersInfo.size() == 1) {
