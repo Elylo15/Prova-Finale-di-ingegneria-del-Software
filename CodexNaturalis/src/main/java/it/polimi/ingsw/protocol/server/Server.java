@@ -16,10 +16,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.util.ArrayList;
-import java.util.Objects;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 import java.util.concurrent.*;
 
 public class Server implements Runnable {
@@ -175,13 +172,8 @@ public class Server implements Runnable {
                 */
 
             } else {
-                // gets the other ID
-                Integer id = games.stream()
-                        .map(clientManager -> clientManager.getMatchInfo().getID())
-                        .max(Integer::compareTo)
-                        .orElse(0);
-
-                MatchInfo matchInfo = new MatchInfo(new Match(), id + 1, this.defaultPath + id.toString() + ".savedgame" ,null, MatchState.Waiting);
+                Integer id = this.createNewMatchID();
+                MatchInfo matchInfo = new MatchInfo(new Match(),id,this.defaultPath + id.toString() + ".savedgame" ,null, MatchState.Waiting);
 
                 connection.sendAnswer(true);
                 ClientManager lobbyManager = new ClientManager(matchInfo);
@@ -410,9 +402,26 @@ public class Server implements Runnable {
 
 
     public void closeMatch() {
-        // TODO remove match from games list
+        while(true) {
+            for(ClientManager clientManager : games){
+                if(clientManager.getMatchInfo().getStatus() == MatchState.KickingPlayers)
+                    games.remove(clientManager);
+            }
+        }
+    }
 
-        //TODO find a way to close a match at any moment, possibly involve executors
+    private Integer createNewMatchID() {
+        Integer MatchID = 0;
+        boolean correct = false;
+        while(!correct) {
+            MatchID = (new Random()).nextInt(100000);
+            Integer finalMatchID = MatchID;
+            if(games.stream()
+                    .map(clientManager -> clientManager.getMatchInfo().getID())
+                    .noneMatch(a -> Objects.equals(a, finalMatchID)))
+                correct = true;
+        }
+        return  MatchID;
     }
 
     public void loadMatch(String fileName) {
@@ -426,6 +435,7 @@ public class Server implements Runnable {
     public void run() {
         executor.submit(this::acceptConnectionSocket);
         executor.submit(this::acceptConnectionRMI);
+        executor.submit(this::closeMatch);
         logCreator.log("Server started");
 
         // TODO maybe add the remove match from list method
