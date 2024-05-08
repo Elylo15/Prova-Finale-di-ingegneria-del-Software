@@ -495,6 +495,7 @@ public class ClientManager implements Runnable{
                 }
 
 
+                // muovi in fondo
                 // Updates all clients on the current situation
                 for(PlayerInfo playerInfo1 : this.playersInfo) {
                     updatePlayerMessage update = new updatePlayerMessage(playerInfo.getPlayer());

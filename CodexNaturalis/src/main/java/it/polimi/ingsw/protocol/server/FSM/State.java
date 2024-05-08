@@ -7,6 +7,8 @@ public enum State implements Serializable {
     StarterCard,
     Objective,
     PlayerTurn,
+    //PlaceCard,
+    //PickCard,
     LastTurn,
     EndGame
 }

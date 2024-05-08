@@ -16,7 +16,7 @@ public class LogCreator {
      * Initializes the BufferedWriter for writing to the log file.
      */
     public LogCreator() {
-        this.fileName = "log/log_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")) + ".log";
+        this.fileName = "./log/log_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")) + ".log";
         this.matchID = null;
         try {
             FileWriter fw = new FileWriter(fileName, true);
