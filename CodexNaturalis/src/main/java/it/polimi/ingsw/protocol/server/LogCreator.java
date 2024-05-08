@@ -18,6 +18,9 @@ public class LogCreator {
      */
     public LogCreator() {
         this.fileName = "logs/log_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")) + ".log";
+        File dir = new File("logs");
+        if(!dir.exists())
+            dir.mkdir();
         this.matchID = null;
         File f = new File(fileName);
         try {
@@ -35,7 +38,10 @@ public class LogCreator {
      */
     public LogCreator(String matchID) {
         this.matchID = matchID;
-        this.fileName =  "log/log_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")) + "_match"+ this.matchID +".log";
+        this.fileName =  "logs/log_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")) + "_match"+ this.matchID +".log";
+        File dir = new File("logs");
+        if(!dir.exists())
+            dir.mkdir();
         File f = new File(fileName);
         try {
             FileWriter fw = new FileWriter(fileName, true);
