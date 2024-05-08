@@ -1,6 +1,7 @@
 package it.polimi.ingsw.protocol.server;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -16,8 +17,9 @@ public class LogCreator {
      * Initializes the BufferedWriter for writing to the log file.
      */
     public LogCreator() {
-        this.fileName = "./log/log_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")) + ".log";
+        this.fileName = "logs/log_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")) + ".log";
         this.matchID = null;
+        File f = new File(fileName);
         try {
             FileWriter fw = new FileWriter(fileName, true);
             writer = new BufferedWriter(fw);
@@ -34,6 +36,7 @@ public class LogCreator {
     public LogCreator(String matchID) {
         this.matchID = matchID;
         this.fileName =  "log/log_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")) + "_match"+ this.matchID +".log";
+        File f = new File(fileName);
         try {
             FileWriter fw = new FileWriter(fileName, true);
             writer = new BufferedWriter(fw);
@@ -47,6 +50,12 @@ public class LogCreator {
      * @param matchID the match ID to set
      */
     public void setMatchID(String matchID) {this.matchID = matchID;}
+
+    /**
+     * Retrieves the filename (relative path) of file where the log is written.
+     * @return String of the relative path.
+     */
+    public String getFileName() {return this.fileName;}
 
     /**
      * Adds a new line to the log file with the specified message.

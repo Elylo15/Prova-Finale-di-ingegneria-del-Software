@@ -47,7 +47,7 @@ public class ControllerSocketTest {
 
     @Test
     void sendOptionsTest() {
-        serverOptionMessage options = new serverOptionMessage(false, 23, "Bianca", true, "")
+        serverOptionMessage options = new serverOptionMessage(false, 23, "Bianca", true, "");
         controllerSocket.sendOptions(options);
     }
 

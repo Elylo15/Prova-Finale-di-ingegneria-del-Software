@@ -201,6 +201,8 @@ public class ClientManager implements Runnable{
             this.checkOnlinePlayersNumber();
         }
 
+
+        logCreator.close();
     }
 
 
