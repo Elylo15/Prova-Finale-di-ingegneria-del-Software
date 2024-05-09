@@ -50,32 +50,11 @@ public class ViewCLI extends View {
         ArrayList<PlaceableCard> cards = playerArea.getAllCards();
         ArrayList<Cell> position = new ArrayList<>();
         for (int i = 0; i < cards.size(); i++) {
-            for (int j = 0; j < 3; j++) {   //every card possesses four cells
+            for (int j = 0; j < 4; j++) {   //every card possesses four cells
                 position.add(cards.get(i).getCells().get(j));
             }
         }
-        /*int minRow = position.get(0).getRow();
-        int maxRow = position.get(0).getRow();
-        for(int j=1; j<position.size(); j++){
-            //trovo coordinata minima e massima delle righe per sapere la grandezza della matrice
-            if(position.get(j).getRow()<minRow){
-                 minRow = position.get(j).getRow();
-            }
-            if(position.get(j).getRow()>maxRow){
-                maxRow = position.get(j).getRow();
-            }
-        }
-        int minColumn = position.get(0).getColumn();
-        int maxColumn = position.get(0).getColumn();
-        for(int j=1; j<position.size(); j++){
-            if(position.get(j).getColumn()<minColumn){
-                 minColumn = position.get(j).getColumn();
-            }
-            if(position.get(j).getColumn()>maxColumn){
-                maxColumn = position.get(j).getColumn();
-            }
-        }
-        */
+
         int minRow = position.stream()
                 .mapToInt(Cell::getRow).min().orElse(0);
         int maxRow = position.stream().mapToInt(Cell::getRow).max().orElse(0);
@@ -85,55 +64,63 @@ public class ViewCLI extends View {
         int maxColumn = position.stream()
                 .mapToInt(Cell::getColumn).max().orElse(0);
 
-        /*now we have size of the matrix
+        //now we have size of the matrix
         int sizeRow = maxRow - minRow;
         int sizeColumn = maxColumn - minColumn;
-        String[][] showArea = new String[sizeRow][sizeColumn];*/
+        String[][] showArea = new String[sizeRow+1][sizeColumn+1];
 
-        String[][] showArea = new String[maxRow+1][maxColumn+1];  //gli indici della matrice partono da 0 e arrivano a alle coordinate massime
+       // String[][] showArea = new String[maxRow+1][maxColumn+1];  //gli indici della matrice partono da 0 e arrivano a alle coordinate massime
         String TopFront = null;
         String BottomFront = null;
         Integer TopID = null; //initialize the top card id
         Integer BottomID = null; //initialize the bottom card id
 
+        for (int i = 0; i < sizeRow+1; i++) {  //scorro ogni cella della matrice da ritornare
+            for (int j = 0; j < sizeColumn+1; j++) {
+                for (PlaceableCard card : cards) { //per ogni carta
+                    for (int p = 0; p < 4; p++) {   //per ogni cella della carta
 
-        for (int i = 0; i < maxRow+1; i++) {
-            for (int j = 0; j < maxColumn+1; j++) {
-                for (PlaceableCard card : cards) {
-                    for (int p = 0; p < 4; p++) {
-
-                        if (i == card.getCells().get(p).getRow() && j == card.getCells().get(p).getColumn()) {
-
-                            if (card.getCells().get(p).getTopCard() == card) {
-                                TopID = card.getID(); //id della carta top
-                                if (card.isFront()) {
-                                    TopFront = "F";
-                                } else {
-                                    TopFront = "B";
-                                }
-                            }
-                             if (card.getCells().get(p).getBottomCard() == card) {
-
-                                BottomID = card.getID(); //id della carta bottom
-                                if (card.isFront()) {
+                        if (i == module(minRow - card.getCells().get(p).getRow()) && j == module(minColumn - card.getCells().get(p).getColumn())) {
+                            if(card.getCells().get(p).getBottomCard()==card){
+                                BottomID = card.getID();
+                                if(card.isFront()){
                                     BottomFront = "F";
-                                } else {
+                                }
+                                else {
                                     BottomFront = "B";
                                 }
                             }
-                            if(TopID!=BottomID){
-                                showArea[i][j] = TopID + TopFront + "/" + BottomID + BottomFront;}
-                            else{
-                                showArea[i][j] = TopID + TopFront +"/" + null + null;
+                            if(card.getCells().get(p).getTopCard()==card){
+                                TopID = card.getID();
+                                if(card.isFront()){
+                                    TopFront = "F";
+                                }
+                                else {
+                                    TopFront = "B";
+                                }
+                            }
+                            if(TopID!=BottomID) {
+                                showArea[i][j] = TopID + TopFront + "/" + BottomID + BottomFront;
+                            }
+                            if(TopID ==BottomID){
+                                showArea[i][j] = TopID + TopFront + "/" + null + null;
+                            }
+                            if(TopID==null){
+                                showArea[i][j] = BottomID + BottomFront + "/" + null + null;
+                            }
+                            if(BottomID==null){
+                                showArea[i][j] = TopID + TopFront + "/" + null + null;
                             }
                         }
                     }
                 }
+                }
             }
-        }
-        this.printMatrix(showArea,maxRow+1,maxColumn+1);
+
+        this.printMatrix(showArea,sizeRow+1,sizeColumn+1);
 
         return showArea;
+
 
     }
 
@@ -149,6 +136,14 @@ public class ViewCLI extends View {
                 System.out.print(matrix[i][j] + " "); //print per non andare a capo dopo ogni valore
             }
             System.out.println("\n"); //staccare le righe
+        }
+    }
+    public int module(int a){
+        if(a>0){
+            return a;
+        }
+        else {
+            return  -a;
         }
     }
 

@@ -37,11 +37,11 @@ class ViewCLITest {
     @Test
     void checkShowArea() throws noPlaceCardException {
         String[][] test = new String[4][4];
-        test[0][0] = "nullnull/81F";
-        test[0][1] = "nullnull/81F";
+        test[0][0] = "81F/nullnull";
+        test[0][1] = "81F/nullnull";
         test[0][2] = "null";
         test[0][3] = "null";
-        test[1][0] = "nullnull/81F";
+        test[1][0] = "81F/nullnull";
         test[1][1] = "2F/81F";
         test[1][2] = "2F/nullnull";
         test[1][3] = "null";
@@ -106,7 +106,7 @@ class ViewCLITest {
         }
 
         playerArea.placeStarterCard(starterCard, true);
-        playerArea.placeCard(testCard, 1, 1, true);
+        playerArea.placeCard(testCard, 1,1, true);
         playerArea.placeCard(testCard2,2,2,false);
         playerArea.placeCard(testCard3,3,3,true);
 
