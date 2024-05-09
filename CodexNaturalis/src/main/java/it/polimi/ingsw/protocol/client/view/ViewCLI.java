@@ -1,5 +1,9 @@
 package it.polimi.ingsw.protocol.client.view;
 
+import it.polimi.ingsw.model.Player;
+import it.polimi.ingsw.model.PlayerArea;
+import it.polimi.ingsw.model.cards.Cell;
+import it.polimi.ingsw.model.cards.PlaceableCard;
 import it.polimi.ingsw.model.cards.StarterCard;
 import it.polimi.ingsw.protocol.messages.ConnectionState.*;
 import it.polimi.ingsw.protocol.messages.ServerOptionState.*;
@@ -15,14 +19,13 @@ import it.polimi.ingsw.protocol.messages.responseMessage;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Scanner;
+import java.util.*;
 
-public class ViewCLI extends View{
-    //the only purpose of ViewCLI is to visualize what the user needs to see in order to play the game
+public class ViewCLI extends View {
+    //the purpose of ViewCLI is to handle the interaction with the user and
+    // visualize what he needs to see in order to play the game
     // by printing it in the command line
-    public ViewCLI(){
+    public ViewCLI() {
         super();
 
     }
@@ -30,299 +33,400 @@ public class ViewCLI extends View{
     /**
      * communicates to the user he lost connection
      */
-    public void playerDisconnected(){
+    public void playerDisconnected() {
         System.out.println("An error occurred, connection interrupted");
     }
 
-
     /**
-     * visualizes the current state of the players
-     * @param message
-     */
-    public void updatePlayer(currentStateMessage message){
-        System.out.println("player " + message.getPlayer() + "is in the state " + message.getStateName());
-        if(message.isLastTurn()){
-            System.out.println("this is the last turn");
-        }
-    }
-
-
-    /**
-     * this method allow the user to say if he wants to connect with socket or rmi
-     * @return boolean
-     */
-    public boolean askSocket(){
-        //if the user doesn't enter a boolean, an exception is thrown and the method return default value true
-        Scanner scanner = new Scanner(System.in);
-        boolean socket= true;
-        try {
-            System.out.println("enter true if yo want to connect with socket, enter false if you want to connect with rmi");
-            socket = scanner.nextBoolean();
-        }
-        catch (Exception e){
-            System.out.println("you didn't enter a boolean");
-        }
-
-        return socket;
-    }
-
-
-    /**
-     * this method allow the client to visualize the server response about the connection
-     * @param message
-     */
-    public void answerToConnection(connectionResponseMessage message){
-      if(message.getCorrect()){
-          System.out.println("the connection has been established");
-      }
-      else{
-          System.out.println("the connection has not been established");
-      }
-    }
-
-    /**
+     * visualize the player area of the player printing a matrix. Every position of the matrix has the id of
+     * its top card followed by F if it is front placed or B if it is back placed / the id of the bottom card
+     * followed by F or B  or null if there is no card
      *
-     * @param message
-     * @return message with the values chosen by the user
+     * @param playerArea
+     * @return void
      */
-    public serverOptionMessage serverOptions(serverOptionMessage message){
-        Scanner scanner = new Scanner(System.in);
-        boolean newMatch = false;
-        try {
-            System.out.println("enter true if this is a new match or false if it is not");
-            newMatch = scanner.hasNextBoolean();
-            scanner.nextLine();
-        }
-        catch(Exception e){
-            System.out.println("you didn't enter a boolean");
-        }
-        int startedMatchID=1000;
-        try {
-            System.out.println("enter the started match ID");
-            startedMatchID = scanner.nextInt();
-            scanner.nextLine();
-        }
-        catch(Exception e){
-            System.out.println("you didn't enter an int value");
+    public String[][] showPlayerArea(PlayerArea playerArea) {
+
+
+        ArrayList<PlaceableCard> cards = playerArea.getAllCards();
+        ArrayList<Cell> position = new ArrayList<>();
+        for (int i = 0; i < cards.size(); i++) {
+            for (int j = 0; j < 3; j++) {   //every card possesses four cells
+                position.add(cards.get(i).getCells().get(j));
+            }
         }
 
-        String nickname;
+        /*int minRow = position.get(0).getRow();
+        int maxRow = position.get(0).getRow();
+        for(int j=1; j<position.size(); j++){
+            //trovo coordinata minima e massima delle righe per sapere la grandezza della matrice
+            if(position.get(j).getRow()<minRow){
+                 minRow = position.get(j).getRow();
+            }
+            if(position.get(j).getRow()>maxRow){
+                maxRow = position.get(j).getRow();
+            }
+        }
+        int minColumn = position.get(0).getColumn();
+        int maxColumn = position.get(0).getColumn();
+        for(int j=1; j<position.size(); j++){
+            if(position.get(j).getColumn()<minColumn){
+                 minColumn = position.get(j).getColumn();
+            }
+            if(position.get(j).getColumn()>maxColumn){
+                maxColumn = position.get(j).getColumn();
+            }
+        }
+        */
+        int minRow = position.stream()
+                .mapToInt(Cell::getRow).min().orElse(0);
+        int maxRow = position.stream().mapToInt(Cell::getRow).max().orElse(0);
+
+        int minColumn = position.stream()
+                .mapToInt(Cell::getColumn).min().orElse(0);
+        int maxColumn = position.stream()
+                .mapToInt(Cell::getColumn).max().orElse(0);
+
+        //now we have size of the matrix
+        int sizeRow = maxRow - minRow;
+        int sizeColumn = maxColumn - minColumn;
+        String[][] showArea = new String[sizeRow][sizeColumn];
+
+        String TopFront = null;
+        String BottomFront = null;
+        Integer TopID = null; //initialize the top card id
+        Integer BottomID = null; //initialize the bottom card id
+
+        for (int i = 0; i < sizeRow; i++) {
+            for (int j = 0; j < sizeColumn; j++) {
+                for (PlaceableCard card : cards) {
+                    for (int p = 0; p < 3; p++) {
+                        if (i == card.getCells().get(p).getRow() && j == card.getCells().get(p).getColumn()) {
+
+                            if (card.getCells().get(p).getTopCard() == card) {
+                                TopID = card.getID(); //id della carta top
+                                if (card.isFront()) {
+                                    TopFront = "F";
+                                } else {
+                                    TopFront = "B";
+                                }
+                            }
+                             else if (card.getCells().get(p).getBottomCard() == card) {
+
+                                BottomID = card.getID(); //id della carta bottom
+                                if (card.isFront()) {
+                                    BottomFront = "F";
+                                } else {
+                                    BottomFront = "B";
+                                }
+                            }
+                             if(TopID!=BottomID){
+                            showArea[i][j] = TopID + TopFront + "/" + BottomID + BottomFront;}
+                               else{
+                                 showArea[i][j] = TopID+TopFront +"/" + null + null;
+                              }
+                        }
+                    }
+                }
+            }
+        }
+        this.printMatrix(showArea,sizeRow,sizeColumn);
+
+        return showArea;
+
+    }
+
+    /**
+     * method for printing the matrix that visualize the player area
+     * @param matrix
+     * @param r
+     * @param c
+     */
+    public void printMatrix(String[][] matrix, int r, int c) {
+        for (int i = 0; i < r; i++) {
+            for (int j = 0; j < c; j++) {
+                System.out.print(matrix[i][j] + " "); //print per non andare a capo dopo ogni valore
+            }
+            System.out.println("\n"); //staccare le righe
+        }
+    }
+
+
+        /**
+         * visualizes the current state of the players
+         * @param message
+         */
+        public void updatePlayer (currentStateMessage message){
+            System.out.println("player " + message.getPlayer() + "is in the state " + message.getStateName());
+            if (message.isLastTurn()) {
+                System.out.println("this is the last turn");
+            }
+        }
+
+
+        /**
+         * this method allow the user to say if he wants to connect with socket or rmi
+         * @return boolean
+         */
+        public boolean askSocket () {
+            //if the user doesn't enter a boolean, an exception is thrown and the method return default value true
+            Scanner scanner = new Scanner(System.in);
+            boolean socket = true;
+            try {
+                System.out.println("enter true if yo want to connect with socket, enter false if you want to connect with rmi");
+                socket = scanner.nextBoolean();
+            } catch (Exception e) {
+                System.out.println("you didn't enter a boolean");
+            }
+
+            return socket;
+        }
+
+
+        /**
+         * this method allow the client to visualize the server response about the connection
+         * @param message
+         */
+        public void answerToConnection (connectionResponseMessage message){
+            if (message.getCorrect()) {
+                System.out.println("the connection has been established");
+            } else {
+                System.out.println("the connection has not been established");
+            }
+        }
+
+        /**
+         *
+         * @param message
+         * @return message with the values chosen by the user
+         */
+        public serverOptionMessage serverOptions (serverOptionMessage message){
+            Scanner scanner = new Scanner(System.in);
+            boolean newMatch = false;
+            try {
+                System.out.println("enter true if this is a new match or false if it is not");
+                newMatch = scanner.hasNextBoolean();
+                scanner.nextLine();
+            } catch (Exception e) {
+                System.out.println("you didn't enter a boolean");
+            }
+            int startedMatchID = 1000;
+            try {
+                System.out.println("enter the started match ID");
+                startedMatchID = scanner.nextInt();
+                scanner.nextLine();
+            } catch (Exception e) {
+                System.out.println("you didn't enter an int value");
+            }
+
+            String nickname;
             System.out.println("enter your nickname");
             nickname = scanner.nextLine();
 
-        boolean loadMatch = false;
-        try {
-            System.out.println("enter true if you want to load the match");
-            loadMatch = scanner.hasNextBoolean();
-            scanner.nextLine();
-        }
-        catch(Exception e){
-            System.out.println("you didn't enter a boolean");
-        }
-        String pathToLoad;
+            boolean loadMatch = false;
+            try {
+                System.out.println("enter true if you want to load the match");
+                loadMatch = scanner.hasNextBoolean();
+                scanner.nextLine();
+            } catch (Exception e) {
+                System.out.println("you didn't enter a boolean");
+            }
+            String pathToLoad;
             System.out.println("enter the path to load");
             pathToLoad = scanner.nextLine();
-         message = new serverOptionMessage(newMatch,startedMatchID,nickname,loadMatch,pathToLoad);
-        return message;
-    }
-
-    /**
-     * allow the user to see if he managed to join the match
-     * @param message
-     */
-    public void answerToOption(serverOptionResponseMessage message){
-        if(message.getCorrect()){
-            System.out.println("You joined correctly the match " + message.getMatchID());
+            message = new serverOptionMessage(newMatch, startedMatchID, nickname, loadMatch, pathToLoad);
+            return message;
         }
-        else{
-            System.out.println("An error occurred, you couldn't join the game");
+
+        /**
+         * allow the user to see if he managed to join the match
+         * @param message
+         */
+        public void answerToOption (serverOptionResponseMessage message){
+            if (message.getCorrect()) {
+                System.out.println("You joined correctly the match " + message.getMatchID());
+            } else {
+                System.out.println("An error occurred, you couldn't join the game");
+            }
         }
-    }
 
-    /**
-     * this method shows what nickname are not available and allows the user to choose his nickname
-     * @param message
-     * @return
-     */
-    public String unavaibleNames(unavailableNamesMessage message){
-        //the client can call the method view.unavailableNames passing as a parameter the arraylist of unavailable names received from server
-        System.out.println("This nicknames are not avaible: " + message.toString());
+        /**
+         * this method shows what nickname are not available and allows the user to choose his nickname
+         * @param message
+         * @return
+         */
+        public String unavaibleNames (unavailableNamesMessage message){
+            //the client can call the method view.unavailableNames passing as a parameter the arraylist of unavailable names received from server
+            System.out.println("This nicknames are not avaible: " + message.toString());
 
-        String name;
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("You need to choose a nickname to play the game");
-        name = scanner.nextLine();
-        return name;
-    }
-
-    /**
-     * visualize the response about the value entered
-     * @param message
-     */
-    public void answer(responseMessage message){
-        if(message.getCorrect()){
-            System.out.println("You have entered a valid value");
-        }
-        else{
-            System.out.println("You didn't entered a valid value, please try again");
-        }
-    }
-
-
-    /**
-     * this method shows what colors are available and allows the user to choose his color
-     * @param message
-     */
-    public String availableColors(availableColorsMessage message){
-        //the client can call the method view.avaibleColors passing as a parameter the arraylist of available colors received from server
-        System.out.println("This are the colors that are available: " + message.toString());
-
-        String color;
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("You need to choose a color, please enter a valid color to play");
-        color = scanner.nextLine();
-        return color;
-    }
-
-    /**
-     *this method allow the user to place his starter card
-     * @return int
-     */
-    public int placeStarter(){
-        //if the user does not enter an int an exception is thrown and the method return the initialized value
-        int side = 1000;
-       System.out.println("You have to place your starter");
-        System.out.println("Enter 1 if you want to play the front side, 0 if you want to play the back side");
-        try {
+            String name;
             Scanner scanner = new Scanner(System.in);
-            side = scanner.nextInt();
-            scanner.nextLine();
+            System.out.println("You need to choose a nickname to play the game");
+            name = scanner.nextLine();
+            return name;
         }
-        catch (Exception e){
-            System.out.println("You didn't enter an integer value");
+
+        /**
+         * visualize the response about the value entered
+         * @param message
+         */
+        public void answer (responseMessage message){
+            if (message.getCorrect()) {
+                System.out.println("You have entered a valid value");
+            } else {
+                System.out.println("You didn't entered a valid value, please try again");
+            }
         }
-        return side;
-    }
 
 
-    /**
-     * allow the user to choose how many players will play
-     * @return number of expected players
-     */
-    public int expectedPlayers(){
-        int numExpected=0;
-        Scanner scanner = new Scanner(System.in);
-        try {
-            System.out.println("how many player do you want to be in the game");
-            numExpected = scanner.nextInt();
-            scanner.nextLine();
-        }catch (Exception e){
-            System.out.println("you didn't enter an integer value");
-        }
-        return numExpected;
+        /**
+         * this method shows what colors are available and allows the user to choose his color
+         * @param message
+         */
+        public String availableColors (availableColorsMessage message){
+            //the client can call the method view.avaibleColors passing as a parameter the arraylist of available colors received from server
+            System.out.println("This are the colors that are available: " + message.toString());
 
-    }
-
-    /**
-     * allow the user to choose his secret objective
-     * @return objective
-     */
-    public int chooseObjective(){
-        int objective = 10;
-        System.out.println("You have to choose your personal objective");
-        System.out.println("Enter 1 if you want to choose the first one, 2 if you want to choose the second one");
-        try {
+            String color;
             Scanner scanner = new Scanner(System.in);
-            objective = scanner.nextInt();
-            scanner.nextLine();
+            System.out.println("You need to choose a color, please enter a valid color to play");
+            color = scanner.nextLine();
+            return color;
         }
-        catch (Exception e){
-            System.out.println("You didn't enter an integer value");
+
+        /**
+         *this method allow the user to place his starter card
+         * @return int
+         */
+        public int placeStarter () {
+            //if the user does not enter an int an exception is thrown and the method return the initialized value
+            int side = 1000;
+            System.out.println("You have to place your starter");
+            System.out.println("Enter 1 if you want to play the front side, 0 if you want to play the back side");
+            try {
+                Scanner scanner = new Scanner(System.in);
+                side = scanner.nextInt();
+                scanner.nextLine();
+            } catch (Exception e) {
+                System.out.println("You didn't enter an integer value");
+            }
+            return side;
         }
-        return objective;
+
+
+        /**
+         * allow the user to choose how many players will play
+         * @return number of expected players
+         */
+        public int expectedPlayers () {
+            int numExpected = 0;
+            Scanner scanner = new Scanner(System.in);
+            try {
+                System.out.println("how many player do you want to be in the game");
+                numExpected = scanner.nextInt();
+                scanner.nextLine();
+            } catch (Exception e) {
+                System.out.println("you didn't enter an integer value");
+            }
+            return numExpected;
+
+        }
+
+        /**
+         * allow the user to choose his secret objective
+         * @return objective
+         */
+        public int chooseObjective () {
+            int objective = 1000;
+            System.out.println("You have to choose your personal objective");
+            System.out.println("Enter 1 if you want to choose the first one, 2 if you want to choose the second one");
+            try {
+                Scanner scanner = new Scanner(System.in);
+                objective = scanner.nextInt();
+                scanner.nextLine();
+            } catch (Exception e) {
+                System.out.println("You didn't enter an integer value");
+            }
+            return objective;
+        }
+
+        /**
+         * allow the user to say what card he wants to play, front or back, and in which position
+         * @return
+         */
+        public int[] placeCard () {
+            int[] chosenCard = new int[4];
+            //if the user does not enter integer values, the method will return an array of invalid values for placing the card
+            chosenCard[0] = 1000;
+            chosenCard[1] = 1000;
+            chosenCard[2] = 1000;
+            chosenCard[3] = 1000;
+            Scanner scanner = new Scanner(System.in);
+            try {
+                System.out.println("enter the ID of the card you want to place");
+                chosenCard[0] = scanner.nextInt();
+                scanner.nextLine();
+            } catch (Exception e) {
+                System.out.println("you didn't enter an integer value");
+            }
+            try {
+                System.out.println("enter 1 if you want to place the card front, 0 if you want to place the card back");
+                chosenCard[1] = scanner.nextInt();
+                scanner.nextLine();
+            } catch (Exception e) {
+                System.out.println("you didn't enter an integer value");
+            }
+            try {
+                System.out.println("enter the x coordinate of the cell where you want to place the card");
+                chosenCard[2] = scanner.nextInt();
+                scanner.nextLine();
+            } catch (Exception e) {
+                System.out.println("you didn't enter an integer value");
+            }
+            try {
+                System.out.println("enter the y coordinate of the cell where you want to place the card");
+                chosenCard[3] = scanner.nextInt();
+                scanner.nextLine();
+            } catch (Exception e) {
+                System.out.println("you didn't enter an integer value");
+            }
+            return chosenCard;
+
+
+        }
+
+        /**
+         * allow the user to say what card he wants to pick
+         * @return the id of the card the user wants to pick
+         */
+        public int pickCard () {
+            int choice = 1000;
+            Scanner scanner = new Scanner(System.in);
+            try {
+                System.out.println("enter the ID of the card you want to pick");
+                choice = scanner.nextInt();
+                scanner.nextLine();
+            } catch (Exception e) {
+                System.out.println("you didn't enter an integer value");
+            }
+            return choice;
+        }
+
+
+        /**
+         * visualize the final information about the game, points and number of objectives achieved by the players
+         * @param message
+         */
+        public void endGame (declareWinnerMessage message){
+            HashMap<String, Integer> points = new HashMap<>();
+            HashMap<String, Integer> numObjectives = new HashMap<>();
+
+            points = message.getPlayersPoints();
+            numObjectives = message.getNumberOfObjects();
+            System.out.println("the points of the players are: " + points);
+            System.out.println("the players have achieved this number of objectives:  " + numObjectives);
+
+        }
+
+
     }
-
-    /**
-     * allow the user to say what card he wants to play, front or back, and in which position
-     * @return
-     */
-    public  int[] placeCard(){
-       int[] chosenCard = new int[4];
-       //if the user does not enter integer values, the method will return an array of invalid values for placing the card
-        chosenCard[0] = 1000;
-        chosenCard[1] = 1000;
-        chosenCard[2] = 1000;
-        chosenCard[3] = 1000;
-        Scanner scanner = new Scanner(System.in);
-        try{
-            System.out.println("enter the ID of the card you want to place");
-            chosenCard[0]= scanner.nextInt();
-            scanner.nextLine();
-        }catch (Exception e){
-            System.out.println("you didn't enter an integer value");
-        }
-        try{
-            System.out.println("enter 1 if you want to place the card front, 0 if you want to place the card back");
-            chosenCard[1]= scanner.nextInt();
-            scanner.nextLine();
-        }catch (Exception e){
-            System.out.println("you didn't enter an integer value");
-        }
-        try{
-            System.out.println("enter the x coordinate of the cell where you want to place the card");
-            chosenCard[2]= scanner.nextInt();
-            scanner.nextLine();
-        }catch (Exception e){
-            System.out.println("you didn't enter an integer value");
-        }
-        try{
-            System.out.println("enter the y coordinate of the cell where you want to place the card");
-            chosenCard[3]= scanner.nextInt();
-            scanner.nextLine();
-        }catch (Exception e){
-            System.out.println("you didn't enter an integer value");
-        }
-        return chosenCard;
-
-
-    }
-
-    /**
-     * allow the user to say what card he wants to pick
-     * @return the id of the card the user wants to pick
-     */
-    public  int pickCard(){
-       int choice=1000;
-       Scanner scanner = new Scanner(System.in);
-       try{
-           System.out.println("enter the ID of the card you want to pick");
-           choice = scanner.nextInt();
-           scanner.nextLine();
-       }
-       catch (Exception e){
-           System.out.println("you didn't enter an integer value");
-       }
-       return choice;
-    }
-
-
-    /**
-     * visualize the final information about the game, points and number of objectives achieved by the players
-     * @param message
-     */
-    public void endGame(declareWinnerMessage message){
-        HashMap<String, Integer> points = new HashMap<>();
-        HashMap<String, Integer> numObjectives = new HashMap<>();
-
-        points = message.getPlayersPoints();
-        numObjectives = message.getNumberOfObjects();
-        System.out.println("the points of the players are: " + points);
-        System.out.println("the players have achieved this number of objectives:  " + numObjectives);
-
-    }
-
-
-
-
-
-}

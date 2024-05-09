@@ -65,7 +65,7 @@ public class PlayerArea implements Serializable {
      * Add a cell to the PlayerArea
      * @param cell Reference to the cell to add
      */
-    private void addCell(Cell cell) {
+    public void addCell(Cell cell) {
         ArrayList<Integer> coordinates = new ArrayList<>();
         coordinates.add(cell.getRow());
         coordinates.add(cell.getColumn());
@@ -439,7 +439,7 @@ public class PlayerArea implements Serializable {
      * Returns a sorted list of all cards: first the card on top and on the left
      * @return Ordered list of all cards
      */
-    private ArrayList<PlaceableCard> getAllCards() {
+    public ArrayList<PlaceableCard> getAllCards() {
         return CellMatrix.values().stream()
                 .flatMap(cell -> Stream.of(cell.getBottomCard(), cell.getTopCard()))
                 .filter(Objects::nonNull)
