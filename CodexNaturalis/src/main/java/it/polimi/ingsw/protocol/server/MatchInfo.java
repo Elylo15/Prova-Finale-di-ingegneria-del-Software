@@ -1,9 +1,12 @@
 package it.polimi.ingsw.protocol.server;
 
 import it.polimi.ingsw.model.Match;
+import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.protocol.server.FSM.MatchState;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Objects;
 
 public class MatchInfo implements Serializable {
     private Match match;
@@ -12,6 +15,7 @@ public class MatchInfo implements Serializable {
     private Integer expectedPlayers;
     private MatchState status;
     private boolean lastTurn;
+    private ArrayList<PlayerInfo> offlinePlayers;
 
     public MatchInfo(Match match, int ID, String path, Integer expectedPlayers, MatchState status) {
         this.match = match;
@@ -20,6 +24,20 @@ public class MatchInfo implements Serializable {
         this.expectedPlayers = expectedPlayers;
         this.status = status;
         this.lastTurn = false;
+        this.offlinePlayers = new ArrayList<>();
+    }
+
+    public void addOfflinePlayer(PlayerInfo player) {
+        this.offlinePlayers.add(player);
+    }
+
+    public PlayerInfo removeOfflinePlayer(String Nickname) {
+        PlayerInfo player = this.offlinePlayers.stream()
+                .filter(playerInfo -> Objects.equals(playerInfo.getPlayer().getNickname(), Nickname))
+                .findFirst()
+                .orElse(null);
+        this.offlinePlayers.remove(player);
+        return player;
     }
 
     public void setExpectedPlayers(Integer expectedPlayers) {this.expectedPlayers = expectedPlayers;}

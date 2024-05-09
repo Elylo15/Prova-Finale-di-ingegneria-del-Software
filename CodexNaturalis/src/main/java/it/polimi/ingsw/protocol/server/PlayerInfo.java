@@ -64,4 +64,11 @@ public class PlayerInfo implements Serializable {
      */
     public ClientConnection getConnection() { return connection;}
 
+    /**
+     * Sets the player connection manager.
+     *
+     * @param connection new connection object.
+     */
+    public void setConnection(ClientConnection connection) {this.connection = connection;}
+
 }

@@ -67,6 +67,8 @@ public class ClientManager implements Runnable{
     private void kickPlayer(PlayerInfo playerInfo) {
         this.playersInfo.remove(playerInfo);
         playerInfo.getConnection().closeConnection();
+        playerInfo.setConnection(null);
+        matchInfo.addOfflinePlayer(playerInfo);
         logCreator.log("Player kicked: " + playerInfo.getPlayer().getNickname());
     }
 
@@ -161,7 +163,7 @@ public class ClientManager implements Runnable{
                 // Eventually update all players to last turn
                 if (this.matchInfo.isLastTurn()) {
                     this.playersInfo.stream()
-                            .filter(playerInfo -> playerInfo.getState() == State.PlayerTurn)
+                            .filter(playerInfo -> playerInfo.getState() == State.PlaceCard)
                             .forEach(playerInfo -> playerInfo.setState(State.LastTurn));
                 }
 
@@ -199,6 +201,8 @@ public class ClientManager implements Runnable{
             this.checkOnlinePlayersNumber();
         }
 
+
+        logCreator.close();
     }
 
 
@@ -433,7 +437,7 @@ public class ClientManager implements Runnable{
                     if(this.matchInfo.isLastTurn())
                         playerInfo.setState(State.EndGame);
                     else
-                        playerInfo.setState(State.PlayerTurn);
+                        playerInfo.setState(State.PlaceCard);
                 }
                 switch (this.matchInfo.getStatus()) {
                     case Player1 -> this.matchInfo.setStatus(MatchState.Player2);
@@ -445,11 +449,11 @@ public class ClientManager implements Runnable{
                 // Saves the progress of the game
                 executor.submit(this::saveMatch);
             }
-            case PlayerTurn -> {
-                logCreator.log("Player " + player.getNickname() + " starts normal turn");
+            case PlaceCard -> {
+                logCreator.log("Player " + player.getNickname() + " starts normal turn and has to place a card");
                 // Sends current state messages to all clients
                 for(PlayerInfo playerInfo1 : this.playersInfo) {
-                    currentStateMessage currState = new currentStateMessage(player, playerInfo1.getPlayer(), "PlayerTurnState", this.matchInfo.isLastTurn());
+                    currentStateMessage currState = new currentStateMessage(player, playerInfo1.getPlayer(), "PlaceCardState", this.matchInfo.isLastTurn());
                     playerInfo1.getConnection().sendCurrentState(currState);
                 }
 
@@ -495,15 +499,35 @@ public class ClientManager implements Runnable{
                 }
 
 
+
                 // Updates all clients on the current situation
                 for(PlayerInfo playerInfo1 : this.playersInfo) {
                     updatePlayerMessage update = new updatePlayerMessage(playerInfo.getPlayer());
                     playerInfo1.getConnection().sendUpdatePlayer(update);
                 }
 
+                // Update the states
+                if(this.playersInfo.contains(playerInfo)) {
+                    playerInfo.setState(State.PickCard);
+                }
+
+                /*
+                Match status is not updated, because this player has yet to pick a card to finish his turn.
+                 */
+            }
+            case PickCard -> {
+
                 logCreator.log("Player " + player.getNickname() + " has to pick a card from common area");
 
+
+                for(PlayerInfo playerInfo1 : this.playersInfo) {
+                    currentStateMessage currState = new currentStateMessage(player, playerInfo1.getPlayer(), "PickCardState", this.matchInfo.isLastTurn());
+                    playerInfo1.getConnection().sendCurrentState(currState);
+                }
+
+
                 // If the client is still online, it proceeds to ask to pick a card
+                boolean correctAnswer;
                 if(this.playersInfo.contains(playerInfo)) {
                     correctAnswer = false;
                     while(!correctAnswer) {
@@ -540,6 +564,13 @@ public class ClientManager implements Runnable{
                 }
 
 
+
+                // Updates all clients on the current situation
+                for(PlayerInfo playerInfo1 : this.playersInfo) {
+                    updatePlayerMessage update = new updatePlayerMessage(playerInfo.getPlayer());
+                    playerInfo1.getConnection().sendUpdatePlayer(update);
+                }
+
                 logCreator.log("Player " + player.getNickname() + " has ended his normal turn");
 
                 // End turn
@@ -548,7 +579,7 @@ public class ClientManager implements Runnable{
                     if(this.matchInfo.isLastTurn())
                         playerInfo.setState(State.EndGame);
                     else
-                        playerInfo.setState(State.PlayerTurn);
+                        playerInfo.setState(State.PlaceCard);
                 }
                 switch (this.matchInfo.getStatus()) {
                     case Player1 -> this.matchInfo.setStatus(MatchState.Player2);
