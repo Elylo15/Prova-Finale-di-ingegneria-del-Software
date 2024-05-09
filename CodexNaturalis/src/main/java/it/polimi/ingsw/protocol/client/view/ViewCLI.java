@@ -90,17 +90,17 @@ public class ViewCLI extends View {
         int sizeColumn = maxColumn - minColumn;
         String[][] showArea = new String[sizeRow][sizeColumn];*/
 
-        String[][] showArea = new String[maxRow][maxColumn];  //gli indici della matrice partono da 0 e arrivano a alle coordinate massime
+        String[][] showArea = new String[maxRow+1][maxColumn+1];  //gli indici della matrice partono da 0 e arrivano a alle coordinate massime
         String TopFront = null;
         String BottomFront = null;
         Integer TopID = null; //initialize the top card id
         Integer BottomID = null; //initialize the bottom card id
 
 
-        for (int i = 0; i < maxRow; i++) {
-            for (int j = 0; j < maxColumn; j++) {
+        for (int i = 0; i < maxRow+1; i++) {
+            for (int j = 0; j < maxColumn+1; j++) {
                 for (PlaceableCard card : cards) {
-                    for (int p = 0; p < 3; p++) {
+                    for (int p = 0; p < 4; p++) {
 
                         if (i == card.getCells().get(p).getRow() && j == card.getCells().get(p).getColumn()) {
 
@@ -112,7 +112,7 @@ public class ViewCLI extends View {
                                     TopFront = "B";
                                 }
                             }
-                            else if (card.getCells().get(p).getBottomCard() == card) {
+                             if (card.getCells().get(p).getBottomCard() == card) {
 
                                 BottomID = card.getID(); //id della carta bottom
                                 if (card.isFront()) {
@@ -124,14 +124,14 @@ public class ViewCLI extends View {
                             if(TopID!=BottomID){
                                 showArea[i][j] = TopID + TopFront + "/" + BottomID + BottomFront;}
                             else{
-                                showArea[i][j] = TopID+TopFront +"/" + null + null;
+                                showArea[i][j] = TopID + TopFront +"/" + null + null;
                             }
                         }
                     }
                 }
             }
         }
-        this.printMatrix(showArea,maxRow,maxColumn);
+        this.printMatrix(showArea,maxRow+1,maxColumn+1);
 
         return showArea;
 
