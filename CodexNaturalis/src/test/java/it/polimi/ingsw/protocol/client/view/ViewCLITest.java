@@ -36,17 +36,27 @@ class ViewCLITest {
 
     @Test
     void checkShowArea() throws noPlaceCardException {
-        String[][] test = new String[3][3];
+        String[][] test = new String[4][4];
         test[0][0] = "nullnull/81F";
         test[0][1] = "nullnull/81F";
         test[0][2] = "null";
+        test[0][3] = "null";
         test[1][0] = "nullnull/81F";
         test[1][1] = "2F/81F";
         test[1][2] = "2F/nullnull";
+        test[1][3] = "null";
         test[2][0] = "null";
         test[2][1] = "2F/nullnull";
         test[2][2] = "3B/2F";
-         viewCLI = new ViewCLI();
+        test[2][3] = "3B/nullnull";
+        test[3][0] = "null";
+        test[3][1] = "null";
+        test[3][2] = "3B/nullnull";
+        test[3][3] = "4F/3B";
+
+
+
+        viewCLI = new ViewCLI();
         ArrayList<Resource> resources = new ArrayList<>();
         resources.add(Resource.Empty);
         resources.add(Resource.Plant);
@@ -108,12 +118,20 @@ class ViewCLITest {
         Assertions.assertEquals(test[0][0], matrix[0][0]);
         Assertions.assertEquals(test[0][1], matrix[0][1]);
         Assertions.assertNull(matrix[0][2]);
+        Assertions.assertNull(matrix[0][3]);
         Assertions.assertEquals(test[1][0], matrix[1][0]);
         Assertions.assertEquals(test[1][1], matrix[1][1]);
         Assertions.assertEquals(test[1][2], matrix[1][2]);
+        Assertions.assertNull(matrix[1][3]);
         Assertions.assertNull(matrix[2][0]);
         Assertions.assertEquals(test[2][1], matrix[2][1]);
         Assertions.assertEquals(test[2][2], matrix[2][2]);
+        Assertions.assertEquals(test[2][3], matrix[2][3]);
+        Assertions.assertNull(matrix[3][0]);
+        Assertions.assertNull(matrix[3][1]);
+        Assertions.assertEquals(test[3][2], matrix[3][2]);
+        Assertions.assertEquals(test[3][3], matrix[3][3]);
+
 
 
 

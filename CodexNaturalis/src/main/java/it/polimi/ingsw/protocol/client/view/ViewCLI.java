@@ -47,7 +47,6 @@ public class ViewCLI extends View {
      */
     public String[][] showPlayerArea(PlayerArea playerArea) {
 
-
         ArrayList<PlaceableCard> cards = playerArea.getAllCards();
         ArrayList<Cell> position = new ArrayList<>();
         for (int i = 0; i < cards.size(); i++) {
@@ -55,7 +54,6 @@ public class ViewCLI extends View {
                 position.add(cards.get(i).getCells().get(j));
             }
         }
-
         /*int minRow = position.get(0).getRow();
         int maxRow = position.get(0).getRow();
         for(int j=1; j<position.size(); j++){
@@ -87,20 +85,23 @@ public class ViewCLI extends View {
         int maxColumn = position.stream()
                 .mapToInt(Cell::getColumn).max().orElse(0);
 
-        //now we have size of the matrix
+        /*now we have size of the matrix
         int sizeRow = maxRow - minRow;
         int sizeColumn = maxColumn - minColumn;
-        String[][] showArea = new String[sizeRow][sizeColumn];
+        String[][] showArea = new String[sizeRow][sizeColumn];*/
 
+        String[][] showArea = new String[maxRow][maxColumn];  //gli indici della matrice partono da 0 e arrivano a alle coordinate massime
         String TopFront = null;
         String BottomFront = null;
         Integer TopID = null; //initialize the top card id
         Integer BottomID = null; //initialize the bottom card id
 
-        for (int i = 0; i < sizeRow; i++) {
-            for (int j = 0; j < sizeColumn; j++) {
+
+        for (int i = 0; i < maxRow; i++) {
+            for (int j = 0; j < maxColumn; j++) {
                 for (PlaceableCard card : cards) {
                     for (int p = 0; p < 3; p++) {
+
                         if (i == card.getCells().get(p).getRow() && j == card.getCells().get(p).getColumn()) {
 
                             if (card.getCells().get(p).getTopCard() == card) {
@@ -111,7 +112,7 @@ public class ViewCLI extends View {
                                     TopFront = "B";
                                 }
                             }
-                             else if (card.getCells().get(p).getBottomCard() == card) {
+                            else if (card.getCells().get(p).getBottomCard() == card) {
 
                                 BottomID = card.getID(); //id della carta bottom
                                 if (card.isFront()) {
@@ -120,17 +121,17 @@ public class ViewCLI extends View {
                                     BottomFront = "B";
                                 }
                             }
-                             if(TopID!=BottomID){
-                            showArea[i][j] = TopID + TopFront + "/" + BottomID + BottomFront;}
-                               else{
-                                 showArea[i][j] = TopID+TopFront +"/" + null + null;
-                              }
+                            if(TopID!=BottomID){
+                                showArea[i][j] = TopID + TopFront + "/" + BottomID + BottomFront;}
+                            else{
+                                showArea[i][j] = TopID+TopFront +"/" + null + null;
+                            }
                         }
                     }
                 }
             }
         }
-        this.printMatrix(showArea,sizeRow,sizeColumn);
+        this.printMatrix(showArea,maxRow,maxColumn);
 
         return showArea;
 
