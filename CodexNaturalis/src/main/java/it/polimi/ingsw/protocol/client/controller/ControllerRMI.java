@@ -8,7 +8,7 @@ import it.polimi.ingsw.protocol.messages.PlayerTurnState.*;
 import it.polimi.ingsw.protocol.messages.ServerOptionState.*;
 import it.polimi.ingsw.protocol.messages.StaterCardState.*;
 import it.polimi.ingsw.protocol.messages.WaitingforPlayerState.*;
-import it.polimi.ingsw.protocol.server.RemoteServerInterface;
+import it.polimi.ingsw.protocol.server.RMI.RemoteServerInterface;
 
 import java.net.*;
 import java.rmi.*;

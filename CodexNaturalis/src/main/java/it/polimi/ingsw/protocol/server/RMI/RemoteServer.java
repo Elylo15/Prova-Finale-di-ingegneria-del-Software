@@ -1,4 +1,4 @@
-package it.polimi.ingsw.protocol.server;
+package it.polimi.ingsw.protocol.server.RMI;
 
 import it.polimi.ingsw.protocol.messages.ConnectionState.*;
 import it.polimi.ingsw.protocol.messages.EndGameState.declareWinnerMessage;

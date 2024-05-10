@@ -1,4 +1,4 @@
-package it.polimi.ingsw.protocol.server;
+package it.polimi.ingsw.protocol.server.RMI;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;

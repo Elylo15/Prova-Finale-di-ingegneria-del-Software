@@ -9,6 +9,7 @@ import it.polimi.ingsw.protocol.messages.ServerOptionState.serverOptionMessage;
 import it.polimi.ingsw.protocol.messages.StaterCardState.*;
 import it.polimi.ingsw.protocol.messages.WaitingforPlayerState.*;
 import it.polimi.ingsw.protocol.messages.*;
+import it.polimi.ingsw.protocol.server.RMI.RemoteServerInterface;
 
 import java.net.MalformedURLException;
 import java.rmi.Naming;
