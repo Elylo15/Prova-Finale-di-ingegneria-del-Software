@@ -234,7 +234,7 @@ public class Server implements Runnable {
         // Player wants to join a new game
         lobby = games.stream()
                 .filter(clientManager -> clientManager.getMatchInfo().getStatus() == MatchState.Waiting)
-                .filter(clientManager -> clientManager.getMatchInfo().getExpectedPlayers() > clientManager.getPlayersInfo().size())
+                .filter(clientManager -> clientManager.getMatchInfo().getExpectedPlayers() == null || clientManager.getMatchInfo().getExpectedPlayers() > clientManager.getPlayersInfo().size())
                 .findFirst().orElse(null);
 
         if (lobby != null) {
@@ -243,10 +243,10 @@ public class Server implements Runnable {
 
             this.welcomeNewPlayer(lobby, connection);
 
-                /*
-                 The managing of the "host" (first player who decides the expected players number)
-                 is implemented in ClientManager.
-                */
+            /*
+             The managing of the "host" (first player who decides the expected players number)
+             is implemented in ClientManager.
+            */
 
         } else {
             Integer id = this.createNewMatchID();

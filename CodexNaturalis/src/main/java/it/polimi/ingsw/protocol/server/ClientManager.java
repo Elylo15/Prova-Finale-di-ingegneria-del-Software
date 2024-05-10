@@ -2,6 +2,7 @@ package it.polimi.ingsw.protocol.server;
 
 import it.polimi.ingsw.model.Match;
 import it.polimi.ingsw.model.Player;
+import it.polimi.ingsw.model.cards.PlaceableCard;
 import it.polimi.ingsw.protocol.messages.ObjectiveState.objectiveCardMessage;
 import it.polimi.ingsw.protocol.messages.PlayerTurnState.pickCardMessage;
 import it.polimi.ingsw.protocol.messages.PlayerTurnState.placeCardMessage;
@@ -36,7 +37,7 @@ public class ClientManager implements Runnable{
 
         playersInfo = new ArrayList<>();
 
-        this.timeout = 300000;
+        this.timeout = 2 * 60 * 1000;
 
         logCreator = new LogCreator(this.matchInfo.getID().toString());
 
@@ -216,21 +217,29 @@ public class ClientManager implements Runnable{
     private void waiting() {
         logCreator.log("Waiting for players");
 
-        currentStateMessage currState = new currentStateMessage(null, null,"WaitingForPlayersState",false);
+        // REMOVE THIS
+        System.out.println("Waiting for players");
 
         // Obtains the number of expected players for this match
-        while(this.matchInfo.getExpectedPlayers() == null ) {
-            // Waiting for the first player that will be indicated as the "host"
-            while (this.playersInfo.isEmpty()) {
-                try{
-                    // REMOVE THIS
-                    System.out.println("Waiting for first player to join");
 
-                    this.wait();
-                } catch (InterruptedException ignore) {
-                    logCreator.log("Waiting for first player, InterruptedException received and ignored.");
+        while(this.matchInfo.getExpectedPlayers() == null ) {
+
+            synchronized(this) {
+                // Waiting for the first player that will be indicated as the "host"
+                while (this.playersInfo.isEmpty()) {
+                    try{
+                        // REMOVE THIS
+                        System.out.println("Waiting for first player to join");
+
+                        this.wait();
+                    } catch (InterruptedException ignore) {
+                        logCreator.log("Waiting for first player, InterruptedException received and ignored.");
+                    }
                 }
             }
+
+            // REMOVE THIS
+            System.out.println("First player joined");
 
             // preventing new player from joining at this moment and not getting all messages correctly
             synchronized(this) {
@@ -292,16 +301,19 @@ public class ClientManager implements Runnable{
 
         logCreator.log("Expected players obtained : " + this.matchInfo.getExpectedPlayers() + " from " + this.playersInfo.getFirst().getPlayer().getNickname());
 
-        // Wait for the specified number of expected players
-        while(this.playersInfo.size() < this.matchInfo.getExpectedPlayers()) {
-            try {
-                this.wait();
-            } catch (InterruptedException ignore) {}
+        synchronized (this) {
+
+            // Wait for the specified number of expected players
+            while(this.playersInfo.size() < this.matchInfo.getExpectedPlayers()) {
+                try {
+                    this.wait();
+                } catch (InterruptedException ignore) {}
 
 //            // Gives a little of room to new players that want to join
 //            try {
 //                Thread.sleep(1000);
 //            } catch (Exception ignore) {}
+            }
         }
 
         // Updates state of the match
@@ -342,10 +354,10 @@ public class ClientManager implements Runnable{
 
         switch (playerInfo.getState()) {
             case StarterCard -> {
-                logCreator.log("Player " + player.getNickname() + "has to place the starter card");
+                logCreator.log("Player " + player.getNickname() + " has to place the starter card");
                 // Draw a StarterCard if player has none in hand
                 if(playerInfo.getPlayer().getPlayerHand().getPlaceableCards().stream().
-                        anyMatch(placeableCard -> placeableCard.isStarter()))
+                        anyMatch(PlaceableCard::isStarter))
                     playerInfo.getPlayer().drawStarter();
 
                 // Sends current state messages to all clients
