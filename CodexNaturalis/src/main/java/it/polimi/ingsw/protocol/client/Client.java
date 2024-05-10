@@ -15,17 +15,15 @@ import java.util.concurrent.atomic.AtomicIntegerArray;
 public class Client {
     private String serverIP;
     private String serverPort;
-    private final Controller controller;
+    private Controller controller;
     private final View view;
 
     /**
      * method {@code Client}: constructs a new Client
      * @param view: default ViewGUI
-     * @param controller: default ControllerSocket
      */
-    public Client(View view, Controller controller) {
+    public Client(View view) {
         this.view = view;
-        this.controller = controller;
     }
 
     /**
@@ -36,11 +34,8 @@ public class Client {
 
         if(isSocket) {
             try {
-                System.out.println("Connecting to 1 " + serverIP + ":" + serverPort);
                 controller.connectToServer(serverIP, serverPort);
-                System.out.println("Connected to 2  " + serverIP + ":" + serverPort);
                 connectionResponseMessage answer = controller.answerConnection();
-                System.out.println("Connection to 3 " + serverIP + ":" + serverPort);
                 view.answerToConnection(answer);
             } catch (Exception e) {
                 view.playerDisconnected();
@@ -62,6 +57,14 @@ public class Client {
      * Invocations of view methods to display and receive player's info.
      */
     public void run() {
+        String[] server = view.askPortIP();
+        setIP(server[0]);
+        setPort(server[1]);
+
+        boolean isSocket = view.askSocket();
+        setController(server, isSocket);
+        connection(isSocket);
+
         try {
             while (true) {
 
@@ -161,7 +164,7 @@ public class Client {
     private void name() {
         while (true) {
             unavailableNamesMessage unavailableName = controller.getUnavailableName();
-            String name = view.unavaibleNames(unavailableName);
+            String name = view.unavailableNames(unavailableName);
             controller.chooseName(name);
             responseMessage answer = controller.correctAnswer();
             view.answer(answer);
@@ -379,4 +382,26 @@ public class Client {
     public void setPort(String serverPort) {
         this.serverPort = serverPort;
     }
+
+    /**
+     * method {@code setController}: sets the Controller
+     * @param  server: String[]
+     * @param isSocket: boolean
+     */
+    public void setController(String[] server, boolean isSocket) {
+        if (isSocket) {
+            try {
+                this.controller = new ControllerSocket(server[0], server[1]);
+            } catch (Exception e) {
+                view.playerDisconnected();
+            }
+        } else {
+            try {
+                this.controller = new ControllerRMI(server[0], server[1]);
+            } catch (Exception e) {
+                view.playerDisconnected();
+            }
+        }
+    }
+
 }

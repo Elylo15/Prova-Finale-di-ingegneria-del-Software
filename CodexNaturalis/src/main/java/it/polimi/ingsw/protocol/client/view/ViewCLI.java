@@ -1,24 +1,16 @@
 package it.polimi.ingsw.protocol.client.view;
 
-import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.PlayerArea;
 import it.polimi.ingsw.model.cards.Cell;
 import it.polimi.ingsw.model.cards.PlaceableCard;
-import it.polimi.ingsw.model.cards.StarterCard;
 import it.polimi.ingsw.protocol.messages.ConnectionState.*;
+import it.polimi.ingsw.protocol.messages.PlayerTurnState.updatePlayerMessage;
 import it.polimi.ingsw.protocol.messages.ServerOptionState.*;
-import it.polimi.ingsw.protocol.messages.PlayerTurnState.*;
 import it.polimi.ingsw.protocol.messages.EndGameState.*;
-import it.polimi.ingsw.protocol.messages.StaterCardState.*;
-import it.polimi.ingsw.protocol.messages.ObjectiveState.*;
-import it.polimi.ingsw.protocol.messages.WaitingforPlayerState.*;
 import it.polimi.ingsw.protocol.messages.currentStateMessage;
 import it.polimi.ingsw.protocol.messages.responseMessage;
 
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.*;
 
 public class ViewCLI extends View {
@@ -30,7 +22,7 @@ public class ViewCLI extends View {
 
     }
 
-
+    @Override
     public String[] askPortIP(){
         Scanner scanner = new Scanner(System.in);
         String[] server = new String[2];
@@ -277,9 +269,10 @@ public class ViewCLI extends View {
          * @param message
          * @return
          */
-        public String unavaibleNames (unavailableNamesMessage message){
+        public String unavailableNames(unavailableNamesMessage message){
             //the client can call the method view.unavailableNames passing as a parameter the arraylist of unavailable names received from server
-            System.out.println("This nicknames are not avaible: " + message.toString());
+            if(!Objects.equals(message.toString(), "[]"))
+                System.out.println("This nicknames are not available: " + message.toString());
 
             String name;
             Scanner scanner = new Scanner(System.in);
@@ -450,5 +443,10 @@ public class ViewCLI extends View {
 
         }
 
+    @Override
+    public void update(updatePlayerMessage update) {
 
     }
+
+
+}
