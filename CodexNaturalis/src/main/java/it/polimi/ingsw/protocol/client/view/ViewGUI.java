@@ -80,7 +80,7 @@ public class ViewGUI extends View {
     }
 
     @Override
-    public String unavaibleNames(unavailableNamesMessage message) {
+    public String unavailableNames(unavailableNamesMessage message) {
         return "";
     }
 
