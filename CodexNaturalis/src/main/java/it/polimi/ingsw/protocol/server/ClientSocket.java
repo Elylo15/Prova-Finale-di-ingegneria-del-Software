@@ -49,6 +49,7 @@ public class ClientSocket extends ClientConnection {
     @Override
     public serverOptionMessage getServerOption() {
         try {
+            outputStream.writeObject(new serverOptionMessage(false,null,null,false,null));
             return (serverOptionMessage) inputStream.readObject();
         } catch (Exception e) {
             throw new RuntimeException(e);

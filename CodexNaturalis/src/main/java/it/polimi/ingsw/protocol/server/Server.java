@@ -7,10 +7,12 @@ import it.polimi.ingsw.protocol.messages.ServerOptionState.serverOptionMessage;
 import it.polimi.ingsw.protocol.messages.currentStateMessage;
 import it.polimi.ingsw.protocol.server.FSM.MatchState;
 import it.polimi.ingsw.protocol.server.FSM.State;
+import it.polimi.ingsw.protocol.server.RMI.MessageRegistry;
+import it.polimi.ingsw.protocol.server.RMI.MessageRegistryInterface;
+import it.polimi.ingsw.protocol.server.RMI.RemoteServer;
+import it.polimi.ingsw.protocol.server.RMI.RemoteServerInterface;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -34,6 +36,8 @@ public class Server implements Runnable {
 
     private LogCreator logCreator;
 
+    private boolean serverRunning;
+
 
     public Server() {
         portSocket = 1024;
@@ -42,9 +46,10 @@ public class Server implements Runnable {
         defaultPath = "savedGames/";
         logCreator = new LogCreator();
         this.rmiCounter = 0;
+        this.serverRunning = false;
 
         int corePoolSize = 15;
-        int maximumPoolSize = 100;
+        int maximumPoolSize = 200;
         long keepAliveTime = 300;
         TimeUnit unit = TimeUnit.SECONDS;
         executor = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, unit, new LinkedBlockingQueue<Runnable>());
@@ -56,6 +61,7 @@ public class Server implements Runnable {
         this.games = new ArrayList<>();
         logCreator = new LogCreator();
         this.rmiCounter = 0;
+        this.serverRunning = false;
 
         if(maximumPoolSize < 2)
             maximumPoolSize = 2;
@@ -71,7 +77,7 @@ public class Server implements Runnable {
             this.serverSocket = new ServerSocket(portSocket);
 
 
-            while(true) {
+            while(this.serverRunning) {
                 logCreator.log("server socket opened");
                 Socket socket = serverSocket.accept();
                 ClientConnection connection = null;
@@ -297,7 +303,7 @@ public class Server implements Runnable {
             RemoteServerInterface remoteObject = new RemoteServer(messageRegistry);
             registry.bind("RemoteServer", remoteObject);
 
-            while(true) {
+            while(this.serverRunning) {
                 try {
                     this.rmiCounter += 1;
                     // Accept incoming client connection
@@ -433,11 +439,18 @@ public class Server implements Runnable {
      */
     @Override
     public void run() {
+        this.serverRunning = true;
         executor.submit(this::acceptConnectionSocket);
         executor.submit(this::acceptConnectionRMI);
         executor.submit(this::closeMatch);
         logCreator.log("Server started");
 
-        // TODO maybe add the remove match from list method
+        Scanner scanner = new Scanner(System.in);
+        while(serverRunning) {
+            System.out.println("Insert 'stop' to end the server: ");
+            scanner.nextLine();
+            if(scanner.nextLine().equals("stop"))
+                this.serverRunning = false;
+        }
     }
 }
