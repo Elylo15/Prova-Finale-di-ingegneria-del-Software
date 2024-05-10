@@ -2,7 +2,9 @@ package it.polimi.ingsw.protocol.messages;
 
 import it.polimi.ingsw.model.Player;
 
-public class currentStateMessage implements Message{
+import java.io.Serializable;
+
+public class currentStateMessage implements Message, Serializable {
     private final Player currentPlayer; // player who is gaming
     private final Player player;        // player who receives the message
     private final String stateName;

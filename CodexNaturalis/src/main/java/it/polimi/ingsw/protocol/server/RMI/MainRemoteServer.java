@@ -26,9 +26,9 @@ public class MainRemoteServer extends UnicastRemoteObject implements MainRemoteS
         return "";
     }
 
-    public ClientConnection newClientConnection(){
-
-    }
+//    public ClientConnection newClientConnection(){
+//
+//    }
 
     /**
      *

@@ -70,7 +70,7 @@ public class LogCreator {
      */
     public void log(String message) {
         LocalDateTime currentTime = LocalDateTime.now();
-        String timestamp = currentTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        String timestamp = currentTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS"));
         try {
             if(matchID != null)
                 writer.write(timestamp + " IdMatch=" + matchID + " -> " + message);

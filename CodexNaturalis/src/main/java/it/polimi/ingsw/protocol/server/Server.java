@@ -110,8 +110,8 @@ public class Server implements Runnable {
 
 
         // Sends status: "ServerOptionState"
-        ClientConnection finalConnection = connection;
-        executor.submit(() -> finalConnection.sendCurrentState(new currentStateMessage(null, null, "ServerOptionState", false)));
+
+        connection.sendCurrentState(new currentStateMessage(null, null, "ServerOptionState", false));
 
         boolean correctResponse = false;
 
@@ -123,30 +123,43 @@ public class Server implements Runnable {
             serverOption = executor.submit(connection::getServerOption);
 
             // Timer
-            Timer timer = new Timer();
-            Future<serverOptionMessage> finalServerOption = serverOption;
-            TimerTask task = new TimerTask() {
-                @Override
-                public void run() {
-                    if(finalServerOption.isDone()) {
-                        finalServerOption.cancel(true);
-                    }
-                }
-            };
-            timer.schedule(task, 3*60*1000);
+//            Timer timer = new Timer();
+//            Future<serverOptionMessage> finalServerOption = serverOption;
+//            TimerTask task = new TimerTask() {
+//                @Override
+//                public void run() {
+//                    logCreator.log("Timer serverOption executed");
+//                    if(!finalServerOption.isDone()) {
+//                        finalServerOption.cancel(true);
+//                    }
+//                }
+//            };
+//
+//            timer.schedule(task, 3*60*1000);
 
             // If client loses connection, then this method ends
             try {
-                msg = serverOption.get();
-            } catch (Exception e) {
+                msg = serverOption.get(3*60, TimeUnit.SECONDS);
+//                timer.cancel();
+            } catch (TimeoutException e) {
                 connection.closeConnection();
-                logCreator.log("Client " + connection.getIP() + " kicked due to no answer received");
+                logCreator.log("Client " + connection.getIP() + " kicked due to no serverOption received");
+                return;
+            } catch (InterruptedException e) {
+                connection.closeConnection();
+                logCreator.log("Client " + connection.getIP() + " kicked due to INTERRUPT");
+                return;
+            } catch (ExecutionException e) {
+                connection.closeConnection();
+                logCreator.log("Client " + connection.getIP() + " kicked due to EXECUTION ERROR: \n" + e.getCause().getMessage());
                 return;
             }
 
             // Checks if the response message is valid
-            if(!msg.isNewMatch() && (msg.getNickname() == null || Objects.equals(msg.getNickname(), "") || msg.getStartedMatchID() == null) && !msg.isLoadMatch())
+            if(!msg.isNewMatch() && (msg.getNickname() == null || Objects.equals(msg.getNickname(), "") || msg.getStartedMatchID() == null) && !msg.isLoadMatch()) {
                 connection.sendAnswer(false);
+                logCreator.log("Client " + connection.getIP() + " has given wrong ServerOption");
+            }
             else
                 correctResponse = true;
         }
@@ -445,12 +458,15 @@ public class Server implements Runnable {
         executor.submit(this::closeMatch);
         logCreator.log("Server started");
 
-        Scanner scanner = new Scanner(System.in);
-        while(serverRunning) {
-            System.out.println("Insert 'stop' to end the server: ");
-            scanner.nextLine();
-            if(scanner.nextLine().equals("stop"))
-                this.serverRunning = false;
-        }
+//        Scanner scanner = new Scanner(System.in);
+//        String answer;
+//        while(this.serverRunning) {
+//            System.out.println("Insert 'stop' to end the server: ");
+//            answer = scanner.nextLine();
+//            if(answer.equals("stop")) {
+//                this.serverRunning = false;
+//                System.out.println("Server stopped");
+//            }
+//        }
     }
 }

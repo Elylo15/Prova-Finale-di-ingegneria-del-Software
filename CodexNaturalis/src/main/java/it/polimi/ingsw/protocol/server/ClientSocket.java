@@ -39,7 +39,7 @@ public class ClientSocket extends ClientConnection {
     }
 
     /**
-     * method {@code run}: initializes the outputStream and inputStream
+     * Needed to be run with executors.
      */
     @Override
     public void run() {
@@ -47,11 +47,14 @@ public class ClientSocket extends ClientConnection {
     }
 
     @Override
-    public serverOptionMessage getServerOption() {
+    public synchronized serverOptionMessage getServerOption() {
         try {
             outputStream.writeObject(new serverOptionMessage(false,null,null,false,null));
+            outputStream.flush();
+            System.out.println("Server option sent");
             return (serverOptionMessage) inputStream.readObject();
         } catch (Exception e) {
+            System.out.println("Server option failed " + e.getMessage());
             throw new RuntimeException(e);
         }
     }
@@ -61,9 +64,10 @@ public class ClientSocket extends ClientConnection {
      * @param hostNickname: String
      */
     @Override
-    public void sendNewHostMessage(String hostNickname){
+    public synchronized void sendNewHostMessage(String hostNickname){
         try {
             outputStream.writeObject(new newHostMessage(hostNickname));
+            outputStream.flush();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -74,7 +78,7 @@ public class ClientSocket extends ClientConnection {
      * @return expectedPlayersMessage
      */
     @Override
-    public expectedPlayersMessage getExpectedPlayer(){
+    public synchronized expectedPlayersMessage getExpectedPlayer(){
         try {
             return (expectedPlayersMessage) inputStream.readObject();
         } catch (IOException | ClassNotFoundException e) {
@@ -87,9 +91,10 @@ public class ClientSocket extends ClientConnection {
      * @param message: connectionResponseMessage
      */
     @Override
-    public void sendAnswerToConnection(connectionResponseMessage message){
+    public synchronized void sendAnswerToConnection(connectionResponseMessage message){
         try {
             outputStream.writeObject(message);
+            outputStream.flush();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -102,9 +107,10 @@ public class ClientSocket extends ClientConnection {
      * @param correct: boolean
      */
     @Override
-    public void sendAnswer(boolean correct){
+    public synchronized void sendAnswer(boolean correct){
         try {
             outputStream.writeObject(new responseMessage(correct));
+            outputStream.flush();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -115,9 +121,10 @@ public class ClientSocket extends ClientConnection {
      * @param unavailableNames: ArrayList<String>
      */
     @Override
-    public void sendUnavailableName(ArrayList<String> unavailableNames) {
+    public synchronized void sendUnavailableName(ArrayList<String> unavailableNames) {
         try {
             outputStream.writeObject(new unavailableNamesMessage(unavailableNames));
+            outputStream.flush();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -128,7 +135,7 @@ public class ClientSocket extends ClientConnection {
      * @return chosenNameMessage
      */
     @Override
-    public chosenNameMessage getName(ArrayList<String> unavailableNames) {
+    public synchronized chosenNameMessage getName(ArrayList<String> unavailableNames) {
         try {
             this.sendUnavailableName(unavailableNames);
             return (chosenNameMessage) inputStream.readObject();
@@ -142,9 +149,10 @@ public class ClientSocket extends ClientConnection {
      * @param availableColors: ArrayList<String>
      */
     @Override
-    public void sendAvailableColor(ArrayList<String> availableColors){
+    public synchronized void sendAvailableColor(ArrayList<String> availableColors){
         try {
             outputStream.writeObject(new availableColorsMessage(availableColors));
+            outputStream.flush();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -155,7 +163,7 @@ public class ClientSocket extends ClientConnection {
      * @return chosenColorMessage
      */
     @Override
-    public chosenColorMessage getColor(ArrayList<String> color){
+    public synchronized chosenColorMessage getColor(ArrayList<String> color){
         try {
             this.sendAvailableColor(color);
             return (chosenColorMessage) inputStream.readObject();
@@ -169,10 +177,15 @@ public class ClientSocket extends ClientConnection {
      * @param currentState: currentStateMessage
      */
     @Override
-    public void sendCurrentState(currentStateMessage currentState){
+    public synchronized void sendCurrentState(currentStateMessage currentState){
         try {
+            // Remove
             outputStream.writeObject(currentState);
+            outputStream.flush();
         } catch (IOException e) {
+            // Remove this
+            System.out.println("ERROR: Current state failed --> " + e.getMessage());
+
             throw new RuntimeException(e);
         }
     }
@@ -182,7 +195,7 @@ public class ClientSocket extends ClientConnection {
      * @return starterCardMessage
      */
     @Override
-    public starterCardMessage getStaterCard(){
+    public synchronized starterCardMessage getStaterCard(){
         try {
             return (starterCardMessage) inputStream.readObject();
         } catch (IOException | ClassNotFoundException e) {
@@ -196,9 +209,10 @@ public class ClientSocket extends ClientConnection {
      * @return objectiveCardMessage
      */
     @Override
-    public objectiveCardMessage getChosenObjective(ObjectiveCard[] objectiveCards){
+    public synchronized objectiveCardMessage getChosenObjective(ObjectiveCard[] objectiveCards){
         try {
             outputStream.writeObject(objectiveCards);
+            outputStream.flush();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -216,7 +230,7 @@ public class ClientSocket extends ClientConnection {
      * @return placeCardMessage
      */
     @Override
-    public placeCardMessage getPlaceCard(){
+    public synchronized placeCardMessage getPlaceCard(){
         try {
             return (placeCardMessage) inputStream.readObject();
         } catch (IOException | ClassNotFoundException e) {
@@ -229,7 +243,7 @@ public class ClientSocket extends ClientConnection {
      * @return pickCardMessage
      */
     @Override
-    public pickCardMessage getChosenPick(){
+    public synchronized pickCardMessage getChosenPick(){
         try {
             return (pickCardMessage) inputStream.readObject();
         } catch (IOException | ClassNotFoundException e) {
@@ -243,9 +257,10 @@ public class ClientSocket extends ClientConnection {
      * @param numberOfObjectives: HashMap<String, Integer> score
      */
     @Override
-    public void sendEndGame(HashMap<String, Integer> scores, HashMap<String, Integer> numberOfObjectives){
+    public synchronized void sendEndGame(HashMap<String, Integer> scores, HashMap<String, Integer> numberOfObjectives){
         try {
             outputStream.writeObject(new declareWinnerMessage(scores, numberOfObjectives));
+            outputStream.flush();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -256,9 +271,10 @@ public class ClientSocket extends ClientConnection {
      * @param updateMessage: updatePlayerMessage
      */
     @Override
-    public void sendUpdatePlayer(updatePlayerMessage updateMessage) {
+    public synchronized void sendUpdatePlayer(updatePlayerMessage updateMessage) {
         try {
             outputStream.writeObject(updateMessage);
+            outputStream.flush();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -268,7 +284,7 @@ public class ClientSocket extends ClientConnection {
      * method {@code closeConnection}: closes the connection closing socket, inputStream, outputStream
      */
     @Override
-    public void closeConnection() {
+    public synchronized void closeConnection() {
         try {
             if (socket != null && !socket.isClosed()) {
                 socket.close();
