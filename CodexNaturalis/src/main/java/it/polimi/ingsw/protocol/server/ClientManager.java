@@ -53,7 +53,7 @@ public class ClientManager implements Runnable{
 
 
     public synchronized void addPlayerInfo(PlayerInfo playerInfo) throws Exception {
-        if(playerInfo != null && matchInfo.getExpectedPlayers() > this.playersInfo.size())
+        if(playerInfo != null && (matchInfo.getExpectedPlayers() == null || matchInfo.getExpectedPlayers() > this.playersInfo.size()))
         {
             this.playersInfo.add(playerInfo);
             logCreator.log("Player added: " + playerInfo.getPlayer().getNickname() + " " + playerInfo.getPlayer().getColor());
@@ -215,21 +215,38 @@ public class ClientManager implements Runnable{
      */
     private void waiting() {
         logCreator.log("Waiting for players");
+
         currentStateMessage currState = new currentStateMessage(null, null,"WaitingForPlayersState",false);
 
         // Obtains the number of expected players for this match
         while(this.matchInfo.getExpectedPlayers() == null ) {
+            // Waiting for the first player that will be indicated as the "host"
+            while (this.playersInfo.isEmpty()) {
+                try{
+                    // REMOVE THIS
+                    System.out.println("Waiting for first player to join");
+
+                    this.wait();
+                } catch (InterruptedException ignore) {
+                    logCreator.log("Waiting for first player, InterruptedException received and ignored.");
+                }
+            }
+
             // preventing new player from joining at this moment and not getting all messages correctly
             synchronized(this) {
+
+
                 PlayerInfo host = this.playersInfo.getFirst();
+
+                // REMOVE THIS
+                System.out.println("First player logged: " + host.getPlayer().getNickname() + " " + host.getConnection().getPort());
+
                 if(host != null) {
                     // Sends current state data
-                    this.playersInfo.stream()
-                            .parallel()
-                            .forEach(playerInfo -> {
+                    this.playersInfo.forEach(playerInfo -> {
                                 currentStateMessage curr = new currentStateMessage(null, playerInfo.getPlayer(),"WaitingForPlayersState",false);
                                 playerInfo.getConnection().sendCurrentState(curr);
-                                newHostMessage hostMessage = new newHostMessage(host.getPlayer().getNickname());
+                                playerInfo.getConnection().sendNewHostMessage(host.getPlayer().getNickname());
                             });
 
                     boolean correctAnswer = false;
