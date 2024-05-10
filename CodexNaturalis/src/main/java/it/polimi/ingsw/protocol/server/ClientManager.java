@@ -244,7 +244,7 @@ public class ClientManager implements Runnable{
                 if(host != null) {
                     // Sends current state data
                     this.playersInfo.forEach(playerInfo -> {
-                                currentStateMessage curr = new currentStateMessage(null, playerInfo.getPlayer(),"WaitingForPlayersState",false);
+                                currentStateMessage curr = new currentStateMessage(null, playerInfo.getPlayer(),"WaitingForPlayerState",false);
                                 playerInfo.getConnection().sendCurrentState(curr);
                                 playerInfo.getConnection().sendNewHostMessage(host.getPlayer().getNickname());
                             });
