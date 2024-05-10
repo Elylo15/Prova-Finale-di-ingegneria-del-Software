@@ -237,12 +237,6 @@ public class Server implements Runnable {
                 .filter(clientManager -> clientManager.getMatchInfo().getExpectedPlayers() > clientManager.getPlayersInfo().size())
                 .findFirst().orElse(null);
 
-        // REMOVE THIS
-        if(lobby == null)
-            System.out.println("lobby is null");
-        else
-            System.out.println("lobby is " + lobby.getMatchInfo().getID());
-
         if (lobby != null) {
 
             logCreator.log("Client " + connection.getIP() + " " + connection.getPort() + " joins a match in WaitingForPlayerState");
@@ -260,12 +254,13 @@ public class Server implements Runnable {
 
             ClientManager lobbyManager = new ClientManager(matchInfo);
             games.add(lobbyManager);
+            executor.submit(lobbyManager);
 
             logCreator.log("Client socket " + connection.getIP() + " " + connection.getPort() + " starts a new ClientManager");
 
             this.welcomeNewPlayer(lobbyManager, connection);
 
-            executor.submit(lobbyManager);
+
         }
     }
 

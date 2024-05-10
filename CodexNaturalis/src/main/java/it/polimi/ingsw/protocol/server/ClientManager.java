@@ -294,22 +294,27 @@ public class ClientManager implements Runnable{
 
         // Wait for the specified number of expected players
         while(this.playersInfo.size() < this.matchInfo.getExpectedPlayers()) {
-            synchronized (this) {
-                if(this.playersInfo.size() == this.matchInfo.getExpectedPlayers())
-                    this.matchInfo.setStatus(MatchState.Player1);
-            }
-
-            // Gives a little of room to new players that want to join
             try {
-                Thread.sleep(1000);
-            } catch (Exception ignore) {}
+                this.wait();
+            } catch (InterruptedException ignore) {}
+
+//            // Gives a little of room to new players that want to join
+//            try {
+//                Thread.sleep(1000);
+//            } catch (Exception ignore) {}
         }
+
+        // Updates state of the match
+        this.matchInfo.setStatus(MatchState.Player1);
+        logCreator.log("Match state updated from \"Waiting\" to \"Player 1\"");
+
 
         // Adds all players to the match (match of the model)
         for(PlayerInfo playerInfo : this.playersInfo) {
             try {
                 this.matchInfo.getMatch().addPlayer(playerInfo.getPlayer());
                 playerInfo.setState(State.StarterCard);
+                logCreator.log("Player " + playerInfo.getPlayer().getNickname() + " added to the model");
             } catch (Exception e) {
                 logCreator.log("Failed to add player to model: " + playerInfo.getPlayer().getNickname());
             }
