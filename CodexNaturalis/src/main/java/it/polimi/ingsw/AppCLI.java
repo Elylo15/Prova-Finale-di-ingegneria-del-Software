@@ -10,26 +10,30 @@ import it.polimi.ingsw.protocol.client.view.ViewGUI;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.rmi.RemoteException;
 
 public class AppCLI {
     public static void main(String[] args) {
-        Controller controller;
         Client client;
+        Controller controller = null;
         ViewCLI view = new ViewCLI();
-        boolean isSocket;
+        boolean isSocket = false;
 
         String[] server = view.askPortIP();
 
         if (view.askSocket()) {
-            controller = new ControllerSocket(server[0], server[1]);
-            isSocket = true;
+            try {
+                controller = new ControllerSocket(server[0], server[1]);
+                isSocket = true;
+            } catch (Exception e) {
+                view.playerDisconnected();
+            }
         } else {
             try {
                 controller = new ControllerRMI(server[0], server[1]);
-                isSocket = false;
-            } catch (RemoteException e) {
-                throw new RuntimeException(e);
+            } catch (Exception e) {
+                view.playerDisconnected();
             }
         }
 
@@ -38,6 +42,5 @@ public class AppCLI {
         client.setPort(server[1]);
         client.connection(isSocket);
         client.run();
-
     }
 }

@@ -9,7 +9,6 @@ import it.polimi.ingsw.protocol.messages.PlayerTurnState.updatePlayerMessage;
 import it.polimi.ingsw.protocol.messages.ServerOptionState.*;
 import it.polimi.ingsw.protocol.messages.WaitingforPlayerState.*;
 
-import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicIntegerArray;
 
@@ -37,18 +36,23 @@ public class Client {
 
         if(isSocket) {
             try {
+                System.out.println("Connecting to 1 " + serverIP + ":" + serverPort);
                 controller.connectToServer(serverIP, serverPort);
+                System.out.println("Connected to 2  " + serverIP + ":" + serverPort);
                 connectionResponseMessage answer = controller.answerConnection();
+                System.out.println("Connection to 3 " + serverIP + ":" + serverPort);
                 view.answerToConnection(answer);
-            } catch (RuntimeException e) {
-                throw new RuntimeException(e);
+            } catch (Exception e) {
+                view.playerDisconnected();
+                throw new RuntimeException();
             }
         } else {
             try {
                 connectionResponseMessage answer = controller.answerConnection();
                 view.answerToConnection(answer);
-            } catch (RuntimeException e) {
-                throw new RuntimeException(e);
+            } catch (Exception e) {
+                view.playerDisconnected();
+                throw new RuntimeException();
             }
         }
     }
@@ -117,8 +121,9 @@ public class Client {
                     }
                 }
             }
-        } catch (RuntimeException | IOException e) {
+        } catch (Exception e) {
             view.playerDisconnected();
+            throw new RuntimeException();
         }
     }
 
@@ -181,7 +186,7 @@ public class Client {
      * invocations of controller methods to send received info.
      * invocations of controller methods to receive responseMessage. If responseMessage is correct, the loop ends.
      */
-    private void waitingPlayer(currentStateMessage current) throws IOException {
+    private void waitingPlayer(currentStateMessage current) {
         int[] expected = new int[1];
         final boolean[] noResponse = {false};
 
@@ -251,7 +256,7 @@ public class Client {
      * invocations of controller methods to send received info.
      * invocations of controller methods to receive responseMessage. If responseMessage is correct, the loop ends.
      */
-    private void pickObjective() throws IOException {
+    private void pickObjective() {
         final int[] pick = new int[1];
         final boolean[] noResponse = {false};
         Timer timer = new Timer();
@@ -284,7 +289,7 @@ public class Client {
      * invocations of controller methods to send received info.
      * invocations of controller methods to receive responseMessage. If responseMessage is correct, the loop ends.
      */
-    private void pickCard() throws IOException {
+    private void pickCard() {
         final int[] card = new int[1];
         final boolean[] noResponse = {false};
         Timer timer = new Timer();
@@ -317,7 +322,7 @@ public class Client {
      * invocations of controller methods to send received info.
      * invocations of controller methods to receive responseMessage. If responseMessage is correct, the loop ends.
      */
-    private void placeCard() throws IOException {
+    private void placeCard() {
         AtomicIntegerArray card = new AtomicIntegerArray(4);
         final boolean[] noResponse = {false};
         Timer timer = new Timer();
