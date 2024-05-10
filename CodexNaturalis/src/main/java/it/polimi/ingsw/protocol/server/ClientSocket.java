@@ -51,10 +51,8 @@ public class ClientSocket extends ClientConnection {
         try {
             outputStream.writeObject(new serverOptionMessage(false,null,null,false,null));
             outputStream.flush();
-            System.out.println("Server option sent");
             return (serverOptionMessage) inputStream.readObject();
         } catch (Exception e) {
-            System.out.println("Server option failed " + e.getMessage());
             throw new RuntimeException(e);
         }
     }

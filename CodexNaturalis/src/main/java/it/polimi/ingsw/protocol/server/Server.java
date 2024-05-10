@@ -20,6 +20,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.stream.Collectors;
 
 public class Server implements Runnable {
     private ArrayList<ClientManager> games;
@@ -368,11 +369,13 @@ public class Server implements Runnable {
         logCreator.log("ConnectionState sent to" + connection.getIP() + " " + connection.getPort());
 
         // Obtains unavailable names
-        ArrayList<String> unavailableNames = (ArrayList<String>) lobbyManager.getPlayersInfo().stream()
+        ArrayList<String> unavailableNames = lobbyManager.getPlayersInfo().stream()
                 .map(playerInfo -> playerInfo.getPlayer().getNickname())
-                .toList();
+                .collect(Collectors.toCollection(ArrayList::new));
 
-        if(unavailableNames.size() >= lobbyManager.getMatchInfo().getExpectedPlayers())
+        System.out.println("Unavailable names: " + unavailableNames);
+
+        if(lobbyManager.getMatchInfo().getExpectedPlayers() != null && unavailableNames.size() >= lobbyManager.getMatchInfo().getExpectedPlayers())
             connection.closeConnection();
 
         // Asks for the new player name
@@ -394,9 +397,9 @@ public class Server implements Runnable {
         logCreator.log("Client " + connection.getIP() + " " + connection.getPort() + " chose name: " + name);
 
         // Obtains unavailable colors
-        ArrayList<String> unavailableColors = (ArrayList<String>) lobbyManager.getPlayersInfo().stream()
+        ArrayList<String> unavailableColors = lobbyManager.getPlayersInfo().stream()
                 .map(playerInfo -> playerInfo.getPlayer().getColor())
-                .toList();
+                .collect(Collectors.toCollection(ArrayList::new));
 
         if(unavailableColors.size() >= 4)
             connection.closeConnection();
@@ -452,7 +455,7 @@ public class Server implements Runnable {
     private Integer createNewMatchID() {
         int MatchID = 0;
         boolean correct = false;
-        while(!correct || MatchID != 1000) {
+        while(!correct || MatchID == 1000) {
             MatchID = (new Random()).nextInt(100000);
             Integer finalMatchID = MatchID;
             if(games.stream()
