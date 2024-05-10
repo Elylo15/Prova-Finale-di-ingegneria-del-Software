@@ -49,5 +49,16 @@ public class serverOptionMessage implements Message, Serializable {
 
     @Override
     public void unlock() {}
+
+    @Override
+    public String toString() {
+        return "serverOptionMessage{" +
+                "newMatch=" + newMatch +
+                ", startedMatchID=" + startedMatchID +
+                ", Nickname='" + Nickname + '\'' +
+                ", loadMatch=" + loadMatch +
+                ", pathToLoad='" + pathToLoad + '\'' +
+                '}';
+    }
 }
 

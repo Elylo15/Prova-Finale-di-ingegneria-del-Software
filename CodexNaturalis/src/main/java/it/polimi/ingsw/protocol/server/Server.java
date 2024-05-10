@@ -155,6 +155,9 @@ public class Server implements Runnable {
                 return;
             }
 
+            // TODO remove this
+            System.out.println(msg.toString());
+
             // Checks if the response message is valid
             if(!msg.isNewMatch() && (msg.getNickname() == null || Objects.equals(msg.getNickname(), "") || msg.getStartedMatchID() == null) && !msg.isLoadMatch()) {
                 connection.sendAnswer(false);
