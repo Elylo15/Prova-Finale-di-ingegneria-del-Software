@@ -54,7 +54,10 @@ public class ClientManager implements Runnable{
 
 
     public synchronized void addPlayerInfo(PlayerInfo playerInfo) throws Exception {
-        if(playerInfo != null && (matchInfo.getExpectedPlayers() == null || matchInfo.getExpectedPlayers() > this.playersInfo.size()))
+        if(playerInfo != null
+                && (matchInfo.getExpectedPlayers() == null || matchInfo.getExpectedPlayers() > this.playersInfo.size())
+                && this.playersInfo.stream().noneMatch(playerInfo1 -> playerInfo1.getPlayer().getNickname().equals(playerInfo.getPlayer().getNickname()))
+                && this.playersInfo.stream().noneMatch(playerInfo1 -> playerInfo1.getPlayer().getColor().equals(playerInfo.getPlayer().getColor())))
         {
             this.playersInfo.add(playerInfo);
             logCreator.log("Player added: " + playerInfo.getPlayer().getNickname() + " " + playerInfo.getPlayer().getColor());
@@ -373,6 +376,9 @@ public class ClientManager implements Runnable{
                     Timer timer = startKickTimer(playerInfo, future);
                     starterCardMessage starter = null;
 
+                    // REMOVE THIS
+                    System.out.println("Waiting for starter card from " + playerInfo.getPlayer().getNickname());
+
                     try {
                         starter = future.get();
                         timer.cancel();
@@ -398,6 +404,12 @@ public class ClientManager implements Runnable{
                              }
                         }
                     }
+                }
+
+                // Updates the view of every player about the current one
+                for(PlayerInfo playerInfo1 : this.playersInfo) {
+                    updatePlayerMessage update = new updatePlayerMessage(player);
+                    playerInfo1.getConnection().sendUpdatePlayer(update);
                 }
 
 
@@ -463,6 +475,13 @@ public class ClientManager implements Runnable{
                         }
                     }
 
+                }
+
+
+                // Updates the view of every player about the current one
+                for(PlayerInfo playerInfo1 : this.playersInfo) {
+                    updatePlayerMessage update = new updatePlayerMessage(player);
+                    playerInfo1.getConnection().sendUpdatePlayer(update);
                 }
 
                 logCreator.log("Player " + player.getNickname() + " has correctly chosen an objective");
@@ -632,7 +651,7 @@ public class ClientManager implements Runnable{
                 logCreator.log("Player " + player.getNickname() + " plays his last turn");
                 // Sends current state messages to all clients
                 for(PlayerInfo playerInfo1 : this.playersInfo) {
-                    currentStateMessage currState = new currentStateMessage(player, playerInfo1.getPlayer(), "LastTurnState", this.matchInfo.isLastTurn());
+                    currentStateMessage currState = new currentStateMessage(player, playerInfo1.getPlayer(), "PlaceCardState", this.matchInfo.isLastTurn());
                     playerInfo1.getConnection().sendCurrentState(currState);
                 }
 
@@ -675,6 +694,12 @@ public class ClientManager implements Runnable{
 
                         }
                     }
+                }
+
+                // Updates all clients on the current situation
+                for(PlayerInfo playerInfo1 : this.playersInfo) {
+                    updatePlayerMessage update = new updatePlayerMessage(playerInfo.getPlayer());
+                    playerInfo1.getConnection().sendUpdatePlayer(update);
                 }
 
                 logCreator.log("Player " + player.getNickname() + " has ended his last turn");
