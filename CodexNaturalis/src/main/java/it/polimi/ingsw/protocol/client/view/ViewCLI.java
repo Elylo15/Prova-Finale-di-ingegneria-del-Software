@@ -155,12 +155,12 @@ public class ViewCLI extends View {
 
         /**
          * visualizes the current state of the players
-         * @param message
+         * @param message: currentStateMessage
          */
         public void updatePlayer (currentStateMessage message){
-            System.out.println("player " + message.getPlayer() + "is in the state " + message.getStateName());
+            System.out.println("Player " + message.getPlayer() + "is in the state " + message.getStateName());
             if (message.isLastTurn()) {
-                System.out.println("this is the last turn");
+                System.out.println("This is the last turn.");
             }
         }
 
@@ -170,17 +170,14 @@ public class ViewCLI extends View {
          * @return boolean
          */
         public boolean askSocket () {
-            //if the user doesn't enter a boolean, an exception is thrown and the method return default value true
             Scanner scanner = new Scanner(System.in);
-            boolean socket = true;
-            try {
-                System.out.println("enter true if yo want to connect with socket, enter false if you want to connect with rmi");
-                socket = scanner.nextBoolean();
-            } catch (Exception e) {
-                System.out.println("you didn't enter a boolean");
-            }
 
-            return socket;
+            while (true) {
+                System.out.println("Do you want to use Socket or RMI?");
+                String choice = scanner.nextLine().toLowerCase();
+                if (choice.equals("socket")) return true;
+                else if (choice.equals("rmi")) return false;
+            }
         }
 
 
@@ -276,7 +273,7 @@ public class ViewCLI extends View {
 
             String name;
             Scanner scanner = new Scanner(System.in);
-            System.out.println("You need to choose a nickname to play the game");
+            System.out.println("Choose a nickname:");
             name = scanner.nextLine();
             return name;
         }
@@ -286,11 +283,8 @@ public class ViewCLI extends View {
          * @param message
          */
         public void answer (responseMessage message){
-            if (message.getCorrect()) {
-                System.out.println("You have entered a valid value");
-            } else {
+            if (!message.getCorrect())
                 System.out.println("You didn't entered a valid value, please try again");
-            }
         }
 
 
@@ -299,12 +293,12 @@ public class ViewCLI extends View {
          * @param message
          */
         public String availableColors (availableColorsMessage message){
-            //the client can call the method view.avaibleColors passing as a parameter the arraylist of available colors received from server
+            //the client can call the method view.availableColors passing as a parameter the arraylist of available colors received from server
             System.out.println("This are the colors that are available: " + message.toString());
 
             String color;
             Scanner scanner = new Scanner(System.in);
-            System.out.println("You need to choose a color, please enter a valid color to play");
+            System.out.println("Choose a color:");
             color = scanner.nextLine();
             return color;
         }
@@ -314,18 +308,22 @@ public class ViewCLI extends View {
          * @return int
          */
         public int placeStarter () {
-            //if the user does not enter an int an exception is thrown and the method return the initialized value
             int side = 1000;
-            System.out.println("You have to place your starter");
-            System.out.println("Enter 1 if you want to play the front side, 0 if you want to play the back side");
-            try {
-                Scanner scanner = new Scanner(System.in);
-                side = scanner.nextInt();
-                scanner.nextLine();
-            } catch (Exception e) {
-                System.out.println("You didn't enter an integer value");
+            System.out.println("Place your starter card.");
+            Scanner scanner = new Scanner(System.in);
+
+            while (true) {
+                System.out.println("Do you want to place it on the front side or on the back side?");
+                String choice = scanner.nextLine().toLowerCase();
+                switch (choice) {
+                    case "front", "front side" -> {
+                        return 1;
+                    }
+                    case "back", "back side" -> {
+                        return 0;
+                    }
+                }
             }
-            return side;
         }
 
 
