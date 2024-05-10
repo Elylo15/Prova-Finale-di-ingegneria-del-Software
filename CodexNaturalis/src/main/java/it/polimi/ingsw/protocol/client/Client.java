@@ -106,21 +106,16 @@ public class Client {
                         view.update(update);
                         break;
                     }
-                    case "PlayerTurnState": {
-                        view.updatePlayer(current);
-                        if(Objects.equals(current.getCurrentPlayer().getNickname(), current.getPlayer().getNickname())) {
-                            placeCard();
-                            updatePlayerMessage update = controller.updatePlayer();
-                            view.update(update);
-                            pickCard();
-                            updatePlayerMessage update2 = controller.updatePlayer();
-                            view.update(update2);
-                        }
-                        break;
-                    }
-                    case "LastTurnState": {
+                    case "PlaceTurnState": {
                         view.updatePlayer(current);
                         if(Objects.equals(current.getCurrentPlayer().getNickname(), current.getPlayer().getNickname())) placeCard();
+                        updatePlayerMessage update = controller.updatePlayer();
+                        view.update(update);
+                        break;
+                    }
+                    case "PickTurnState": {
+                        view.updatePlayer(current);
+                        if(Objects.equals(current.getCurrentPlayer().getNickname(), current.getPlayer().getNickname())) pickCard();
                         updatePlayerMessage update = controller.updatePlayer();
                         view.update(update);
                         break;
