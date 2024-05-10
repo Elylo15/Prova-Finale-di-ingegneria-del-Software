@@ -32,6 +32,16 @@ public class currentStateMessage implements Message, Serializable {
     }
 
     @Override
+    public String toString() {
+        return "currentStateMessage{" +
+                "currentPlayer=" + currentPlayer.getNickname() +
+                ", player=" + player.getNickname() +
+                ", stateName='" + stateName + '\'' +
+                ", lastTurn=" + lastTurn +
+                '}';
+    }
+
+    @Override
     public void setLock() {}
 
     @Override

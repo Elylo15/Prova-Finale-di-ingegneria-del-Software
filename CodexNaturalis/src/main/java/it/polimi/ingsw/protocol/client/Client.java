@@ -64,8 +64,16 @@ public class Client {
     public void run() {
         try {
             while (true) {
+
+                // REMOVE THIS
+                System.out.println("\nWaiting for current state");
+
+
                 currentStateMessage current = controller.getCurrent();
                 String state = current.getStateName();
+
+                // REMOVE THIS
+                System.out.println("Current state: " + state +"\n");
 
                 switch (state) {
                     case "ServerOptionState":{

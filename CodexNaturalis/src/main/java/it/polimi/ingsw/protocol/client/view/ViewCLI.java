@@ -209,44 +209,54 @@ public class ViewCLI extends View {
         public serverOptionMessage serverOptions (serverOptionMessage message){
             Scanner scanner = new Scanner(System.in);
             boolean newMatch = false;
+            Integer startedMatchID = null;
+            String nickname = null;
+            boolean loadMatch = false;
+            String pathToLoad = null;
             try {
-                System.out.println("enter true if this is a new match or false if it is not");
+                System.out.println("Enter 'true' if this is a new match or 'false' if it is not");
                 newMatch = scanner.nextBoolean();
                 scanner.nextLine();
             } catch (Exception e) {
-                System.out.println("you didn't enter a boolean");
+                System.out.println("You didn't enter a boolean");
             }
 
-            if(newMatch) {
-                int startedMatchID = 1000;
+            if(!newMatch) {
+                boolean runMatch = false;
                 try {
-                    System.out.println("Enter the started match ID");
-                    startedMatchID = scanner.nextInt();
+                    System.out.println("Enter 'true' if you want to join an already started match or 'false' if it is not");
+                    runMatch = scanner.nextBoolean();
                     scanner.nextLine();
                 } catch (Exception e) {
-                    System.out.println("You didn't enter an int value");
+                    System.out.println("You didn't enter a boolean");
                 }
 
-                String nickname;
-                System.out.println("enter your nickname");
-                nickname = scanner.nextLine();
+                if(runMatch) {
+                    try {
+                        System.out.println("Enter the started match ID");
+                        startedMatchID = scanner.nextInt();
+                        scanner.nextLine();
+                    } catch (Exception e) {
+                        System.out.println("You didn't enter an int value");
+                    }
 
-                boolean loadMatch = false;
-                try {
-                    System.out.println("enter true if you want to load the match");
-                    loadMatch = scanner.nextBoolean();
-                    scanner.nextLine();
-                } catch (Exception e) {
-                    System.out.println("you didn't enter a boolean");
+                    System.out.println("Enter your nickname");
+                    nickname = scanner.nextLine();
+                } else {
+                    try {
+                        System.out.println("Enter true if you want to load the match");
+                        loadMatch = scanner.nextBoolean();
+                        scanner.nextLine();
+                    } catch (Exception e) {
+                        System.out.println("You didn't enter a boolean");
+                    }
+                    System.out.println("Enter the path to load");
+                    pathToLoad = scanner.nextLine();
                 }
-                String pathToLoad;
-                System.out.println("enter the path to load");
-                pathToLoad = scanner.nextLine();
-                message = new serverOptionMessage(true, startedMatchID, nickname, loadMatch, pathToLoad);
-            } else {
-                message = new serverOptionMessage(false, 1000, "1000", false, "1000");
+
             }
 
+            message = new serverOptionMessage(newMatch, startedMatchID, nickname, loadMatch, pathToLoad);
             return message;
         }
 
