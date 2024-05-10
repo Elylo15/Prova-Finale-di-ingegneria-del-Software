@@ -373,8 +373,6 @@ public class Server implements Runnable {
                 .map(playerInfo -> playerInfo.getPlayer().getNickname())
                 .collect(Collectors.toCollection(ArrayList::new));
 
-        System.out.println("Unavailable names: " + unavailableNames);
-
         if(lobbyManager.getMatchInfo().getExpectedPlayers() != null && unavailableNames.size() >= lobbyManager.getMatchInfo().getExpectedPlayers())
             connection.closeConnection();
 
