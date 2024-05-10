@@ -30,6 +30,19 @@ public class ViewCLI extends View {
 
     }
 
+
+    public String[] askPortIP(){
+        Scanner scanner = new Scanner(System.in);
+        String[] server = new String[2];
+
+        System.out.println("Enter IP:");
+        server[0] = scanner.nextLine();
+        System.out.println("Enter port:");
+        server[1] = scanner.nextLine();
+
+        return server;
+    }
+
     /**
      * communicates to the user he lost connection
      */
