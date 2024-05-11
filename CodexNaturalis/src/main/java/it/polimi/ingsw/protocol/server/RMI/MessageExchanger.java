@@ -86,4 +86,10 @@ public class MessageExchanger extends UnicastRemoteObject implements MessageExch
 
         return message;
     }
+
+    /**
+     * Retrieves last message. Created only for the tests.
+     * @return last stored message.
+     */
+    protected Message getLastMessage() {return lastMessage;}
 }
