@@ -74,7 +74,7 @@ public class ClientRMI extends ClientConnection implements Runnable{
     @Override
     public void sendNewHostMessage(String hostNickname){
         try {
-            remoteServer.sendNewHostMessageRMI(new newHostMessage(hostNickname));
+
         } catch (RuntimeException e) {
             throw new RuntimeException(e);
         }
@@ -87,7 +87,7 @@ public class ClientRMI extends ClientConnection implements Runnable{
     @Override
     public expectedPlayersMessage getExpectedPlayer(){
         try {
-            return remoteServer.getExpectedPlayerRMI();
+            return null;
         } catch (RuntimeException e) {
             throw new RuntimeException(e);
         }
@@ -100,7 +100,7 @@ public class ClientRMI extends ClientConnection implements Runnable{
     @Override
     public void sendAnswer(boolean correct){
         try {
-            remoteServer.sendAnswerRMI(new responseMessage(correct));
+
         } catch (RuntimeException e) {
             throw new RuntimeException(e);
         }
@@ -113,7 +113,7 @@ public class ClientRMI extends ClientConnection implements Runnable{
     @Override
     public void sendAnswerToConnection(connectionResponseMessage message){
         try {
-            remoteServer.sendAnswerToConnectionRMI(message);
+
         } catch (RuntimeException e) {
             throw new RuntimeException(e);
         }
@@ -126,7 +126,7 @@ public class ClientRMI extends ClientConnection implements Runnable{
     @Override
     public void sendUnavailableName(ArrayList<String> unavailableNames) {
         try {
-            remoteServer.sendUnavailableNameRMI(new unavailableNamesMessage(unavailableNames));
+
         } catch (RuntimeException e) {
             throw new RuntimeException(e);
         }
@@ -140,7 +140,7 @@ public class ClientRMI extends ClientConnection implements Runnable{
     @Override
     public chosenNameMessage getName(ArrayList<String> unavailableNames){
         try {
-            return remoteServer.getNameRMI();
+            return null;
         } catch (RuntimeException e) {
             throw new RuntimeException(e);
         }
@@ -153,7 +153,7 @@ public class ClientRMI extends ClientConnection implements Runnable{
     @Override
     public void sendAvailableColor(ArrayList<String> availableColors){
         try {
-            remoteServer.sendAvailableColorRMI(new availableColorsMessage(availableColors));
+
         } catch (RuntimeException e) {
             throw new RuntimeException(e);
         }
@@ -166,7 +166,7 @@ public class ClientRMI extends ClientConnection implements Runnable{
     @Override
     public chosenColorMessage getColor(ArrayList<String> availableColors){
         try {
-            return remoteServer.getColorRMI();
+            return null;
         } catch (RuntimeException e) {
             throw new RuntimeException(e);
         }
@@ -179,7 +179,7 @@ public class ClientRMI extends ClientConnection implements Runnable{
     @Override
     public void sendCurrentState(currentStateMessage currentState){
         try {
-            remoteServer.sendCurrentStateRMI(currentState);
+
         } catch (RuntimeException e) {
             throw new RuntimeException(e);
         }
@@ -192,7 +192,7 @@ public class ClientRMI extends ClientConnection implements Runnable{
     @Override
     public starterCardMessage getStaterCard(){
         try {
-            return remoteServer.getStaterCardRMI();
+            return null;
         } catch (RuntimeException e) {
             throw new RuntimeException(e);
         }
@@ -205,7 +205,7 @@ public class ClientRMI extends ClientConnection implements Runnable{
     @Override
     public objectiveCardMessage getChosenObjective(ObjectiveCard[] objectiveCards){
         try {
-            return remoteServer.getChosenObjectiveRMI();
+            return null;
         } catch (RuntimeException e) {
             throw new RuntimeException(e);
         }
@@ -218,7 +218,7 @@ public class ClientRMI extends ClientConnection implements Runnable{
     @Override
     public placeCardMessage getPlaceCard(){
         try {
-            return remoteServer.getPlaceCardRMI();
+            return null;
         } catch (RuntimeException e) {
             throw new RuntimeException(e);
         }
@@ -231,7 +231,7 @@ public class ClientRMI extends ClientConnection implements Runnable{
     @Override
     public pickCardMessage getChosenPick(){
         try {
-            return remoteServer.getChosenPickRMI();
+            return null;
         } catch (RuntimeException e) {
             throw new RuntimeException(e);
         }
@@ -245,7 +245,7 @@ public class ClientRMI extends ClientConnection implements Runnable{
     @Override
     public void sendEndGame(HashMap<String, Integer> score, HashMap<String, Integer> numberOfObjectives){
         try {
-            remoteServer.sendEndGameRMI(new declareWinnerMessage(score, numberOfObjectives));
+            return;
         } catch (RuntimeException e) {
             throw new RuntimeException(e);
         }
@@ -258,7 +258,7 @@ public class ClientRMI extends ClientConnection implements Runnable{
     @Override
     public void sendUpdatePlayer(updatePlayerMessage updateMessage) {
         try {
-            remoteServer.sendUpdatePlayerRMI(updateMessage);
+
         } catch (RuntimeException e) {
             throw new RuntimeException(e);
         }
@@ -270,10 +270,8 @@ public class ClientRMI extends ClientConnection implements Runnable{
     @Override
     public void closeConnection() {
         try {
-            Registry registry = LocateRegistry.getRegistry();
-            registry.unbind("RemoteServer");
-            UnicastRemoteObject.unexportObject(registry, true);
-            UnicastRemoteObject.unexportObject(remoteServer, true);
+
+
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
