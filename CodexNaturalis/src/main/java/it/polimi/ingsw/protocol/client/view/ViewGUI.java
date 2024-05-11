@@ -1,5 +1,7 @@
 package it.polimi.ingsw.protocol.client.view;
 
+import it.polimi.ingsw.model.CommonArea;
+import it.polimi.ingsw.model.cards.PlayerHand;
 import it.polimi.ingsw.protocol.messages.ConnectionState.availableColorsMessage;
 import it.polimi.ingsw.protocol.messages.ConnectionState.connectionResponseMessage;
 import it.polimi.ingsw.protocol.messages.ConnectionState.unavailableNamesMessage;
@@ -186,5 +188,15 @@ public class ViewGUI extends View {
         });
 
         return server.get();
+    }
+
+    @Override
+    public void showPlayerHand(PlayerHand playerHand) {
+
+    }
+
+    @Override
+    public void showCommonArea(CommonArea commonArea) {
+
     }
 }
