@@ -46,7 +46,7 @@ public class  Player implements Serializable {
      * @param side integer that indicates the side chosen.
      */
     public void placeStarter(int side){
-        playerArea.placeStarterCard(deck.removeplaceableCard(0), pickSide(side));
+        playerArea.placeStarterCard(deck.removeplaceableCard(deck.getPlaceableCards().getFirst().getID()), pickSide(side));
     }
 
     /**
