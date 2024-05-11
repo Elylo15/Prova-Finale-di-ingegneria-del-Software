@@ -1,7 +1,5 @@
 package it.polimi.ingsw.protocol.server.RMI;
 
-import it.polimi.ingsw.protocol.messages.Message;
-
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
@@ -12,7 +10,7 @@ public interface MessageExchangerInterface extends Remote {
      * @param message Message to be sent.
      * @throws RemoteException
      */
-    void sendMessage(Message message) throws RemoteException;
+    void write(Object message) throws RemoteException;
 
     /**
      * Returns the last message received.
@@ -20,5 +18,5 @@ public interface MessageExchangerInterface extends Remote {
      * @return Message received.
      * @throws RemoteException
      */
-    Message receiveMessage() throws RemoteException;
+    Object read() throws RemoteException;
 }

@@ -46,7 +46,7 @@ public abstract class ClientConnection implements Runnable {
         return port;
     }
 
-    public abstract serverOptionMessage getServerOption();
+    public abstract serverOptionMessage getServerOption(ArrayList<Integer> runningMatches, ArrayList<Integer> savedMatches);
     public abstract void sendNewHostMessage(String hostNickname);
     public abstract expectedPlayersMessage getExpectedPlayer();
     public abstract void sendAnswer(boolean correct);

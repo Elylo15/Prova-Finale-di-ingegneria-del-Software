@@ -3,6 +3,7 @@ package it.polimi.ingsw.protocol.messages.ServerOptionState;
 import it.polimi.ingsw.protocol.messages.Message;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 public class serverOptionMessage implements Message, Serializable {
     private final boolean newMatch;         // true if the client wants to join a new game
@@ -11,33 +12,53 @@ public class serverOptionMessage implements Message, Serializable {
     private final boolean loadMatch;        // true if the client wants to load a custom match
     private final String pathToLoad;        // path of the saved game that the client wants to load
 
-   public serverOptionMessage(boolean newMatch, Integer startedMatchID, String Nickname, boolean loadMatch, String pathToLoad) {
+    private ArrayList<Integer> runningMatches;
+    private ArrayList<Integer> savedMatches;
+
+    public serverOptionMessage(boolean newMatch, Integer startedMatchID, String Nickname, boolean loadMatch, String pathToLoad) {
        this.newMatch = newMatch;
        this.startedMatchID = startedMatchID;
        this.Nickname = Nickname;
        this.loadMatch = loadMatch;
        this.pathToLoad = pathToLoad;
+       this.runningMatches = null;
+       this.savedMatches = null;
    }
 
-   public boolean isNewMatch() {
+    public serverOptionMessage(boolean newMatch, Integer startedMatchID, String Nickname, boolean loadMatch, String pathToLoad, ArrayList<Integer> runningMatches, ArrayList<Integer> savedMatches) {
+        this.newMatch = newMatch;
+        this.startedMatchID = startedMatchID;
+        this.Nickname = Nickname;
+        this.loadMatch = loadMatch;
+        this.pathToLoad = pathToLoad;
+        this.runningMatches = runningMatches;
+        this.savedMatches = savedMatches;
+    }
+
+    public boolean isNewMatch() {
        return newMatch;
    }
 
-   public Integer getStartedMatchID() {
+    public Integer getStartedMatchID() {
        return startedMatchID;
    }
 
-   public String getNickname() {
+    public String getNickname() {
        return Nickname;
    }
 
-   public boolean isLoadMatch() {
+    public boolean isLoadMatch() {
        return loadMatch;
    }
 
-   public String getPathToLoad() {
+    public String getPathToLoad() {
        return pathToLoad;
    }
+
+    public ArrayList<Integer> getRunningMatches() {return runningMatches;}
+
+    public ArrayList<Integer> getSavedMatches() {return savedMatches;}
+
 
     @Override
     public void setLock() {}

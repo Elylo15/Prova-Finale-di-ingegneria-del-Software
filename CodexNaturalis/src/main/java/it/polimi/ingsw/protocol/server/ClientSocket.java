@@ -39,7 +39,7 @@ public class ClientSocket extends ClientConnection {
     }
 
     /**
-     * Needed to be run with executors.
+     * Empty method, needed for executors to work.
      */
     @Override
     public void run() {
@@ -51,9 +51,9 @@ public class ClientSocket extends ClientConnection {
      * @return serverOptionMessage
      */
     @Override
-    public synchronized serverOptionMessage getServerOption() {
+    public synchronized serverOptionMessage getServerOption(ArrayList<Integer> runningMatches, ArrayList<Integer> savedMatches) {
         try {
-            outputStream.writeObject(new serverOptionMessage(false,null,null,false,null));
+            outputStream.writeObject(new serverOptionMessage(false,null,null,false,null, runningMatches, savedMatches));
             outputStream.flush();
             return (serverOptionMessage) inputStream.readObject();
         } catch (Exception e) {
@@ -181,13 +181,9 @@ public class ClientSocket extends ClientConnection {
     @Override
     public synchronized void sendCurrentState(currentStateMessage currentState){
         try {
-            // Remove
             outputStream.writeObject(currentState);
             outputStream.flush();
         } catch (IOException e) {
-            // Remove this
-            System.out.println("ERROR: Current state failed --> " + e.getMessage());
-
             throw new RuntimeException(e);
         }
     }
