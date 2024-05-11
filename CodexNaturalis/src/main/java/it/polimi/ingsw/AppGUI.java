@@ -5,7 +5,7 @@ import it.polimi.ingsw.protocol.client.view.ViewGUI;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
-public class App {
+public class AppGUI {
     public static void main(String[] args) {
         Application.launch(application.class, args);
     }
