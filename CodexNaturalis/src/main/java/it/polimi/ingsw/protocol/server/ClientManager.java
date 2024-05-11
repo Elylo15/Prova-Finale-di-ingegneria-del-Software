@@ -245,7 +245,7 @@ public class ClientManager implements Runnable{
                 if(host != null) {
                     // Sends current state data
                     this.playersInfo.forEach(playerInfo -> {
-                                currentStateMessage curr = new currentStateMessage(null, playerInfo.getPlayer(),"WaitingForPlayerState",false);
+                                currentStateMessage curr = new currentStateMessage(null, playerInfo.getPlayer(),"WaitingForPlayerState",false, this.onlinePlayers());
                                 playerInfo.getConnection().sendCurrentState(curr);
                                 playerInfo.getConnection().sendNewHostMessage(host.getPlayer().getNickname());
                             });
@@ -354,7 +354,7 @@ public class ClientManager implements Runnable{
 
                 // Sends current state messages to all clients
                 for(PlayerInfo playerInfo1 : this.playersInfo) {
-                    currentStateMessage currState = new currentStateMessage(player, playerInfo1.getPlayer(), "StarterCardState", this.matchInfo.isLastTurn());
+                    currentStateMessage currState = new currentStateMessage(player, playerInfo1.getPlayer(), "StarterCardState", this.matchInfo.isLastTurn(), this.onlinePlayers());
                     playerInfo1.getConnection().sendCurrentState(currState);
                 }
 
@@ -458,7 +458,7 @@ public class ClientManager implements Runnable{
 
                 // Sends current state messages to all clients
                 for(PlayerInfo playerInfo1 : this.playersInfo) {
-                    currentStateMessage currState = new currentStateMessage(player, playerInfo1.getPlayer(), "ObjectiveState", this.matchInfo.isLastTurn());
+                    currentStateMessage currState = new currentStateMessage(player, playerInfo1.getPlayer(), "ObjectiveState", this.matchInfo.isLastTurn(), this.onlinePlayers());
                     playerInfo1.getConnection().sendCurrentState(currState);
                 }
 
@@ -525,7 +525,7 @@ public class ClientManager implements Runnable{
                 logCreator.log("Player " + player.getNickname() + " starts normal turn and has to place a card");
                 // Sends current state messages to all clients
                 for(PlayerInfo playerInfo1 : this.playersInfo) {
-                    currentStateMessage currState = new currentStateMessage(player, playerInfo1.getPlayer(), "PlaceCardState", this.matchInfo.isLastTurn());
+                    currentStateMessage currState = new currentStateMessage(player, playerInfo1.getPlayer(), "PlaceCardState", this.matchInfo.isLastTurn(), this.onlinePlayers());
                     playerInfo1.getConnection().sendCurrentState(currState);
                 }
 
@@ -593,7 +593,7 @@ public class ClientManager implements Runnable{
 
 
                 for(PlayerInfo playerInfo1 : this.playersInfo) {
-                    currentStateMessage currState = new currentStateMessage(player, playerInfo1.getPlayer(), "PickCardState", this.matchInfo.isLastTurn());
+                    currentStateMessage currState = new currentStateMessage(player, playerInfo1.getPlayer(), "PickCardState", this.matchInfo.isLastTurn(), this.onlinePlayers());
                     playerInfo1.getConnection().sendCurrentState(currState);
                 }
 
@@ -670,7 +670,7 @@ public class ClientManager implements Runnable{
                 logCreator.log("Player " + player.getNickname() + " plays his last turn");
                 // Sends current state messages to all clients
                 for(PlayerInfo playerInfo1 : this.playersInfo) {
-                    currentStateMessage currState = new currentStateMessage(player, playerInfo1.getPlayer(), "PlaceCardState", this.matchInfo.isLastTurn());
+                    currentStateMessage currState = new currentStateMessage(player, playerInfo1.getPlayer(), "PlaceCardState", this.matchInfo.isLastTurn(), this.onlinePlayers());
                     playerInfo1.getConnection().sendCurrentState(currState);
                 }
 
@@ -751,7 +751,7 @@ public class ClientManager implements Runnable{
         logCreator.log("ENDGAME");
         // Sends current state messages to all clients
         for(PlayerInfo playerInfo1 : this.playersInfo) {
-            currentStateMessage currState = new currentStateMessage(null, playerInfo1.getPlayer(), "EndGameState", this.matchInfo.isLastTurn());
+            currentStateMessage currState = new currentStateMessage(null, playerInfo1.getPlayer(), "EndGameState", this.matchInfo.isLastTurn(), this.onlinePlayers());
             playerInfo1.getConnection().sendCurrentState(currState);
         }
 
@@ -855,6 +855,14 @@ public class ClientManager implements Runnable{
                 this.matchInfo.setStatus(MatchState.KickingPlayers);
             }
         }
+    }
+
+
+
+    private ArrayList<String> onlinePlayers() {
+        return this.playersInfo.stream()
+                .map(playerInfo -> playerInfo.getPlayer().getNickname())
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
 

@@ -8,7 +8,8 @@ import it.polimi.ingsw.protocol.messages.PlayerTurnState.*;
 import it.polimi.ingsw.protocol.messages.ServerOptionState.*;
 import it.polimi.ingsw.protocol.messages.StaterCardState.*;
 import it.polimi.ingsw.protocol.messages.WaitingforPlayerState.*;
-import it.polimi.ingsw.protocol.server.RMI.RemoteServerInterface;
+import it.polimi.ingsw.protocol.server.RMI.MainRemoteServerInterface;
+import it.polimi.ingsw.protocol.server.RMI.MessageExchangerInterface;
 
 import java.net.*;
 import java.rmi.*;
@@ -16,7 +17,8 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
 public class ControllerRMI extends Controller {
-    private RemoteServerInterface remoteServer;
+    private MessageExchangerInterface toServer;
+    private MessageExchangerInterface toClient;
 
     /**
      * method {@code ControllerRMI}: constructs a new ControllerRMI
@@ -35,8 +37,14 @@ public class ControllerRMI extends Controller {
     public void connectToServer(String serverIP, String serverPort) {
         try {
             Registry registry = LocateRegistry.getRegistry(serverIP, Integer.parseInt(serverPort));
-            remoteServer = (RemoteServerInterface) Naming.lookup("RemoteServer");
-        } catch (RemoteException | NotBoundException | MalformedURLException e) {
+            MainRemoteServerInterface server = (MainRemoteServerInterface) registry.lookup("MainServer");
+            // todo check Naming.lookup()
+
+            String lookup = server.helloFromClient();
+            this.toServer = (MessageExchangerInterface) registry.lookup(lookup + "_toServer");
+            this.toClient = (MessageExchangerInterface) registry.lookup(lookup + "_toClient");
+
+        } catch (RemoteException | NotBoundException e) {
             throw new RuntimeException(e);
         }
     }
@@ -48,8 +56,8 @@ public class ControllerRMI extends Controller {
     @Override
     public connectionResponseMessage answerConnection() {
         try {
-            return remoteServer.answerConnectionRMI();
-        } catch (RuntimeException e) {
+            return (connectionResponseMessage) toClient.read();
+        } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
     }
@@ -61,8 +69,8 @@ public class ControllerRMI extends Controller {
     @Override
     public currentStateMessage getCurrent() {
         try {
-            return remoteServer.getCurrentRMI();
-        } catch (RuntimeException e) {
+            return (currentStateMessage) toClient.read();
+        } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
     }
@@ -74,8 +82,8 @@ public class ControllerRMI extends Controller {
     @Override
     public serverOptionMessage serverOptions() {
         try {
-            return remoteServer.serverOptionsRMI();
-        } catch (RuntimeException e) {
+            return (serverOptionMessage) toClient.read();
+        } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
     }
@@ -87,8 +95,8 @@ public class ControllerRMI extends Controller {
     @Override
     public responseMessage correctAnswer() {
         try {
-            return remoteServer.correctAnswerRMI();
-        } catch (RuntimeException e) {
+            return (responseMessage) toClient.read();
+        } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
     }
@@ -100,8 +108,8 @@ public class ControllerRMI extends Controller {
     @Override
     public void sendOptions(serverOptionMessage options) {
         try {
-            remoteServer.sendOptionsRMI(options);
-        } catch (RuntimeException e) {
+            toServer.write(options);
+        } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
     }
@@ -113,8 +121,8 @@ public class ControllerRMI extends Controller {
     @Override
     public unavailableNamesMessage getUnavailableName() {
         try {
-            return remoteServer.getUnavailableNameRMI();
-        } catch (RuntimeException e) {
+            return (unavailableNamesMessage) toClient.read();
+        } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
     }
@@ -126,8 +134,8 @@ public class ControllerRMI extends Controller {
     @Override
     public void chooseName(String name) {
         try {
-            remoteServer.chooseNameRMI(new chosenNameMessage(name));
-        } catch (RuntimeException e) {
+            toServer.write(new chosenNameMessage(name));
+        } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
     }
@@ -139,8 +147,8 @@ public class ControllerRMI extends Controller {
     @Override
     public availableColorsMessage getAvailableColor() {
         try {
-            return remoteServer.getAvailableColorRMI();
-        } catch (RuntimeException e) {
+            return (availableColorsMessage) toClient.read();
+        } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
     }
@@ -152,8 +160,8 @@ public class ControllerRMI extends Controller {
     @Override
     public void chooseColor(String color) {
         try {
-            remoteServer.chooseColorRMI(new chosenColorMessage(color));
-        } catch (RuntimeException e) {
+            toServer.write(new chosenNameMessage(color));
+        } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
     }
@@ -165,8 +173,8 @@ public class ControllerRMI extends Controller {
     @Override
     public newHostMessage newHost() {
         try {
-            return remoteServer.newHostRMI();
-        } catch (RuntimeException e) {
+            return (newHostMessage) toClient.read();
+        } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
     }
@@ -179,8 +187,8 @@ public class ControllerRMI extends Controller {
     @Override
     public void expectedPlayers(int expected, boolean noResponse) {
         try {
-            remoteServer.expectedPlayersRMI(new expectedPlayersMessage(expected, noResponse));
-        } catch (RuntimeException e) {
+            toServer.write(new expectedPlayersMessage(expected, noResponse));
+        } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
     }
@@ -193,8 +201,8 @@ public class ControllerRMI extends Controller {
     @Override
     public void placeStarter(int side, boolean noResponse) {
         try {
-            remoteServer.placeStarterRMI(new starterCardMessage(side, noResponse));
-        } catch (RuntimeException e) {
+            toServer.write(new starterCardMessage(side, noResponse));
+        } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
     }
@@ -207,8 +215,8 @@ public class ControllerRMI extends Controller {
     @Override
     public void chooseObjective(int pick, boolean noResponse) {
         try {
-            remoteServer.chooseObjectiveRMI(new objectiveCardMessage(pick, noResponse));
-        } catch (RuntimeException e) {
+            toServer.write(new objectiveCardMessage(pick, noResponse));
+        } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
     }
@@ -224,8 +232,8 @@ public class ControllerRMI extends Controller {
     @Override
     public void placeCard(int card, int side, int x, int y, boolean noResponse) {
         try {
-            remoteServer.placeCardRMI(new placeCardMessage(card, side, x, y, noResponse));
-        } catch (RuntimeException e) {
+            toServer.write(new placeCardMessage(card, side, x, y, noResponse));
+        } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
     }
@@ -238,8 +246,8 @@ public class ControllerRMI extends Controller {
     @Override
     public void pickCard(int card, boolean noResponse) {
         try {
-            remoteServer.pickCardRMI(new pickCardMessage(card, noResponse));
-        } catch (RuntimeException e) {
+            toServer.write(new pickCardMessage(card, noResponse));
+        } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
     }
@@ -250,8 +258,8 @@ public class ControllerRMI extends Controller {
      */
     public updatePlayerMessage updatePlayer(){
         try {
-            return remoteServer.updatePlayerRMI();
-        } catch (RuntimeException e) {
+            return (updatePlayerMessage) toClient.read();
+        } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
     }
@@ -263,8 +271,8 @@ public class ControllerRMI extends Controller {
     @Override
     public declareWinnerMessage endGame() {
         try {
-            return remoteServer.endGameRMI();
-        } catch (RuntimeException e) {
+            return (declareWinnerMessage) toClient.read();
+        } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
     }

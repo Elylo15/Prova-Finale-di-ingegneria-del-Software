@@ -11,12 +11,8 @@ import it.polimi.ingsw.protocol.messages.WaitingforPlayerState.*;
 import it.polimi.ingsw.protocol.messages.*;
 import it.polimi.ingsw.protocol.server.RMI.MessageExchanger;
 import it.polimi.ingsw.protocol.server.RMI.MessageExchangerInterface;
-import it.polimi.ingsw.protocol.server.RMI.RemoteServerInterface;
 
-import java.net.MalformedURLException;
 import java.rmi.AlreadyBoundException;
-import java.rmi.Naming;
-import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -25,7 +21,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class ClientRMI extends ClientConnection implements Runnable{
-    private MessageExchangerInterface exchanger;
+    private MessageExchangerInterface toServer;
+    private MessageExchangerInterface toClient;
+    private Registry registry;
 
     /**
      * method {@code ClientRMI}: constructs a new ClientRMI
@@ -36,11 +34,16 @@ public class ClientRMI extends ClientConnection implements Runnable{
         super(IP, port);
     }
 
-    public ClientRMI(int rmiCounter, String lookupString, int portRMI) throws RemoteException, AlreadyBoundException {
+    public ClientRMI(int rmiCounter, String lookupString, Registry registry) throws RemoteException, AlreadyBoundException {
         super("RMI_Client_" + rmiCounter, "no_port");
-        Registry registry = LocateRegistry.createRegistry(portRMI);
-        this.exchanger = new MessageExchanger();
-        registry.bind(lookupString, this.exchanger);
+
+        this.toServer = new MessageExchanger();
+        this.toClient = new MessageExchanger();
+
+        this.registry = registry;
+
+        this.registry.bind(lookupString + "_toServer", this.toServer);
+        this.registry.bind(lookupString + "_toClient", this.toClient);
     }
 
 
@@ -58,10 +61,10 @@ public class ClientRMI extends ClientConnection implements Runnable{
      * @return serverOptionMessage
      */
     @Override
-    public serverOptionMessage getServerOption() {
+    public serverOptionMessage getServerOption(ArrayList<Integer> runningMatches, ArrayList<Integer> savedMatches) {
         try {
-            this.exchanger.sendMessage(new serverOptionMessage(false,null,null,false,null));
-            return (serverOptionMessage) this.exchanger.receiveMessage();
+            this.toClient.write(new serverOptionMessage(false,null,null,false,null, runningMatches, savedMatches));
+            return (serverOptionMessage) this.toServer.read();
         } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
@@ -74,8 +77,8 @@ public class ClientRMI extends ClientConnection implements Runnable{
     @Override
     public void sendNewHostMessage(String hostNickname){
         try {
-
-        } catch (RuntimeException e) {
+            toClient.write(new newHostMessage(hostNickname));
+        } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
     }
@@ -87,8 +90,8 @@ public class ClientRMI extends ClientConnection implements Runnable{
     @Override
     public expectedPlayersMessage getExpectedPlayer(){
         try {
-            return null;
-        } catch (RuntimeException e) {
+            return (expectedPlayersMessage) toServer.read();
+        } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
     }
@@ -100,8 +103,8 @@ public class ClientRMI extends ClientConnection implements Runnable{
     @Override
     public void sendAnswer(boolean correct){
         try {
-
-        } catch (RuntimeException e) {
+            toClient.write(new responseMessage(correct));
+        } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
     }
@@ -113,8 +116,8 @@ public class ClientRMI extends ClientConnection implements Runnable{
     @Override
     public void sendAnswerToConnection(connectionResponseMessage message){
         try {
-
-        } catch (RuntimeException e) {
+            toClient.write(message);
+        } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
     }
@@ -126,8 +129,8 @@ public class ClientRMI extends ClientConnection implements Runnable{
     @Override
     public void sendUnavailableName(ArrayList<String> unavailableNames) {
         try {
-
-        } catch (RuntimeException e) {
+            toClient.write(new unavailableNamesMessage(unavailableNames));
+        } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
     }
@@ -140,8 +143,9 @@ public class ClientRMI extends ClientConnection implements Runnable{
     @Override
     public chosenNameMessage getName(ArrayList<String> unavailableNames){
         try {
-            return null;
-        } catch (RuntimeException e) {
+            this.sendUnavailableName(unavailableNames);
+            return (chosenNameMessage) toServer.read();
+        } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
     }
@@ -153,8 +157,8 @@ public class ClientRMI extends ClientConnection implements Runnable{
     @Override
     public void sendAvailableColor(ArrayList<String> availableColors){
         try {
-
-        } catch (RuntimeException e) {
+            toClient.write(new availableColorsMessage(availableColors));
+        } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
     }
@@ -166,8 +170,9 @@ public class ClientRMI extends ClientConnection implements Runnable{
     @Override
     public chosenColorMessage getColor(ArrayList<String> availableColors){
         try {
-            return null;
-        } catch (RuntimeException e) {
+            this.sendAvailableColor(availableColors);
+            return (chosenColorMessage) toServer.read();
+        } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
     }
@@ -179,8 +184,8 @@ public class ClientRMI extends ClientConnection implements Runnable{
     @Override
     public void sendCurrentState(currentStateMessage currentState){
         try {
-
-        } catch (RuntimeException e) {
+            toClient.write(currentState);
+        } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
     }
@@ -192,8 +197,8 @@ public class ClientRMI extends ClientConnection implements Runnable{
     @Override
     public starterCardMessage getStaterCard(){
         try {
-            return null;
-        } catch (RuntimeException e) {
+            return (starterCardMessage) toServer.read();
+        } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
     }
@@ -205,8 +210,9 @@ public class ClientRMI extends ClientConnection implements Runnable{
     @Override
     public objectiveCardMessage getChosenObjective(ObjectiveCard[] objectiveCards){
         try {
-            return null;
-        } catch (RuntimeException e) {
+            toClient.write(objectiveCards);
+            return (objectiveCardMessage) toServer.read();
+        } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
     }
@@ -218,8 +224,8 @@ public class ClientRMI extends ClientConnection implements Runnable{
     @Override
     public placeCardMessage getPlaceCard(){
         try {
-            return null;
-        } catch (RuntimeException e) {
+            return (placeCardMessage) toServer.read();
+        } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
     }
@@ -231,8 +237,8 @@ public class ClientRMI extends ClientConnection implements Runnable{
     @Override
     public pickCardMessage getChosenPick(){
         try {
-            return null;
-        } catch (RuntimeException e) {
+            return (pickCardMessage) toServer.read();
+        } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
     }
@@ -245,8 +251,8 @@ public class ClientRMI extends ClientConnection implements Runnable{
     @Override
     public void sendEndGame(HashMap<String, Integer> score, HashMap<String, Integer> numberOfObjectives){
         try {
-            return;
-        } catch (RuntimeException e) {
+            toClient.write(new declareWinnerMessage(score, numberOfObjectives));
+        } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
     }
@@ -258,8 +264,8 @@ public class ClientRMI extends ClientConnection implements Runnable{
     @Override
     public void sendUpdatePlayer(updatePlayerMessage updateMessage) {
         try {
-
-        } catch (RuntimeException e) {
+            toClient.write(updateMessage);
+        } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
     }
@@ -270,8 +276,8 @@ public class ClientRMI extends ClientConnection implements Runnable{
     @Override
     public void closeConnection() {
         try {
-
-
+            UnicastRemoteObject.unexportObject(toServer, true);
+            UnicastRemoteObject.unexportObject(toClient, true);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

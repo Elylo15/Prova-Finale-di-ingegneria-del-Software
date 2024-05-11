@@ -9,10 +9,7 @@ import it.polimi.ingsw.protocol.messages.ServerOptionState.serverOptionMessage;
 import it.polimi.ingsw.protocol.messages.currentStateMessage;
 import it.polimi.ingsw.protocol.server.FSM.MatchState;
 import it.polimi.ingsw.protocol.server.FSM.State;
-import it.polimi.ingsw.protocol.server.RMI.MessageRegistry;
-import it.polimi.ingsw.protocol.server.RMI.MessageRegistryInterface;
-import it.polimi.ingsw.protocol.server.RMI.RemoteServer;
-import it.polimi.ingsw.protocol.server.RMI.RemoteServerInterface;
+import it.polimi.ingsw.protocol.server.RMI.*;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -33,8 +30,6 @@ public class Server implements Runnable {
 
     private ServerSocket serverSocket;
 
-    private int rmiCounter;
-
     private ThreadPoolExecutor executor;
 
     private String defaultPath;
@@ -50,7 +45,6 @@ public class Server implements Runnable {
         games = new ArrayList<>();
         defaultPath = "savedGames/";
         logCreator = new LogCreator();
-        this.rmiCounter = 0;
         this.serverRunning = false;
         this.timeoutSeconds = 2*60;
 
@@ -66,7 +60,6 @@ public class Server implements Runnable {
         this.portRMI = portRMI;
         this.games = new ArrayList<>();
         logCreator = new LogCreator();
-        this.rmiCounter = 0;
         this.serverRunning = false;
         this.timeoutSeconds = 2*60;
 
@@ -128,7 +121,7 @@ public class Server implements Runnable {
 
         // Sends status: "ServerOptionState"
 
-        connection.sendCurrentState(new currentStateMessage(null, null, "ServerOptionState", false));
+        connection.sendCurrentState(new currentStateMessage(null, null, "ServerOptionState", false, null));
 
         boolean correctResponse = false;
 
@@ -136,8 +129,16 @@ public class Server implements Runnable {
         serverOptionMessage msg = null;
 
         while(!correctResponse) {
+            ArrayList<Integer> runningGames = games.stream()
+                    .filter(game -> game.getMatchInfo().getStatus() != MatchState.Waiting && game.getMatchInfo().getStatus() != MatchState.Waiting)
+                    .map(game -> game.getMatchInfo().getID())
+                    .collect(Collectors.toCollection(ArrayList::new));
+
+            // TODO Collect all saved matches
+            ArrayList<Integer> savedMatches = null;
+
             // Requests the ServerOptionMessage
-            serverOption = executor.submit(connection::getServerOption);
+            serverOption = executor.submit(() -> connection.getServerOption(runningGames, savedMatches));
 
             // Timer
 //            Timer timer = new Timer();
@@ -204,18 +205,13 @@ public class Server implements Runnable {
     public void acceptConnectionRMI() {
         try {
             Registry registry = LocateRegistry.createRegistry(portRMI);
-            MessageRegistryInterface messageRegistry = new MessageRegistry();
-            registry.bind("MessageRegistry", messageRegistry);
-            RemoteServerInterface remoteObject = new RemoteServer(messageRegistry);
-            registry.bind("RemoteServer", remoteObject);
+            MainRemoteServer server = new MainRemoteServer();
+            registry.bind("MainServer", server);
 
             while(this.serverRunning) {
                 try {
-                    this.rmiCounter += 1;
-                    // Accept incoming client connection
-                    RemoteServerInterface client = (RemoteServerInterface) registry.lookup("RemoteServer");
-                    ClientConnection connection = new ClientRMI("RMICLient" + this.rmiCounter, "");
-                    // Handle the client connection in a new thread
+                    // Listens for new clients and returns a ClientConnection to them
+                    ClientConnection connection = server.clientConnected(registry);
                     this.executor.submit(() -> this.handleConnection(connection));
                 } catch (Exception e) {
                     logCreator.log("Error accepting client connection: " + e.getMessage());
@@ -361,7 +357,7 @@ public class Server implements Runnable {
 
     private void welcomeNewPlayer(ClientManager lobbyManager, ClientConnection connection) {
         // Sends status information
-        currentStateMessage currState = new currentStateMessage(null,null,"ConnectionState", false);
+        currentStateMessage currState = new currentStateMessage(null,null,"ConnectionState", false, null);
         connection.sendCurrentState(currState);
         logCreator.log("ConnectionState sent to" + connection.getIP() + " " + connection.getPort());
 

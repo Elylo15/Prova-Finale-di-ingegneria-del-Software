@@ -4,10 +4,9 @@ import it.polimi.ingsw.protocol.messages.Message;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.ArrayList;
 
 public class MessageExchanger extends UnicastRemoteObject implements MessageExchangerInterface {
-    private Message lastMessage;
+    private Object storedObject;
 
     private boolean receiverCanRead;
     private boolean senderCanWrite;
@@ -18,7 +17,7 @@ public class MessageExchanger extends UnicastRemoteObject implements MessageExch
       * @throws RemoteException
      */
     public MessageExchanger() throws RemoteException {
-        lastMessage = null;
+        storedObject = null;
         this.receiverCanRead = false;
         this.senderCanWrite = true;
     }
@@ -31,7 +30,7 @@ public class MessageExchanger extends UnicastRemoteObject implements MessageExch
      * @throws RemoteException
      */
     @Override
-    public synchronized void sendMessage(Message message) throws RemoteException {
+    public synchronized void write(Object message) throws RemoteException {
 
         // Wait until the receiver has read
         while(!senderCanWrite) {
@@ -44,7 +43,7 @@ public class MessageExchanger extends UnicastRemoteObject implements MessageExch
         this.receiverCanRead = false;
 
         // Overwrites the stored message
-        this.lastMessage = message;
+        this.storedObject = message;
 
         // Allows the receiver to read
         this.senderCanWrite = false;
@@ -62,7 +61,7 @@ public class MessageExchanger extends UnicastRemoteObject implements MessageExch
      * @throws RemoteException
      */
     @Override
-    public synchronized Message receiveMessage() throws RemoteException {
+    public synchronized Object read() throws RemoteException {
 
         // Wait until the sender has written
         while (!receiverCanRead) {
@@ -75,7 +74,7 @@ public class MessageExchanger extends UnicastRemoteObject implements MessageExch
         this.senderCanWrite = false;
 
         // Obtains the last message
-        Message message = this.lastMessage;
+        Object message = this.storedObject;
 
         // Allows the sender to write
         this.receiverCanRead = false;
@@ -91,5 +90,5 @@ public class MessageExchanger extends UnicastRemoteObject implements MessageExch
      * Retrieves last message. Created only for the tests.
      * @return last stored message.
      */
-    protected Message getLastMessage() {return lastMessage;}
+    protected Object getStoredObject() {return storedObject;}
 }
