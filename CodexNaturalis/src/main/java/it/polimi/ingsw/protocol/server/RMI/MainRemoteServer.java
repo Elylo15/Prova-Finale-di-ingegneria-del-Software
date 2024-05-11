@@ -2,6 +2,7 @@ package it.polimi.ingsw.protocol.server.RMI;
 
 import it.polimi.ingsw.protocol.server.ClientRMI;
 
+import java.rmi.AlreadyBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.time.LocalDateTime;
@@ -58,7 +59,7 @@ public class MainRemoteServer extends UnicastRemoteObject implements MainRemoteS
      *
      * @return the ClientRMI object
      */
-    public synchronized ClientRMI clientConnected() {
+    public synchronized ClientRMI clientConnected(int portRMI) throws RemoteException, AlreadyBoundException {
 
         // Waits a new client ro connect
         while (!this.setUpClient) {
@@ -68,7 +69,7 @@ public class MainRemoteServer extends UnicastRemoteObject implements MainRemoteS
         }
 
         // Sets up the new ClientConnection
-        ClientRMI connection = new ClientRMI(this.clientCounter, connectionNames.getLast());
+        ClientRMI connection = new ClientRMI(this.clientCounter, connectionNames.getLast(), portRMI);
         this.setUpClient = false;
 
         // Wakes up helloFromClient

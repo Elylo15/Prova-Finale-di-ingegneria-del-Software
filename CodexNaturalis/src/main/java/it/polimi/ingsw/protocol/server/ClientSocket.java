@@ -46,6 +46,10 @@ public class ClientSocket extends ClientConnection {
 
     }
 
+    /**
+     * method {@code getServerOption}: sends an empty server option message and expects an answer.
+     * @return serverOptionMessage
+     */
     @Override
     public synchronized serverOptionMessage getServerOption() {
         try {

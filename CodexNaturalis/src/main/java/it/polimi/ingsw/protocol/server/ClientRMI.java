@@ -9,9 +9,12 @@ import it.polimi.ingsw.protocol.messages.ServerOptionState.serverOptionMessage;
 import it.polimi.ingsw.protocol.messages.StaterCardState.*;
 import it.polimi.ingsw.protocol.messages.WaitingforPlayerState.*;
 import it.polimi.ingsw.protocol.messages.*;
+import it.polimi.ingsw.protocol.server.RMI.MessageExchanger;
+import it.polimi.ingsw.protocol.server.RMI.MessageExchangerInterface;
 import it.polimi.ingsw.protocol.server.RMI.RemoteServerInterface;
 
 import java.net.MalformedURLException;
+import java.rmi.AlreadyBoundException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -21,8 +24,8 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class ClientRMI extends ClientConnection {
-    private RemoteServerInterface remoteServer;
+public class ClientRMI extends ClientConnection implements Runnable{
+    private MessageExchangerInterface exchanger;
 
     /**
      * method {@code ClientRMI}: constructs a new ClientRMI
@@ -33,37 +36,33 @@ public class ClientRMI extends ClientConnection {
         super(IP, port);
     }
 
-    public ClientRMI(int rmiCounter, String lookupString) {
-        super("RMI_Client_" + rmiCounter, "rmi_port_" + rmiCounter);
-
+    public ClientRMI(int rmiCounter, String lookupString, int portRMI) throws RemoteException, AlreadyBoundException {
+        super("RMI_Client_" + rmiCounter, "no_port");
+        Registry registry = LocateRegistry.createRegistry(portRMI);
+        this.exchanger = new MessageExchanger();
+        registry.bind(lookupString, this.exchanger);
     }
 
-    @Override
-    public serverOptionMessage getServerOption() {
-        return null;
-    }
+
 
     /**
-     * method {@code run}: establishes the RMI connection by obtaining a reference to the remote server object.
+     *  Empty method, needed for executors to work
      */
     @Override
     public void run() {
 
-//        try {
-//            Registry registry = LocateRegistry.createRegistry(Integer.parseInt(getPort()));
-//            MessageRegistryInterface messageRegistry = new MessageRegistry();
-//            registry.bind("MessageRegistry", messageRegistry);
-//            RemoteServerInterface remoteObject = new RemoteServer(messageRegistry);
-//            registry.bind("RemoteServer", remoteObject);
-//
-//        } catch (Exception e) {
-//            throw new RuntimeException(e);
-//        }
+    }
 
+    /**
+     * method {@code getServerOption}: sends an empty server option message and expects an answer.
+     * @return serverOptionMessage
+     */
+    @Override
+    public serverOptionMessage getServerOption() {
         try {
-            Registry registry = LocateRegistry.getRegistry(getIP(), Integer.parseInt(getPort()));
-            remoteServer = (RemoteServerInterface) Naming.lookup("RemoteServer");
-        } catch (RemoteException | NotBoundException | MalformedURLException e) {
+            this.exchanger.sendMessage(new serverOptionMessage(false,null,null,false,null));
+            return (serverOptionMessage) this.exchanger.receiveMessage();
+        } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
     }
