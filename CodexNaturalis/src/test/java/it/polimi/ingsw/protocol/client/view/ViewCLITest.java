@@ -111,6 +111,7 @@ class ViewCLITest {
         playerArea.placeCard(testCard3,3,3,true);
 
 
+
         String[][] matrix = viewCLI.showPlayerArea(playerArea);
 
         viewCLI.showPlayerArea(playerArea);

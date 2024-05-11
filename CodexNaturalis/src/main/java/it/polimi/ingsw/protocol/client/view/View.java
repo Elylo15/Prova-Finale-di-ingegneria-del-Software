@@ -1,5 +1,7 @@
 package it.polimi.ingsw.protocol.client.view;
 
+import it.polimi.ingsw.model.CommonArea;
+import it.polimi.ingsw.model.cards.PlayerHand;
 import it.polimi.ingsw.protocol.messages.ConnectionState.*;
 import it.polimi.ingsw.protocol.messages.ServerOptionState.*;
 import it.polimi.ingsw.protocol.messages.PlayerTurnState.*;
@@ -12,6 +14,8 @@ public abstract class View {
     public View(){ }
 
     public abstract String[] askPortIP();
+    public abstract void showPlayerHand(PlayerHand playerHand);
+    public abstract void showCommonArea(CommonArea commonArea);
     public abstract void playerDisconnected();
     public abstract boolean askSocket();
     public abstract void updatePlayer(currentStateMessage message);

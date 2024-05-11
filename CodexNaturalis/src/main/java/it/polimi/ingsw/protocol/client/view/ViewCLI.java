@@ -1,8 +1,10 @@
 package it.polimi.ingsw.protocol.client.view;
 
+import it.polimi.ingsw.model.CommonArea;
 import it.polimi.ingsw.model.PlayerArea;
 import it.polimi.ingsw.model.cards.Cell;
 import it.polimi.ingsw.model.cards.PlaceableCard;
+import it.polimi.ingsw.model.cards.PlayerHand;
 import it.polimi.ingsw.protocol.messages.ConnectionState.*;
 import it.polimi.ingsw.protocol.messages.PlayerTurnState.updatePlayerMessage;
 import it.polimi.ingsw.protocol.messages.ServerOptionState.*;
@@ -33,6 +35,42 @@ public class ViewCLI extends View {
         server[1] = scanner.nextLine();
 
         return server;
+    }
+
+    /**
+     * visualize the cards the player has in his hands
+     * @param playerHand
+     */
+    public void showPlayerHand(PlayerHand playerHand){
+        ArrayList<PlaceableCard> handCards =new ArrayList<>();
+        handCards = playerHand.getPlaceableCards();
+        for (PlaceableCard card: handCards){
+            if(card.isResource()){
+                System.out.println("You have this resource card in your hand " + card.getID());
+            }
+            if(card.isGold()){
+                System.out.println("You have this gold card in your hand " + card.getID());
+            }
+
+        }
+
+    }
+
+    /**
+     * visualize the cards that are in the common table
+     * @param commonArea
+     */
+    public void showCommonArea(CommonArea commonArea){
+        ArrayList<PlaceableCard> commonCards = new ArrayList<>();
+        commonCards = commonArea.getTableCards();
+        for(PlaceableCard card : commonCards){
+            if(card.isResource()){
+                System.out.println("The common table has this resource card " + card.getID());
+            }
+            if(card.isGold()){
+                System.out.println("The common table has this gold card " + card.getID());
+            }
+        }
     }
 
     /**
@@ -119,14 +157,12 @@ public class ViewCLI extends View {
                         }
                     }
                 }
-                }
             }
+        }
 
         this.printMatrix(showArea,sizeRow+1,sizeColumn+1);
 
         return showArea;
-
-
     }
 
     /**
