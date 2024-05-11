@@ -2,18 +2,21 @@ package it.polimi.ingsw.GUI;
 
 import it.polimi.ingsw.protocol.client.view.ViewGUI;
 import javafx.fxml.FXML;
-import javafx.scene.control.ButtonType;
 
 import java.awt.*;
 
 public class InsertIPPortController {
     @FXML
     private TextField ipField;
-
     @FXML
     private TextField portField;
 
     private ViewGUI viewGUI;
+
+    public InsertIPPortController(TextField ipField, TextField portField) {
+        this.ipField = ipField;
+        this.portField = portField;
+    }
 
     public void setViewGUI(ViewGUI viewGUI) {
         this.viewGUI = viewGUI;

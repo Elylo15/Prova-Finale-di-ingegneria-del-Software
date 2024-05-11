@@ -1,5 +1,6 @@
 package it.polimi.ingsw.protocol.client.view;
 
+import it.polimi.ingsw.GUI.ChooseSocketRMIController;
 import it.polimi.ingsw.GUI.InsertIPPortController;
 import it.polimi.ingsw.model.CommonArea;
 import it.polimi.ingsw.model.cards.PlayerHand;
@@ -33,39 +34,47 @@ public class ViewGUI extends View {
     }
 
     @Override
-    public void playerDisconnected() {
+    public String[] askPortIP(){
+        String[] server = new String[2];
+        try{
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/it/polimi/ingsw/GUI/Insert_IP_PORT.fxml"));
+            Parent root = loader.load();
+
+            InsertIPPortController controller = loader.getController();
+            controller.setViewGUI(this);
+
+            server[0] = controller.getIp();
+            server[1] = controller.getPort();
+
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+        return server;
+    }
+
+    public boolean askSocket(){//true if socket, false if RMI
+        try{
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/it/polimi/ingsw/GUI/ChooseSocketRMI.fxml"));
+            Parent root = loader.load();
+
+            ChooseSocketRMIController controller = loader.getController();
+            controller.setViewGUI(this);
+
+            return controller.useSocket();
+
+    } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+        @Override
+    public void updatePlayer(currentStateMessage message) {
 
     }
 
-    public boolean askSocket(){
-        AtomicBoolean useSocket = new AtomicBoolean(false);
-        Button socketButton = new Button("Use Sockets");
-        Button rmiButton = new Button("Use RMI");
-
-        VBox root = new VBox(20);
-        root.setAlignment(Pos.CENTER);
-        root.getChildren().addAll(socketButton, rmiButton);
-
-        Scene scene = new Scene(root, 300, 200);
-
-        stage.setTitle("Choose Connection Method");
-        stage.setScene(scene);
-        stage.show();
-
-        socketButton.setOnAction(e -> {
-            useSocket.set(true);
-            stage.close();
-
-        });
-        rmiButton.setOnAction(e -> {
-            useSocket.set(false);
-            stage.close();
-        });
-        return useSocket.get();
-    }
 
     @Override
-    public void updatePlayer(currentStateMessage message) {
+    public void playerDisconnected() {
 
     }
 
@@ -159,25 +168,6 @@ public class ViewGUI extends View {
             stage.close();
         });
         return useGUI.get();
-    }
-
-    @Override
-    public String[] askPortIP(){
-        String[] server = new String[2];
-        try{
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/it/polimi/ingsw/GUI/Insert_IP_PORT.fxml"));
-            Parent root = loader.load();
-
-            InsertIPPortController controller = loader.getController();
-            controller.setViewGUI(this);
-
-            server[0] = controller.getIp();
-            server[1] = controller.getPort();
-
-        }catch (IOException e){
-            e.printStackTrace();
-        }
-        return server;
     }
 
     @Override
