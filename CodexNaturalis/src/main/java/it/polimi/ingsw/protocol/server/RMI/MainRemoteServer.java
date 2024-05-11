@@ -9,8 +9,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 /**
- * The MainRemoteServer class represents the RMI server that manages client connections
- * and provides methods for clients to interact with the server.
+ * RMI server that manages client connections and provides methods for clients to establish a new connection with the server.
  */
 public class MainRemoteServer extends UnicastRemoteObject implements MainRemoteServerInterface, Runnable {
     private ArrayList<String> connectionNames;

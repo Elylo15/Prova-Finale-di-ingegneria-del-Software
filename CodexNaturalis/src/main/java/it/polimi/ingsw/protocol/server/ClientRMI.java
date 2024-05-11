@@ -33,6 +33,11 @@ public class ClientRMI extends ClientConnection {
         super(IP, port);
     }
 
+    public ClientRMI(int rmiCounter, String lookupString) {
+        super("RMI_Client_" + rmiCounter, "rmi_port_" + rmiCounter);
+
+    }
+
     @Override
     public serverOptionMessage getServerOption() {
         return null;
