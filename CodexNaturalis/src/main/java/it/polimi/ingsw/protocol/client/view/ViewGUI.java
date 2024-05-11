@@ -1,5 +1,6 @@
 package it.polimi.ingsw.protocol.client.view;
 
+import it.polimi.ingsw.GUI.InsertIPPortController;
 import it.polimi.ingsw.model.CommonArea;
 import it.polimi.ingsw.model.cards.PlayerHand;
 import it.polimi.ingsw.protocol.messages.ConnectionState.availableColorsMessage;
@@ -11,15 +12,17 @@ import it.polimi.ingsw.protocol.messages.ServerOptionState.serverOptionMessage;
 import it.polimi.ingsw.protocol.messages.ServerOptionState.serverOptionResponseMessage;
 import it.polimi.ingsw.protocol.messages.currentStateMessage;
 import it.polimi.ingsw.protocol.messages.responseMessage;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
+
 
 public class ViewGUI extends View {
     private final Stage stage;
@@ -158,36 +161,23 @@ public class ViewGUI extends View {
         return useGUI.get();
     }
 
+    @Override
     public String[] askPortIP(){
-        final AtomicReference<String[]> server = new AtomicReference<>();
+        String[] server = new String[2];
+        try{
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/it/polimi/ingsw/GUI/Insert_IP_PORT.fxml"));
+            Parent root = loader.load();
 
-        TextField ipTextField = new TextField();
-        ipTextField.setPromptText("Enter Server IP");
+            InsertIPPortController controller = loader.getController();
+            controller.setViewGUI(this);
 
-        TextField portTextField = new TextField();
-        portTextField.setPromptText("Enter Server Port");
+            server[0] = controller.getIp();
+            server[1] = controller.getPort();
 
-        Button submitButton = new Button("Submit");
-
-        VBox root = new VBox(20);
-        root.setAlignment(Pos.CENTER);
-        root.getChildren().addAll(ipTextField, portTextField, submitButton);
-
-        Scene scene = new Scene(root, 300, 200);
-
-        stage.setTitle("Enter Server IP and Port");
-        stage.setScene(scene);
-        stage.show();
-
-        submitButton.setOnAction(e -> {
-            String ip = ipTextField.getText();
-            String port = portTextField.getText();
-            server.set(new String[]{ip, port});
-
-            stage.close();
-        });
-
-        return server.get();
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+        return server;
     }
 
     @Override
