@@ -1,7 +1,9 @@
 package it.polimi.ingsw.protocol.server;
 
+import it.polimi.ingsw.model.CommonArea;
 import it.polimi.ingsw.model.Match;
 import it.polimi.ingsw.model.Player;
+import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.protocol.messages.ConnectionState.connectionResponseMessage;
 import it.polimi.ingsw.protocol.messages.ServerOptionState.serverOptionMessage;
 import it.polimi.ingsw.protocol.messages.currentStateMessage;

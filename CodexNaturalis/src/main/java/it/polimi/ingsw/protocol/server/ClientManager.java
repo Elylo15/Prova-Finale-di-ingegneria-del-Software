@@ -1,7 +1,9 @@
 package it.polimi.ingsw.protocol.server;
 
+import it.polimi.ingsw.model.CommonArea;
 import it.polimi.ingsw.model.Match;
 import it.polimi.ingsw.model.Player;
+import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.cards.PlaceableCard;
 import it.polimi.ingsw.protocol.messages.ObjectiveState.objectiveCardMessage;
 import it.polimi.ingsw.protocol.messages.PlayerTurnState.pickCardMessage;
@@ -9,13 +11,13 @@ import it.polimi.ingsw.protocol.messages.PlayerTurnState.placeCardMessage;
 import it.polimi.ingsw.protocol.messages.PlayerTurnState.updatePlayerMessage;
 import it.polimi.ingsw.protocol.messages.StaterCardState.starterCardMessage;
 import it.polimi.ingsw.protocol.messages.WaitingforPlayerState.expectedPlayersMessage;
-import it.polimi.ingsw.protocol.messages.WaitingforPlayerState.newHostMessage;
 import it.polimi.ingsw.protocol.messages.currentStateMessage;
 import it.polimi.ingsw.protocol.server.FSM.MatchState;
 import it.polimi.ingsw.protocol.server.FSM.State;
 
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.stream.Collectors;
 
 public class ClientManager implements Runnable{
     private MatchInfo matchInfo;
@@ -67,7 +69,7 @@ public class ClientManager implements Runnable{
         }
     }
 
-
+    // TODO update this part for FA
     private void kickPlayer(PlayerInfo playerInfo) {
         this.playersInfo.remove(playerInfo);
         playerInfo.getConnection().closeConnection();
@@ -198,7 +200,7 @@ public class ClientManager implements Runnable{
                     this.endgame();
                 }
                 case KickingPlayers -> {
-                    this.kickPlayers();
+                    this.kickingPlayers();
                     gameOver = true;
                 }
             }
@@ -220,20 +222,13 @@ public class ClientManager implements Runnable{
     private void waiting() {
         logCreator.log("Waiting for players");
 
-        // REMOVE THIS
-        System.out.println("Waiting for players");
-
         // Obtains the number of expected players for this match
-
         while(this.matchInfo.getExpectedPlayers() == null ) {
 
             synchronized(this) {
                 // Waiting for the first player that will be indicated as the "host"
                 while (this.playersInfo.isEmpty()) {
                     try{
-                        // REMOVE THIS
-                        System.out.println("Waiting for first player to join");
-
                         this.wait();
                     } catch (InterruptedException ignore) {
                         logCreator.log("Waiting for first player, InterruptedException received and ignored.");
@@ -241,17 +236,11 @@ public class ClientManager implements Runnable{
                 }
             }
 
-            // REMOVE THIS
-            System.out.println("First player joined");
-
             // preventing new player from joining at this moment and not getting all messages correctly
             synchronized(this) {
 
 
                 PlayerInfo host = this.playersInfo.getFirst();
-
-                // REMOVE THIS
-                System.out.println("First player logged: " + host.getPlayer().getNickname() + " " + host.getConnection().getPort());
 
                 if(host != null) {
                     // Sends current state data
@@ -360,7 +349,7 @@ public class ClientManager implements Runnable{
                 logCreator.log("Player " + player.getNickname() + " has to place the starter card");
                 // Draw a StarterCard if player has none in hand
                 if(playerInfo.getPlayer().getPlayerHand().getPlaceableCards().stream().
-                        anyMatch(PlaceableCard::isStarter))
+                        noneMatch(PlaceableCard::isStarter))
                     playerInfo.getPlayer().drawStarter();
 
                 // Sends current state messages to all clients
@@ -372,36 +361,66 @@ public class ClientManager implements Runnable{
                 // Obtains side of the starter card
                 boolean correctAnswer = false;
                 while(!correctAnswer) {
+                    // REMOVE THESE
+                    CommonArea area = this.matchInfo.getMatch().getCommonArea();
+                    System.out.println("Deck 1: " + area.getD1().getList().stream().map(Card::getID).collect(Collectors.toCollection(ArrayList::new)));
+                    System.out.println("Deck 2: " + area.getD2().getList().stream().map(Card::getID).collect(Collectors.toCollection(ArrayList::new)));
+                    System.out.println("Deck 3: " + area.getD3().getList().stream().map(Card::getID).collect(Collectors.toCollection(ArrayList::new)));
+                    System.out.println("Deck 4: " + area.getD4().getList().stream().map(Card::getID).collect(Collectors.toCollection(ArrayList::new)));
+
+
                     Future<starterCardMessage> future = executor.submit(() -> playerInfo.getConnection().getStaterCard());
-                    Timer timer = startKickTimer(playerInfo, future);
+//                    Timer timer = startKickTimer(playerInfo, future);
                     starterCardMessage starter = null;
 
                     // REMOVE THIS
                     System.out.println("Waiting for starter card from " + playerInfo.getPlayer().getNickname());
 
                     try {
-                        starter = future.get();
-                        timer.cancel();
+                        starter = future.get(this.timeout, TimeUnit.MILLISECONDS);
+//                        timer.cancel();
                     } catch (Exception e) {
                         logCreator.log("Player " + player.getNickname() + " has not answered");
+                        this.kickPlayer(playerInfo);
                     }
 
+                    System.out.println("Starter " + player.getPlayerHand().getPlaceableCards().stream().map(Card::getID).collect(Collectors.toCollection(ArrayList::new)) +" fetched card from " + playerInfo.getPlayer().getNickname());
+                    System.out.println("Answer: " + starter);
+
                     if(starter != null) {
+
+                        System.out.println("Answer side: " + starter.getSide());
+                        System.out.println("Answer noResponse: " + starter.isNoResponse());
                         // Checks if the client has properly given a response
                         if(starter.isNoResponse()) {
                             correctAnswer = true;
-                            this.kickPlayers();
+                            logCreator.log("Player " + player.getNickname() + " has not answered");
+                            this.kickPlayer(playerInfo);
                         } else {
                             // Checks if the answer is valid
                              if(starter.getSide() == 0 || starter.getSide() == 1) {
+
+                                 System.out.println("Placing Starter Card");
+
                                  playerInfo.getPlayer().placeStarter(starter.getSide());
+
+                                 System.out.println("Starter Card Placed");
+
                                  correctAnswer = true;
                                  playerInfo.getConnection().sendAnswer(true);
+
+                                 System.out.println("Answer sent");
+
                                  logCreator.log("Player " + player.getNickname() + " has correctly answered");
                              } else {
                                  playerInfo.getConnection().sendAnswer(false);
                                  logCreator.log("Player " + player.getNickname() + " has not answered correctly");
                              }
+                        }
+                    } else {
+                        if(this.playersInfo.contains(playerInfo)) {
+                            logCreator.log("Player " + player.getNickname() + " wanted to place a null card");
+                            this.kickPlayer(playerInfo);
                         }
                     }
                 }
@@ -769,7 +788,7 @@ public class ClientManager implements Runnable{
         this.saveMatch();
     }
 
-    private void kickPlayers() {
+    private void kickingPlayers() {
         logCreator.log("Kicking out all players");
         this.playersInfo.forEach(this::kickPlayer);
     }
