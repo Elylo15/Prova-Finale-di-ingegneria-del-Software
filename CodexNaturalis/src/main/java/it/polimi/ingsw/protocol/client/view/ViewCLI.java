@@ -477,9 +477,16 @@ public class ViewCLI extends View {
 
         }
 
+    /**
+     * visualize playerHand, cards in the commonArea and the playerArea
+     * @param update
+     */
     @Override
     public void update(updatePlayerMessage update) {
-
+           this.showPlayerHand(update.getPlayer().getPlayerHand());
+           this.showCommonArea(update.getPlayer().getCommonArea());
+           System.out.println("This is your play area: ");
+           this.showPlayerArea(update.getPlayer().getPlayerArea());
     }
 
 

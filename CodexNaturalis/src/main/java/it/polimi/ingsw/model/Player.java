@@ -242,4 +242,8 @@ public class  Player implements Serializable {
         this.color = newColor;
     }
 
+    public CommonArea getCommonArea(){
+        return commonArea;
+    }
+
 }
