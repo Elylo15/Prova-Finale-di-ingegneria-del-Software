@@ -121,7 +121,7 @@ public class Server implements Runnable {
 
         // Sends status: "ServerOptionState"
 
-        connection.sendCurrentState(new currentStateMessage(null, null, "ServerOptionState", false, null));
+        connection.sendCurrentState(new currentStateMessage(null, null, "ServerOptionState", false, null, null));
 
         boolean correctResponse = false;
 
@@ -357,7 +357,7 @@ public class Server implements Runnable {
 
     private void welcomeNewPlayer(ClientManager lobbyManager, ClientConnection connection) {
         // Sends status information
-        currentStateMessage currState = new currentStateMessage(null,null,"ConnectionState", false, null);
+        currentStateMessage currState = new currentStateMessage(null,null,"ConnectionState", false, null, null);
         connection.sendCurrentState(currState);
         logCreator.log("ConnectionState sent to" + connection.getIP() + " " + connection.getPort());
 

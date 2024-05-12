@@ -1,5 +1,7 @@
 package it.polimi.ingsw.model.cards.enumeration;
 
-public enum Reign {
+import java.io.Serializable;
+
+public enum Reign implements Serializable {
     Fungus, Insect, Animal, Plant
 }

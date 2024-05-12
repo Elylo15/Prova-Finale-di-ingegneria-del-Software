@@ -14,7 +14,7 @@ public abstract class View {
     public View(){ }
 
     public abstract String[] askPortIP();
-    public abstract void showPlayerHand(PlayerHand playerHand);
+    public abstract void showPlayerHand(currentStateMessage message);
     public abstract void showCommonArea(CommonArea commonArea);
     public abstract void playerDisconnected();
     public abstract boolean askSocket();

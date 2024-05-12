@@ -1,6 +1,8 @@
 package it.polimi.ingsw.model.cards.exceptions;
 
-public class noPlaceCardException extends Exception{
+import java.io.Serializable;
+
+public class noPlaceCardException extends Exception implements Serializable {
     public noPlaceCardException() {
         super();
     }
