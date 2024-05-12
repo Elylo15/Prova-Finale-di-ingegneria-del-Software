@@ -10,6 +10,7 @@ import it.polimi.ingsw.protocol.messages.ServerOptionState.*;
 import it.polimi.ingsw.protocol.messages.WaitingforPlayerState.*;
 
 import java.util.*;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicIntegerArray;
 
 public class Client {
@@ -17,6 +18,7 @@ public class Client {
     private String serverPort;
     private Controller controller;
     private final View view;
+    private ThreadPoolExecutor executor;
 
     /**
      * method {@code Client}: constructs a new Client
@@ -24,6 +26,12 @@ public class Client {
      */
     public Client(View view) {
         this.view = view;
+
+        int corePoolSize = 5;
+        int maximumPoolSize = 200;
+        long keepAliveTime = 300;
+        TimeUnit unit = TimeUnit.SECONDS;
+        executor = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, unit, new LinkedBlockingQueue<Runnable>());
     }
 
     /**
@@ -129,7 +137,9 @@ public class Client {
             }
         } catch (Exception e) {
             view.playerDisconnected();
-            run();
+
+            System.out.println("\nERROR: " + e.getMessage() + "\n");
+            // run();
         }
     }
 
@@ -186,6 +196,9 @@ public class Client {
         }
     }
 
+
+
+
     /**
      * method {@code color}: invocations of controller methods to receive availableColorsMessage.
      * Invocations of view methods to display and receive player's info.
@@ -193,34 +206,33 @@ public class Client {
      * invocations of controller methods to receive responseMessage. If responseMessage is correct, the loop ends.
      */
     private void waitingPlayer(currentStateMessage current) {
-        int[] expected = new int[1];
-        final boolean[] noResponse = {false};
-
-        Timer timer = new Timer();
+        Integer expected;
+        boolean noResponse = false;
 
         newHostMessage newHost = controller.newHost();
 
         while (Objects.equals(newHost.getNewHostNickname(), current.getPlayer().getNickname())) {
-            TimerTask task = new TimerTask() {
-                public void run() {
-                    expected[0] = 1000;
-                    noResponse[0] = true;
-                }
-            };
+            Future<Integer> future = executor.submit(view::expectedPlayers);
 
-            timer.schedule(task, 240000); //2 min
+            try {
+                expected = future.get(120, TimeUnit.SECONDS);
+            } catch (Exception e) {
+                expected = 1000;
+                noResponse = true;
+            }
 
-            expected[0] = view.expectedPlayers();
-            timer.cancel();
-            controller.expectedPlayers(expected[0], noResponse[0]);
+            controller.expectedPlayers(expected, noResponse);
             responseMessage answer = controller.correctAnswer();
             view.answer(answer);
             if(answer.getCorrect())
                 break;
         }
 
-        timer.cancel();
     }
+
+
+
+
 
     /**
      * method {@code starter}: invocations of controller methods to receive and send messages.
@@ -229,32 +241,29 @@ public class Client {
      * invocations of controller methods to receive responseMessage. If responseMessage is correct, the loop ends.
      */
     private void starter() {
-        final int[] side = new int[1];
-        final boolean[] noResponse = {false};
-        Timer timer = new Timer();
+        Integer side;
+        boolean noResponse = false;
 
         while (true) {
-            TimerTask task = new TimerTask() {
-                public void run() {
-                    side[0] = 1000;
-                    noResponse[0] = true;
+            Future<Integer> future = executor.submit(view::placeStarter);
 
-                }
-            };
+            try {
+                side = future.get(120, TimeUnit.SECONDS);
+            } catch (Exception e) {
+                side = 1000;
+                noResponse = true;
+            }
 
-            timer.schedule(task, 240000); //2 min
-
-            side[0] = view.placeStarter();
-            timer.cancel();
-            controller.placeStarter(side[0], noResponse[0]);
+            controller.placeStarter(side, noResponse);
             responseMessage answer = controller.correctAnswer();
+
             view.answer(answer);
             if(answer.getCorrect())
                 break;
         }
-
-        timer.cancel();
     }
+
+
 
     /**
      * method {@code pickObjective}: invocations of controller methods to receive and send messages.
@@ -263,31 +272,29 @@ public class Client {
      * invocations of controller methods to receive responseMessage. If responseMessage is correct, the loop ends.
      */
     private void pickObjective() {
-        final int[] pick = new int[1];
-        final boolean[] noResponse = {false};
-        Timer timer = new Timer();
+        Integer pick;
+        boolean noResponse = false;
 
         while (true) {
-            TimerTask task = new TimerTask() {
-                public void run() {
-                    pick[0] = 1000;
-                    noResponse[0] = true;
-                }
-            };
+            Future<Integer> future = executor.submit(view::chooseObjective);
 
-            timer.schedule(task, 240000); //2 min
+            try {
+                pick = future.get(120, TimeUnit.SECONDS);
+            } catch (Exception e) {
+                pick = 1000;
+                noResponse = true;
+            }
 
-            pick[0] = view.chooseObjective();
-            timer.cancel();
-            controller.chooseObjective(pick[0], noResponse[0]);
+            controller.chooseObjective(pick, noResponse);
             responseMessage answer = controller.correctAnswer();
             view.answer(answer);
             if(answer.getCorrect())
                 break;
         }
 
-        timer.cancel();
     }
+
+
 
     /**
      * method {@code pickCard}: invocations of controller methods to receive and send messages.
@@ -296,31 +303,70 @@ public class Client {
      * invocations of controller methods to receive responseMessage. If responseMessage is correct, the loop ends.
      */
     private void pickCard() {
-        final int[] card = new int[1];
-        final boolean[] noResponse = {false};
-        Timer timer = new Timer();
+        Integer card;
+        boolean noResponse = false;
 
         while (true) {
-            TimerTask task = new TimerTask() {
-                public void run() {
-                    card[0] = 1000;
-                    noResponse[0] = true;
-                }
-            };
+            Future<Integer> future = executor.submit(view::pickCard);
 
-            timer.schedule(task, 240000); //2 min
+            try {
+                card = future.get(120, TimeUnit.SECONDS);
+            } catch (Exception e) {
+               card = 1000;
+               noResponse = true;
+            }
 
-            card[0] = view.pickCard();
-            timer.cancel();
-            controller.pickCard(card[0], noResponse[0]);
+            controller.pickCard(card, noResponse);
             responseMessage answer = controller.correctAnswer();
             view.answer(answer);
             if(answer.getCorrect())
                 break;
         }
-
-        timer.cancel();
     }
+
+
+
+
+//    /**
+//     * method {@code placeCard}: invocations of controller methods to receive and send messages.
+//     * Invocations of view methods to display and receive player's info.
+//     * invocations of controller methods to send received info.
+//     * invocations of controller methods to receive responseMessage. If responseMessage is correct, the loop ends.
+//     */
+//    private void placeCard() {
+//        AtomicIntegerArray card = new AtomicIntegerArray(4);
+//        final boolean[] noResponse = {false};
+//        Timer timer = new Timer();
+//
+//        while (true) {
+//            TimerTask task = new TimerTask() {
+//                public void run() {
+//                    card.set(0, 1000);
+//                    card.set(1, 1000);
+//                    card.set(2, 1000);
+//                    card.set(3, 1000);
+//                    noResponse[0] = true;
+//                }
+//            };
+//
+//            timer.schedule(task, 240000); //2 min
+//
+//            int[] cardArray = view.placeCard();
+//            card.set(0, cardArray[0]);
+//            card.set(1, cardArray[1]);
+//            card.set(2, cardArray[2]);
+//            card.set(3, cardArray[3]);
+//            timer.cancel();
+//            controller.placeCard(card.get(0), card.get(1), card.get(2), card.get(3), noResponse[0]);
+//            responseMessage answer = controller.correctAnswer();
+//            view.answer(answer);
+//            if(answer.getCorrect())
+//                break;
+//        }
+//
+//        timer.cancel();
+//    }
+
 
     /**
      * method {@code placeCard}: invocations of controller methods to receive and send messages.
@@ -330,36 +376,31 @@ public class Client {
      */
     private void placeCard() {
         AtomicIntegerArray card = new AtomicIntegerArray(4);
-        final boolean[] noResponse = {false};
-        Timer timer = new Timer();
+        boolean noResponse = false;
 
         while (true) {
-            TimerTask task = new TimerTask() {
-                public void run() {
-                    card.set(0, 1000);
-                    card.set(1, 1000);
-                    card.set(2, 1000);
-                    card.set(3, 1000);
-                    noResponse[0] = true;
-                }
-            };
+            Future<int[]> future = executor.submit(view::placeCard);
 
-            timer.schedule(task, 240000); //2 min
+            try {
+                int[] cardArray = future.get(240, TimeUnit.SECONDS);
+                card.set(0, cardArray[0]);
+                card.set(1, cardArray[1]);
+                card.set(2, cardArray[2]);
+                card.set(3, cardArray[3]);
+            } catch (Exception e) {
+                card.set(0, 1000);
+                card.set(1, 1000);
+                card.set(2, 1000);
+                card.set(3, 1000);
+                noResponse = true;
+            }
 
-            int[] cardArray = view.placeCard();
-            card.set(0, cardArray[0]);
-            card.set(1, cardArray[1]);
-            card.set(2, cardArray[2]);
-            card.set(3, cardArray[3]);
-            timer.cancel();
-            controller.placeCard(card.get(0), card.get(1), card.get(2), card.get(3), noResponse[0]);
+            controller.placeCard(card.get(0), card.get(1), card.get(2), card.get(3), noResponse);
             responseMessage answer = controller.correctAnswer();
             view.answer(answer);
             if(answer.getCorrect())
                 break;
         }
-
-        timer.cancel();
     }
 
     /**

@@ -208,12 +208,14 @@ public class ClientSocket extends ClientConnection {
      */
     @Override
     public synchronized objectiveCardMessage getChosenObjective(ObjectiveCard[] objectiveCards){
-        try {
-            outputStream.writeObject(objectiveCards);
-            outputStream.flush();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+
+        // USE THIS LATER
+//        try {
+//            outputStream.writeObject(objectiveCards);
+//            outputStream.flush();
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
         try {
             return (objectiveCardMessage) inputStream.readObject();
         } catch (IOException | ClassNotFoundException e) {

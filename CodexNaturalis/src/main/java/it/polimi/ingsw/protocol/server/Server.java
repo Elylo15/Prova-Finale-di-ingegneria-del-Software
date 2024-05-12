@@ -363,14 +363,14 @@ public class Server implements Runnable {
 
         // Obtains unavailable names
         ArrayList<String> unavailableNames = lobbyManager.getPlayersInfo().stream()
-                .map(playerInfo -> playerInfo.getPlayer().getNickname())
+                .map(playerInfo -> playerInfo.getPlayer().getNickname().toLowerCase())
                 .collect(Collectors.toCollection(ArrayList::new));
 
         if(lobbyManager.getMatchInfo().getExpectedPlayers() != null && unavailableNames.size() >= lobbyManager.getMatchInfo().getExpectedPlayers())
             connection.closeConnection();
 
         // Asks for the new player name
-        String name = connection.getName(unavailableNames).getName();
+        String name = connection.getName(unavailableNames).getName().toLowerCase();
         if(unavailableNames.contains(name))
             connection.sendAnswer(false);
         else
@@ -378,7 +378,7 @@ public class Server implements Runnable {
 
         // Asks again until it is a valid name
         while(unavailableNames.contains(name)) {
-            name = connection.getName(unavailableNames).getName();
+            name = connection.getName(unavailableNames).getName().toLowerCase();
             if(unavailableNames.contains(name))
                 connection.sendAnswer(false);
             else
@@ -389,32 +389,32 @@ public class Server implements Runnable {
 
         // Obtains unavailable colors
         ArrayList<String> unavailableColors = lobbyManager.getPlayersInfo().stream()
-                .map(playerInfo -> playerInfo.getPlayer().getColor())
+                .map(playerInfo -> playerInfo.getPlayer().getColor().toLowerCase())
                 .collect(Collectors.toCollection(ArrayList::new));
 
         if(unavailableColors.size() >= 4)
             connection.closeConnection();
 
         ArrayList<String> availableColors = new ArrayList<>();
-        if(!unavailableColors.contains("Blue"))
-            availableColors.add("Blue");
-        if(!unavailableColors.contains("Red"))
-            availableColors.add("Red");
-        if(!unavailableColors.contains("Green"))
-            availableColors.add("Green");
-        if(!unavailableColors.contains("Yellow"))
-            availableColors.add("Yellow");
+        if(!unavailableColors.contains("blue"))
+            availableColors.add("blue");
+        if(!unavailableColors.contains("red"))
+            availableColors.add("red");
+        if(!unavailableColors.contains("green"))
+            availableColors.add("green");
+        if(!unavailableColors.contains("yellow"))
+            availableColors.add("yellow");
 
         // Asks for the player color
         if(availableColors.isEmpty()) {
             connection.closeConnection();
             logCreator.log("Client socket " + connection.getIP() + " " + connection.getPort() + " closed connection");
         }
-        String color = connection.getColor(availableColors).getColor();
+        String color = connection.getColor(availableColors).getColor().toLowerCase();
         connection.sendAnswer(availableColors.contains(color));
         // Asks again until it is a valid color
         while(!availableColors.contains(color)) {
-            color = connection.getColor(availableColors).getColor();
+            color = connection.getColor(availableColors).getColor().toLowerCase();
             connection.sendAnswer(availableColors.contains(color));
         }
 
