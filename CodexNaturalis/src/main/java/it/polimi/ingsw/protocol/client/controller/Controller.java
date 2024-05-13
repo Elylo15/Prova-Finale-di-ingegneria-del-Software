@@ -1,13 +1,17 @@
 package it.polimi.ingsw.protocol.client.controller;
 
+import it.polimi.ingsw.model.*;
+import it.polimi.ingsw.model.cards.ObjectiveCard;
 import it.polimi.ingsw.protocol.messages.*;
 import it.polimi.ingsw.protocol.messages.ConnectionState.*;
 import it.polimi.ingsw.protocol.messages.EndGameState.*;
+import it.polimi.ingsw.protocol.messages.ObjectiveState.objectiveCardMessage;
 import it.polimi.ingsw.protocol.messages.PlayerTurnState.updatePlayerMessage;
 import it.polimi.ingsw.protocol.messages.ServerOptionState.*;
 import it.polimi.ingsw.protocol.messages.WaitingforPlayerState.*;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 
 /**
  * Controller is an abstract class. The methods of the Controller will be implemented
@@ -35,6 +39,7 @@ public abstract class Controller {
     public abstract newHostMessage newHost();
     public abstract void expectedPlayers(int expected, boolean noResponse);
     public abstract void placeStarter(int side, boolean noResponse);
+    public abstract objectiveCardMessage getObjectiveCards();
     public abstract void chooseObjective(int pick, boolean noResponse);
     public abstract void placeCard(int card, int side, int x, int y, boolean noResponse);
     public abstract void pickCard(int card, boolean noResponse);

@@ -208,6 +208,18 @@ public class ControllerRMI extends Controller {
     }
 
     /**
+     * @return
+     */
+    @Override
+    public objectiveCardMessage getObjectiveCards() {
+        try {
+            return (objectiveCardMessage) toClient.read();
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
      *  method {@code chooseObjective}: sends a objectiveCardMessage
      * @param pick: int
      * @param noResponse: boolean

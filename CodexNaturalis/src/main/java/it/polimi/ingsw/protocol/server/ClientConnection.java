@@ -57,10 +57,14 @@ public abstract class ClientConnection implements Runnable {
     public abstract chosenColorMessage getColor(ArrayList<String> availableColors);
     public abstract void sendCurrentState(currentStateMessage currentState);
     public abstract starterCardMessage getStaterCard();
-    public abstract objectiveCardMessage getChosenObjective(ObjectiveCard[] objectiveCards);
+    public abstract objectiveCardMessage getChosenObjective(ArrayList<ObjectiveCard> objectiveCards);
     public abstract placeCardMessage getPlaceCard();
     public abstract pickCardMessage getChosenPick();
     public abstract void sendEndGame(HashMap<String, Integer> score, HashMap<String, Integer> numberOfObjectives);
     public abstract void sendUpdatePlayer(updatePlayerMessage updateMessage);
     public abstract void closeConnection();
+
+    // REMOVE THIS METHOD
+    public void sendPlayerInfo(PlayerInfo playerInfo) {}
+
 }

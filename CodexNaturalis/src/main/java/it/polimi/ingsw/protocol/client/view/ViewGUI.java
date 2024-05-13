@@ -3,6 +3,7 @@ package it.polimi.ingsw.protocol.client.view;
 import it.polimi.ingsw.GUI.ChooseConnection.ChooseSocketRMIController;
 import it.polimi.ingsw.GUI.IP_PORT.InsertIPPortController;
 import it.polimi.ingsw.model.CommonArea;
+import it.polimi.ingsw.model.cards.ObjectiveCard;
 import it.polimi.ingsw.protocol.messages.ConnectionState.availableColorsMessage;
 import it.polimi.ingsw.protocol.messages.ConnectionState.connectionResponseMessage;
 import it.polimi.ingsw.protocol.messages.ConnectionState.unavailableNamesMessage;
@@ -18,6 +19,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 
 public class ViewGUI extends View {
@@ -125,10 +127,12 @@ public class ViewGUI extends View {
         return 0;
     }
 
+
     @Override
-    public int chooseObjective() {
+    public int chooseObjective(ArrayList<ObjectiveCard> objectives) {
         return 0;
     }
+
 
     @Override
     public int[] placeCard() {

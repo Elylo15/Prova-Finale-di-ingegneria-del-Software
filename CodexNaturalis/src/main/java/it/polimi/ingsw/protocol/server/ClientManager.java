@@ -1,13 +1,9 @@
 package it.polimi.ingsw.protocol.server;
 
-import it.polimi.ingsw.model.CommonArea;
 import it.polimi.ingsw.model.Match;
 import it.polimi.ingsw.model.Player;
-import it.polimi.ingsw.model.PlayerArea;
-import it.polimi.ingsw.model.cards.Card;
-import it.polimi.ingsw.model.cards.Cell;
+import it.polimi.ingsw.model.cards.ObjectiveCard;
 import it.polimi.ingsw.model.cards.PlaceableCard;
-import it.polimi.ingsw.model.cards.PlayerHand;
 import it.polimi.ingsw.protocol.messages.ObjectiveState.objectiveCardMessage;
 import it.polimi.ingsw.protocol.messages.PlayerTurnState.pickCardMessage;
 import it.polimi.ingsw.protocol.messages.PlayerTurnState.placeCardMessage;
@@ -422,9 +418,13 @@ public class ClientManager implements Runnable{
                     playerInfo1.getConnection().sendCurrentState(currState);
                 }
 
-                // REMOVE THIS
-                this.showPlayerStatus(new currentStateMessage(player, player, "StarterCardState", this.matchInfo.isLastTurn(), this.onlinePlayers(), null));
+//                currentStateMessage curr = new currentStateMessage(player, playerInfo.getPlayer(), "StarterCardState", this.matchInfo.isLastTurn(), this.onlinePlayers(), null);
+//                CurrentStatePrinter printer = new CurrentStatePrinter();
+//                printer.printCurrentState(curr);
+//                printer.printCurrentPlayer();
 
+                // REMOVE THIS
+                System.out.println("PlayerHand: " + playerInfo.getPlayer().getPlayerHand().toString());
 
                 // Obtains side of the starter card
                 boolean correctAnswer = false;
@@ -509,10 +509,6 @@ public class ClientManager implements Runnable{
             case Objective -> {
                 logCreator.log("Player " + player.getNickname() + " has to choose an objective");
 
-                // REMOVE THIS
-                this.showPlayerStatus(new currentStateMessage(player, player, "ObjectiveState", this.matchInfo.isLastTurn(), this.onlinePlayers(), null));
-
-
 
                 // Draw two objective cards if there are none
                 if(playerInfo.getSavedObjectives() == null)
@@ -526,7 +522,8 @@ public class ClientManager implements Runnable{
 
                 boolean correctAnswer = false;
                 while(!correctAnswer) {
-                    Future<objectiveCardMessage> future = executor.submit(() -> playerInfo.getConnection().getChosenObjective(playerInfo.getSavedObjectives()));
+                    ArrayList<ObjectiveCard> objectives = new ArrayList<>(Arrays.asList(playerInfo.getSavedObjectives()));
+                    Future<objectiveCardMessage> future = executor.submit(() -> playerInfo.getConnection().getChosenObjective(objectives));
 //                    Timer timer = startKickTimer(playerInfo, future);
                     objectiveCardMessage objective = null;
 
@@ -596,8 +593,6 @@ public class ClientManager implements Runnable{
                     playerInfo1.getConnection().sendCurrentState(currState);
                 }
 
-                // REMOVE THIS
-                this.showPlayerStatus(new currentStateMessage(player, player, "PlaceTurnState", this.matchInfo.isLastTurn(), this.onlinePlayers(), this.matchInfo.getMatch().getCommonObjective()));
 
 
                 // Asks client to place a card
@@ -659,63 +654,68 @@ public class ClientManager implements Runnable{
             }
             case PickCard -> {
 
-                logCreator.log("Player " + player.getNickname() + " has to pick a card from common area");
+                if(this.matchInfo.getMatch().getCommonArea().getTableCards().isEmpty()) {
+                    logCreator.log("Common area is empty, player " + player.getNickname() + " cannot pick a card. Ending his turn.");
+
+                } else {
+                    logCreator.log("Player " + player.getNickname() + " has to pick a card from common area");
 
 
-                for(PlayerInfo playerInfo1 : this.playersInfo) {
-                    currentStateMessage currState = new currentStateMessage(player, playerInfo1.getPlayer(), "PickTurnState", this.matchInfo.isLastTurn(), this.onlinePlayers(), this.matchInfo.getMatch().getCommonObjective());
-                    playerInfo1.getConnection().sendCurrentState(currState);
-                }
+                    for(PlayerInfo playerInfo1 : this.playersInfo) {
+                        currentStateMessage currState = new currentStateMessage(player, playerInfo1.getPlayer(), "PickTurnState", this.matchInfo.isLastTurn(), this.onlinePlayers(), this.matchInfo.getMatch().getCommonObjective());
+                        playerInfo1.getConnection().sendCurrentState(currState);
+                    }
 
 
 
 
-                // If the client is still online, it proceeds to ask to pick a card
-                boolean correctAnswer;
-                if(this.playersInfo.contains(playerInfo)) {
-                    correctAnswer = false;
-                    while(!correctAnswer) {
-                        Future<pickCardMessage> future = executor.submit(() -> playerInfo.getConnection().getChosenPick());
-                        Timer timer = startKickTimer(playerInfo, future);
-                        pickCardMessage pickCard = null;
+                    // If the client is still online, it proceeds to ask to pick a card
+                    boolean correctAnswer;
+                    if(this.playersInfo.contains(playerInfo)) {
+                        correctAnswer = false;
+                        while(!correctAnswer) {
+                            Future<pickCardMessage> future = executor.submit(() -> playerInfo.getConnection().getChosenPick());
+                            Timer timer = startKickTimer(playerInfo, future);
+                            pickCardMessage pickCard = null;
 
-                        try {
-                            pickCard = future.get();
-                            timer.cancel();
-                        } catch (Exception e) {
-                            logCreator.log("Player " + player.getNickname() + "has not answered");
-                        }
+                            try {
+                                pickCard = future.get();
+                                timer.cancel();
+                            } catch (Exception e) {
+                                logCreator.log("Player " + player.getNickname() + "has not answered");
+                            }
 
-                        if(pickCard != null) {
-                            // Checks if the client has properly given a response
-                            if(pickCard.isNoResponse()) {
-                                correctAnswer = true;
-                                this.kickPlayer(playerInfo);
-                            } else {
-                                // Checks if the answer is valid
-                                try {
-                                    playerInfo.getPlayer().pickNewCard(pickCard.getCard());
+                            if(pickCard != null) {
+                                // Checks if the client has properly given a response
+                                if(pickCard.isNoResponse()) {
                                     correctAnswer = true;
-                                    playerInfo.getConnection().sendAnswer(true);
-                                    logCreator.log("Player " + player.getNickname() + "has correctly answered");
-                                } catch (Exception e){
-                                    playerInfo.getConnection().sendAnswer(false);
-                                    logCreator.log("Player " + player.getNickname() + "has not correctly answered");
+                                    this.kickPlayer(playerInfo);
+                                } else {
+                                    // Checks if the answer is valid
+                                    try {
+                                        playerInfo.getPlayer().pickNewCard(pickCard.getCard());
+                                        correctAnswer = true;
+                                        playerInfo.getConnection().sendAnswer(true);
+                                        logCreator.log("Player " + player.getNickname() + "has correctly answered");
+                                    } catch (Exception e){
+                                        playerInfo.getConnection().sendAnswer(false);
+                                        logCreator.log("Player " + player.getNickname() + "has not correctly answered");
+                                    }
                                 }
                             }
                         }
                     }
+
+
+
+                    // Updates all clients on the current situation
+                    for(PlayerInfo playerInfo1 : this.playersInfo) {
+                        updatePlayerMessage update = new updatePlayerMessage(playerInfo.getPlayer());
+                        playerInfo1.getConnection().sendUpdatePlayer(update);
+                    }
+
+                    logCreator.log("Player " + player.getNickname() + " has ended his normal turn");
                 }
-
-
-
-                // Updates all clients on the current situation
-                for(PlayerInfo playerInfo1 : this.playersInfo) {
-                    updatePlayerMessage update = new updatePlayerMessage(playerInfo.getPlayer());
-                    playerInfo1.getConnection().sendUpdatePlayer(update);
-                }
-
-                logCreator.log("Player " + player.getNickname() + " has ended his normal turn");
 
                 // End turn
                 // Update all states
@@ -938,132 +938,6 @@ public class ClientManager implements Runnable{
     }
 
 
-    /**
-     * Prints the current state of the player area
-     * @param area PlayerArea to be printed
-     */
-    public void showPlayerArea(PlayerArea area) {
-        System.out.println("\n");
 
-        ArrayList<Integer> resourceList = area.getResources();
-        String[] resourceNames = {"FUNGUS", "INSECT", "ANIMAL", "PLANT", "MANUSCRIPT", "QUILL", "INKWELL", "EMPTY"};
-
-        for (int i = 0; i < resourceList.size() - 1; i++) {
-            System.out.println(resourceNames[i] + ": " + resourceList.get(i));
-        }
-
-        ArrayList<Cell> Cells = area.getAllCards().stream()
-                .map(PlaceableCard::getCells)
-                .flatMap(Collection::stream)
-                .distinct()
-                .collect(Collectors.toCollection(ArrayList::new));
-
-        int minRow = Cells.stream()
-                .mapToInt(Cell::getRow)
-                .min()
-                .orElse(0);
-
-        int maxRow = Cells.stream()
-                .mapToInt(Cell::getRow)
-                .max()
-                .orElse(0);
-
-        int minColumn = Cells.stream()
-                .mapToInt(Cell::getColumn)
-                .min()
-                .orElse(0);
-
-        int maxColumn = Cells.stream()
-                .mapToInt(Cell::getColumn)
-                .max()
-                .orElse(0);
-
-        for(int i = minRow; i <= maxRow; i++) {
-            for(int j = minColumn; j <= maxColumn; j++) {
-                Cell cell = findCell(i, j, Cells);
-                if(cell != null) {
-                    PlaceableCard card = cell.getTopCard();
-                    if(card != null) {
-                        System.out.print(" " + String.format("%02d", card.getID()) + (cell.getTopCard().isFront() ? "F" : "B") + "/");
-                    } else {
-                        System.out.print(" " + "   " + "/");
-                    }
-
-                    PlaceableCard bottomCard = cell.getBottomCard();
-                    if(bottomCard != null) {
-                        System.out.print(String.format("%02d", bottomCard.getID()) + (cell.getBottomCard().isFront() ? "F" : "B"));
-                    } else {
-                        System.out.print("   ");
-                    }
-                } else {
-                    System.out.print("        ");
-                }
-            }
-            System.out.println(" ");
-        }
-
-        System.out.println("\n");
-        ArrayList<String> availablePositionsString = area.getAvailablePosition().stream()
-                .map(position -> "[" + position[0] + ", " + position[1] + "]")
-                .collect(Collectors.toCollection(ArrayList::new));
-        System.out.println("The available positions are [row, column]: " + availablePositionsString);
-        System.out.println("\n");
-    }
-
-    /**
-     * Finds a cell in a list of cells
-     * @param row the row of the cell
-     * @param column the column of the cell
-     * @param cells the list of cells
-     * @return the cell if found, null otherwise
-     */
-    private Cell findCell(int row, int column, List<Cell> cells) {
-        return cells.stream()
-                .filter(cell -> cell.getRow() == row && cell.getColumn() == column)
-                .findFirst()
-                .orElse(null);
-    }
-
-
-    public void showCommonArea(CommonArea area) {
-        System.out.println("\nCARDS ON THE TABLE: ");
-        System.out.println("(1) Resource deck top card: " + area.getD1().getList().getFirst().getReign());
-        System.out.print("(2) Gold deck top card: " + area.getD2().getList().getFirst().getReign());
-
-        for(int i=3; i<area.getTableCards().size(); i++) {
-            PlaceableCard card = area.getTableCards().get(i);
-            if (card != null)
-                System.out.print("("+ i +") Card ID: " + area.getTableCards().get(i).getID());
-            else
-                System.out.print("("+ i +") Card ID: " + "empty");
-        }
-
-        System.out.println("\n");
-
-    }
-
-    /**
-     * Prints the current state of the player hand
-     * @param message Object with reference to the player hand and current player
-     */
-    public void showPlayerHand(currentStateMessage message) {
-        PlayerHand hand = message.getCurrentPlayer().getPlayerHand();
-        System.out.println("\nPLAYER HAND: ");
-        if (message.getPlayer().getNickname().equals(message.getCurrentPlayer().getNickname())) {
-            for (PlaceableCard card : hand.getPlaceableCards()) {
-                System.out.println("Card ID: " + card.getID());
-            }
-        } else {
-            for (PlaceableCard card : hand.getPlaceableCards()) {
-                System.out.println("Card: " + card.getReign());
-            }
-        }
-    }
-
-    public void showPlayerStatus(currentStateMessage message) {
-        this.showCommonArea(message.getCurrentPlayer().getCommonArea());
-        this.showPlayerArea(message.getCurrentPlayer().getPlayerArea());
-        this.showPlayerHand(message);
-    }
 
 }

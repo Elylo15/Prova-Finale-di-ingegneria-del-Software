@@ -5,6 +5,7 @@ import it.polimi.ingsw.model.cards.ObjectiveCard;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class currentStateMessage implements Message, Serializable {
     private final Player currentPlayer; // player who is gaming
@@ -12,7 +13,9 @@ public class currentStateMessage implements Message, Serializable {
     private final String stateName;
     private final boolean lastTurn;
     private final ArrayList<String> onlinePlayers;
-    private final ObjectiveCard[] commonObjectiveCards;
+    private final ArrayList<ObjectiveCard> commonObjectiveCards;
+
+
 
     public currentStateMessage(Player currentPlayer, Player player, String stateName, boolean lastTurn, ArrayList<String> onlinePlayers, ObjectiveCard[] commonObjectiveCards){
         this.currentPlayer = currentPlayer;
@@ -20,8 +23,17 @@ public class currentStateMessage implements Message, Serializable {
         this.stateName = stateName;
         this.lastTurn = lastTurn;
         this.onlinePlayers = onlinePlayers;
-        this.commonObjectiveCards = commonObjectiveCards;
+        if(commonObjectiveCards == null) {
+            this.commonObjectiveCards = null;
+        }
+        else {
+            this.commonObjectiveCards = new ArrayList<>();
+            this.commonObjectiveCards.addAll(Arrays.asList(commonObjectiveCards));
+        }
+
     }
+
+
 
     public Player getPlayer() {
         return player;
@@ -39,7 +51,7 @@ public class currentStateMessage implements Message, Serializable {
 
     public ArrayList<String> getOnlinePlayers() {return onlinePlayers;}
 
-    public ObjectiveCard[] getCommonObjectiveCards() {return commonObjectiveCards;}
+    public ArrayList<ObjectiveCard> getCommonObjectiveCards() {return commonObjectiveCards;}
 
     @Override
     public String toString() {
@@ -61,4 +73,7 @@ public class currentStateMessage implements Message, Serializable {
 
     @Override
     public void unlock() {}
+
+
+
 }

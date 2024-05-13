@@ -3,6 +3,7 @@ package it.polimi.ingsw.model.cards;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * PlayerHand class
@@ -59,5 +60,12 @@ public class PlayerHand implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hashCode(placeableCards);
+    }
+
+    @Override
+    public String toString() {
+        return "PlayerHand{" +
+                "placeableCards=" + placeableCards.stream().map(Card::getID).collect(Collectors.toCollection(ArrayList::new)) +
+                '}';
     }
 }

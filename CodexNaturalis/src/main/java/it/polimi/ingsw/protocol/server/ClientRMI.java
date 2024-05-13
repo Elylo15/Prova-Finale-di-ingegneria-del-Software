@@ -203,14 +203,15 @@ public class ClientRMI extends ClientConnection implements Runnable{
         }
     }
 
+
     /**
      * method {@code getChosenObjective}: receives a objectiveCardMessage
      * @return objectiveCardMessage
      */
     @Override
-    public objectiveCardMessage getChosenObjective(ObjectiveCard[] objectiveCards){
+    public objectiveCardMessage getChosenObjective(ArrayList<ObjectiveCard> objectiveCards) {
         try {
-            toClient.write(objectiveCards);
+            toClient.write(new objectiveCardMessage(objectiveCards));
             return (objectiveCardMessage) toServer.read();
         } catch (RemoteException e) {
             throw new RuntimeException(e);

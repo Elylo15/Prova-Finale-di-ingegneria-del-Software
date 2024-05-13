@@ -1,9 +1,11 @@
 package it.polimi.ingsw.protocol.client.view;
 
+import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.model.CommonArea;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.PlayerArea;
 import it.polimi.ingsw.model.cards.Cell;
+import it.polimi.ingsw.model.cards.ObjectiveCard;
 import it.polimi.ingsw.model.cards.PlaceableCard;
 import it.polimi.ingsw.model.cards.PlayerHand;
 import it.polimi.ingsw.protocol.messages.ConnectionState.*;
@@ -12,6 +14,7 @@ import it.polimi.ingsw.protocol.messages.ServerOptionState.*;
 import it.polimi.ingsw.protocol.messages.EndGameState.*;
 import it.polimi.ingsw.protocol.messages.currentStateMessage;
 import it.polimi.ingsw.protocol.messages.responseMessage;
+import it.polimi.ingsw.protocol.server.PlayerInfo;
 
 
 import java.util.*;
@@ -45,7 +48,7 @@ public class ViewCLI extends View {
      * communicates to the user he lost connection
      */
     public void playerDisconnected() {
-        System.out.println("An error occurred, connection interrupted");
+        System.out.println("\nAn error occurred, connection interrupted\n");
     }
 
 
@@ -63,8 +66,8 @@ public class ViewCLI extends View {
         if(!Objects.equals(message.getStateName(), "StarterCardState"))
         {
             ArrayList<Integer> objectivesID = new ArrayList<>();
-            objectivesID.add(message.getCommonObjectiveCards()[0].getID());
-            objectivesID.add(message.getCommonObjectiveCards()[1].getID());
+            objectivesID.add(message.getCommonObjectiveCards().get(0).getID());
+            objectivesID.add(message.getCommonObjectiveCards().get(1).getID());
 
             System.out.println("The common objectives are: " + objectivesID);
 
@@ -78,12 +81,13 @@ public class ViewCLI extends View {
             }
         }
 
-        this.showCommonArea(message.getCurrentPlayer().getCommonArea());
+        //this.showCommonArea(message.getCurrentPlayer().getCommonArea());
+        this.showCommonArea(message.getPlayer().getCommonArea());
 
         System.out.println("Score of " + message.getPlayer().getNickname() + ": " + message.getPlayer().getScore());
 
         if(!Objects.equals(message.getStateName(), "StarterCardState")) {
-            this.showPlayerArea(message.getCurrentPlayer().getPlayerArea());
+            this.showPlayerArea(message.getPlayer().getPlayerArea());
 
         }
 
@@ -92,6 +96,8 @@ public class ViewCLI extends View {
         if (message.isLastTurn()) {
             System.out.println("THIS IS THE LAST TURN");
         }
+
+        System.out.println("\n");
     }
 
     /**
@@ -103,12 +109,12 @@ public class ViewCLI extends View {
        System.out.println("(1) Resource deck top card: " + area.getD1().getList().getFirst().getReign());
        System.out.print("(2) Gold deck top card: " + area.getD2().getList().getFirst().getReign());
 
-       for(int i=3; i<area.getTableCards().size(); i++) {
+       for(int i=0; i<area.getTableCards().size(); i++) {
            PlaceableCard card = area.getTableCards().get(i);
            if (card != null)
-               System.out.print("("+ i +") Card ID: " + area.getTableCards().get(i).getID());
+               System.out.print("("+ (i + 3) +") Card ID: " + area.getTableCards().get(i).getID());
            else
-               System.out.print("("+ i +") Card ID: " + "empty");
+               System.out.print("("+ (i + 3) +") Card ID: " + "empty");
        }
 
        System.out.println("\n");
@@ -184,7 +190,10 @@ public class ViewCLI extends View {
         ArrayList<String> availablePositionsString = area.getAvailablePosition().stream()
                 .map(position -> "[" + position[0] + ", " + position[1] + "]")
                 .collect(Collectors.toCollection(ArrayList::new));
-        System.out.println("The available positions are [row, column]: " + availablePositionsString);
+        System.out.println("The available positions are [row, column]: ");
+        for (String position : availablePositionsString) {
+            System.out.println("> " + position);
+        }
         System.out.println("\n");
     }
 
@@ -207,11 +216,13 @@ public class ViewCLI extends View {
      * @param message Object with reference to the player hand and current player
      */
     public void showPlayerHand(currentStateMessage message) {
-        PlayerHand hand = message.getCurrentPlayer().getPlayerHand();
+        //PlayerHand hand = message.getCurrentPlayer().getPlayerHand();
+        PlayerHand hand = message.getPlayer().getPlayerHand();
         System.out.println("\nPLAYER HAND: ");
         if (message.getPlayer().getNickname().equals(message.getCurrentPlayer().getNickname())) {
+            int i = 1;
             for (PlaceableCard card : hand.getPlaceableCards()) {
-                System.out.println("Card ID: " + card.getID());
+                System.out.println("("+i+") Card ID: " + card.getID());
             }
         } else {
             for (PlaceableCard card : hand.getPlaceableCards()) {
@@ -257,23 +268,30 @@ public class ViewCLI extends View {
         String nickname = null;
         boolean loadMatch = false;
         String pathToLoad = null;
-        try {
-            System.out.println("Enter 'true' if this is a new match or 'false' if it is not");
-            newMatch = scanner.nextBoolean();
-            scanner.nextLine();
-        } catch (Exception e) {
-            System.out.println("You didn't enter a boolean");
+        while(true) {
+            try {
+                System.out.println("Enter 'true' if this is a new match or 'false' if it is not");
+                newMatch = scanner.nextBoolean();
+                scanner.nextLine();
+                break;
+            } catch (Exception e) {
+                System.out.println("You didn't enter a boolean");
+            }
         }
 
         if(!newMatch) {
             boolean runMatch = false;
-            try {
-                System.out.println("Enter 'true' if you want to join an already started match or 'false' if it is not");
-                runMatch = scanner.nextBoolean();
-                scanner.nextLine();
-            } catch (Exception e) {
-                System.out.println("You didn't enter a boolean");
+            while (true)  {
+                try {
+                    System.out.println("Enter 'true' if you want to join an already started match or 'false' if it is not");
+                    runMatch = scanner.nextBoolean();
+                    scanner.nextLine();
+                    break;
+                } catch (Exception e) {
+                    System.out.println("You didn't enter a boolean");
+                }
             }
+
 
             if(runMatch) {
                 try {
@@ -408,9 +426,14 @@ public class ViewCLI extends View {
      * allow the user to choose his secret objective
      * @return objective
      */
-    public int chooseObjective () {
+    public int chooseObjective (ArrayList<ObjectiveCard> objectives) {
         int objective = 1000;
         System.out.println("You have to choose your personal objective");
+
+        for (int i = 0; i < objectives.size(); i++) {
+            System.out.println("(" + i + ") Objective  ID: " + objectives.get(i).getID());
+        }
+
         System.out.println("Enter '1' if you want to choose the first one, '2' if you want to choose the second one");
         while(true) {
             try {
@@ -519,13 +542,19 @@ public class ViewCLI extends View {
 
         points = message.getPlayersPoints();
         numObjectives = message.getNumberOfObjects();
-        System.out.println("the points of the players are: " + points);
-        System.out.println("the players have achieved this number of objectives:  " + numObjectives);
-
+        for (String playerName : points.keySet()) {
+            Integer playerPoints = points.get(playerName);
+            Integer playerObjectives = numObjectives.get(playerName);
+            System.out.println("Player Name: " + playerName + " - Points: " + playerPoints + " - Number of Objectives: " + playerObjectives);
+        }
     }
 
     @Override
     public void update(updatePlayerMessage update) {
+        Player player = update.getPlayer();
+        this.showCommonArea(player.getCommonArea());
+        this.showPlayerArea(player.getPlayerArea());
+        this.showPlayerHand(new currentStateMessage(player, player, null, false, null, null));
 
     }
 

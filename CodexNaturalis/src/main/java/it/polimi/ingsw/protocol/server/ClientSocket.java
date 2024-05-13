@@ -53,6 +53,7 @@ public class ClientSocket extends ClientConnection {
     @Override
     public synchronized serverOptionMessage getServerOption(ArrayList<Integer> runningMatches, ArrayList<Integer> savedMatches) {
         try {
+            outputStream.reset();
             outputStream.writeObject(new serverOptionMessage(false,null,null,false,null, runningMatches, savedMatches));
             outputStream.flush();
             return (serverOptionMessage) inputStream.readObject();
@@ -68,6 +69,7 @@ public class ClientSocket extends ClientConnection {
     @Override
     public synchronized void sendNewHostMessage(String hostNickname){
         try {
+            outputStream.reset();
             outputStream.writeObject(new newHostMessage(hostNickname));
             outputStream.flush();
         } catch (IOException e) {
@@ -95,6 +97,7 @@ public class ClientSocket extends ClientConnection {
     @Override
     public synchronized void sendAnswerToConnection(connectionResponseMessage message){
         try {
+            outputStream.reset();
             outputStream.writeObject(message);
             outputStream.flush();
         } catch (IOException e) {
@@ -111,6 +114,7 @@ public class ClientSocket extends ClientConnection {
     @Override
     public synchronized void sendAnswer(boolean correct){
         try {
+            outputStream.reset();
             outputStream.writeObject(new responseMessage(correct));
             outputStream.flush();
         } catch (IOException e) {
@@ -125,6 +129,7 @@ public class ClientSocket extends ClientConnection {
     @Override
     public synchronized void sendUnavailableName(ArrayList<String> unavailableNames) {
         try {
+            outputStream.reset();
             outputStream.writeObject(new unavailableNamesMessage(unavailableNames));
             outputStream.flush();
         } catch (IOException e) {
@@ -153,6 +158,7 @@ public class ClientSocket extends ClientConnection {
     @Override
     public synchronized void sendAvailableColor(ArrayList<String> availableColors){
         try {
+            outputStream.reset();
             outputStream.writeObject(new availableColorsMessage(availableColors));
             outputStream.flush();
         } catch (IOException e) {
@@ -181,6 +187,8 @@ public class ClientSocket extends ClientConnection {
     @Override
     public synchronized void sendCurrentState(currentStateMessage currentState){
         try {
+            outputStream.reset();
+            outputStream.reset();
             outputStream.writeObject(currentState);
             outputStream.flush();
         } catch (IOException e) {
@@ -207,15 +215,14 @@ public class ClientSocket extends ClientConnection {
      * @return objectiveCardMessage
      */
     @Override
-    public synchronized objectiveCardMessage getChosenObjective(ObjectiveCard[] objectiveCards){
-
-        // USE THIS LATER
-//        try {
-//            outputStream.writeObject(objectiveCards);
-//            outputStream.flush();
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
+    public synchronized objectiveCardMessage getChosenObjective(ArrayList<ObjectiveCard> objectiveCards){
+        try {
+            outputStream.reset();
+            outputStream.writeObject(new objectiveCardMessage(objectiveCards));
+            outputStream.flush();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         try {
             return (objectiveCardMessage) inputStream.readObject();
         } catch (IOException | ClassNotFoundException e) {
@@ -232,6 +239,7 @@ public class ClientSocket extends ClientConnection {
     @Override
     public synchronized placeCardMessage getPlaceCard(){
         try {
+            outputStream.reset();
             return (placeCardMessage) inputStream.readObject();
         } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException(e);
@@ -259,6 +267,7 @@ public class ClientSocket extends ClientConnection {
     @Override
     public synchronized void sendEndGame(HashMap<String, Integer> scores, HashMap<String, Integer> numberOfObjectives){
         try {
+            outputStream.reset();
             outputStream.writeObject(new declareWinnerMessage(scores, numberOfObjectives));
             outputStream.flush();
         } catch (IOException e) {
@@ -273,6 +282,7 @@ public class ClientSocket extends ClientConnection {
     @Override
     public synchronized void sendUpdatePlayer(updatePlayerMessage updateMessage) {
         try {
+            outputStream.reset();
             outputStream.writeObject(updateMessage);
             outputStream.flush();
         } catch (IOException e) {

@@ -1,14 +1,16 @@
 package it.polimi.ingsw.model;
 
-import it.polimi.ingsw.model.cards.Card;
+import it.polimi.ingsw.model.cards.*;
 import it.polimi.ingsw.model.cards.Json.LoadDecks;
-import it.polimi.ingsw.model.cards.ObjectiveCard;
-import it.polimi.ingsw.model.cards.PlaceableCard;
-import it.polimi.ingsw.model.cards.PlayerHand;
 import it.polimi.ingsw.model.cards.exceptions.InvalidIdException;
 import it.polimi.ingsw.model.cards.exceptions.noPlaceCardException;
+import it.polimi.ingsw.protocol.messages.currentStateMessage;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class  Player implements Serializable {
     private String nickname;

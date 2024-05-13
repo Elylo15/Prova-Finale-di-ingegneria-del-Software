@@ -4,10 +4,11 @@ import it.polimi.ingsw.model.cards.ObjectiveCard;
 import it.polimi.ingsw.protocol.messages.Message;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 
 public class objectiveCardMessage implements Message, Serializable {
-    private ObjectiveCard[] objectiveCard;
+    private ArrayList<ObjectiveCard> objectiveCard;
     private final Integer choice;
     private final boolean noResponse;
 
@@ -17,7 +18,7 @@ public class objectiveCardMessage implements Message, Serializable {
         this.noResponse = noResponse;
     }
 
-    public objectiveCardMessage(ObjectiveCard[] objectiveCard) {
+    public objectiveCardMessage(ArrayList<ObjectiveCard> objectiveCard) {
         this.objectiveCard = objectiveCard;
         this.choice = null;
         this.noResponse = false;
@@ -31,7 +32,7 @@ public class objectiveCardMessage implements Message, Serializable {
         return noResponse;
     }
 
-    public ObjectiveCard[] getObjectiveCard() {return objectiveCard;}
+    public ArrayList<ObjectiveCard> getObjectiveCard() {return objectiveCard;}
 
     @Override
     public void setLock() {}

@@ -1,5 +1,6 @@
 package it.polimi.ingsw.protocol.client.controller;
 
+import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.protocol.messages.*;
 import it.polimi.ingsw.protocol.messages.ConnectionState.*;
 import it.polimi.ingsw.protocol.messages.EndGameState.*;
@@ -88,6 +89,7 @@ public class ControllerSocket extends Controller {
     @Override
     public void sendOptions(serverOptionMessage options) {
         try {
+            outputStream.reset();
             outputStream.writeObject(options);
             outputStream.flush();
         } catch (IOException e) {
@@ -128,6 +130,7 @@ public class ControllerSocket extends Controller {
     @Override
     public void chooseName(String name) {
         try {
+            outputStream.reset();
             outputStream.writeObject(new chosenNameMessage(name));
             outputStream.flush();
         } catch (IOException e) {
@@ -155,6 +158,7 @@ public class ControllerSocket extends Controller {
     @Override
     public void chooseColor(String color) {
         try {
+            outputStream.reset();
             outputStream.writeObject(new chosenColorMessage(color));
             outputStream.flush();
         } catch (IOException e) {
@@ -183,6 +187,7 @@ public class ControllerSocket extends Controller {
     @Override
     public void expectedPlayers(int expected, boolean noResponse) {
         try {
+            outputStream.reset();
             outputStream.writeObject(new expectedPlayersMessage (expected, noResponse));
             outputStream.flush();
         } catch (IOException e) {
@@ -198,9 +203,23 @@ public class ControllerSocket extends Controller {
     @Override
     public void placeStarter(int side, boolean noResponse) {
         try {
+            outputStream.reset();
             outputStream.writeObject(new starterCardMessage(side, noResponse));
             outputStream.flush();
         } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * method {@code getObjectiveCards}: receives a objectiveCardMessage
+     * @return objectiveCardMessage
+     */
+    @Override
+    public objectiveCardMessage getObjectiveCards() {
+        try {
+            return (objectiveCardMessage) inputStream.readObject();
+        } catch (IOException | ClassNotFoundException e){
             throw new RuntimeException(e);
         }
     }
@@ -213,6 +232,7 @@ public class ControllerSocket extends Controller {
     @Override
     public void chooseObjective(int pick, boolean noResponse) {
         try {
+            outputStream.reset();
             outputStream.writeObject(new objectiveCardMessage(pick, noResponse));
             outputStream.flush();
         } catch (IOException e) {
@@ -231,6 +251,7 @@ public class ControllerSocket extends Controller {
     @Override
     public void placeCard(int card, int side, int x, int y, boolean noResponse) {
         try {
+            outputStream.reset();
             outputStream.writeObject(new placeCardMessage(card, side, x, y, noResponse));
             outputStream.flush();
         } catch (IOException e) {
@@ -246,6 +267,7 @@ public class ControllerSocket extends Controller {
     @Override
     public void pickCard(int card, boolean noResponse) {
         try {
+            outputStream.reset();
             outputStream.writeObject(new pickCardMessage(card, noResponse));
             outputStream.flush();
         } catch (IOException e) {

@@ -1,5 +1,6 @@
 package it.polimi.ingsw.protocol.client;
 
+import it.polimi.ingsw.model.cards.ObjectiveCard;
 import it.polimi.ingsw.protocol.client.controller.*;
 import it.polimi.ingsw.protocol.client.view.*;
 import it.polimi.ingsw.protocol.messages.*;
@@ -22,6 +23,7 @@ public class Client {
 
     /**
      * method {@code Client}: constructs a new Client
+     *
      * @param view: default ViewGUI
      */
     public Client(View view) {
@@ -38,9 +40,9 @@ public class Client {
      * method {@code connection}: sets socket or rmi. Enables GUI or CLI.
      * Connects to a socket server or rmi server.
      */
-    public void connection(boolean isSocket)  {
+    public void connection(boolean isSocket) {
 
-        if(isSocket) {
+        if (isSocket) {
             try {
                 controller.connectToServer(serverIP, serverPort);
                 connectionResponseMessage answer = controller.answerConnection();
@@ -84,12 +86,12 @@ public class Client {
                 String state = current.getStateName();
 
                 // REMOVE THIS
-                System.out.println("Current state: " + state +"\n");
+                System.out.println("Current state: " + state + "\n");
 
                 switch (state) {
-                    case "ServerOptionState":{
+                    case "ServerOptionState": {
                         serverOptions();
-                    break;
+                        break;
                     }
                     case "ConnectionState": {
                         name();
@@ -101,29 +103,36 @@ public class Client {
                         break;
                     }
                     case "StarterCardState": {
-                        view.updatePlayer(current);
-                        if(Objects.equals(current.getCurrentPlayer().getNickname(), current.getPlayer().getNickname())) starter();
+                         view.updatePlayer(current);
+
+
+                        if (Objects.equals(current.getCurrentPlayer().getNickname(), current.getPlayer().getNickname()))
+                            starter();
                         updatePlayerMessage update = controller.updatePlayer();
                         view.update(update);
                         break;
                     }
                     case "ObjectiveState": {
+
                         view.updatePlayer(current);
-                        if(Objects.equals(current.getCurrentPlayer().getNickname(), current.getPlayer().getNickname())) pickObjective();
+                        if (Objects.equals(current.getCurrentPlayer().getNickname(), current.getPlayer().getNickname()))
+                            pickObjective();
                         updatePlayerMessage update = controller.updatePlayer();
                         view.update(update);
                         break;
                     }
                     case "PlaceTurnState": {
                         view.updatePlayer(current);
-                        if(Objects.equals(current.getCurrentPlayer().getNickname(), current.getPlayer().getNickname())) placeCard();
+                        if (Objects.equals(current.getCurrentPlayer().getNickname(), current.getPlayer().getNickname()))
+                            placeCard();
                         updatePlayerMessage update = controller.updatePlayer();
                         view.update(update);
                         break;
                     }
                     case "PickTurnState": {
                         view.updatePlayer(current);
-                        if(Objects.equals(current.getCurrentPlayer().getNickname(), current.getPlayer().getNickname())) pickCard();
+                        if (Objects.equals(current.getCurrentPlayer().getNickname(), current.getPlayer().getNickname()))
+                            pickCard();
                         updatePlayerMessage update = controller.updatePlayer();
                         view.update(update);
                         break;
@@ -139,6 +148,8 @@ public class Client {
             view.playerDisconnected();
 
             System.out.println("\nERROR: " + e.getMessage() + "\n");
+
+            throw new RuntimeException();
             // run();
         }
     }
@@ -149,7 +160,7 @@ public class Client {
      * invocations of controller methods to receive responseMessage. If responseMessage is correct, the loop ends.
      */
     private void serverOptions() {
-        while(true) {
+        while (true) {
             serverOptionMessage options = controller.serverOptions();
             options = view.serverOptions(options);
             controller.sendOptions(options);
@@ -173,7 +184,7 @@ public class Client {
             controller.chooseName(name);
             responseMessage answer = controller.correctAnswer();
             view.answer(answer);
-            if(answer.getCorrect())
+            if (answer.getCorrect())
                 break;
         }
     }
@@ -191,12 +202,10 @@ public class Client {
             controller.chooseColor(color);
             responseMessage answer = controller.correctAnswer();
             view.answer(answer);
-            if(answer.getCorrect())
+            if (answer.getCorrect())
                 break;
         }
     }
-
-
 
 
     /**
@@ -224,14 +233,11 @@ public class Client {
             controller.expectedPlayers(expected, noResponse);
             responseMessage answer = controller.correctAnswer();
             view.answer(answer);
-            if(answer.getCorrect())
+            if (answer.getCorrect())
                 break;
         }
 
     }
-
-
-
 
 
     /**
@@ -258,11 +264,10 @@ public class Client {
             responseMessage answer = controller.correctAnswer();
 
             view.answer(answer);
-            if(answer.getCorrect())
+            if (answer.getCorrect())
                 break;
         }
     }
-
 
 
     /**
@@ -275,8 +280,11 @@ public class Client {
         Integer pick;
         boolean noResponse = false;
 
+
         while (true) {
-            Future<Integer> future = executor.submit(view::chooseObjective);
+            ArrayList<ObjectiveCard> objectives = controller.getObjectiveCards().getObjectiveCard();
+
+            Future<Integer> future = executor.submit(() -> view.chooseObjective(objectives));
 
             try {
                 pick = future.get(120, TimeUnit.SECONDS);
@@ -288,12 +296,11 @@ public class Client {
             controller.chooseObjective(pick, noResponse);
             responseMessage answer = controller.correctAnswer();
             view.answer(answer);
-            if(answer.getCorrect())
+            if (answer.getCorrect())
                 break;
         }
 
     }
-
 
 
     /**
@@ -312,19 +319,17 @@ public class Client {
             try {
                 card = future.get(120, TimeUnit.SECONDS);
             } catch (Exception e) {
-               card = 1000;
-               noResponse = true;
+                card = 1000;
+                noResponse = true;
             }
 
             controller.pickCard(card, noResponse);
             responseMessage answer = controller.correctAnswer();
             view.answer(answer);
-            if(answer.getCorrect())
+            if (answer.getCorrect())
                 break;
         }
     }
-
-
 
 
 //    /**
@@ -398,13 +403,14 @@ public class Client {
             controller.placeCard(card.get(0), card.get(1), card.get(2), card.get(3), noResponse);
             responseMessage answer = controller.correctAnswer();
             view.answer(answer);
-            if(answer.getCorrect())
+            if (answer.getCorrect())
                 break;
         }
     }
 
     /**
      * method {@code setIP}: sets serverIP
+     *
      * @param serverIP: String
      */
     public void setIP(String serverIP) {
@@ -413,6 +419,7 @@ public class Client {
 
     /**
      * method {@code setPort}: sets serverPort
+     *
      * @param serverPort: String
      */
     public void setPort(String serverPort) {
@@ -421,7 +428,8 @@ public class Client {
 
     /**
      * method {@code setController}: sets the Controller
-     * @param  server: String[]
+     *
+     * @param server:   String[]
      * @param isSocket: boolean
      */
     public void setController(String[] server, boolean isSocket) {
