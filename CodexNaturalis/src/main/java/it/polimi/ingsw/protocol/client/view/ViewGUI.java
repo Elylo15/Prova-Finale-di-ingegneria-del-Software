@@ -1,8 +1,12 @@
 package it.polimi.ingsw.protocol.client.view;
 
-import it.polimi.ingsw.GUI.ChooseConnection.ChooseSocketRMIController;
-import it.polimi.ingsw.GUI.IP_PORT.InsertIPPortController;
+import it.polimi.ingsw.protocol.client.view.GUI.IP_PORT.*;
+import it.polimi.ingsw.protocol.client.view.GUI.ChooseConnection.*;
+import it.polimi.ingsw.protocol.client.view.GUI.Disconnection.*;
+import it.polimi.ingsw.protocol.client.view.GUI.ServerOption.*;
 import it.polimi.ingsw.model.CommonArea;
+import it.polimi.ingsw.model.Player;
+import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.cards.ObjectiveCard;
 import it.polimi.ingsw.protocol.messages.ConnectionState.availableColorsMessage;
 import it.polimi.ingsw.protocol.messages.ConnectionState.connectionResponseMessage;
@@ -16,10 +20,13 @@ import it.polimi.ingsw.protocol.messages.responseMessage;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class ViewGUI extends View {
@@ -34,7 +41,7 @@ public class ViewGUI extends View {
     public String[] askPortIP(){
         String[] server = new String[2];
         try{
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("it/polimi/ingsw/GUI/ServerOption/Insert_ServerOption.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("it/polimi/ingsw/protocol/client/view/GUI/ServerOption/Insert_ServerOption.fxml"));
             Parent root = loader.load();
 
             InsertIPPortController controller = loader.getController();
@@ -49,10 +56,15 @@ public class ViewGUI extends View {
         return server;
     }
 
+    @Override
+    public void showPlayerHand(Player player, String viewer) {
+
+    }
+
 
     public boolean askSocket(){//true if socket, false if RMI
         try{
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("it/polimi/ingsw/GUI/ChooseConnection/Choose_Socket_RMI.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("it/polimi/ingsw/protocol/client/view/GUI/ChooseConnection/Choose_Socket_RMI.fxml"));
             Parent root = loader.load();
 
             ChooseSocketRMIController controller = loader.getController();
@@ -86,7 +98,7 @@ public class ViewGUI extends View {
     @Override
     public void playerDisconnected() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("it/polimi/ingsw/GUI/Disconnection/Disconnect.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("it/polimi/ingsw/protocol/client/view/GUI/Disconnection/Disconnect.fxml"));
             Parent root = loader.load();
             scene = new Scene(root);
             stage.setScene(scene);
@@ -159,10 +171,18 @@ public class ViewGUI extends View {
 
     }
 
-    @Override
-    public void showPlayerHand(currentStateMessage message) {
 
-    }
-
-
+//    private void decks(ArrayList<Card> deck){
+//        List<ImageView> imageViews = new ArrayList<>();
+//
+//        for (Card card : deck) {
+//            ImageView imageView = new ImageView();
+//            imageView.imageProperty().bind(card.imageProperty());
+//            imageViews.add(imageView);
+//        }
+//
+//        HBox hbox = new HBox();
+//        hbox.getChildren().addAll(imageViews);
+//    }
 }
+
