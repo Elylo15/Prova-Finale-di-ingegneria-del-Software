@@ -6,6 +6,7 @@ import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.PlayerArea;
 import it.polimi.ingsw.model.cards.ObjectiveCard;
 import it.polimi.ingsw.model.cards.PlaceableCard;
+import it.polimi.ingsw.model.cards.PlayerHand;
 import it.polimi.ingsw.model.cards.exceptions.InvalidIdException;
 import it.polimi.ingsw.model.cards.exceptions.noPlaceCardException;
 import it.polimi.ingsw.protocol.messages.ObjectiveState.objectiveCardMessage;
@@ -179,17 +180,9 @@ public class ClientManager implements Runnable{
 
             switch (this.matchInfo.getStatus()) {
                 case Waiting -> {
-
-                    // REMOVE THIS
-                    System.out.println("Waiting");
-
                     this.waiting();
                 }
                 case Player1 -> {
-
-                    // REMOVE THIS
-                    System.out.println("Player1");
-
                     Player currentPlayer;
                     if(matchInfo.getMatch().getPlayers().size() < 1)
                         currentPlayer = null;
@@ -199,10 +192,6 @@ public class ClientManager implements Runnable{
                     this.player(currentPlayer);
                 }
                 case Player2 -> {
-
-                   // REMOVE THIS
-                   System.out.println("Player2");
-
                     Player currentPlayer;
                     if(matchInfo.getMatch().getPlayers().size() < 2)
                         currentPlayer = null;
@@ -212,24 +201,14 @@ public class ClientManager implements Runnable{
                     this.player(currentPlayer);
                 }
                 case Player3 -> {
-
-
                     Player currentPlayer;
                     if(matchInfo.getMatch().getPlayers().size() < 3)
                         currentPlayer = null;
                     else
                         currentPlayer = matchInfo.getMatch().getPlayers().get(2);
-
-                    // REMOVE THIS
-                    System.out.println("Player3");
-
                     this.player(currentPlayer);
                 }
                 case Player4 -> {
-
-                    // REMOVE THIS
-                    System.out.println("Player4");
-
                     Player currentPlayer;
                     if(matchInfo.getMatch().getPlayers().size() < 4)
                         currentPlayer = null;
@@ -954,6 +933,9 @@ public class ClientManager implements Runnable{
         if(!area.checkPosition(x, y)) {
             return false;
         }
+
+        if(card < 0 || card >= player.getPlayerHand().getPlaceableCards().size())
+            return false;
 
         PlaceableCard placeableCard = player.pickPlaceableCard(card);
 

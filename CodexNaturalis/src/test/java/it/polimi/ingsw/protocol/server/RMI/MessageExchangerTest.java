@@ -36,7 +36,7 @@ class MessageExchangerTest {
         } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
-        Assertions.assertEquals( ((currentStateMessage) exchanger.getStoredObject()), message1);
+        Assertions.assertEquals( ((currentStateMessage) exchanger.getStoredObject().getFirst()), message1);
     }
 
     @Test

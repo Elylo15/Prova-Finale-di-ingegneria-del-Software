@@ -66,6 +66,7 @@ public class ClientRMI extends ClientConnection implements Runnable{
             this.toClient.write(new serverOptionMessage(false,null,null,false,null, runningMatches, savedMatches));
             return (serverOptionMessage) this.toServer.read();
         } catch (RemoteException e) {
+            System.out.println("Error in getServerOption");
             throw new RuntimeException(e);
         }
     }
@@ -79,6 +80,7 @@ public class ClientRMI extends ClientConnection implements Runnable{
         try {
             toClient.write(new newHostMessage(hostNickname));
         } catch (RemoteException e) {
+            System.out.println("Error in sendNewHostMessage");
             throw new RuntimeException(e);
         }
     }
@@ -92,6 +94,7 @@ public class ClientRMI extends ClientConnection implements Runnable{
         try {
             return (expectedPlayersMessage) toServer.read();
         } catch (RemoteException e) {
+            System.out.println("Error in getExpectedPlayer");
             throw new RuntimeException(e);
         }
     }
@@ -105,6 +108,7 @@ public class ClientRMI extends ClientConnection implements Runnable{
         try {
             toClient.write(new responseMessage(correct));
         } catch (RemoteException e) {
+            System.out.println("Error in sendAnswer");
             throw new RuntimeException(e);
         }
     }
@@ -118,6 +122,7 @@ public class ClientRMI extends ClientConnection implements Runnable{
         try {
             toClient.write(message);
         } catch (RemoteException e) {
+            System.out.println("Error in sendAnswerToConnection");
             throw new RuntimeException(e);
         }
     }
@@ -131,6 +136,7 @@ public class ClientRMI extends ClientConnection implements Runnable{
         try {
             toClient.write(new unavailableNamesMessage(unavailableNames));
         } catch (RemoteException e) {
+            System.out.println("Error in sendUnavailableName");
             throw new RuntimeException(e);
         }
     }
@@ -146,6 +152,7 @@ public class ClientRMI extends ClientConnection implements Runnable{
             this.sendUnavailableName(unavailableNames);
             return (chosenNameMessage) toServer.read();
         } catch (RemoteException e) {
+            System.out.println("Error in getName");
             throw new RuntimeException(e);
         }
     }
@@ -159,6 +166,7 @@ public class ClientRMI extends ClientConnection implements Runnable{
         try {
             toClient.write(new availableColorsMessage(availableColors));
         } catch (RemoteException e) {
+            System.out.println("Error in sendAvailableColor");
             throw new RuntimeException(e);
         }
     }
@@ -173,6 +181,7 @@ public class ClientRMI extends ClientConnection implements Runnable{
             this.sendAvailableColor(availableColors);
             return (chosenColorMessage) toServer.read();
         } catch (RemoteException e) {
+            System.out.println("Error in getColor");
             throw new RuntimeException(e);
         }
     }
@@ -186,6 +195,7 @@ public class ClientRMI extends ClientConnection implements Runnable{
         try {
             toClient.write(currentState);
         } catch (RemoteException e) {
+            System.out.println("Error in sendCurrentState");
             throw new RuntimeException(e);
         }
     }
@@ -199,6 +209,7 @@ public class ClientRMI extends ClientConnection implements Runnable{
         try {
             return (starterCardMessage) toServer.read();
         } catch (RemoteException e) {
+            System.out.println("Error in getStaterCard");
             throw new RuntimeException(e);
         }
     }
@@ -214,6 +225,7 @@ public class ClientRMI extends ClientConnection implements Runnable{
             toClient.write(new objectiveCardMessage(objectiveCards));
             return (objectiveCardMessage) toServer.read();
         } catch (RemoteException e) {
+            System.out.println("Error in getChosenObjective");
             throw new RuntimeException(e);
         }
     }
@@ -227,6 +239,7 @@ public class ClientRMI extends ClientConnection implements Runnable{
         try {
             return (placeCardMessage) toServer.read();
         } catch (RemoteException e) {
+            System.out.println("Error in getPlaceCard");
             throw new RuntimeException(e);
         }
     }
@@ -240,6 +253,7 @@ public class ClientRMI extends ClientConnection implements Runnable{
         try {
             return (pickCardMessage) toServer.read();
         } catch (RemoteException e) {
+            System.out.println("Error in getChosenPick");
             throw new RuntimeException(e);
         }
     }
@@ -254,6 +268,7 @@ public class ClientRMI extends ClientConnection implements Runnable{
         try {
             toClient.write(new declareWinnerMessage(score, numberOfObjectives));
         } catch (RemoteException e) {
+            System.out.println("Error in sendEndGame");
             throw new RuntimeException(e);
         }
     }
@@ -267,6 +282,7 @@ public class ClientRMI extends ClientConnection implements Runnable{
         try {
             toClient.write(updateMessage);
         } catch (RemoteException e) {
+            System.out.println("Error in sendUpdatePlayer");
             throw new RuntimeException(e);
         }
     }
@@ -280,6 +296,7 @@ public class ClientRMI extends ClientConnection implements Runnable{
             UnicastRemoteObject.unexportObject(toServer, true);
             UnicastRemoteObject.unexportObject(toClient, true);
         } catch (Exception e) {
+            System.out.println("Error in closeConnection");
             throw new RuntimeException(e);
         }
     }

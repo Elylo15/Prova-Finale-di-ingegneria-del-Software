@@ -1,15 +1,12 @@
 package it.polimi.ingsw.protocol.server.RMI;
 
-import it.polimi.ingsw.protocol.messages.Message;
-
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
+import java.util.Objects;
 
 public class MessageExchanger extends UnicastRemoteObject implements MessageExchangerInterface {
-    private Object storedObject;
-
-    private boolean receiverCanRead;
-    private boolean senderCanWrite;
+    private ArrayList<Object> storedObjects;
 
 
     /**
@@ -17,9 +14,7 @@ public class MessageExchanger extends UnicastRemoteObject implements MessageExch
       * @throws RemoteException
      */
     public MessageExchanger() throws RemoteException {
-        storedObject = null;
-        this.receiverCanRead = false;
-        this.senderCanWrite = true;
+        storedObjects =  new ArrayList<>();
     }
 
 
@@ -32,26 +27,11 @@ public class MessageExchanger extends UnicastRemoteObject implements MessageExch
     @Override
     public synchronized void write(Object message) throws RemoteException {
 
-        // Wait until the receiver has read
-        while(!senderCanWrite) {
-            try {
-                this.wait();
-            } catch (InterruptedException ignored) {}
-        }
-
-        // Blocks the receiver from reading
-        this.receiverCanRead = false;
-
-        // Overwrites the stored message
-        this.storedObject = message;
-
-        // Allows the receiver to read
-        this.senderCanWrite = false;
-        this.receiverCanRead = true;
+        // Adds a new message to the list
+        this.storedObjects.add(message);
 
         // Notify the receiver
         this.notifyAll();
-
     }
 
     /**
@@ -64,31 +44,19 @@ public class MessageExchanger extends UnicastRemoteObject implements MessageExch
     public synchronized Object read() throws RemoteException {
 
         // Wait until the sender has written
-        while (!receiverCanRead) {
+        while (storedObjects.isEmpty())  {
             try {
                 this.wait();
             } catch (InterruptedException ignored) {}
         }
 
-        // Block the sender from writing
-        this.senderCanWrite = false;
-
         // Obtains the last message
-        Object message = this.storedObject;
-
-        // Allows the sender to write
-        this.receiverCanRead = false;
-        this.senderCanWrite = true;
-
-        // Notify the sender
-        this.notifyAll();
-
-        return message;
+        return this.storedObjects.removeFirst();
     }
 
     /**
      * Retrieves last message. Created only for the tests.
      * @return last stored message.
      */
-    protected Object getStoredObject() {return storedObject;}
+    protected ArrayList<Object> getStoredObject() {return this.storedObjects;}
 }

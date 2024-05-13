@@ -53,6 +53,7 @@ public class Client {
             }
         } else {
             try {
+                controller.connectToServer(serverIP, serverPort);
                 connectionResponseMessage answer = controller.answerConnection();
                 view.answerToConnection(answer);
             } catch (Exception e) {
@@ -144,6 +145,8 @@ public class Client {
             }
         } catch (Exception e) {
             view.playerDisconnected();
+
+            throw new RuntimeException();
         }
     }
 
