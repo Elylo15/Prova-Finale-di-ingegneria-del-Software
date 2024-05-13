@@ -1,9 +1,8 @@
 package it.polimi.ingsw.protocol.client.view;
 
-import it.polimi.ingsw.GUI.ChooseSocketRMIController;
-import it.polimi.ingsw.GUI.InsertIPPortController;
+import it.polimi.ingsw.GUI.ChooseConnection.ChooseSocketRMIController;
+import it.polimi.ingsw.GUI.IP_PORT.InsertIPPortController;
 import it.polimi.ingsw.model.CommonArea;
-import it.polimi.ingsw.model.cards.PlayerHand;
 import it.polimi.ingsw.protocol.messages.ConnectionState.availableColorsMessage;
 import it.polimi.ingsw.protocol.messages.ConnectionState.connectionResponseMessage;
 import it.polimi.ingsw.protocol.messages.ConnectionState.unavailableNamesMessage;
@@ -14,15 +13,11 @@ import it.polimi.ingsw.protocol.messages.ServerOptionState.serverOptionResponseM
 import it.polimi.ingsw.protocol.messages.currentStateMessage;
 import it.polimi.ingsw.protocol.messages.responseMessage;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 
 public class ViewGUI extends View {
@@ -37,7 +32,7 @@ public class ViewGUI extends View {
     public String[] askPortIP(){
         String[] server = new String[2];
         try{
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/it/polimi/ingsw/GUI/Insert_IP_PORT.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("it/polimi/ingsw/GUI/ServerOption/Insert_ServerOption.fxml"));
             Parent root = loader.load();
 
             InsertIPPortController controller = loader.getController();
@@ -52,9 +47,10 @@ public class ViewGUI extends View {
         return server;
     }
 
+
     public boolean askSocket(){//true if socket, false if RMI
         try{
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/it/polimi/ingsw/GUI/ChooseSocketRMI.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("it/polimi/ingsw/GUI/ChooseConnection/Choose_Socket_RMI.fxml"));
             Parent root = loader.load();
 
             ChooseSocketRMIController controller = loader.getController();
@@ -67,7 +63,19 @@ public class ViewGUI extends View {
         }
     }
 
-        @Override
+
+    @Override
+    public serverOptionMessage serverOptions(serverOptionMessage message) {
+        return message;
+    }
+
+    @Override
+    public void answerToOption(serverOptionResponseMessage message) {
+
+    }
+
+
+    @Override
     public void updatePlayer(currentStateMessage message) {
 
     }
@@ -75,7 +83,15 @@ public class ViewGUI extends View {
 
     @Override
     public void playerDisconnected() {
-
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("it/polimi/ingsw/GUI/Disconnection/Disconnect.fxml"));
+            Parent root = loader.load();
+            scene = new Scene(root);
+            stage.setScene(scene);
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -83,15 +99,6 @@ public class ViewGUI extends View {
 
     }
 
-    @Override
-    public serverOptionMessage serverOptions(serverOptionMessage message) {
-        return null;
-    }
-
-    @Override
-    public void answerToOption(serverOptionResponseMessage message) {
-
-    }
 
     @Override
     public String unavailableNames(unavailableNamesMessage message) {
@@ -143,40 +150,15 @@ public class ViewGUI extends View {
 
     }
 
-    public boolean askGUI(){
-        AtomicBoolean useGUI = new AtomicBoolean(false);
-        Button guiButton = new Button("Use Graphic Interface");
-        Button cliButton = new Button("Use CommandLine Interface");
-
-        VBox root = new VBox(20);
-        root.setAlignment(Pos.CENTER);
-        root.getChildren().addAll(guiButton, cliButton);
-
-        Scene scene = new Scene(root, 300, 200);
-
-        stage.setTitle("Choose Connection Method");
-        stage.setScene(scene);
-        stage.show();
-
-        guiButton.setOnAction(e -> {
-            useGUI.set(true);
-            stage.close();
-
-        });
-        cliButton.setOnAction(e -> {
-            useGUI.set(false);
-            stage.close();
-        });
-        return useGUI.get();
-    }
-
-    @Override
-    public void showPlayerHand(PlayerHand playerHand) {
-
-    }
-
     @Override
     public void showCommonArea(CommonArea commonArea) {
 
     }
+
+    @Override
+    public void showPlayerHand(currentStateMessage message) {
+
+    }
+
+
 }
