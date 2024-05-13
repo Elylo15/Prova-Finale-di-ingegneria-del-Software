@@ -43,6 +43,11 @@ public class Match implements Serializable {
         commonArea.getD4().shuffle();
 
         Collections.shuffle(players); //randomizes the order of the players
+
+        commonArea.drawFromDeck(1); //places the front-up cards on the table
+        commonArea.drawFromDeck(1);
+        commonArea.drawFromDeck(2);
+        commonArea.drawFromDeck(2);
     }
 
     /**

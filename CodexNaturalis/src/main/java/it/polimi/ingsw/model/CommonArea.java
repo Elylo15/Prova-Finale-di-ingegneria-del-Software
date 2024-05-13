@@ -54,7 +54,7 @@ public class CommonArea implements Serializable {
      * method drawFromDeck: remove the top GoldCard/ResourceCard of the deck and places it as a face-up card
      * @param d: number of the deck from witch you want to remove a card to put in among those discovered
      */
-    private void drawFromDeck(int d){
+    public void drawFromDeck(int d){
         PlaceableCard c = null;
         switch (d) {
             case 1 -> c= d1.removeCard();
