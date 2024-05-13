@@ -147,7 +147,7 @@ public class  Player implements Serializable {
         if(cardPick==2)
             return deck.getPlaceableCards().get(2);
         else
-            return deck.getPlaceableCards().get(3);
+            return deck.getPlaceableCards().get(0);
     }
 
     /**

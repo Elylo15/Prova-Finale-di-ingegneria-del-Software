@@ -103,9 +103,7 @@ public class Client {
                         break;
                     }
                     case "StarterCardState": {
-                         view.updatePlayer(current);
-
-
+                        view.updatePlayer(current);
                         if (Objects.equals(current.getCurrentPlayer().getNickname(), current.getPlayer().getNickname()))
                             starter();
                         updatePlayerMessage update = controller.updatePlayer();
@@ -146,11 +144,6 @@ public class Client {
             }
         } catch (Exception e) {
             view.playerDisconnected();
-
-            System.out.println("\nERROR: " + e.getMessage() + "\n");
-
-            throw new RuntimeException();
-            // run();
         }
     }
 
@@ -331,46 +324,6 @@ public class Client {
         }
     }
 
-
-//    /**
-//     * method {@code placeCard}: invocations of controller methods to receive and send messages.
-//     * Invocations of view methods to display and receive player's info.
-//     * invocations of controller methods to send received info.
-//     * invocations of controller methods to receive responseMessage. If responseMessage is correct, the loop ends.
-//     */
-//    private void placeCard() {
-//        AtomicIntegerArray card = new AtomicIntegerArray(4);
-//        final boolean[] noResponse = {false};
-//        Timer timer = new Timer();
-//
-//        while (true) {
-//            TimerTask task = new TimerTask() {
-//                public void run() {
-//                    card.set(0, 1000);
-//                    card.set(1, 1000);
-//                    card.set(2, 1000);
-//                    card.set(3, 1000);
-//                    noResponse[0] = true;
-//                }
-//            };
-//
-//            timer.schedule(task, 240000); //2 min
-//
-//            int[] cardArray = view.placeCard();
-//            card.set(0, cardArray[0]);
-//            card.set(1, cardArray[1]);
-//            card.set(2, cardArray[2]);
-//            card.set(3, cardArray[3]);
-//            timer.cancel();
-//            controller.placeCard(card.get(0), card.get(1), card.get(2), card.get(3), noResponse[0]);
-//            responseMessage answer = controller.correctAnswer();
-//            view.answer(answer);
-//            if(answer.getCorrect())
-//                break;
-//        }
-//
-//        timer.cancel();
-//    }
 
 
     /**

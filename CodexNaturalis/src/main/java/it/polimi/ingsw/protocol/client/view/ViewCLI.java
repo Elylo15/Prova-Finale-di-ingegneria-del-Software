@@ -48,7 +48,7 @@ public class ViewCLI extends View {
      * communicates to the user he lost connection
      */
     public void playerDisconnected() {
-        System.out.println("\nAn error occurred, connection interrupted\n");
+        System.out.println("\nYou have been disconnected.\n");
     }
 
 
@@ -59,7 +59,7 @@ public class ViewCLI extends View {
      * @param message: currentStateMessage
      */
     public void updatePlayer (currentStateMessage message){
-        System.out.println("Player " + message.getPlayer().getNickname() + " is in the state " + message.getStateName());
+        System.out.println("Player " + message.getCurrentPlayer().getNickname() + " is in the state " + message.getStateName());
 
         System.out.println("The online players are: " + message.getOnlinePlayers());
 
@@ -81,20 +81,19 @@ public class ViewCLI extends View {
             }
         }
 
-        //this.showCommonArea(message.getCurrentPlayer().getCommonArea());
-        this.showCommonArea(message.getPlayer().getCommonArea());
+        this.showCommonArea(message.getCurrentPlayer().getCommonArea());
 
-        System.out.println("Score of " + message.getPlayer().getNickname() + ": " + message.getPlayer().getScore());
+        System.out.println("Score of " + message.getCurrentPlayer().getNickname() + ": " + message.getCurrentPlayer().getScore());
 
         if(!Objects.equals(message.getStateName(), "StarterCardState")) {
-            this.showPlayerArea(message.getPlayer().getPlayerArea());
+            this.showPlayerArea(message.getCurrentPlayer().getPlayerArea());
 
         }
 
-        this.showPlayerHand(message);
+        this.showPlayerHand(message.getCurrentPlayer(), message.getPlayer().getNickname());
 
         if (message.isLastTurn()) {
-            System.out.println("THIS IS THE LAST TURN");
+            System.out.println("\nTHIS IS THE LAST TURN\n");
         }
 
         System.out.println("\n");
@@ -107,14 +106,14 @@ public class ViewCLI extends View {
     public void showCommonArea(CommonArea area) {
        System.out.println("\nCARDS ON THE TABLE: ");
        System.out.println("(1) Resource deck top card: " + area.getD1().getList().getFirst().getReign());
-       System.out.print("(2) Gold deck top card: " + area.getD2().getList().getFirst().getReign());
+       System.out.println("(2) Gold deck top card: " + area.getD2().getList().getFirst().getReign());
 
        for(int i=0; i<area.getTableCards().size(); i++) {
            PlaceableCard card = area.getTableCards().get(i);
            if (card != null)
-               System.out.print("("+ (i + 3) +") Card ID: " + area.getTableCards().get(i).getID());
+               System.out.println("("+ (i + 3) +") Card ID: " + area.getTableCards().get(i).getID());
            else
-               System.out.print("("+ (i + 3) +") Card ID: " + "empty");
+               System.out.println("("+ (i + 3) +") Card ID: " + "empty");
        }
 
        System.out.println("\n");
@@ -213,16 +212,17 @@ public class ViewCLI extends View {
 
     /**
      * Prints the current state of the player hand
-     * @param message Object with reference to the player hand and current player
+     * @param currentPlayer the player whose hand is to be printed
      */
-    public void showPlayerHand(currentStateMessage message) {
+    public void showPlayerHand(Player currentPlayer, String viewer) {
         //PlayerHand hand = message.getCurrentPlayer().getPlayerHand();
-        PlayerHand hand = message.getPlayer().getPlayerHand();
+        PlayerHand hand = currentPlayer.getPlayerHand();
         System.out.println("\nPLAYER HAND: ");
-        if (message.getPlayer().getNickname().equals(message.getCurrentPlayer().getNickname())) {
-            int i = 1;
+        if (currentPlayer.getNickname().equals(viewer)) {
+            int i = 0;
             for (PlaceableCard card : hand.getPlaceableCards()) {
                 System.out.println("("+i+") Card ID: " + card.getID());
+                i += 1;
             }
         } else {
             for (PlaceableCard card : hand.getPlaceableCards()) {
@@ -431,7 +431,7 @@ public class ViewCLI extends View {
         System.out.println("You have to choose your personal objective");
 
         for (int i = 0; i < objectives.size(); i++) {
-            System.out.println("(" + i + ") Objective  ID: " + objectives.get(i).getID());
+            System.out.println("(" + (i + 1) + ") Objective  ID: " + objectives.get(i).getID());
         }
 
         System.out.println("Enter '1' if you want to choose the first one, '2' if you want to choose the second one");
@@ -454,7 +454,6 @@ public class ViewCLI extends View {
      */
     public int[] placeCard () {
         int[] chosenCard = new int[4];
-        //if the user does not enter integer values, the method will return an array of invalid values for placing the card
         chosenCard[0] = 1000;
         chosenCard[1] = 1000;
         chosenCard[2] = 1000;
@@ -473,7 +472,7 @@ public class ViewCLI extends View {
 
         boolean correct = false;
         while(!correct) {
-            System.out.println("Do you want to place it on the front side or on the back side?");
+            System.out.println("FRONT or BACK?");
             String choice = scanner.nextLine().toLowerCase();
             switch (choice) {
                 case "front", "front side" -> {
@@ -490,7 +489,7 @@ public class ViewCLI extends View {
 
         while(true) {
             try {
-                System.out.println("Enter the ROW coordinate of the cell where you want to place the card");
+                System.out.print("ROW: ");
                 chosenCard[2] = scanner.nextInt();
                 scanner.nextLine();
                 break;
@@ -502,7 +501,7 @@ public class ViewCLI extends View {
 
         while(true) {
             try {
-                System.out.println("Enter the COLUMN coordinate of the cell where you want to place the card");
+                System.out.print("COLUMN: ");
                 chosenCard[3] = scanner.nextInt();
                 scanner.nextLine();
                 break;
@@ -542,6 +541,8 @@ public class ViewCLI extends View {
 
         points = message.getPlayersPoints();
         numObjectives = message.getNumberOfObjects();
+
+        System.out.println("\n\nSCOREBOARD\n");
         for (String playerName : points.keySet()) {
             Integer playerPoints = points.get(playerName);
             Integer playerObjectives = numObjectives.get(playerName);
@@ -554,9 +555,7 @@ public class ViewCLI extends View {
         Player player = update.getPlayer();
         this.showCommonArea(player.getCommonArea());
         this.showPlayerArea(player.getPlayerArea());
-        this.showPlayerHand(new currentStateMessage(player, player, null, false, null, null));
+        this.showPlayerHand(player, update.getNicknameViewer());
 
     }
-
-
 }

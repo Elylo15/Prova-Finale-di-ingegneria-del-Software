@@ -1,9 +1,13 @@
 package it.polimi.ingsw.protocol.server;
 
+import it.polimi.ingsw.model.CommonArea;
 import it.polimi.ingsw.model.Match;
 import it.polimi.ingsw.model.Player;
+import it.polimi.ingsw.model.PlayerArea;
 import it.polimi.ingsw.model.cards.ObjectiveCard;
 import it.polimi.ingsw.model.cards.PlaceableCard;
+import it.polimi.ingsw.model.cards.exceptions.InvalidIdException;
+import it.polimi.ingsw.model.cards.exceptions.noPlaceCardException;
 import it.polimi.ingsw.protocol.messages.ObjectiveState.objectiveCardMessage;
 import it.polimi.ingsw.protocol.messages.PlayerTurnState.pickCardMessage;
 import it.polimi.ingsw.protocol.messages.PlayerTurnState.placeCardMessage;
@@ -57,8 +61,8 @@ public class ClientManager implements Runnable{
     public synchronized void addPlayerInfo(PlayerInfo playerInfo) throws Exception {
         if(playerInfo != null
                 && (matchInfo.getExpectedPlayers() == null || matchInfo.getExpectedPlayers() > this.playersInfo.size())
-                && this.playersInfo.stream().noneMatch(playerInfo1 -> playerInfo1.getPlayer().getNickname().equals(playerInfo.getPlayer().getNickname()))
-                && this.playersInfo.stream().noneMatch(playerInfo1 -> playerInfo1.getPlayer().getColor().equals(playerInfo.getPlayer().getColor())))
+                && this.playersInfo.stream().noneMatch(playerInfo1 -> playerInfo1.getPlayer().getNickname().equalsIgnoreCase(playerInfo.getPlayer().getNickname()))
+                && this.playersInfo.stream().noneMatch(playerInfo1 -> playerInfo1.getPlayer().getColor().equalsIgnoreCase(playerInfo.getPlayer().getColor())))
         {
             this.playersInfo.add(playerInfo);
             logCreator.log("Player added: " + playerInfo.getPlayer().getNickname() + " " + playerInfo.getPlayer().getColor());
@@ -234,11 +238,18 @@ public class ClientManager implements Runnable{
 
                     this.player(currentPlayer);
 
-
+                    if(this.matchInfo.isLastTurn()) {
+                        this.matchInfo.setStatus(MatchState.Endgame);
+                    } else {
+                        this.matchInfo.setStatus(MatchState.Player1);
+                    }
                     this.turnNumber += 1;
                     if(this.matchInfo.getMatch().getPlayers().stream()
-                            .anyMatch(player -> player.getScore() >= 20)) {
-                        System.out.println("This is the last turn");
+                            .anyMatch(player -> player.getScore() >= 20) ||
+                            (this.matchInfo.getMatch().getCommonArea().getTableCards().isEmpty()
+                            && this.getMatch().getCommonArea().getD1().getList().isEmpty()
+                            && this.getMatch().getCommonArea().getD2().getList().isEmpty())) {
+                        logCreator.log("This is the last turn");
                         matchInfo.setLastTurn(true);
                     }
                 }
@@ -380,13 +391,6 @@ public class ClientManager implements Runnable{
     }
 
     private synchronized void player(Player player) {
-        // REMOVE THIS
-        if (player != null)
-            System.out.println("Current player -> " + player.getNickname());
-        else
-            System.out.println("Current player -> null");
-
-
         if(player == null) {
             logCreator.log("Player is null");
             switch (this.matchInfo.getStatus()) {
@@ -418,23 +422,9 @@ public class ClientManager implements Runnable{
                     playerInfo1.getConnection().sendCurrentState(currState);
                 }
 
-//                currentStateMessage curr = new currentStateMessage(player, playerInfo.getPlayer(), "StarterCardState", this.matchInfo.isLastTurn(), this.onlinePlayers(), null);
-//                CurrentStatePrinter printer = new CurrentStatePrinter();
-//                printer.printCurrentState(curr);
-//                printer.printCurrentPlayer();
-
-                // REMOVE THIS
-                System.out.println("PlayerHand: " + playerInfo.getPlayer().getPlayerHand().toString());
-
                 // Obtains side of the starter card
                 boolean correctAnswer = false;
                 while(!correctAnswer) {
-                    // REMOVE THESE
-//                    CommonArea area = this.matchInfo.getMatch().getCommonArea();
-//                    System.out.println("Deck 1: " + area.getD1().getList().stream().map(Card::getID).collect(Collectors.toCollection(ArrayList::new)));
-//                    System.out.println("Deck 2: " + area.getD2().getList().stream().map(Card::getID).collect(Collectors.toCollection(ArrayList::new)));
-//                    System.out.println("Deck 3: " + area.getD3().getList().stream().map(Card::getID).collect(Collectors.toCollection(ArrayList::new)));
-//                    System.out.println("Deck 4: " + area.getD4().getList().stream().map(Card::getID).collect(Collectors.toCollection(ArrayList::new)));
 
 
                     Future<starterCardMessage> future = executor.submit(() -> playerInfo.getConnection().getStaterCard());
@@ -480,7 +470,7 @@ public class ClientManager implements Runnable{
 
                 // Updates the view of every player about the current one
                 for(PlayerInfo playerInfo1 : this.playersInfo) {
-                    updatePlayerMessage update = new updatePlayerMessage(player);
+                    updatePlayerMessage update = new updatePlayerMessage(player, playerInfo1.getPlayer().getNickname());
                     playerInfo1.getConnection().sendUpdatePlayer(update);
                 }
 
@@ -563,7 +553,7 @@ public class ClientManager implements Runnable{
 
                 // Updates the view of every player about the current one
                 for(PlayerInfo playerInfo1 : this.playersInfo) {
-                    updatePlayerMessage update = new updatePlayerMessage(player);
+                    updatePlayerMessage update = new updatePlayerMessage(player, playerInfo1.getPlayer().getNickname());
                     playerInfo1.getConnection().sendUpdatePlayer(update);
                 }
 
@@ -616,21 +606,25 @@ public class ClientManager implements Runnable{
                             this.kickPlayer(playerInfo);
                         } else {
                             // Checks if the answer is valid
-                            try {
-                                int card = placeCard.getCard();
-                                int x = placeCard.getRow();
-                                int y = placeCard.getColumn();
-                                int side = placeCard.getFront();
-                                playerInfo.getPlayer().playTurn(card, x, y, side);
-                                playerInfo.getConnection().sendAnswer(true);
-                                logCreator.log("Player " + player.getNickname() + " has correctly answered");
-                                correctAnswer = true;
-                            } catch (Exception e)  {
-                                correctAnswer = false;
+                            int card = placeCard.getCard();
+                            int x = placeCard.getRow();
+                            int y = placeCard.getColumn();
+                            int side = placeCard.getFront();
+
+                            if(this.checkValidPositioning(player, card, x, y, side)) {
+                                try {
+                                    playerInfo.getPlayer().playTurn(card, x, y, side);
+                                    playerInfo.getConnection().sendAnswer(true);
+                                    logCreator.log("Player " + player.getNickname() + " has correctly answered");
+                                    correctAnswer = true;
+                                } catch (noPlaceCardException e) {
+                                    playerInfo.getConnection().sendAnswer(false);
+                                    logCreator.log("Player " + player.getNickname() + " has not correctly answered");
+                                }
+                            } else {
                                 playerInfo.getConnection().sendAnswer(false);
                                 logCreator.log("Player " + player.getNickname() + " has not correctly answered");
                             }
-
                         }
                     }
                 }
@@ -639,7 +633,7 @@ public class ClientManager implements Runnable{
 
                 // Updates all clients on the current situation
                 for(PlayerInfo playerInfo1 : this.playersInfo) {
-                    updatePlayerMessage update = new updatePlayerMessage(playerInfo.getPlayer());
+                    updatePlayerMessage update = new updatePlayerMessage(playerInfo.getPlayer(), playerInfo1.getPlayer().getNickname());
                     playerInfo1.getConnection().sendUpdatePlayer(update);
                 }
 
@@ -667,8 +661,6 @@ public class ClientManager implements Runnable{
                     }
 
 
-
-
                     // If the client is still online, it proceeds to ask to pick a card
                     boolean correctAnswer;
                     if(this.playersInfo.contains(playerInfo)) {
@@ -692,14 +684,19 @@ public class ClientManager implements Runnable{
                                     this.kickPlayer(playerInfo);
                                 } else {
                                     // Checks if the answer is valid
-                                    try {
-                                        playerInfo.getPlayer().pickNewCard(pickCard.getCard());
-                                        correctAnswer = true;
-                                        playerInfo.getConnection().sendAnswer(true);
-                                        logCreator.log("Player " + player.getNickname() + "has correctly answered");
-                                    } catch (Exception e){
+                                    if(this.checkValidPick(pickCard.getCard())) {
+                                        try {
+                                            playerInfo.getPlayer().pickNewCard(pickCard.getCard());
+                                            correctAnswer = true;
+                                            playerInfo.getConnection().sendAnswer(true);
+                                            logCreator.log("Player " + player.getNickname() + " has correctly answered");
+                                        } catch (InvalidIdException e) {
+                                            playerInfo.getConnection().sendAnswer(false);
+                                            logCreator.log("Player " + player.getNickname() + " has not correctly answered");
+                                        }
+                                    } else {
                                         playerInfo.getConnection().sendAnswer(false);
-                                        logCreator.log("Player " + player.getNickname() + "has not correctly answered");
+                                        logCreator.log("Player " + player.getNickname() + " has not correctly answered");
                                     }
                                 }
                             }
@@ -710,7 +707,7 @@ public class ClientManager implements Runnable{
 
                     // Updates all clients on the current situation
                     for(PlayerInfo playerInfo1 : this.playersInfo) {
-                        updatePlayerMessage update = new updatePlayerMessage(playerInfo.getPlayer());
+                        updatePlayerMessage update = new updatePlayerMessage(playerInfo.getPlayer(), playerInfo1.getPlayer().getNickname());
                         playerInfo1.getConnection().sendUpdatePlayer(update);
                     }
 
@@ -758,7 +755,7 @@ public class ClientManager implements Runnable{
                         placeCard = future.get();
                         timer.cancel();
                     } catch (Exception e) {
-                        logCreator.log("Player " + player.getNickname() + "has not answered");
+                        logCreator.log("Player " + player.getNickname() + " has not answered");
                     }
 
                     if(placeCard != null) {
@@ -768,28 +765,32 @@ public class ClientManager implements Runnable{
                             this.kickPlayer(playerInfo);
                         } else {
                             // Checks if the answer is valid
-                            try {
-                                int card = placeCard.getCard();
-                                int x = placeCard.getRow();
-                                int y = placeCard.getColumn();
-                                int side = placeCard.getFront();
-                                playerInfo.getPlayer().playTurn(card, x, y, side);
-                                playerInfo.getConnection().sendAnswer(true);
-                                logCreator.log("Player " + player.getNickname() + "has correctly answered");
-                                correctAnswer = true;
-                            } catch (Exception e)  {
-                                correctAnswer = false;
-                                playerInfo.getConnection().sendAnswer(false);
-                                logCreator.log("Player " + player.getNickname() + "has not correctly answered");
-                            }
+                            int card = placeCard.getCard();
+                            int x = placeCard.getRow();
+                            int y = placeCard.getColumn();
+                            int side = placeCard.getFront();
 
+                            if(this.checkValidPositioning(player, card, x, y, side)) {
+                                try {
+                                    playerInfo.getPlayer().playTurn(card, x, y, side);
+                                    playerInfo.getConnection().sendAnswer(true);
+                                    logCreator.log("Player " + player.getNickname() + " has correctly answered");
+                                    correctAnswer = true;
+                                } catch (noPlaceCardException e) {
+                                    playerInfo.getConnection().sendAnswer(false);
+                                    logCreator.log("Player " + player.getNickname() + " has not correctly answered");
+                                }
+                            } else {
+                                playerInfo.getConnection().sendAnswer(false);
+                                logCreator.log("Player " + player.getNickname() + " has not correctly answered");
+                            }
                         }
                     }
                 }
 
                 // Updates all clients on the current situation
                 for(PlayerInfo playerInfo1 : this.playersInfo) {
-                    updatePlayerMessage update = new updatePlayerMessage(playerInfo.getPlayer());
+                    updatePlayerMessage update = new updatePlayerMessage(playerInfo.getPlayer(), playerInfo1.getPlayer().getNickname());
                     playerInfo1.getConnection().sendUpdatePlayer(update);
                 }
 
@@ -803,12 +804,7 @@ public class ClientManager implements Runnable{
                     case Player1 -> this.matchInfo.setStatus(MatchState.Player2);
                     case Player2 -> this.matchInfo.setStatus(MatchState.Player3);
                     case Player3 -> this.matchInfo.setStatus(MatchState.Player4);
-                    case Player4 -> {
-                        if(!this.matchInfo.isLastTurn())
-                            this.matchInfo.setStatus(MatchState.Player1);
-                        else
-                            this.matchInfo.setStatus(MatchState.Endgame);
-                    }
+                    case Player4 -> this.matchInfo.setStatus(MatchState.Endgame);
                 }
 
                 this.saveMatch();
@@ -830,9 +826,9 @@ public class ClientManager implements Runnable{
         HashMap<String, Integer> scores = new HashMap<>();
         HashMap<String, Integer> numberOfObjects = new HashMap<>();
 
-        ArrayList<Player> players = (ArrayList<Player>) this.playersInfo.stream()
+        ArrayList<Player> players =this.playersInfo.stream()
                 .map(PlayerInfo::getPlayer)
-                .toList();
+                .collect(Collectors.toCollection(ArrayList::new));
 
         // Compute all points and number of objective accomplished
         for(Player player : players) {
@@ -852,6 +848,10 @@ public class ClientManager implements Runnable{
         }
 
         for(PlayerInfo playerInfo1 : this.playersInfo) {
+
+            // REMOVE THIS
+            System.out.println("Sending endgame message to " + playerInfo1.getPlayer().getNickname());
+
             playerInfo1.getConnection().sendEndGame(scores, numberOfObjects);
         }
 
@@ -930,14 +930,92 @@ public class ClientManager implements Runnable{
     }
 
 
-
+    /**
+     * Returns a list of all online players
+     * @return list of online players
+     */
     private ArrayList<String> onlinePlayers() {
         return this.playersInfo.stream()
                 .map(playerInfo -> playerInfo.getPlayer().getNickname())
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 
+    /**
+     * Checks if the card can be placed in the specified position
+     * @param player player that wants to place the card
+     * @param card card to be placed
+     * @param x row
+     * @param y column
+     * @param side front or back
+     * @return true if the card can be placed, false otherwise
+     */
+    private boolean checkValidPositioning(Player player, int card, int x, int y, int side) {
+        PlayerArea area = player.getPlayerArea();
+        if(!area.checkPosition(x, y)) {
+            return false;
+        }
 
+        PlaceableCard placeableCard = player.pickPlaceableCard(card);
+
+        if(side == 1 && !placeableCard.checkRequirement(area.getResources())) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Checks if the player can pick the specified card
+     * @param card card to be picked
+     * @return true if the card can be picked, false otherwise
+     */
+    private boolean checkValidPick(int card) {
+        CommonArea commonArea = this.matchInfo.getMatch().getCommonArea();
+        switch (card) {
+            // Checks if the Resource deck is empty
+            case 1 -> {
+                if(commonArea.getD1().getList().isEmpty())
+                    return false;
+            }
+
+            // Checks if the Gold deck is empty
+            case 2 -> {
+                if(commonArea.getD2().getList().isEmpty())
+                    return false;
+            }
+
+            // Checks if the table has at least 1 card
+            case 3 -> {
+                if(commonArea.getTableCards().isEmpty())
+                    return false;
+            }
+
+            // Checks if the table has at least 2 cards
+            case 4 -> {
+                if(commonArea.getTableCards().size() < 2)
+                    return false;
+            }
+
+            // Checks if the table has at least 3 cards
+            case 5 -> {
+                if(commonArea.getTableCards().size() < 3)
+                    return false;
+            }
+
+            // Checks if the table has at least 4 cards
+            case 6 -> {
+                if(commonArea.getTableCards().size() < 4)
+                    return false;
+            }
+
+            default -> {
+                return false;
+            }
+
+        }
+
+        return true;
+    }
 
 
 }
