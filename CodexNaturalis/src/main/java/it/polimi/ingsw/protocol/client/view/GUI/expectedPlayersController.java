@@ -1,4 +1,4 @@
-package it.polimi.ingsw.protocol.client.view.GUI.expectedPlayers;
+package it.polimi.ingsw.protocol.client.view.GUI;
 
 import it.polimi.ingsw.protocol.client.view.ViewGUI;
 import javafx.fxml.FXML;

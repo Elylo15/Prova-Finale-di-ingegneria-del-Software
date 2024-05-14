@@ -1,14 +1,12 @@
 package it.polimi.ingsw.protocol.client.view;
 
-import it.polimi.ingsw.protocol.client.view.GUI.IP_PORT.*;
-import it.polimi.ingsw.protocol.client.view.GUI.ChooseConnection.*;
-import it.polimi.ingsw.protocol.client.view.GUI.Disconnection.*;
-import it.polimi.ingsw.protocol.client.view.GUI.ServerOption.*;
+
 import it.polimi.ingsw.model.CommonArea;
 import it.polimi.ingsw.model.Player;
-import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.cards.ObjectiveCard;
-import it.polimi.ingsw.protocol.client.view.GUI.expectedPlayers.expectedPlayersController;
+import it.polimi.ingsw.protocol.client.view.GUI.ChooseSocketRMIController;
+import it.polimi.ingsw.protocol.client.view.GUI.InsertIPPortController;
+import it.polimi.ingsw.protocol.client.view.GUI.expectedPlayersController;
 import it.polimi.ingsw.protocol.messages.ConnectionState.availableColorsMessage;
 import it.polimi.ingsw.protocol.messages.ConnectionState.connectionResponseMessage;
 import it.polimi.ingsw.protocol.messages.ConnectionState.unavailableNamesMessage;
@@ -43,8 +41,8 @@ public class ViewGUI extends View {
     public String[] askPortIP(){
         String[] server = new String[2];
         try{
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("it/polimi/ingsw/protocol/client/view/GUI/ServerOption/Insert_ServerOption.fxml"));
-            Parent root = loader.load();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Insert_IP_PORT.fxml"));
+            Parent root = (Parent) loader.load();
 
             InsertIPPortController controller = loader.getController();
             controller.setViewGUI(this);
@@ -66,7 +64,7 @@ public class ViewGUI extends View {
 
     public boolean askSocket(){//true if socket, false if RMI
         try{
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("it/polimi/ingsw/protocol/client/view/GUI/ChooseConnection/Choose_Socket_RMI.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Choose_Socket_RMI.fxml"));
             Parent root = loader.load();
 
             ChooseSocketRMIController controller = loader.getController();
@@ -100,7 +98,7 @@ public class ViewGUI extends View {
     @Override
     public void playerDisconnected() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("it/polimi/ingsw/protocol/client/view/GUI/Disconnection/Disconnect.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Disconnect.fxml"));
             Parent root = loader.load();
             scene = new Scene(root);
             stage.setScene(scene);
@@ -143,7 +141,7 @@ public class ViewGUI extends View {
     @Override
     public int expectedPlayers() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("it/polimi/ingsw/protocol/client/view/GUI/expectedPlayers/expectedPlayers.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("src/main/java/it/polimi/ingsw/protocol/client/view/GUI/expectedPlayers/expectedPlayers.fxml"));
             Parent root = loader.load();
             scene = new Scene(root);
             stage.setScene(scene);
