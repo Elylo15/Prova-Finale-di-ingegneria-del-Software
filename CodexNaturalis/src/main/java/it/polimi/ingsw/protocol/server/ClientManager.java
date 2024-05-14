@@ -217,10 +217,13 @@ public class ClientManager implements Runnable{
 
                     this.player(currentPlayer);
 
+
+
                     if(this.matchInfo.isLastTurn()) {
                         this.matchInfo.setStatus(MatchState.Endgame);
                     } else {
-                        this.matchInfo.setStatus(MatchState.Player1);
+                        if(findPlayer(currentPlayer).getState() != State.PlaceCard)
+                            this.matchInfo.setStatus(MatchState.Player1);
                     }
                     this.turnNumber += 1;
                     if(this.matchInfo.getMatch().getPlayers().stream()
