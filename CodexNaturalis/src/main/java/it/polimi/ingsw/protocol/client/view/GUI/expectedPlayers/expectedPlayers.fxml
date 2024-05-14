@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.protocol.client.view.GUI.expectedPlayers.ExpectedPlayers">
+   <children>
+      <ChoiceBox fx:id="choice" layoutX="225.0" layoutY="250.0" prefWidth="150.0" />
+      <Label fx:id="label" contentDisplay="CENTER" layoutX="60.0" layoutY="149.0" prefHeight="30.0" prefWidth="474.0" text="How many players do you want to be in the game?">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </Label>
+   </children>
+</AnchorPane>

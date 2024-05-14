@@ -8,6 +8,7 @@ import it.polimi.ingsw.model.CommonArea;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.cards.ObjectiveCard;
+import it.polimi.ingsw.protocol.client.view.GUI.expectedPlayers.expectedPlayersController;
 import it.polimi.ingsw.protocol.messages.ConnectionState.availableColorsMessage;
 import it.polimi.ingsw.protocol.messages.ConnectionState.connectionResponseMessage;
 import it.polimi.ingsw.protocol.messages.ConnectionState.unavailableNamesMessage;
@@ -17,6 +18,7 @@ import it.polimi.ingsw.protocol.messages.ServerOptionState.serverOptionMessage;
 import it.polimi.ingsw.protocol.messages.ServerOptionState.serverOptionResponseMessage;
 import it.polimi.ingsw.protocol.messages.currentStateMessage;
 import it.polimi.ingsw.protocol.messages.responseMessage;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -134,8 +136,28 @@ public class ViewGUI extends View {
         return 0;
     }
 
+    /**
+     * allow the user to choose how many players will play
+     * @return number of expected players
+     */
     @Override
     public int expectedPlayers() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("it/polimi/ingsw/protocol/client/view/GUI/expectedPlayers/expectedPlayers.fxml"));
+            Parent root = loader.load();
+            scene = new Scene(root);
+            stage.setScene(scene);
+            stage.show();
+
+            expectedPlayersController controller = loader.getController();
+            controller.setViewGUI(this);
+            //int num = controller.getNumber();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+         //return num;
+
         return 0;
     }
 

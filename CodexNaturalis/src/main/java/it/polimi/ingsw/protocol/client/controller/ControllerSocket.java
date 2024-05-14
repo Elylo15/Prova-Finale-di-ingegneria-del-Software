@@ -276,7 +276,7 @@ public class ControllerSocket extends Controller {
     }
 
     /**
-     * method {@code updatePlayer}: sends a updatePlayerMessage
+     * method {@code updatePlayer}: receives a updatePlayerMessage
      * @return updatePlayerMessage
      */
     @Override
