@@ -23,7 +23,7 @@ public class LoadDecks implements Serializable {
         CommonArea c = new CommonArea();
         try {
             // Read the JSON file into a Reader object
-            FileReader reader = new FileReader("CodexNaturalis/src/main/java/it/polimi/ingsw/model/cards/Json/Cards.json");
+            FileReader reader = new FileReader("src/main/java/it/polimi/ingsw/model/cards/Json/Cards.json");
 
             //Parse the JSON file into a JsonObject
             JsonObject jsonObject = JsonParser.parseReader(reader).getAsJsonObject();
