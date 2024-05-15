@@ -16,22 +16,19 @@ import it.polimi.ingsw.protocol.messages.ServerOptionState.serverOptionMessage;
 import it.polimi.ingsw.protocol.messages.ServerOptionState.serverOptionResponseMessage;
 import it.polimi.ingsw.protocol.messages.currentStateMessage;
 import it.polimi.ingsw.protocol.messages.responseMessage;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 
 public class ViewGUI extends View {
     private final Stage stage;
     private Scene scene;
+
 
     public ViewGUI() {
         this.stage = new Stage();
@@ -205,17 +202,5 @@ public class ViewGUI extends View {
     }
 
 
-//    private void decks(ArrayList<Card> deck){
-//        List<ImageView> imageViews = new ArrayList<>();
-//
-//        for (Card card : deck) {
-//            ImageView imageView = new ImageView();
-//            imageView.imageProperty().bind(card.imageProperty());
-//            imageViews.add(imageView);
-//        }
-//
-//        HBox hbox = new HBox();
-//        hbox.getChildren().addAll(imageViews);
-//    }
 }
 

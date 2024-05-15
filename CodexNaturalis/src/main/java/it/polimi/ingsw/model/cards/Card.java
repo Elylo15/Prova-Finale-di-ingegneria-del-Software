@@ -6,6 +6,7 @@ import java.io.Serializable;
 
 public abstract class Card implements Serializable {
     protected int ID;
+    private boolean front;
 
     /**
      * Constructs a new {@code Card} object with the specified {@param ID}.
@@ -24,9 +25,23 @@ public abstract class Card implements Serializable {
     protected Card(){}
 
     /**
-     * @return card ID
+     * @return card ID: int
      */
     public int getID() {
         return ID;
+    }
+
+    /**
+     * @return front: boolean
+     */
+    public boolean isFront() {
+        return front;
+    }
+
+    /**
+     * @param front: boolean
+     */
+    public void setFront(boolean front) {
+        this.front = front;
     }
 }
