@@ -1,7 +1,5 @@
 package it.polimi.ingsw.protocol.client.controller;
 
-import it.polimi.ingsw.model.*;
-import it.polimi.ingsw.model.cards.ObjectiveCard;
 import it.polimi.ingsw.protocol.messages.*;
 import it.polimi.ingsw.protocol.messages.ConnectionState.*;
 import it.polimi.ingsw.protocol.messages.EndGameState.*;
@@ -11,7 +9,6 @@ import it.polimi.ingsw.protocol.messages.ServerOptionState.*;
 import it.polimi.ingsw.protocol.messages.WaitingforPlayerState.*;
 
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 
 /**
  * Controller is an abstract class. The methods of the Controller will be implemented

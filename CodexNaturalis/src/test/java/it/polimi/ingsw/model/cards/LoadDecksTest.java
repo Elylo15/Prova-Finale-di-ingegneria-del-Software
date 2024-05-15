@@ -1,7 +1,6 @@
 package it.polimi.ingsw.model.cards;
 
 import it.polimi.ingsw.model.CommonArea;
-import it.polimi.ingsw.model.cards.Json.LoadDecks;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;

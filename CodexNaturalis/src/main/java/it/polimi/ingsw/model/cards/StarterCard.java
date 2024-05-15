@@ -23,7 +23,7 @@ public class StarterCard extends PlaceableCard implements Serializable {
         }
         else if(ID<81){
             throw new InvalidIdException("ID is too small");
-        } else if (ID>86) {
+        } else {
             throw new InvalidIdException("ID is too big");
         }
     }

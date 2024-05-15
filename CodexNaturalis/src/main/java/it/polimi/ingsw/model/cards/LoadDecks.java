@@ -1,10 +1,8 @@
-package it.polimi.ingsw.model.cards.Json;
+package it.polimi.ingsw.model.cards;
 
 import com.google.gson.*;
 import it.polimi.ingsw.model.CommonArea;
-import it.polimi.ingsw.model.cards.*;
 
-import java.awt.*;
 import java.io.FileReader;
 import java.io.Serializable;
 
@@ -23,7 +21,7 @@ public class LoadDecks implements Serializable {
         CommonArea c = new CommonArea();
         try {
             // Read the JSON file into a Reader object
-            FileReader reader = new FileReader("src/main/java/it/polimi/ingsw/model/cards/Json/Cards.json");
+            FileReader reader = new FileReader("CodexNaturalis/src/main/Resource/Json/Cards.json");
 
             //Parse the JSON file into a JsonObject
             JsonObject jsonObject = JsonParser.parseReader(reader).getAsJsonObject();
@@ -36,7 +34,7 @@ public class LoadDecks implements Serializable {
                 c.getD1().addCard(resourceCard);
             }
 
-            //for Goldcard
+            //for GoldCard
             JsonArray ArrayGoldCard = jsonObject.getAsJsonArray("GoldCard");
             for (int i = 0; i < ArrayGoldCard.size(); i++) {
                 JsonElement y = ArrayGoldCard.get(i);
@@ -65,19 +63,4 @@ public class LoadDecks implements Serializable {
 
     }
 
-   /* public static void main(String[] args) {
-        LoadDecks loadDecks = new LoadDecks();
-        CommonArea commonArea = new CommonArea();
-        commonArea = loadDecks.load();
-        System.out.println(commonArea.getD1().getSize());
-        System.out.println(commonArea.getD2().getSize());
-        System.out.println(commonArea.getD3().getSize());
-        System.out.println(commonArea.getD4().getSize());
-    }*/
-
-
 }
-
-
-
-

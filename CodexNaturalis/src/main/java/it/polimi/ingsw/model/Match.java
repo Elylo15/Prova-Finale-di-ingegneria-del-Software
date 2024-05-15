@@ -1,6 +1,6 @@
 package it.polimi.ingsw.model;
 import it.polimi.ingsw.model.cards.*;
-import it.polimi.ingsw.model.cards.Json.LoadDecks;
+import it.polimi.ingsw.model.cards.LoadDecks;
 
 import java.io.Serializable;
 import java.util.ArrayList;

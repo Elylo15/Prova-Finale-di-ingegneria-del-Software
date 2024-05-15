@@ -16,15 +16,15 @@ public class CommonArea implements Serializable {
     private final Deck<ObjectiveCard> d4;
     private final ArrayList<PlaceableCard> tableCards;
     /**
-     * Class costructor
+     * Class constructor
      */
     public CommonArea(){
 
-        d1 = new Deck<ResourceCard>();
-        d2 = new Deck<GoldCard>();
-        d3 = new Deck<StarterCard>();
-        d4 = new Deck<ObjectiveCard>();
-        tableCards = new ArrayList<PlaceableCard>();
+        d1 = new Deck<>();
+        d2 = new Deck<>();
+        d3 = new Deck<>();
+        d4 = new Deck<>();
+        tableCards = new ArrayList<>();
     }
     /**
      * method pickTableCard: remove a face-up card

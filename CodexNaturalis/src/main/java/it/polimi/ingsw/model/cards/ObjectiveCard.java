@@ -27,15 +27,15 @@ public class ObjectiveCard extends Card implements Serializable {
     {
         if(ID > 86 && ID < 102) {
             this.ID = ID;
-            if(ID >= 87 && ID <= 90) {this.points = 2;}
+            if(ID <= 90) {this.points = 2;}
             if(ID >= 91 && ID <= 94) {this.points = 3;}
             if(ID >= 95 && ID <= 98) {this.points = 2;}
             if(ID == 99) {this.points = 3;}
-            if(ID >= 100 && ID <= 102) {this.points = 2;}
+            if(ID >= 100) {this.points = 2;}
 
         } else if (ID < 87) {
             throw new InvalidIdException("ID too small");
-        } else if (ID > 101) {
+        } else {
             throw new InvalidIdException("ID too big");
         }
     }

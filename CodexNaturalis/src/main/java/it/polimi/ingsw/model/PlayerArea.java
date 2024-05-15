@@ -142,7 +142,7 @@ public class PlayerArea implements Serializable {
 
     /**
      * Returns a list of coordinates of available position.
-     * A position is made of a square of four cells and it is represented by the coordinates of its top-left cell
+     * A position is made of a square of four cells, and it is represented by the coordinates of its top-left cell
      * @return A list of positions where a card could be placed
      */
     public ArrayList<Integer[]> getAvailablePosition() {

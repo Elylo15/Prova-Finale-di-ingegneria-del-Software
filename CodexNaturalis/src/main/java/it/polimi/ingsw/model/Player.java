@@ -1,16 +1,11 @@
 package it.polimi.ingsw.model;
 
 import it.polimi.ingsw.model.cards.*;
-import it.polimi.ingsw.model.cards.Json.LoadDecks;
+import it.polimi.ingsw.model.cards.LoadDecks;
 import it.polimi.ingsw.model.cards.exceptions.InvalidIdException;
 import it.polimi.ingsw.model.cards.exceptions.noPlaceCardException;
-import it.polimi.ingsw.protocol.messages.currentStateMessage;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class  Player implements Serializable {
     private String nickname;
@@ -40,7 +35,7 @@ public class  Player implements Serializable {
      * method {@code drawStarter}: draws a starter card.
      */
     public void drawStarter(){
-        deck.addNewplaceableCard(commonArea.drawFromToPlayer(3));
+        deck.addNewPlaceableCard(commonArea.drawFromToPlayer(3));
     }
 
     /**
@@ -55,9 +50,9 @@ public class  Player implements Serializable {
      * method {@code initialHand}: The player draws two resourceCard, one goldCard.
      */
     public void initialHand(){
-        deck.addNewplaceableCard(commonArea.drawFromToPlayer(1)); //draw resource
-        deck.addNewplaceableCard(commonArea.drawFromToPlayer(1)); //draw resource
-        deck.addNewplaceableCard(commonArea.drawFromToPlayer(2)); //draw gold
+        deck.addNewPlaceableCard(commonArea.drawFromToPlayer(1)); //draw resource
+        deck.addNewPlaceableCard(commonArea.drawFromToPlayer(1)); //draw resource
+        deck.addNewPlaceableCard(commonArea.drawFromToPlayer(2)); //draw gold
     }
 
     /**
@@ -160,17 +155,17 @@ public class  Player implements Serializable {
             throw new InvalidIdException();
 
         if (drawPick == 1)
-            deck.addNewplaceableCard(commonArea.drawFromToPlayer(1));
+            deck.addNewPlaceableCard(commonArea.drawFromToPlayer(1));
         else if (drawPick == 2)
-            deck.addNewplaceableCard(commonArea.drawFromToPlayer(2));
+            deck.addNewPlaceableCard(commonArea.drawFromToPlayer(2));
         else if (drawPick == 3)
-            deck.addNewplaceableCard(commonArea.pickTableCard(commonArea.getTableCards().getFirst().getID()));
+            deck.addNewPlaceableCard(commonArea.pickTableCard(commonArea.getTableCards().getFirst().getID()));
         else if(drawPick==4)
-            deck.addNewplaceableCard(commonArea.pickTableCard(commonArea.getTableCards().get(1).getID()));
+            deck.addNewPlaceableCard(commonArea.pickTableCard(commonArea.getTableCards().get(1).getID()));
         else if(drawPick==5)
-            deck.addNewplaceableCard(commonArea.pickTableCard(commonArea.getTableCards().get(2).getID()));
+            deck.addNewPlaceableCard(commonArea.pickTableCard(commonArea.getTableCards().get(2).getID()));
         else
-            deck.addNewplaceableCard(commonArea.pickTableCard(commonArea.getTableCards().get(3).getID()));
+            deck.addNewPlaceableCard(commonArea.pickTableCard(commonArea.getTableCards().get(3).getID()));
 
     }
 

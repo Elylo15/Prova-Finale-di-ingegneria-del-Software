@@ -21,7 +21,7 @@ public class ResourceCard extends PlaceableCard implements Serializable {
         } else if (ID <1) {
             throw new InvalidIdException("ID is too small");
         }
-        else if(ID >40){
+        else {
             throw new InvalidIdException("ID is too big");
         }
     }

@@ -1,19 +1,13 @@
 package it.polimi.ingsw.model.cards;
 
-import it.polimi.ingsw.model.CommonArea;
-import it.polimi.ingsw.model.Player;
-import it.polimi.ingsw.model.cards.Json.LoadDecks;
 import it.polimi.ingsw.model.cards.enumeration.Reign;
 import it.polimi.ingsw.model.cards.enumeration.Resource;
 import it.polimi.ingsw.model.cards.exceptions.InvalidIdException;
-import org.junit.Before;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class CellTest {
 
@@ -23,7 +17,7 @@ class CellTest {
 
     @BeforeEach
     void setUp() {
-        ArrayList<Resource> resources = new ArrayList<Resource>();
+        ArrayList<Resource> resources = new ArrayList<>();
         resources.add(Resource.Fungus);
         resources.add(Resource.Empty);
         resources.add(Resource.Fungus);

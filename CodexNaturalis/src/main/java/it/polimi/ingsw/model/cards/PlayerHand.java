@@ -13,13 +13,13 @@ public class PlayerHand implements Serializable {
     ArrayList<PlaceableCard> placeableCards;
 
     /**
-     * Class costructor
+     * Class constructor
      */
     public PlayerHand(){
-        placeableCards = new ArrayList<PlaceableCard>();
+        placeableCards = new ArrayList<>();
     }
     /**
-     * method removeplaceableCard: removes placeableCard from PlayerHand. Returns the placeableCard
+     * method removePlaceableCard: removes placeableCard from PlayerHand. Returns the placeableCard
      * @param numCard: id of the card the player wants to play
      * @return PlaceableCard: card played by the player
      */
@@ -34,7 +34,7 @@ public class PlayerHand implements Serializable {
         return c;
     }
     /**
-     * method getplaceableCard: returns the placeableCards
+     * method getPlaceableCard: returns the placeableCards
      * @return ArrayList<PlaceableCard>: array list of player cards
      */
     public ArrayList<PlaceableCard> getPlaceableCards(){
@@ -42,10 +42,10 @@ public class PlayerHand implements Serializable {
     }
 
     /**
-     * method addNewplaceableCard: adds a new placeableCard (drawn by the player) to PlayerHand
+     * method addNewPlaceableCard: adds a new placeableCard (drawn by the player) to PlayerHand
      * @param card: card drawn by the player to add to the PlayerHand
      */
-    public void addNewplaceableCard(PlaceableCard card){
+    public void addNewPlaceableCard(PlaceableCard card){
         placeableCards.add(card);
     }
 

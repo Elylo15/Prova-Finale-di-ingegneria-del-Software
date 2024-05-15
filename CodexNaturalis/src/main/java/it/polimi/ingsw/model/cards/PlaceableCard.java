@@ -10,7 +10,7 @@ import java.util.Objects;
 
 public abstract class PlaceableCard extends Card implements Serializable {
 
-    private ArrayList<Resource> requirement;
+    private final ArrayList<Resource> requirement;
     private int points;
     private Reign reign;
     private boolean front;
@@ -92,11 +92,7 @@ public abstract class PlaceableCard extends Card implements Serializable {
                     cardInsect++;
                 }
             }
-            if (cardFungus <= playgroundFungus && cardPlant <= playgroundPlant && cardAnimal <= playgroundAnimal && cardInsect <= playgroundInsect) {
-                return true;
-            } else {
-                return false;
-            }
+            return cardFungus <= playgroundFungus && cardPlant <= playgroundPlant && cardAnimal <= playgroundAnimal && cardInsect <= playgroundInsect;
         }
         else {
             return true;
@@ -105,7 +101,7 @@ public abstract class PlaceableCard extends Card implements Serializable {
 
     /**
      * Given a list of cells, it updates the references to the new cells.
-     * @param cells ArryList of Cells
+     * @param cells ArrayList of Cells
      */
     public void setCells(ArrayList<Cell> cells) {
         this.cells = cells;
@@ -173,31 +169,16 @@ public abstract class PlaceableCard extends Card implements Serializable {
     }
 
     public boolean isResource() {
-        if(this.ID >= 1 && this.ID <=40){
-            return true;
-        }
-        else{
-            return false;
-        }
+        return this.ID >= 1 && this.ID <= 40;
     }
 
     public boolean isGold() {
-        if(this.ID>=41 && this.ID <=80){
-            return true;
-        }
-        else {
-            return false;
-        }
+        return this.ID >= 41 && this.ID <= 80;
 
     }
 
     public boolean isStarter() {
-        if(this.ID>=81 && this.ID <=86){
-            return true;
-        }
-        else {
-            return false;
-        }
+        return this.ID >= 81 && this.ID <= 86;
     }
 
     @Override

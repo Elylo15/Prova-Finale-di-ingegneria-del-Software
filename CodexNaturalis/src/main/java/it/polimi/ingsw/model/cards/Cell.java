@@ -7,11 +7,11 @@ import java.util.Objects;
 
 public class Cell implements Serializable {
 
-    private int row;
-    private int column;
+    private final int row;
+    private final int column;
 
 
-    private PlaceableCard bottomCard;
+    private final PlaceableCard bottomCard;
     private PlaceableCard topCard;
 
     /**
@@ -36,11 +36,6 @@ public class Cell implements Serializable {
         return row == cell.row && column == cell.column && Objects.equals(bottomCard, cell.bottomCard) && Objects.equals(topCard, cell.topCard);
     }
 
-//    @Override
-//    public int hashCode() {
-//        return Objects.hash(row, column, bottomCard, topCard);
-//    }
-//
     /**
      * Initialize the pointer to the card on top and update the stored resource
      * @param topCard pointer to the card on top
@@ -74,10 +69,7 @@ public class Cell implements Serializable {
      * @return true if the pointer to the top card is null and if the stored resource is not "Blocked"
      */
     public boolean isAvailable() {
-        if(this.topCard == null && this.getResource() != Resource.Blocked)
-            return true;
-        else
-            return false;
+        return this.topCard == null && this.getResource() != Resource.Blocked;
     }
 
     /**

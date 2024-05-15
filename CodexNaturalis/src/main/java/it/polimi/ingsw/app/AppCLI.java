@@ -1,4 +1,4 @@
-package it.polimi.ingsw;
+package it.polimi.ingsw.app;
 
 import it.polimi.ingsw.protocol.client.Client;
 import it.polimi.ingsw.protocol.client.view.ViewCLI;

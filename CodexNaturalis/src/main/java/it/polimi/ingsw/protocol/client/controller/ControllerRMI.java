@@ -11,7 +11,6 @@ import it.polimi.ingsw.protocol.messages.WaitingforPlayerState.*;
 import it.polimi.ingsw.protocol.server.RMI.MainRemoteServerInterface;
 import it.polimi.ingsw.protocol.server.RMI.MessageExchangerInterface;
 
-import java.net.*;
 import java.rmi.*;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -25,7 +24,7 @@ public class ControllerRMI extends Controller {
      * @param serverIP: String
      * @param serverPort: String
      */
-    public ControllerRMI(String serverIP, String serverPort) throws RemoteException {
+    public ControllerRMI(String serverIP, String serverPort) {
         super(serverIP, serverPort);
     }
 
@@ -220,7 +219,8 @@ public class ControllerRMI extends Controller {
     }
 
     /**
-     * @return
+     * method {@code getObjectiveCards}: receives a objectiveCardMessage
+     * @return objectiveCardMessage
      */
     @Override
     public objectiveCardMessage getObjectiveCards() {

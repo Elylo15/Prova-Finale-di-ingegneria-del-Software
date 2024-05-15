@@ -1,7 +1,7 @@
 package it.polimi.ingsw.model;
 
 import it.polimi.ingsw.model.cards.*;
-import it.polimi.ingsw.model.cards.Json.LoadDecks;
+import it.polimi.ingsw.model.cards.LoadDecks;
 import it.polimi.ingsw.model.cards.enumeration.Reign;
 import it.polimi.ingsw.model.cards.exceptions.InvalidIdException;
 import it.polimi.ingsw.model.cards.exceptions.noPlaceCardException;

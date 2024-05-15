@@ -11,10 +11,10 @@ import java.util.Collections;
 public class Deck<E extends Card> implements Serializable {
     ArrayList<E> list;
     /**
-     * Class costructor
+     * Class constructor
      */
     public Deck(){
-       list = new ArrayList<E>();
+       list = new ArrayList<>();
     }
 
     /**

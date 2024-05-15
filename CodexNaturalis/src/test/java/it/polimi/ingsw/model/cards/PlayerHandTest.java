@@ -4,8 +4,6 @@ import it.polimi.ingsw.model.cards.exceptions.InvalidIdException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 class PlayerHandTest {
@@ -18,8 +16,8 @@ class PlayerHandTest {
         playerHand = new PlayerHand();
         card1 = new ResourceCard(1);
         card2 = new GoldCard(41);
-        playerHand.addNewplaceableCard(card1);
-        playerHand.addNewplaceableCard(card2);
+        playerHand.addNewPlaceableCard(card1);
+        playerHand.addNewPlaceableCard(card2);
     }
     //Test for the method removeplaceableCard
 
@@ -39,8 +37,8 @@ class PlayerHandTest {
     //Test for the method addNewplaceableCard
 
     @Test
-    void addNewplaceableCardAddsCardToHand() throws InvalidIdException {
-        playerHand.addNewplaceableCard(card1);
+    void addNewPlaceableCardAddsCardToHand() throws InvalidIdException {
+        playerHand.addNewPlaceableCard(card1);
         assertTrue(playerHand.getPlaceableCards().contains(card1));
     }
 
