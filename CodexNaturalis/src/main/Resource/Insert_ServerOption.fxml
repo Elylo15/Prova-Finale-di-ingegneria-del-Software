@@ -11,17 +11,17 @@
             <Font size="22.0" />
          </font>
       </Text>
-      <Button fx:id="new_match" layoutX="223.0" layoutY="157.0" mnemonicParsing="false" prefHeight="41.0" prefWidth="154.0" text="New match">
+      <Button fx:id="new_match" layoutX="223.0" layoutY="157.0" mnemonicParsing="false" onAction="#newMatchPressed" prefHeight="41.0" prefWidth="154.0" text="New match">
          <font>
             <Font size="19.0" />
          </font>
       </Button>
-      <Button fx:id="running_match" layoutX="223.0" layoutY="209.0" mnemonicParsing="false" text="Running match">
+      <Button fx:id="running_match" layoutX="223.0" layoutY="209.0" mnemonicParsing="false" onAction="#runningMatchPressed" text="Running match">
          <font>
             <Font size="19.0" />
          </font>
       </Button>
-      <Button fx:id="load_game" layoutX="223.0" layoutY="262.0" mnemonicParsing="false" prefHeight="41.0" prefWidth="154.0" text="Load a game">
+      <Button fx:id="load_game" layoutX="223.0" layoutY="262.0" mnemonicParsing="false" onAction="#loadGamePressed" prefHeight="41.0" prefWidth="154.0" text="Load a game">
          <font>
             <Font size="19.0" />
          </font>

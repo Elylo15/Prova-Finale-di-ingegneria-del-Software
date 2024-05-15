@@ -12,12 +12,12 @@
             <Font size="22.0" />
          </font>
       </Text>
-      <Button fx:id="socketButton" layoutX="109.0" layoutY="187.0" mnemonicParsing="false" prefHeight="55.0" prefWidth="94.0" text="Socket">
+      <Button fx:id="socketButton" layoutX="109.0" layoutY="187.0" mnemonicParsing="false" onAction="#isSocket" prefHeight="55.0" prefWidth="94.0" text="Socket">
          <font>
             <Font size="19.0" />
          </font>
       </Button>
-      <Button fx:id="rmiButton" layoutX="395.0" layoutY="185.0" mnemonicParsing="false" prefHeight="55.0" prefWidth="94.0" text="RMI">
+      <Button fx:id="rmiButton" layoutX="395.0" layoutY="185.0" mnemonicParsing="false" onAction="#isRMI" prefHeight="55.0" prefWidth="94.0" text="RMI">
          <font>
             <Font size="19.0" />
          </font></Button>

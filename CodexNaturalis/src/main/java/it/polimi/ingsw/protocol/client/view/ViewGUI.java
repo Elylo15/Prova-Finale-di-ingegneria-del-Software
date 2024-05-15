@@ -6,6 +6,7 @@ import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.cards.ObjectiveCard;
 import it.polimi.ingsw.protocol.client.view.GUI.ChooseSocketRMIController;
 import it.polimi.ingsw.protocol.client.view.GUI.InsertIPPortController;
+import it.polimi.ingsw.protocol.client.view.GUI.InsertServerOptionController;
 import it.polimi.ingsw.protocol.client.view.GUI.expectedPlayersController;
 import it.polimi.ingsw.protocol.messages.ConnectionState.availableColorsMessage;
 import it.polimi.ingsw.protocol.messages.ConnectionState.connectionResponseMessage;
@@ -41,7 +42,7 @@ public class ViewGUI extends View {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/Insert_IP_PORT.fxml"));
             Parent root = loader.load();
             stage.setScene(new Scene(root));
-            stage.show();
+            stage.showAndWait();
 
             InsertIPPortController controller = loader.getController();
             controller.setViewGUI(this);
@@ -62,35 +63,47 @@ public class ViewGUI extends View {
 
     @Override
     public boolean askSocket() {// true = socket, false = rmi
-            ChooseSocketRMIController controller = null;
-            try {
+        boolean useSocket = true;
+        try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/Choose_Socket_RMI.fxml"));
                 Parent root = loader.load();
                 stage.setScene(new Scene(root));
-                stage.show();
+                stage.showAndWait();
 
-                controller = loader.getController();
-
-                // Aggiungi un listener a useSocketProperty
-                controller.useSocketProperty().addListener((observable, oldValue, newValue) -> {
-                    if (newValue != null) {
-                        stage.close();
-                    }
-                });
+                ChooseSocketRMIController controller = loader.getController();
+                controller.setViewGUI(this);
+                
+                useSocket = controller.useSocket();
 
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
             // Restituisci il valore di useSocket
-            return controller != null ? controller.useSocketProperty().get() : null;
+            return useSocket;
     }
 
 
 
     @Override
     public serverOptionMessage serverOptions(serverOptionMessage message) {
-        return message;
+        serverOptionMessage newMessage = null;
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Insert_ServerOption.fxml"));
+            Parent root = loader.load();
+            stage.setScene(new Scene(root));
+            stage.showAndWait();
+
+            InsertServerOptionController controller = loader.getController();
+            controller.setViewGUI(this);
+            controller.setServerOptionMessage(message);
+
+
+            newMessage = controller.getServerOptionMessage();
+        }catch(IOException e){
+                e.printStackTrace();
+        }
+        return newMessage;
     }
 
     @Override
@@ -112,7 +125,9 @@ public class ViewGUI extends View {
             Parent root = loader.load();
             scene = new Scene(root);
             stage.setScene(scene);
-            stage.show();
+            stage.showAndWait();
+
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -151,7 +166,7 @@ public class ViewGUI extends View {
     @Override
     public int expectedPlayers() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("src/main/java/it/polimi/ingsw/protocol/client/view/GUI/expectedPlayers/expectedPlayers.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/expectedPlayers.fxml"));
             Parent root = loader.load();
             scene = new Scene(root);
             stage.setScene(scene);

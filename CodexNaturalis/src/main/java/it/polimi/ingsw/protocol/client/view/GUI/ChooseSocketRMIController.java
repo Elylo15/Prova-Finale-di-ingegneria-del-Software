@@ -5,6 +5,7 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.stage.Stage;
 
 public class ChooseSocketRMIController {
     @FXML
@@ -12,7 +13,7 @@ public class ChooseSocketRMIController {
     @FXML
     private Button rmiButton;
 
-    private BooleanProperty useSocket = new SimpleBooleanProperty();
+    private boolean useSocket;
 
     private ViewGUI viewGUI;
 
@@ -20,12 +21,19 @@ public class ChooseSocketRMIController {
         this.viewGUI = viewGUI;
     }
 
-    public void initialize() {
-        socketButton.setOnAction(event -> useSocket.set(true));
-        rmiButton.setOnAction(event -> useSocket.set(false));
+    public void isSocket() {
+            useSocket = true;
+            Stage stage = (Stage) socketButton.getScene().getWindow();
+            stage.close();
     }
 
-    public BooleanProperty useSocketProperty() {
+    public void isRMI() {
+            useSocket = false;
+            Stage stage = (Stage) rmiButton.getScene().getWindow();
+            stage.close();
+    }
+
+    public boolean useSocket() {
         return useSocket;
     }
 }
