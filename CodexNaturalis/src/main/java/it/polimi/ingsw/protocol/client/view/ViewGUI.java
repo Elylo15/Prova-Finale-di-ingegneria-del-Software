@@ -1,8 +1,5 @@
 package it.polimi.ingsw.protocol.client.view;
 
-
-import it.polimi.ingsw.model.CommonArea;
-import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.cards.ObjectiveCard;
 import it.polimi.ingsw.protocol.client.view.GUI.ChooseSocketRMIController;
 import it.polimi.ingsw.protocol.client.view.GUI.InsertIPPortController;
@@ -56,11 +53,6 @@ public class ViewGUI extends View {
     }
 
     @Override
-    public void showPlayerHand(Player player, String viewer) {
-
-    }
-
-    @Override
     public boolean askSocket() {// true = socket, false = rmi
             ChooseSocketRMIController controller = null;
             try {
@@ -98,13 +90,6 @@ public class ViewGUI extends View {
 
     }
 
-
-    @Override
-    public void updatePlayer(currentStateMessage message) {
-
-    }
-
-
     @Override
     public void playerDisconnected() {
         try {
@@ -139,11 +124,6 @@ public class ViewGUI extends View {
         return "";
     }
 
-    @Override
-    public int placeStarter() {
-        return 0;
-    }
-
     /**
      * allow the user to choose how many players will play
      * @return number of expected players
@@ -169,38 +149,64 @@ public class ViewGUI extends View {
         return 0;
     }
 
+    @Override
+    public void updatePlayer(currentStateMessage message) {
+        //load a mainGamePage with a backGround, scoreBoard etc.
+        //load the playerCards in the correct positions and visualize the playerArea
+        //and the general starting turn situation
+
+        //get playerHand, load card images based on id in correct place, when selected, select the id
+        //playerHand is an array of 3 cards, get id and place (placeHolder?) use imageBinder with Card
+
+        //playerArea like a grid
+
+        //scoreboard -> based on points, color goes to specific position (placeholder?)
+
+        //decks -> load back of card on top, load front of card on table (imageBinder)
+
+        //if notYourTurn button -> onClick back to your page
+        //if notYourTurn back of currentPlayer hand and of objective cards
+    }
 
     @Override
-    public int chooseObjective(ArrayList<ObjectiveCard> objectives) {
+    public int placeStarter() {
+        //animations and things happen in a mainGamePage
+        //addEventListener -> onClick on border turn around the card
+        //addEventListener -> onClick select, on click place where clicked and click place button(o doubleClick)
         return 0;
     }
 
+    @Override
+    public int chooseObjective(ArrayList<ObjectiveCard> objectives) {
+        //animations and things happen in a mainGamePage
+        //addEventListener -> onClick select and click button choose (or double click is definitive)
+        return 0;
+    }
 
     @Override
     public int[] placeCard() {
+        //animations and things happen in a mainGamePage
+        //addEventListener -> onClick on border turn around the card
+        //addEventListener -> onClick select, on double click place where clicked and click place button (or double click is definitive)
         return new int[0];
     }
 
     @Override
-    public void update(updatePlayerMessage update) {
-
-    }
-
-    @Override
     public int pickCard() {
+        //animations and things happen in a mainGamePage
+        //addEventListener -> onClick select and click button choose (or first click is definitive)
+        //update what is seen (load back of card on top, load front of card on table)
         return 0;
     }
 
     @Override
-    public void endGame(declareWinnerMessage message) {
-
+    public void update(updatePlayerMessage update) {
+        //load the mainGamePage with the general ending turn situation
     }
 
     @Override
-    public void showCommonArea(CommonArea commonArea) {
-
+    public void endGame(declareWinnerMessage message) {
     }
-
 
 }
 
