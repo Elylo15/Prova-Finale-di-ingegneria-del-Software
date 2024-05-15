@@ -1,15 +1,18 @@
- package it.polimi.ingsw.protocol.client.view.GUI;
+package it.polimi.ingsw.protocol.client.view.GUI;
 
 import it.polimi.ingsw.protocol.client.view.ViewGUI;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 
 public class ChooseSocketRMIController {
     @FXML
     private Button socketButton;
-
     @FXML
     private Button rmiButton;
+
+    private BooleanProperty useSocket = new SimpleBooleanProperty();
 
     private ViewGUI viewGUI;
 
@@ -17,14 +20,12 @@ public class ChooseSocketRMIController {
         this.viewGUI = viewGUI;
     }
 
-    @FXML
     public void initialize() {
-        viewGUI.askSocket();
-
+        socketButton.setOnAction(event -> useSocket.set(true));
+        rmiButton.setOnAction(event -> useSocket.set(false));
     }
 
-    public boolean useSocket() {
-        return socketButton.isPressed(); // Return true if the socket button is pressed
+    public BooleanProperty useSocketProperty() {
+        return useSocket;
     }
 }
-

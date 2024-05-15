@@ -6,7 +6,7 @@
 <?import javafx.scene.text.*?>
 
 <AnchorPane id="panel" depthTest="DISABLE" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" prefHeight="400.0" prefWidth="600.0" style="-fx-border-color: black;" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.protocol.client.view.GUI.InsertIPPortController">
-    <TextField id="ip" alignment="TOP_CENTER" layoutX="81.0" layoutY="178.0" promptText="127.0.0.0" style="-fx-border-color: black;" AnchorPane.bottomAnchor="200.0" AnchorPane.leftAnchor="100.0">
+    <TextField fx:id="ip_server" alignment="TOP_CENTER" layoutX="81.0" layoutY="178.0" promptText="127.0.0.0" style="-fx-border-color: black;" AnchorPane.bottomAnchor="200.0" AnchorPane.leftAnchor="100.0">
         <opaqueInsets>
             <Insets />
         </opaqueInsets>
@@ -17,13 +17,13 @@
         </font>
     </Text>
     <Text layoutX="107.0" layoutY="190.0" strokeType="OUTSIDE" strokeWidth="0.0" text="IP:" />
-    <TextField id="port" alignment="TOP_CENTER" layoutX="376.0" layoutY="178.0" promptText="1024" style="-fx-border-color: black;" AnchorPane.bottomAnchor="200.0" AnchorPane.rightAnchor="100.0">
+    <TextField fx:id="port_protocol" alignment="TOP_CENTER" layoutX="376.0" layoutY="178.0" promptText="1024" style="-fx-border-color: black;" AnchorPane.bottomAnchor="200.0" AnchorPane.rightAnchor="100.0">
         <opaqueInsets>
             <Insets />
         </opaqueInsets>
     </TextField>
     <Text layoutX="354.0" layoutY="190.0" strokeType="OUTSIDE" strokeWidth="0.0" text="PORT:" />
-    <Button id="submit" layoutX="257.0" layoutY="250.0" mnemonicParsing="false" onAction="#handleSubmit" text="Submit">
+    <Button fx:id="submit_ip" layoutX="257.0" layoutY="250.0" mnemonicParsing="false" onAction="#handleSubmit" text="Submit">
         <font>
             <Font size="19.0" />
         </font>

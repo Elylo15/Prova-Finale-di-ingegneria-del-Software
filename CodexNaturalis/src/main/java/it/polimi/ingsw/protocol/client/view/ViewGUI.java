@@ -42,12 +42,14 @@ public class ViewGUI extends View {
         String[] server = new String[2];
         try{
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/Insert_IP_PORT.fxml"));
-            Parent root = (Parent) loader.load();
+            Parent root = loader.load();
+            stage.setScene(new Scene(root));
+            stage.show();
 
             InsertIPPortController controller = loader.getController();
             controller.setViewGUI(this);
 
-            server[0] = controller.getIp();
+            server[0] = controller.getIP();
             server[1] = controller.getPort();
 
         }catch (IOException e){
@@ -61,21 +63,32 @@ public class ViewGUI extends View {
 
     }
 
+    @Override
+    public boolean askSocket() {// true = socket, false = rmi
+            ChooseSocketRMIController controller = null;
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/Choose_Socket_RMI.fxml"));
+                Parent root = loader.load();
+                stage.setScene(new Scene(root));
+                stage.show();
 
-    public boolean askSocket(){//true if socket, false if RMI
-        try{
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Choose_Socket_RMI.fxml"));
-            Parent root = loader.load();
+                controller = loader.getController();
 
-            ChooseSocketRMIController controller = loader.getController();
-            controller.setViewGUI(this);
+                // Aggiungi un listener a useSocketProperty
+                controller.useSocketProperty().addListener((observable, oldValue, newValue) -> {
+                    if (newValue != null) {
+                        stage.close();
+                    }
+                });
 
-            return controller.useSocket();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
-    } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+            // Restituisci il valore di useSocket
+            return controller != null ? controller.useSocketProperty().get() : null;
     }
+
 
 
     @Override

@@ -2,37 +2,38 @@ package it.polimi.ingsw.protocol.client.view.GUI;
 
 import it.polimi.ingsw.protocol.client.view.ViewGUI;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
+import javafx.stage.Stage;
 
-import java.awt.*;
+
+import java.io.IOException;
 
 public class InsertIPPortController {
-    @FXML
-    private TextField ipField;
-    @FXML
-    private TextField portField;
-
+    public TextField ip_server;
+    public TextField port_protocol;
+    public Button submit_ip;
     private ViewGUI viewGUI;
 
-    public InsertIPPortController(TextField ipField, TextField portField) {
-        this.ipField = ipField;
-        this.portField = portField;
-    }
 
     public void setViewGUI(ViewGUI viewGUI) {
         this.viewGUI = viewGUI;
     }
 
     @FXML
-    private void handleSubmit() {
-        viewGUI.askPortIP();
+    private void handleSubmit() throws IOException {
+        Stage stage = (Stage) ip_server.getScene().getWindow();
+        stage.close();
     }
 
-    public String getIp() {
-        return ipField.getText();
+    public String getIP(){
+        return ip_server.getText();
     }
 
-    public String getPort() {
-        return portField.getText();
+    public String getPort(){
+        return port_protocol.getText();
     }
+
+
 }
 

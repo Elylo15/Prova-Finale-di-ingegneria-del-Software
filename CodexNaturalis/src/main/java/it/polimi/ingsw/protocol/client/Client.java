@@ -48,6 +48,7 @@ public class Client {
                 connectionResponseMessage answer = controller.answerConnection();
                 view.answerToConnection(answer);
             } catch (Exception e) {
+                e.printStackTrace();
                 view.playerDisconnected();
                 throw new RuntimeException();
             }
@@ -57,6 +58,7 @@ public class Client {
                 connectionResponseMessage answer = controller.answerConnection();
                 view.answerToConnection(answer);
             } catch (Exception e) {
+                e.printStackTrace();
                 view.playerDisconnected();
                 throw new RuntimeException();
             }
