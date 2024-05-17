@@ -51,10 +51,10 @@ public class ClientSocket extends ClientConnection {
      * @return serverOptionMessage
      */
     @Override
-    public synchronized serverOptionMessage getServerOption(ArrayList<Integer> runningMatches, ArrayList<Integer> savedMatches) {
+    public synchronized serverOptionMessage getServerOption(ArrayList<Integer> waitingMatches,ArrayList<Integer> runningMatches, ArrayList<Integer> savedMatches) {
         try {
             outputStream.reset();
-            outputStream.writeObject(new serverOptionMessage(false,null,null,false,null, runningMatches, savedMatches));
+            outputStream.writeObject(new serverOptionMessage(false,null,null,false,null,waitingMatches, runningMatches, savedMatches));
             outputStream.flush();
             return (serverOptionMessage) inputStream.readObject();
         } catch (Exception e) {

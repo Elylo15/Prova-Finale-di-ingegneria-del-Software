@@ -52,5 +52,6 @@ public class MatchInfo implements Serializable {
     public Integer getExpectedPlayers() {return expectedPlayers;}
     public MatchState getStatus() {return status;}
     public boolean isLastTurn() {return lastTurn;}
+    public ArrayList<PlayerInfo> getOfflinePlayers() {return offlinePlayers;}
 
 }

@@ -14,21 +14,31 @@ import it.polimi.ingsw.protocol.messages.ServerOptionState.*;
 import it.polimi.ingsw.protocol.messages.EndGameState.*;
 import it.polimi.ingsw.protocol.messages.currentStateMessage;
 import it.polimi.ingsw.protocol.messages.responseMessage;
-import it.polimi.ingsw.protocol.server.PlayerInfo;
 
 
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * this class is the view of the client, it is used to visualize the game in the command line
+ */
 public class ViewCLI extends View {
     //the purpose of ViewCLI is to handle the interaction with the user and
     // visualize what he needs to see in order to play the game
     // by printing it in the command line
+
+    /**
+     * method {@code ViewCLI}: constructs a new ViewCLI
+     */
     public ViewCLI() {
         super();
 
     }
 
+    /**
+     * method {@code askPortIP}: asks the user to enter the IP and the port of the server
+     * @return String[]
+     */
     @Override
     public String[] askPortIP(){
         Scanner scanner = new Scanner(System.in);
@@ -264,61 +274,155 @@ public class ViewCLI extends View {
     public serverOptionMessage serverOptions (serverOptionMessage message){
         Scanner scanner = new Scanner(System.in);
         boolean newMatch = false;
+        Integer matchID = null;
         Integer startedMatchID = null;
-        String nickname = null;
         boolean loadMatch = false;
-        String pathToLoad = null;
+        Integer savedMatchID = null;
+
+        // Asks the user if he wants to join a new match
         while(true) {
-            try {
-                System.out.println("Enter 'true' if this is a new match or 'false' if it is not");
-                newMatch = scanner.nextBoolean();
-                scanner.nextLine();
+            System.out.print("Do you want to join a new match? [YES/no] ");
+            String choice = scanner.nextLine().toLowerCase();
+            if(choice.equals("yes") || choice.equals("y")) {
+                newMatch = true;
+            } else if(choice.equals("no") || choice.equals("n")) {
+                newMatch = false;
+            } else {
+                System.out.println("ANSWER NOT VALID");
+                continue;
+            }
+            newMatch = scanner.nextBoolean();
+            scanner.nextLine();
+            break;
+        }
+
+        // Asks the user if he wants to create a new match or join an existing one in waiting
+        while (newMatch) {
+            System.out.print("Create a New Match (1) or Join a Match (2)? ");
+            String choice = scanner.nextLine().toLowerCase();
+            if(choice.equals("2")) {
+                    if(message.getWaitingMatches().isEmpty()) {
+                        System.out.println("There are no matches to join: creating a new match");
+                        matchID = null;
+                        break;
+                    } else {
+                        System.out.println("Here are the matches you can join: ");
+                        for (Integer id : message.getWaitingMatches()) {
+                            System.out.println(id);
+                        }
+                        System.out.print("Enter the match ID: ");
+                        try {
+                            matchID = scanner.nextInt();
+                            scanner.nextLine();
+                            break;
+                        } catch (Exception e) {
+                            System.out.println("ANSWER NOT VALID");
+                            continue;
+                        }
+                    }
+
+            } else if(choice.equals("1")) {
+                matchID = null;
                 break;
-            } catch (Exception e) {
-                System.out.println("You didn't enter a boolean");
+            } else {
+                System.out.println("ANSWER NOT VALID");
+                continue;
             }
         }
 
+
         if(!newMatch) {
+
             boolean runMatch = false;
             while (true)  {
-                try {
-                    System.out.println("Enter 'true' if you want to join an already started match or 'false' if it is not");
-                    runMatch = scanner.nextBoolean();
-                    scanner.nextLine();
-                    break;
-                } catch (Exception e) {
-                    System.out.println("You didn't enter a boolean");
+                System.out.println("Join a running match? [YES/no]");
+                String choice = scanner.nextLine().toLowerCase();
+                if(choice.equals("yes") || choice.equals("y")) {
+                    runMatch = true;
+                } else if(choice.equals("no") || choice.equals("n")) {
+                    runMatch = false;
+                } else {
+                    System.out.println("ANSWER NOT VALID");
+                    continue;
                 }
+                break;
+
             }
 
 
             if(runMatch) {
-                try {
-                    System.out.println("Enter the started match ID");
-                    startedMatchID = scanner.nextInt();
-                    scanner.nextLine();
-                } catch (Exception e) {
-                    System.out.println("You didn't enter an int value");
+
+                // Asks the user which running match he wants to join
+                while (true) {
+                    if (message.getRunningMatches().isEmpty()) {
+                        System.out.println("There are no matches to join.");
+                        startedMatchID = null;
+                        break;
+                    } else {
+                        System.out.println("Here are the matches you can join: ");
+                        for (Integer id : message.getRunningMatches()) {
+                            System.out.println(id);
+                        }
+                        System.out.println("Enter the started match ID");
+                        try {
+                            startedMatchID = scanner.nextInt();
+                            scanner.nextLine();
+                            break;
+                        } catch (Exception e) {
+                            System.out.println("You didn't enter an int value");
+                            continue;
+                        }
+                    }
+                    break;
                 }
 
-                System.out.println("Enter your nickname");
-                nickname = scanner.nextLine();
             } else {
-                try {
-                    System.out.println("Enter true if you want to load the match");
-                    loadMatch = scanner.nextBoolean();
-                    scanner.nextLine();
-                } catch (Exception e) {
-                    System.out.println("You didn't enter a boolean");
+                while (true) {
+                    System.out.print("Join a saved match? [YES/no] ");
+                    String choice = scanner.nextLine().toLowerCase();
+                    if(choice.equals("yes") || choice.equals("y")) {
+                        loadMatch = true;
+                    } else if(choice.equals("no") || choice.equals("n")) {
+                        loadMatch = false;
+                    } else {
+                        System.out.println("ANSWER NOT VALID");
+                        continue;
+                    }
+                    break;
                 }
-                System.out.println("Enter the path to load");
-                pathToLoad = scanner.nextLine();
+
+                if(loadMatch) {
+                    // Asks the user which saved match he wants to join
+                    while (true) {
+                        if (message.getSavedMatches().isEmpty()) {
+                            System.out.println("There are no matches to join.");
+                            savedMatchID = null;
+                            break;
+                        } else {
+                            System.out.println("Here are the matches you can join: ");
+                            for (Integer id : message.getSavedMatches()) {
+                                System.out.println(id);
+                            }
+                            System.out.println("Enter the saved match ID");
+                            try {
+                                savedMatchID = scanner.nextInt();
+                                scanner.nextLine();
+                                break;
+                            } catch (Exception e) {
+                                System.out.println("ANSWER NOT VALID");
+                                continue;
+                            }
+                        }
+                        break;
+                    }
+                }
+
+
             }
 
         }
 
-        message = new serverOptionMessage(newMatch, startedMatchID, nickname, loadMatch, pathToLoad);
+        message = new serverOptionMessage(newMatch, matchID, startedMatchID, loadMatch, savedMatchID);
         return message;
     }
 

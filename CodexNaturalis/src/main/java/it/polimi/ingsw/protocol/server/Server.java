@@ -1,15 +1,14 @@
 package it.polimi.ingsw.protocol.server;
 
-import it.polimi.ingsw.model.CommonArea;
 import it.polimi.ingsw.model.Match;
 import it.polimi.ingsw.model.Player;
-import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.protocol.messages.ConnectionState.connectionResponseMessage;
 import it.polimi.ingsw.protocol.messages.ServerOptionState.serverOptionMessage;
 import it.polimi.ingsw.protocol.messages.currentStateMessage;
 import it.polimi.ingsw.protocol.server.FSM.MatchState;
 import it.polimi.ingsw.protocol.server.FSM.State;
 import it.polimi.ingsw.protocol.server.RMI.*;
+import it.polimi.ingsw.protocol.server.exceptions.FailedToJoinMatch;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -21,6 +20,9 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
+/**
+ * Server class that manages the connections with the clients.
+ */
 public class Server implements Runnable {
     private ArrayList<ClientManager> games;
     private int portSocket;
@@ -39,6 +41,9 @@ public class Server implements Runnable {
     private boolean serverRunning;
 
 
+    /**
+     * Constructor of the class.
+     */
     public Server() {
         portSocket = 1024;
         portRMI = 1099;
@@ -55,6 +60,13 @@ public class Server implements Runnable {
         executor = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, unit, new LinkedBlockingQueue<Runnable>());
     }
 
+    /**
+     * Constructor of the class.
+     *
+     * @param portSocket port of the socket connection.
+     * @param portRMI port of the RMI connection.
+     * @param maximumPoolSize maximum number of threads in the pool.
+     */
     public Server(int portSocket, int portRMI, int maximumPoolSize) {
         this.portSocket = portSocket;
         this.portRMI = portRMI;
@@ -82,6 +94,9 @@ public class Server implements Runnable {
             this.timeoutSeconds = timeoutSeconds;
     }
 
+    /**
+     * Accepts a connection via socket from a client and creates a new ClientConnection.
+      */
     public void acceptConnectionSocket() {
         try {
             this.serverSocket = new ServerSocket(portSocket);
@@ -109,99 +124,9 @@ public class Server implements Runnable {
     }
 
 
-    private void handleConnection(ClientConnection connection) {
-        if(connection == null)
-            return;
-
-        // Confirms the connection to the client
-        connection.sendAnswerToConnection(new connectionResponseMessage(true));
-
-        logCreator.log("New client socket accepted, answer sent: " + connection.getIP() + " " + connection.getPort());
-
-
-        // Sends status: "ServerOptionState"
-
-        connection.sendCurrentState(new currentStateMessage(null, null, "ServerOptionState", false, null, null));
-
-        boolean correctResponse = false;
-
-        Future<serverOptionMessage> serverOption;
-        serverOptionMessage msg = null;
-
-        while(!correctResponse) {
-            ArrayList<Integer> runningGames = games.stream()
-                    .filter(game -> game.getMatchInfo().getStatus() != MatchState.Waiting && game.getMatchInfo().getStatus() != MatchState.Waiting)
-                    .map(game -> game.getMatchInfo().getID())
-                    .collect(Collectors.toCollection(ArrayList::new));
-
-            // TODO Collect all saved matches
-            ArrayList<Integer> savedMatches = null;
-
-            // Requests the ServerOptionMessage
-            serverOption = executor.submit(() -> connection.getServerOption(runningGames, savedMatches));
-
-            // Timer
-//            Timer timer = new Timer();
-//            Future<serverOptionMessage> finalServerOption = serverOption;
-//            TimerTask task = new TimerTask() {
-//                @Override
-//                public void run() {
-//                    logCreator.log("Timer serverOption executed");
-//                    if(!finalServerOption.isDone()) {
-//                        finalServerOption.cancel(true);
-//                    }
-//                }
-//            };
-//
-//            timer.schedule(task, 3*60*1000);
-
-            // If client loses connection, then this method ends
-            try {
-                msg = serverOption.get(this.timeoutSeconds, TimeUnit.SECONDS);
-//                timer.cancel();
-            } catch (TimeoutException e) {
-                connection.closeConnection();
-                logCreator.log("Client " + connection.getIP() + " kicked due to no serverOption received");
-                return;
-            } catch (InterruptedException e) {
-                connection.closeConnection();
-                logCreator.log("Client " + connection.getIP() + " kicked due to INTERRUPT");
-                return;
-            } catch (ExecutionException e) {
-                connection.closeConnection();
-                logCreator.log("Client " + connection.getIP() + " kicked due to EXECUTION ERROR: \n" + e.getCause().getMessage());
-                return;
-            }
-
-//            // TODO remove this
-//            System.out.println(msg.toString());
-
-            // Checks if the response message is valid
-            if(!msg.isNewMatch() && (msg.getNickname() == null || Objects.equals(msg.getNickname(), "") || msg.getStartedMatchID() == null) && !msg.isLoadMatch()) {
-                connection.sendAnswer(false);
-                logCreator.log("Client " + connection.getIP() + " has given wrong ServerOption");
-            }
-            else
-                correctResponse = true;
-        }
-
-        connection.sendAnswer(true);
-
-        logCreator.log("Server option fetched from client" + connection.getIP() + " " + connection.getPort());
-
-
-        if(msg.isNewMatch()) {
-            logCreator.log("Client " + connection.getIP() +":" + connection.getPort() + " wants to join a new game");
-            this.newMatch(connection);
-        } else if (msg.getStartedMatchID() != null && msg.getNickname() != null ) {
-            logCreator.log("Client " + connection.getIP() +":" + connection.getPort() + " wants to join an already started game");
-            this.joinStartedMatch(connection,msg);
-        } else {
-            logCreator.log("Client " + connection.getIP() +":" + connection.getPort() + " wants to load a game");
-            this.loadSavedMatch(connection);
-        }
-    }
-
+    /**
+     * Accepts the connection from the client and creates a new ClientConnection.
+     */
     public void acceptConnectionRMI() {
         try {
             Registry registry = LocateRegistry.createRegistry(portRMI);
@@ -220,33 +145,151 @@ public class Server implements Runnable {
 
         } catch (Exception e) {
             logCreator.log("Server RMI service crashed");
-            return;
         }
 
     }
 
 
-    private void newMatch(ClientConnection connection) {
-        ClientManager lobby;
+    /**
+     * Handles the connection with the client.
+     *
+     * @param connection connection with the client.
+     */
+    private void handleConnection(ClientConnection connection) {
+        if(connection == null)
+            return;
 
-        // Player wants to join a new game
-        lobby = games.stream()
-                .filter(clientManager -> clientManager.getMatchInfo().getStatus() == MatchState.Waiting)
-                .filter(clientManager -> clientManager.getMatchInfo().getExpectedPlayers() == null || clientManager.getMatchInfo().getExpectedPlayers() > clientManager.getPlayersInfo().size())
-                .findFirst().orElse(null);
+        while (true) {
+            // Confirms the connection to the client
+            connection.sendAnswerToConnection(new connectionResponseMessage(true));
 
-        if (lobby != null) {
+            logCreator.log("New client accepted, answer sent: " + connection.getIP() + " " + connection.getPort());
 
-            logCreator.log("Client " + connection.getIP() + " " + connection.getPort() + " joins a match in WaitingForPlayerState");
 
-            this.welcomeNewPlayer(lobby, connection);
+            serverOptionMessage msg = this.obtainServerOption(connection);
 
-            /*
-             The managing of the "host" (first player who decides the expected players number)
-             is implemented in ClientManager.
-            */
+            if(msg == null) {
+                return;
+            }
 
-        } else {
+            if(msg.isNewMatch()) {
+                logCreator.log("Client " + connection.getIP() +":" + connection.getPort() + " wants to join a new game");
+                if(msg.getMatchID() == null) {
+                    this.joinNewMatch(connection);
+                    break;
+                }
+                else {
+                    try {
+                        this.joinWaitingMatch(connection, msg);
+                        break;
+                    } catch (FailedToJoinMatch e) {
+                        logCreator.log("Client " + connection.getIP() + " " + connection.getPort() + " failed to join match " + msg.getMatchID() + ": sending again the serverOption");
+                    }
+                }
+            } else if (msg.getStartedMatchID() != null) {
+                logCreator.log("Client " + connection.getIP() +":" + connection.getPort() + " wants to join an already started game");
+                try {
+                    this.joinStartedMatch(connection,msg);
+                    break;
+                } catch (FailedToJoinMatch e) {
+                    logCreator.log("Client " + connection.getIP() + " " + connection.getPort() + " failed to join match " + msg.getStartedMatchID() + ": sending again the serverOption");
+                }
+            } else {
+                logCreator.log("Client " + connection.getIP() +":" + connection.getPort() + " wants to load a game");
+                try {
+                    this.joinSavedMatch(connection);
+                    break;
+                } catch (FailedToJoinMatch e) {
+                    logCreator.log("Client " + connection.getIP() + " " + connection.getPort() + " failed to join match " + msg.getStartedMatchID() + ": sending again the serverOption");
+                }
+            }
+        }
+    }
+
+
+    /**
+     * Obtains the serverOptionMessage from the client.
+     *
+     * @param connection connection with the client.
+     * @return serverOptionMessage obtained from the client.
+     */
+    private serverOptionMessage obtainServerOption(ClientConnection connection) {
+
+        // Sends status: "ServerOptionState"
+        connection.sendCurrentState(new currentStateMessage(null, null, "ServerOptionState", false, null, null));
+
+        boolean correctResponse = false;
+
+        Future<serverOptionMessage> serverOption;
+        serverOptionMessage msg = null;
+
+
+        while(!correctResponse) {
+            ArrayList<Integer> waitingGames = games.stream()
+                    .filter(game -> game.getMatchInfo().getStatus() == MatchState.Waiting)
+                    .map(game -> game.getMatchInfo().getID())
+                    .collect(Collectors.toCollection(ArrayList::new));
+
+            ArrayList<Integer> runningGames = games.stream()
+                    .filter(game -> game.getMatchInfo().getStatus() != MatchState.Waiting && game.getMatchInfo().getStatus() != MatchState.Endgame)
+                    .map(game -> game.getMatchInfo().getID())
+                    .collect(Collectors.toCollection(ArrayList::new));
+
+            // TODO Collect all saved matches
+            ArrayList<Integer> savedMatches = new ArrayList<>();
+
+
+            // Requests the ServerOptionMessage
+            serverOption = executor.submit(() -> connection.getServerOption(waitingGames, runningGames, savedMatches));
+
+            try {
+                msg = serverOption.get(this.timeoutSeconds, TimeUnit.SECONDS);
+            } catch (TimeoutException e) {
+                connection.closeConnection();
+                logCreator.log("Client " + connection.getIP() + " kicked due to no serverOption received");
+                return null;
+            } catch (InterruptedException e) {
+                connection.closeConnection();
+                logCreator.log("Client " + connection.getIP() + " kicked due to INTERRUPT");
+                return null;
+            } catch (ExecutionException e) {
+                connection.closeConnection();
+                logCreator.log("Client " + connection.getIP() + " kicked due to EXECUTION ERROR: \n" + e.getCause().getMessage());
+                return null;
+            }
+
+            // Checks if the response message is valid
+            if(msg.isNewMatch() && (msg.getMatchID() == null || waitingGames.contains(msg.getMatchID()))) {
+                correctResponse = true;
+            } else if (msg.getStartedMatchID() != null && runningGames.contains(msg.getStartedMatchID())) {
+                correctResponse = true;
+            } else if (msg.isLoadMatch() && (msg.getSavedMatchID() != null) && savedMatches.contains(msg.getSavedMatchID())) {
+                correctResponse = true;
+            } else {
+                // correctResponse = false;
+                connection.sendAnswer(false);
+                logCreator.log("Client " + connection.getIP() + " has given wrong ServerOption");
+            }
+
+        }
+
+        connection.sendAnswer(true);
+
+        logCreator.log("Server option fetched from client" + connection.getIP() + " " + connection.getPort());
+
+        return msg;
+    }
+
+
+    /**
+     * Client joins a not yet created new match.
+     *
+     * @param connection connection with the client.
+     */
+    private void joinNewMatch(ClientConnection connection) {
+        // Client wants to join a new game
+        boolean correctJoining = false;
+        while(!correctJoining) {
             Integer id = this.createNewMatchID();
             MatchInfo matchInfo = new MatchInfo(new Match(),id,this.defaultPath + id.toString() + ".savedgame" ,null, MatchState.Waiting);
 
@@ -256,13 +299,43 @@ public class Server implements Runnable {
 
             logCreator.log("Client socket " + connection.getIP() + " " + connection.getPort() + " starts a new ClientManager");
 
-            this.welcomeNewPlayer(lobbyManager, connection);
-
-
+            try {
+                this.welcomeNewPlayer(lobbyManager, connection);
+                correctJoining = true;
+            } catch (FailedToJoinMatch e) {
+                logCreator.log("Client " + connection.getIP() + " " + connection.getPort() + " failed to join match " + id);
+            }
         }
     }
 
-    private void joinStartedMatch(ClientConnection connection, serverOptionMessage msg) {
+    /**
+     * Client joins a waiting match.
+     *
+     * @param connection connection with the client.
+     * @param msg serverOptionMessage obtained from the client.
+     * @throws FailedToJoinMatch if the player cannot join the game.
+     */
+    private void joinWaitingMatch(ClientConnection connection, serverOptionMessage msg) throws FailedToJoinMatch {
+        // Player wants to join a waiting game
+        ClientManager lobbyManager = games.stream()
+                .filter(clientManager -> Objects.equals(clientManager.getMatchInfo().getID(), msg.getMatchID()))
+                .limit(1)
+                .findAny().orElse(null);
+
+        // Checks again: Game not found
+        if(lobbyManager == null) {
+            logCreator.log("Client " + connection.getIP() + " " + connection.getPort() + " failed to join match " + msg.getMatchID() + " due to not found lobby");
+            throw new FailedToJoinMatch("Failed to join match " + msg.getMatchID() + " due to not found lobby");
+        }
+
+        this.welcomeNewPlayer(lobbyManager, connection);
+    }
+
+    private void joinStartedMatch(ClientConnection connection, serverOptionMessage msg) throws FailedToJoinMatch {
+        // Find the lobby
+        // getName
+        // AddPlayer
+
 
         // TODO finish this part
         // Player wants to join an already started game
@@ -276,76 +349,21 @@ public class Server implements Runnable {
                 .limit(1)
                 .findAny().orElse(null);
 
-        // Game not found
+        // Checks again: Game not found
         if(lobbyManager == null) {
-            connection.closeConnection();
-            return;
+            logCreator.log("Client " + connection.getIP() + " " + connection.getPort() + " failed to join match " + msg.getMatchID() + " due to not found lobby");
+            throw new FailedToJoinMatch("Failed to join match " + msg.getMatchID() + " due to not found lobby");
         }
-        synchronized (lobbyManager) {
 
-            // Is lobby full?
-            if (lobbyManager.getMatchInfo().getExpectedPlayers() <= lobbyManager.getPlayersInfo().size() || lobbyManager.getMatchInfo().getStatus() == MatchState.Waiting) {
-                connection.closeConnection();
-                return;
-            }
+        // TODO Send status information
 
+        // TODO Get the player name
 
-            // Checks if nickname is correct and if it is available
-            ArrayList<String> onlinePlayers = (ArrayList<String>) lobbyManager.getPlayersInfo().stream()
-                    .map(playerInfo -> playerInfo.getPlayer().getNickname())
-                    .toList();
-
-            if(!lobbyManager.getMatch().getPlayers().contains(msg.getNickname()) || onlinePlayers.contains(msg.getNickname())) {
-                connection.closeConnection();
-                return;
-            }
-
-
-            // Add the player to the game
-            serverOptionMessage finalMsg1 = msg;
-            Player savedPlayer = lobbyManager.getMatch().getPlayers().stream()
-                    .filter(player -> Objects.equals(player.getNickname(), finalMsg1.getNickname()))
-                    .findAny().orElse(null);
-
-            if(lobbyManager.getMatchInfo().getStatus() == MatchState.Player1 ||
-                    lobbyManager.getMatchInfo().getStatus() == MatchState.Player2 ||
-                    lobbyManager.getMatchInfo().getStatus() == MatchState.Player3 ||
-                    lobbyManager.getMatchInfo().getStatus() == MatchState.Player4) {
-
-                if(savedPlayer != null) {
-                    PlayerInfo savedPlayerInfo = new PlayerInfo(savedPlayer, State.LastTurn, connection);
-                    try {
-                        lobbyManager.addPlayerInfo(savedPlayerInfo);
-                    } catch (Exception e) {
-                        connection.closeConnection();
-                    }
-                } else {
-                    connection.closeConnection();
-                    return;
-                }
-
-            } else if (lobbyManager.getMatchInfo().getStatus() == MatchState.Endgame) {
-
-                if(savedPlayer != null) {
-                    PlayerInfo savedPlayerInfo = new PlayerInfo(savedPlayer, State.EndGame, connection);
-                    try {
-                        lobbyManager.addPlayerInfo(savedPlayerInfo);
-                    } catch (Exception e) {
-                        connection.closeConnection();
-                    }
-                } else {
-                    connection.closeConnection();
-                    return;
-                }
-            } else {
-                connection.closeConnection();
-                return;
-            }
-        }
+        // TODO Add the player to the game
 
     }
 
-    private void loadSavedMatch(ClientConnection connection) {
+    private void joinSavedMatch(ClientConnection connection) throws FailedToJoinMatch{
         // Player wants to load a saved game
         // TODO implement loading of a game
         // maybe start from here the custom loaded game and not from run
@@ -355,7 +373,15 @@ public class Server implements Runnable {
 
     }
 
-    private void welcomeNewPlayer(ClientManager lobbyManager, ClientConnection connection) {
+    /**
+     * Tries to add a new player to the waiting list of a match.
+     * Asks for the player name and color to the client.
+     *
+     * @param lobbyManager ClientManager of the game.
+     * @param connection connection with the client.
+     * @throws FailedToJoinMatch if the player cannot join the game.
+     */
+    private void welcomeNewPlayer(ClientManager lobbyManager, ClientConnection connection) throws FailedToJoinMatch {
         // Sends status information
         currentStateMessage currState = new currentStateMessage(null,null,"ConnectionState", false, null, null);
         connection.sendCurrentState(currState);
@@ -366,8 +392,10 @@ public class Server implements Runnable {
                 .map(playerInfo -> playerInfo.getPlayer().getNickname().toLowerCase())
                 .collect(Collectors.toCollection(ArrayList::new));
 
-        if(lobbyManager.getMatchInfo().getExpectedPlayers() != null && unavailableNames.size() >= lobbyManager.getMatchInfo().getExpectedPlayers())
-            connection.closeConnection();
+        if(lobbyManager.getMatchInfo().getExpectedPlayers() != null && unavailableNames.size() >= lobbyManager.getMatchInfo().getExpectedPlayers()) {
+            logCreator.log("Client " + connection.getIP() + " " + connection.getPort() + " failed to join match " + lobbyManager.getMatchInfo().getID());
+            throw new FailedToJoinMatch("Failed to join match " + lobbyManager.getMatchInfo().getID() + " due to full lobby");
+        }
 
         // Asks for the new player name
         String name = connection.getName(unavailableNames).getName().toLowerCase();
@@ -392,8 +420,10 @@ public class Server implements Runnable {
                 .map(playerInfo -> playerInfo.getPlayer().getColor().toLowerCase())
                 .collect(Collectors.toCollection(ArrayList::new));
 
-        if(unavailableColors.size() >= 4)
-            connection.closeConnection();
+        if(unavailableColors.size() >= 4) {
+            logCreator.log("Client " + connection.getIP() + " " + connection.getPort() + " failed to join match " + lobbyManager.getMatchInfo().getID());
+            throw new FailedToJoinMatch("Failed to join match " + lobbyManager.getMatchInfo().getID() + " due to full lobby");
+        }
 
         ArrayList<String> availableColors = new ArrayList<>();
         if(!unavailableColors.contains("blue"))
@@ -407,8 +437,8 @@ public class Server implements Runnable {
 
         // Asks for the player color
         if(availableColors.isEmpty()) {
-            connection.closeConnection();
-            logCreator.log("Client socket " + connection.getIP() + " " + connection.getPort() + " closed connection");
+            logCreator.log("Client " + connection.getIP() + " " + connection.getPort() + " failed to join match " + lobbyManager.getMatchInfo().getID());
+            throw new FailedToJoinMatch("Failed to join match " + lobbyManager.getMatchInfo().getID() + " due to full lobby");
         }
         String color = connection.getColor(availableColors).getColor().toLowerCase();
         connection.sendAnswer(availableColors.contains(color));
@@ -427,16 +457,15 @@ public class Server implements Runnable {
             lobbyManager.addPlayerInfo(playerInfo);
             logCreator.log("Client " + connection.getIP() + " " + connection.getPort() + " joined match " + lobbyManager.getMatchInfo().getID());
         } catch(Exception e) {
-            connection.closeConnection();
             logCreator.log("Client " + connection.getIP() + " " + connection.getPort() + " failed to join match " + lobbyManager.getMatchInfo().getID());
+            throw new FailedToJoinMatch("Failed to join match " + lobbyManager.getMatchInfo().getID() + " due to full lobby");
         }
-
-
     }
 
 
-
-
+    /**
+     * Closes the match when the ClientManager is not running anymore.
+     */
     private void closeMatch() {
         while(this.serverRunning || !this.games.isEmpty()) {
             games.removeIf(clientManager -> clientManager.getMatchInfo().getStatus() == MatchState.KickingPlayers);
@@ -457,7 +486,7 @@ public class Server implements Runnable {
         return  MatchID;
     }
 
-    private void loadSavedMatch(String fileName) {
+    private void joinSavedMatch(String fileName) {
         // TODO load the match
 
     }
@@ -472,16 +501,5 @@ public class Server implements Runnable {
         executor.submit(this::acceptConnectionRMI);
         executor.submit(this::closeMatch);
         logCreator.log("Server started");
-
-//        Scanner scanner = new Scanner(System.in);
-//        String answer;
-//        while(this.serverRunning) {
-//            System.out.println("Insert 'stop' to end the server: ");
-//            answer = scanner.nextLine();
-//            if(answer.equals("stop")) {
-//                this.serverRunning = false;
-//                System.out.println("Server stopped");
-//            }
-//        }
     }
 }

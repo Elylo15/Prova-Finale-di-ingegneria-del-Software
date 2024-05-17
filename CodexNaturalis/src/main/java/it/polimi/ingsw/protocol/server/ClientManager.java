@@ -18,6 +18,7 @@ import it.polimi.ingsw.protocol.messages.WaitingforPlayerState.expectedPlayersMe
 import it.polimi.ingsw.protocol.messages.currentStateMessage;
 import it.polimi.ingsw.protocol.server.FSM.MatchState;
 import it.polimi.ingsw.protocol.server.FSM.State;
+import it.polimi.ingsw.protocol.server.exceptions.FailedToJoinMatch;
 
 import java.util.*;
 import java.util.concurrent.*;
@@ -59,28 +60,59 @@ public class ClientManager implements Runnable{
     }
 
 
-    public synchronized void addPlayerInfo(PlayerInfo playerInfo) throws Exception {
+    /**
+     * Checks if the player is in the list of online players or offline players
+     * @param playerInfo player to be checked
+     * @throws Exception if the player is not found
+     */
+    public synchronized void addPlayerInfo(PlayerInfo playerInfo) throws FailedToJoinMatch {
         if(playerInfo != null
+                && matchInfo.getStatus() == MatchState.Waiting
                 && (matchInfo.getExpectedPlayers() == null || matchInfo.getExpectedPlayers() > this.playersInfo.size())
                 && this.playersInfo.stream().noneMatch(playerInfo1 -> playerInfo1.getPlayer().getNickname().equalsIgnoreCase(playerInfo.getPlayer().getNickname()))
-                && this.playersInfo.stream().noneMatch(playerInfo1 -> playerInfo1.getPlayer().getColor().equalsIgnoreCase(playerInfo.getPlayer().getColor())))
+                && this.playersInfo.stream().noneMatch(playerInfo1 -> playerInfo1.getPlayer().getColor().equalsIgnoreCase(playerInfo.getPlayer().getColor()))
+                && this.matchInfo.getOfflinePlayers().stream().noneMatch(playerInfo1 -> playerInfo1.getPlayer().getNickname().equalsIgnoreCase(playerInfo.getPlayer().getNickname())
+                && playerInfo1.getPlayer().getColor().equalsIgnoreCase(playerInfo.getPlayer().getColor())))
         {
             this.playersInfo.add(playerInfo);
             logCreator.log("Player added: " + playerInfo.getPlayer().getNickname() + " " + playerInfo.getPlayer().getColor());
             this.notifyAll();
         } else {
-            throw new Exception();
+            throw new FailedToJoinMatch("Player cannot join the match");
         }
     }
 
-    // TODO update this part for FA
+    /**
+     * Kicks a player from the match, removing it from the list of online players and adding it to the list of offline players
+     *
+     * @param playerInfo player to be kicked
+     */
     private void kickPlayer(PlayerInfo playerInfo) {
         this.playersInfo.remove(playerInfo);
         playerInfo.getConnection().closeConnection();
         playerInfo.setConnection(null);
         matchInfo.addOfflinePlayer(playerInfo);
-        logCreator.log("Player kicked: " + playerInfo.getPlayer().getNickname());
+        logCreator.log("Player kicked: " + playerInfo.getPlayer().getNickname() + " and added to offline players");
     }
+
+    /**
+     * Adds a player to the list of online players and removes it from the list of offline players
+     *
+     * @param playerInfo player to be moved
+     */
+    public synchronized void movePlayer(PlayerInfo playerInfo) {
+        if (matchInfo.getOfflinePlayers().contains(playerInfo)) {
+            this.playersInfo.add(playerInfo);
+            matchInfo.getOfflinePlayers().remove(playerInfo);
+            logCreator.log("Player moved: " + playerInfo.getPlayer().getNickname() + " from offline to online players");
+        } else {
+            if (playerInfo != null)
+                logCreator.log("Player " + playerInfo.getPlayer().getNickname() + " not found in offline players");
+            else
+                logCreator.log("Player is null and cannot be brought back online");
+        }
+    }
+
 
 
     private Timer startKickTimer(PlayerInfo playerInfo, Future<?> future) {
@@ -222,8 +254,12 @@ public class ClientManager implements Runnable{
                     if(this.matchInfo.isLastTurn()) {
                         this.matchInfo.setStatus(MatchState.Endgame);
                     } else {
-                        if(findPlayer(currentPlayer).getState() != State.PlaceCard)
+                        if (this.findPlayer(currentPlayer) == null) {
                             this.matchInfo.setStatus(MatchState.Player1);
+                        } else {
+                            if (findPlayer(currentPlayer).getState() != State.PlaceCard)
+                                this.matchInfo.setStatus(MatchState.Player1);
+                        }
                     }
                     this.turnNumber += 1;
                     if(this.matchInfo.getMatch().getPlayers().stream()

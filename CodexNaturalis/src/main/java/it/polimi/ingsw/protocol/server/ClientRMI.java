@@ -61,9 +61,9 @@ public class ClientRMI extends ClientConnection implements Runnable{
      * @return serverOptionMessage
      */
     @Override
-    public serverOptionMessage getServerOption(ArrayList<Integer> runningMatches, ArrayList<Integer> savedMatches) {
+    public serverOptionMessage getServerOption(ArrayList<Integer> waitingMatches,ArrayList<Integer> runningMatches, ArrayList<Integer> savedMatches) {
         try {
-            this.toClient.write(new serverOptionMessage(false,null,null,false,null, runningMatches, savedMatches));
+            this.toClient.write(new serverOptionMessage(false,null,null,false,null, waitingMatches, runningMatches, savedMatches));
             return (serverOptionMessage) this.toServer.read();
         } catch (RemoteException e) {
             System.out.println("Error in getServerOption");
