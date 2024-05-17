@@ -141,7 +141,7 @@ class ViewCLITest {
 
     @Test
     void checkAnswer() {
-        responseMessage message = new responseMessage(true);
+        responseMessage message = new responseMessage(false);
         ViewCLI viewCLI = new ViewCLI();
         viewCLI.answer(message);
     }
