@@ -129,7 +129,6 @@ public class serverOptionMessage implements Message, Serializable {
                 "newMatch=" + newMatch +
                 ", matchID=" + matchID +
                 ", startedMatchID=" + startedMatchID +
-                ", Nickname='" + Nickname + '\'' +
                 ", loadMatch=" + loadMatch +
                 ", filename='" + savedMatchID + '\'' +
                 ", WaitingMatches=" + WaitingMatches +

@@ -9,6 +9,7 @@ import it.polimi.ingsw.protocol.messages.StaterCardState.*;
 import it.polimi.ingsw.protocol.messages.WaitingforPlayerState.*;
 import it.polimi.ingsw.protocol.messages.*;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -16,7 +17,7 @@ import java.util.HashMap;
  * ClientConnection class
  * @author elylo
  */
-public abstract class ClientConnection implements Runnable {
+public abstract class ClientConnection implements Runnable, Serializable {
     private final String IP;
     private final String port;
 

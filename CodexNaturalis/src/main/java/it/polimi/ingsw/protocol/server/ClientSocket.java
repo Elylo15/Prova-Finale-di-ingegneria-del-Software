@@ -13,11 +13,12 @@ import it.polimi.ingsw.protocol.messages.*;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class ClientSocket extends ClientConnection {
+public class ClientSocket extends ClientConnection implements Serializable {
     private ObjectOutputStream outputStream;
     private ObjectInputStream inputStream;
     private final Socket socket;

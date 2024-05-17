@@ -6,7 +6,6 @@ import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.PlayerArea;
 import it.polimi.ingsw.model.cards.ObjectiveCard;
 import it.polimi.ingsw.model.cards.PlaceableCard;
-import it.polimi.ingsw.model.cards.PlayerHand;
 import it.polimi.ingsw.model.cards.exceptions.InvalidIdException;
 import it.polimi.ingsw.model.cards.exceptions.noPlaceCardException;
 import it.polimi.ingsw.protocol.messages.ObjectiveState.objectiveCardMessage;
@@ -104,6 +103,7 @@ public class ClientManager implements Runnable{
         if (matchInfo.getOfflinePlayers().contains(playerInfo)) {
             this.playersInfo.add(playerInfo);
             matchInfo.getOfflinePlayers().remove(playerInfo);
+            this.notifyAll();
             logCreator.log("Player moved: " + playerInfo.getPlayer().getNickname() + " from offline to online players");
         } else {
             if (playerInfo != null)
@@ -113,24 +113,6 @@ public class ClientManager implements Runnable{
         }
     }
 
-
-
-    private Timer startKickTimer(PlayerInfo playerInfo, Future<?> future) {
-        Timer timer = new Timer();
-
-        TimerTask task = new TimerTask() {
-            @Override
-            public void run() {
-                if(!future.isDone()) {
-                    future.cancel(true);
-                    kickPlayer(playerInfo);
-                }
-            }
-        };
-        timer.schedule(task, this.timeout);
-
-        return timer;
-    }
 
 
     /**
@@ -174,6 +156,9 @@ public class ClientManager implements Runnable{
     public void run() {
         boolean gameOver = false;
         while(!gameOver) {
+
+            // After the first turns prioritizes the players who reconnect and are in the starter state
+            // or objective state
             synchronized(this) {
                 // Draws common objective cards
                 if (this.turnNumber == 2) {
@@ -210,6 +195,7 @@ public class ClientManager implements Runnable{
 
             }
 
+            // Starts the normal flow of the game
             switch (this.matchInfo.getStatus()) {
                 case Waiting -> {
                     this.waiting();
@@ -329,13 +315,12 @@ public class ClientManager implements Runnable{
                     while(!correctAnswer){
                         // If the timer ends the player is kicked
                         Future<expectedPlayersMessage> future = executor.submit(() -> host.getConnection().getExpectedPlayer());
-                        Timer timer = this.startKickTimer(host,future);
                         expectedPlayersMessage expected = null;
                         try {
-                            expected = future.get();
-                            timer.cancel();
+                            expected = future.get(this.timeout, TimeUnit.MILLISECONDS);
                         } catch (Exception e) {
                             logCreator.log("Player " + host.getPlayer().getNickname() + " has not answered");
+                            this.kickPlayer(host);
                         }
 
                         if (expected != null) {
@@ -381,6 +366,11 @@ public class ClientManager implements Runnable{
 //                Thread.sleep(1000);
 //            } catch (Exception ignore) {}
             }
+        }
+
+        while(this.playersInfo.size() > this.matchInfo.getExpectedPlayers()) {
+            logCreator.log("Too many players have joined the match");
+            this.kickPlayer(this.playersInfo.getLast());
         }
 
         // Updates state of the match
@@ -429,62 +419,9 @@ public class ClientManager implements Runnable{
         switch (playerInfo.getState()) {
             case StarterCard -> {
                 logCreator.log("Player " + player.getNickname() + " has to place the starter card");
-                // Draw a StarterCard if player has none in hand
-                if(playerInfo.getPlayer().getPlayerHand().getPlaceableCards().stream().
-                        noneMatch(PlaceableCard::isStarter))
-                    playerInfo.getPlayer().drawStarter();
 
-                // Sends current state messages to all clients
-                for(PlayerInfo playerInfo1 : this.playersInfo) {
-                    currentStateMessage currState = new currentStateMessage(player, playerInfo1.getPlayer(), "StarterCardState", this.matchInfo.isLastTurn(), this.onlinePlayers(), null);
-                    playerInfo1.getConnection().sendCurrentState(currState);
-                }
-
-                // Obtains side of the starter card
-                boolean correctAnswer = false;
-                while(!correctAnswer) {
-
-
-                    Future<starterCardMessage> future = executor.submit(() -> playerInfo.getConnection().getStaterCard());
-//                    Timer timer = startKickTimer(playerInfo, future);
-                    starterCardMessage starter = null;
-
-
-                    try {
-                        starter = future.get(this.timeout, TimeUnit.MILLISECONDS);
-//                        timer.cancel();
-                    } catch (Exception e) {
-                        logCreator.log("Player " + player.getNickname() + " has not answered");
-                        this.kickPlayer(playerInfo);
-                    }
-
-                    if(starter != null) {
-
-                        // Checks if the client has properly given a response
-                        if(starter.isNoResponse()) {
-                            correctAnswer = true;
-                            logCreator.log("Player " + player.getNickname() + " has not answered");
-                            this.kickPlayer(playerInfo);
-                        } else {
-                            // Checks if the answer is valid
-                             if(starter.getSide() == 0 || starter.getSide() == 1) {
-
-                                 playerInfo.getPlayer().placeStarter(starter.getSide());
-                                 correctAnswer = true;
-                                 playerInfo.getConnection().sendAnswer(true);
-                                 logCreator.log("Player " + player.getNickname() + " has correctly answered");
-                             } else {
-                                 playerInfo.getConnection().sendAnswer(false);
-                                 logCreator.log("Player " + player.getNickname() + " has not answered correctly");
-                             }
-                        }
-                    } else {
-                        if(this.playersInfo.contains(playerInfo)) {
-                            logCreator.log("Player " + player.getNickname() + " wanted to place a null card");
-                            this.kickPlayer(playerInfo);
-                        }
-                    }
-                }
+                // Compute starter state itself
+                this.starterState(playerInfo);
 
                 // Updates the view of every player about the current one
                 for(PlayerInfo playerInfo1 : this.playersInfo) {
@@ -512,61 +449,13 @@ public class ClientManager implements Runnable{
                 }
 
                 // Saves the progress of the game
-                executor.submit(this::saveMatch);
+                this.saveMatch();
             }
             case Objective -> {
                 logCreator.log("Player " + player.getNickname() + " has to choose an objective");
 
-
-                // Draw two objective cards if there are none
-                if(playerInfo.getSavedObjectives() == null)
-                    playerInfo.setSavedObjectives(playerInfo.getPlayer().drawObjectives());
-
-                // Sends current state messages to all clients
-                for(PlayerInfo playerInfo1 : this.playersInfo) {
-                    currentStateMessage currState = new currentStateMessage(player, playerInfo1.getPlayer(), "ObjectiveState", this.matchInfo.isLastTurn(), this.onlinePlayers(), this.matchInfo.getMatch().getCommonObjective());
-                    playerInfo1.getConnection().sendCurrentState(currState);
-                }
-
-                boolean correctAnswer = false;
-                while(!correctAnswer) {
-                    ArrayList<ObjectiveCard> objectives = new ArrayList<>(Arrays.asList(playerInfo.getSavedObjectives()));
-                    Future<objectiveCardMessage> future = executor.submit(() -> playerInfo.getConnection().getChosenObjective(objectives));
-//                    Timer timer = startKickTimer(playerInfo, future);
-                    objectiveCardMessage objective = null;
-
-                    try {
-
-                        // REMOVE THIS
-                        System.out.println("Waiting for objective to be placed");
-
-                        objective = future.get(this.timeout, TimeUnit.MILLISECONDS);
-//                        timer.cancel();
-                    } catch (Exception e) {
-                        logCreator.log("Player " + player.getNickname() + " has not answered");
-                        this.kickPlayer(playerInfo);
-                    }
-
-                    if(objective != null) {
-                        // Checks if the client has properly given a response
-                        if(objective.isNoResponse()) {
-                            correctAnswer = true;
-                            this.kickPlayer(playerInfo);
-                        } else {
-                            // Checks if the answer is valid
-                            if(objective.getChoice() == 1 || objective.getChoice() == 2) {
-                                playerInfo.getPlayer().pickObjectiveCard(objective.getChoice(), playerInfo.getSavedObjectives());
-                                correctAnswer = true;
-                                playerInfo.getConnection().sendAnswer(true);
-                                logCreator.log("Player " + player.getNickname() + " has correctly answered");
-                            } else {
-                                playerInfo.getConnection().sendAnswer(false);
-                                logCreator.log("Player " + player.getNickname() + " has not correctly answered");
-                            }
-                        }
-                    }
-
-                }
+                // Compute objective state itself
+                this.objectiveState(playerInfo);
 
 
                 // Updates the view of every player about the current one
@@ -591,61 +480,13 @@ public class ClientManager implements Runnable{
                 }
 
                 // Saves the progress of the game
-                executor.submit(this::saveMatch);
+                this.saveMatch();
             }
             case PlaceCard -> {
                 logCreator.log("Player " + player.getNickname() + " starts normal turn and has to place a card");
-                // Sends current state messages to all clients
-                for(PlayerInfo playerInfo1 : this.playersInfo) {
-                    currentStateMessage currState = new currentStateMessage(player, playerInfo1.getPlayer(), "PlaceTurnState", this.matchInfo.isLastTurn(), this.onlinePlayers(), this.matchInfo.getMatch().getCommonObjective());
-                    playerInfo1.getConnection().sendCurrentState(currState);
-                }
 
-
-
-                // Asks client to place a card
-                boolean correctAnswer = false;
-                while(!correctAnswer) {
-                    Future<placeCardMessage> future = executor.submit(() -> playerInfo.getConnection().getPlaceCard());
-                    Timer timer = startKickTimer(playerInfo, future);
-                    placeCardMessage placeCard = null;
-
-                    try {
-                        placeCard = future.get();
-                        timer.cancel();
-                    } catch (Exception e) {
-                        logCreator.log("Player " + player.getNickname() + " has not answered");
-                    }
-
-                    if(placeCard != null) {
-                        // Checks if the client has properly given a response
-                        if(placeCard.isNoResponse()) {
-                            correctAnswer = true;
-                            this.kickPlayer(playerInfo);
-                        } else {
-                            // Checks if the answer is valid
-                            int card = placeCard.getCard();
-                            int x = placeCard.getRow();
-                            int y = placeCard.getColumn();
-                            int side = placeCard.getFront();
-
-                            if(this.checkValidPositioning(player, card, x, y, side)) {
-                                try {
-                                    playerInfo.getPlayer().playTurn(card, x, y, side);
-                                    playerInfo.getConnection().sendAnswer(true);
-                                    logCreator.log("Player " + player.getNickname() + " has correctly answered");
-                                    correctAnswer = true;
-                                } catch (noPlaceCardException e) {
-                                    playerInfo.getConnection().sendAnswer(false);
-                                    logCreator.log("Player " + player.getNickname() + " has not correctly answered");
-                                }
-                            } else {
-                                playerInfo.getConnection().sendAnswer(false);
-                                logCreator.log("Player " + player.getNickname() + " has not correctly answered");
-                            }
-                        }
-                    }
-                }
+                // Compute place card state itself
+                this.placeCardState(playerInfo);
 
 
 
@@ -673,53 +514,8 @@ public class ClientManager implements Runnable{
                     logCreator.log("Player " + player.getNickname() + " has to pick a card from common area");
 
 
-                    for(PlayerInfo playerInfo1 : this.playersInfo) {
-                        currentStateMessage currState = new currentStateMessage(player, playerInfo1.getPlayer(), "PickTurnState", this.matchInfo.isLastTurn(), this.onlinePlayers(), this.matchInfo.getMatch().getCommonObjective());
-                        playerInfo1.getConnection().sendCurrentState(currState);
-                    }
-
-
-                    // If the client is still online, it proceeds to ask to pick a card
-                    boolean correctAnswer;
-                    if(this.playersInfo.contains(playerInfo)) {
-                        correctAnswer = false;
-                        while(!correctAnswer) {
-                            Future<pickCardMessage> future = executor.submit(() -> playerInfo.getConnection().getChosenPick());
-                            Timer timer = startKickTimer(playerInfo, future);
-                            pickCardMessage pickCard = null;
-
-                            try {
-                                pickCard = future.get();
-                                timer.cancel();
-                            } catch (Exception e) {
-                                logCreator.log("Player " + player.getNickname() + "has not answered");
-                            }
-
-                            if(pickCard != null) {
-                                // Checks if the client has properly given a response
-                                if(pickCard.isNoResponse()) {
-                                    correctAnswer = true;
-                                    this.kickPlayer(playerInfo);
-                                } else {
-                                    // Checks if the answer is valid
-                                    if(this.checkValidPick(pickCard.getCard())) {
-                                        try {
-                                            playerInfo.getPlayer().pickNewCard(pickCard.getCard());
-                                            correctAnswer = true;
-                                            playerInfo.getConnection().sendAnswer(true);
-                                            logCreator.log("Player " + player.getNickname() + " has correctly answered");
-                                        } catch (InvalidIdException e) {
-                                            playerInfo.getConnection().sendAnswer(false);
-                                            logCreator.log("Player " + player.getNickname() + " has not correctly answered");
-                                        }
-                                    } else {
-                                        playerInfo.getConnection().sendAnswer(false);
-                                        logCreator.log("Player " + player.getNickname() + " has not correctly answered");
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    // Compute pick card state itself
+                    this.pickCardState(playerInfo);
 
 
 
@@ -755,56 +551,9 @@ public class ClientManager implements Runnable{
             }
             case LastTurn -> {
                 logCreator.log("Player " + player.getNickname() + " plays his last turn");
-                // Sends current state messages to all clients
-                for(PlayerInfo playerInfo1 : this.playersInfo) {
-                    currentStateMessage currState = new currentStateMessage(player, playerInfo1.getPlayer(), "PlaceTurnState", this.matchInfo.isLastTurn(), this.onlinePlayers(), this.matchInfo.getMatch().getCommonObjective());
-                    playerInfo1.getConnection().sendCurrentState(currState);
-                }
 
-
-                // Asks client to place a card
-                boolean correctAnswer = false;
-                while(!correctAnswer) {
-                    Future<placeCardMessage> future = executor.submit(() -> playerInfo.getConnection().getPlaceCard());
-                    Timer timer = startKickTimer(playerInfo, future);
-                    placeCardMessage placeCard = null;
-
-                    try {
-                        placeCard = future.get();
-                        timer.cancel();
-                    } catch (Exception e) {
-                        logCreator.log("Player " + player.getNickname() + " has not answered");
-                    }
-
-                    if(placeCard != null) {
-                        // Checks if the client has properly given a response
-                        if(placeCard.isNoResponse()) {
-                            correctAnswer = true;
-                            this.kickPlayer(playerInfo);
-                        } else {
-                            // Checks if the answer is valid
-                            int card = placeCard.getCard();
-                            int x = placeCard.getRow();
-                            int y = placeCard.getColumn();
-                            int side = placeCard.getFront();
-
-                            if(this.checkValidPositioning(player, card, x, y, side)) {
-                                try {
-                                    playerInfo.getPlayer().playTurn(card, x, y, side);
-                                    playerInfo.getConnection().sendAnswer(true);
-                                    logCreator.log("Player " + player.getNickname() + " has correctly answered");
-                                    correctAnswer = true;
-                                } catch (noPlaceCardException e) {
-                                    playerInfo.getConnection().sendAnswer(false);
-                                    logCreator.log("Player " + player.getNickname() + " has not correctly answered");
-                                }
-                            } else {
-                                playerInfo.getConnection().sendAnswer(false);
-                                logCreator.log("Player " + player.getNickname() + " has not correctly answered");
-                            }
-                        }
-                    }
-                }
+                // Compute place card state itself
+                this.placeCardState(playerInfo);
 
                 // Updates all clients on the current situation
                 for(PlayerInfo playerInfo1 : this.playersInfo) {
@@ -833,6 +582,234 @@ public class ClientManager implements Runnable{
 
     }
 
+    /**
+     * Manages the starter state of a player.
+     * @param playerInfo data about the player to manage.
+     */
+    private void starterState(PlayerInfo playerInfo) {
+        Player player = playerInfo.getPlayer();
+
+        // Draw a StarterCard if player has none in hand
+        if(playerInfo.getPlayer().getPlayerHand().getPlaceableCards().stream().
+                noneMatch(PlaceableCard::isStarter))
+            playerInfo.getPlayer().drawStarter();
+
+        // Sends current state messages to all clients
+        for(PlayerInfo playerInfo1 : this.playersInfo) {
+            currentStateMessage currState = new currentStateMessage(player, playerInfo1.getPlayer(), "StarterCardState", this.matchInfo.isLastTurn(), this.onlinePlayers(), null);
+            playerInfo1.getConnection().sendCurrentState(currState);
+        }
+
+        // Obtains side of the starter card
+        boolean correctAnswer = false;
+        while(!correctAnswer) {
+
+
+            Future<starterCardMessage> future = executor.submit(() -> playerInfo.getConnection().getStaterCard());
+            starterCardMessage starter = null;
+
+
+            try {
+                starter = future.get(this.timeout, TimeUnit.MILLISECONDS);
+            } catch (Exception e) {
+                logCreator.log("Player " + player.getNickname() + " has not answered");
+                this.kickPlayer(playerInfo);
+            }
+
+            if(starter != null) {
+
+                // Checks if the client has properly given a response
+                if(starter.isNoResponse()) {
+                    correctAnswer = true;
+                    logCreator.log("Player " + player.getNickname() + " has not answered");
+                    this.kickPlayer(playerInfo);
+                } else {
+                    // Checks if the answer is valid
+                    if(starter.getSide() == 0 || starter.getSide() == 1) {
+
+                        playerInfo.getPlayer().placeStarter(starter.getSide());
+                        correctAnswer = true;
+                        playerInfo.getConnection().sendAnswer(true);
+                        logCreator.log("Player " + player.getNickname() + " has correctly answered");
+                    } else {
+                        playerInfo.getConnection().sendAnswer(false);
+                        logCreator.log("Player " + player.getNickname() + " has not answered correctly");
+                    }
+                }
+            } else {
+                if(this.playersInfo.contains(playerInfo)) {
+                    logCreator.log("Player " + player.getNickname() + " wanted to place a null card");
+                    this.kickPlayer(playerInfo);
+                }
+            }
+        }
+    }
+
+    /**
+     * Manages the objective state of a player.
+     * @param playerInfo data about the player to manage.
+     */
+    private void objectiveState(PlayerInfo playerInfo) {
+        Player player = playerInfo.getPlayer();
+
+        // Draw two objective cards if there are none
+        if(playerInfo.getSavedObjectives() == null)
+            playerInfo.setSavedObjectives(playerInfo.getPlayer().drawObjectives());
+
+        // Sends current state messages to all clients
+        for(PlayerInfo playerInfo1 : this.playersInfo) {
+            currentStateMessage currState = new currentStateMessage(player, playerInfo1.getPlayer(), "ObjectiveState", this.matchInfo.isLastTurn(), this.onlinePlayers(), this.matchInfo.getMatch().getCommonObjective());
+            playerInfo1.getConnection().sendCurrentState(currState);
+        }
+
+        boolean correctAnswer = false;
+        while(!correctAnswer) {
+            ArrayList<ObjectiveCard> objectives = new ArrayList<>(Arrays.asList(playerInfo.getSavedObjectives()));
+            Future<objectiveCardMessage> future = executor.submit(() -> playerInfo.getConnection().getChosenObjective(objectives));
+            objectiveCardMessage objective = null;
+
+            try {
+
+                // REMOVE THIS
+                System.out.println("Waiting for objective to be placed");
+
+                objective = future.get(this.timeout, TimeUnit.MILLISECONDS);
+            } catch (Exception e) {
+                logCreator.log("Player " + player.getNickname() + " has not answered");
+                this.kickPlayer(playerInfo);
+            }
+
+            if(objective != null) {
+                // Checks if the client has properly given a response
+                if(objective.isNoResponse()) {
+                    correctAnswer = true;
+                    this.kickPlayer(playerInfo);
+                } else {
+                    // Checks if the answer is valid
+                    if(objective.getChoice() == 1 || objective.getChoice() == 2) {
+                        playerInfo.getPlayer().pickObjectiveCard(objective.getChoice(), playerInfo.getSavedObjectives());
+                        correctAnswer = true;
+                        playerInfo.getConnection().sendAnswer(true);
+                        logCreator.log("Player " + player.getNickname() + " has correctly answered");
+                    } else {
+                        playerInfo.getConnection().sendAnswer(false);
+                        logCreator.log("Player " + player.getNickname() + " has not correctly answered");
+                    }
+                }
+            }
+
+        }
+    }
+
+    /**
+     * Manages the place card state of a player.
+     * @param playerInfo data about the player to manage.
+     */
+    private void placeCardState(PlayerInfo playerInfo) {
+        Player player = playerInfo.getPlayer();
+
+        // Sends current state messages to all clients
+        for(PlayerInfo playerInfo1 : this.playersInfo) {
+            currentStateMessage currState = new currentStateMessage(player, playerInfo1.getPlayer(), "PlaceTurnState", this.matchInfo.isLastTurn(), this.onlinePlayers(), this.matchInfo.getMatch().getCommonObjective());
+            playerInfo1.getConnection().sendCurrentState(currState);
+        }
+
+
+
+        // Asks client to place a card
+        boolean correctAnswer = false;
+        while(!correctAnswer) {
+            Future<placeCardMessage> future = executor.submit(() -> playerInfo.getConnection().getPlaceCard());
+            placeCardMessage placeCard = null;
+
+            try {
+                placeCard = future.get(this.timeout, TimeUnit.MILLISECONDS);
+            } catch (Exception e) {
+                logCreator.log("Player " + player.getNickname() + " has not answered");
+                this.kickPlayer(playerInfo);
+            }
+
+            if(placeCard != null) {
+                // Checks if the client has properly given a response
+                if(placeCard.isNoResponse()) {
+                    correctAnswer = true;
+                    this.kickPlayer(playerInfo);
+                } else {
+                    // Checks if the answer is valid
+                    int card = placeCard.getCard();
+                    int x = placeCard.getRow();
+                    int y = placeCard.getColumn();
+                    int side = placeCard.getFront();
+
+                    try {
+                        playerInfo.getPlayer().playTurn(card, x, y, side);
+                        playerInfo.getConnection().sendAnswer(true);
+                        logCreator.log("Player " + player.getNickname() + " has correctly answered");
+                        correctAnswer = true;
+                    } catch (noPlaceCardException e) {
+                        playerInfo.getConnection().sendAnswer(false);
+                        logCreator.log("Player " + player.getNickname() + " has not correctly answered");
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Manages the pick card state of a player.
+     * @param playerInfo data about the player to manage.
+     */
+    private void pickCardState(PlayerInfo playerInfo) {
+        Player player = playerInfo.getPlayer();
+
+        for(PlayerInfo playerInfo1 : this.playersInfo) {
+            currentStateMessage currState = new currentStateMessage(player, playerInfo1.getPlayer(), "PickTurnState", this.matchInfo.isLastTurn(), this.onlinePlayers(), this.matchInfo.getMatch().getCommonObjective());
+            playerInfo1.getConnection().sendCurrentState(currState);
+        }
+
+
+        // If the client is still online, it proceeds to ask to pick a card
+        boolean correctAnswer;
+        if(this.playersInfo.contains(playerInfo)) {
+            correctAnswer = false;
+            while(!correctAnswer) {
+                Future<pickCardMessage> future = executor.submit(() -> playerInfo.getConnection().getChosenPick());
+                pickCardMessage pickCard = null;
+
+                try {
+                    pickCard = future.get(this.timeout, TimeUnit.MILLISECONDS);
+                } catch (Exception e) {
+                    logCreator.log("Player " + player.getNickname() + "has not answered");
+                    this.kickPlayer(playerInfo);
+                }
+
+                if(pickCard != null) {
+                    // Checks if the client has properly given a response
+                    if(pickCard.isNoResponse()) {
+                        correctAnswer = true;
+                        this.kickPlayer(playerInfo);
+                    } else {
+                        // Checks if the answer is valid
+                        try {
+                            playerInfo.getPlayer().pickNewCard(pickCard.getCard());
+                            correctAnswer = true;
+                            playerInfo.getConnection().sendAnswer(true);
+                            logCreator.log("Player " + player.getNickname() + " has correctly answered");
+                        } catch (InvalidIdException e) {
+                            playerInfo.getConnection().sendAnswer(false);
+                            logCreator.log("Player " + player.getNickname() + " has not correctly answered");
+                        }
+
+                    }
+                }
+            }
+        }
+    }
+
+
+    /**
+     * Manages the endgame state of the match.
+     */
     private void endgame() {
         logCreator.log("ENDGAME");
         // Sends current state messages to all clients
@@ -957,86 +934,5 @@ public class ClientManager implements Runnable{
                 .map(playerInfo -> playerInfo.getPlayer().getNickname())
                 .collect(Collectors.toCollection(ArrayList::new));
     }
-
-    /**
-     * Checks if the card can be placed in the specified position
-     * @param player player that wants to place the card
-     * @param card card to be placed
-     * @param x row
-     * @param y column
-     * @param side front or back
-     * @return true if the card can be placed, false otherwise
-     */
-    private boolean checkValidPositioning(Player player, int card, int x, int y, int side) {
-        PlayerArea area = player.getPlayerArea();
-        if(!area.checkPosition(x, y)) {
-            return false;
-        }
-
-        if(card < 0 || card >= player.getPlayerHand().getPlaceableCards().size())
-            return false;
-
-        PlaceableCard placeableCard = player.pickPlaceableCard(card);
-
-        if(side == 1 && !placeableCard.checkRequirement(area.getResources())) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * Checks if the player can pick the specified card
-     * @param card card to be picked
-     * @return true if the card can be picked, false otherwise
-     */
-    private boolean checkValidPick(int card) {
-        CommonArea commonArea = this.matchInfo.getMatch().getCommonArea();
-        switch (card) {
-            // Checks if the Resource deck is empty
-            case 1 -> {
-                if(commonArea.getD1().getList().isEmpty())
-                    return false;
-            }
-
-            // Checks if the Gold deck is empty
-            case 2 -> {
-                if(commonArea.getD2().getList().isEmpty())
-                    return false;
-            }
-
-            // Checks if the table has at least 1 card
-            case 3 -> {
-                if(commonArea.getTableCards().isEmpty())
-                    return false;
-            }
-
-            // Checks if the table has at least 2 cards
-            case 4 -> {
-                if(commonArea.getTableCards().size() < 2)
-                    return false;
-            }
-
-            // Checks if the table has at least 3 cards
-            case 5 -> {
-                if(commonArea.getTableCards().size() < 3)
-                    return false;
-            }
-
-            // Checks if the table has at least 4 cards
-            case 6 -> {
-                if(commonArea.getTableCards().size() < 4)
-                    return false;
-            }
-
-            default -> {
-                return false;
-            }
-
-        }
-
-        return true;
-    }
-
 
 }

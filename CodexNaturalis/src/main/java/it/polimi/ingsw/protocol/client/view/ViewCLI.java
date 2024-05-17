@@ -373,7 +373,6 @@ public class ViewCLI extends View {
                             continue;
                         }
                     }
-                    break;
                 }
 
             } else {
@@ -413,7 +412,6 @@ public class ViewCLI extends View {
                                 continue;
                             }
                         }
-                        break;
                     }
                 }
 

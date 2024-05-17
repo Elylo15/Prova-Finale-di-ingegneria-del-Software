@@ -12,6 +12,7 @@ import it.polimi.ingsw.protocol.messages.*;
 import it.polimi.ingsw.protocol.server.RMI.MessageExchanger;
 import it.polimi.ingsw.protocol.server.RMI.MessageExchangerInterface;
 
+import java.io.Serializable;
 import java.rmi.AlreadyBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -20,7 +21,7 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class ClientRMI extends ClientConnection implements Runnable{
+public class ClientRMI extends ClientConnection implements Runnable, Serializable {
     private MessageExchangerInterface toServer;
     private MessageExchangerInterface toClient;
     private Registry registry;

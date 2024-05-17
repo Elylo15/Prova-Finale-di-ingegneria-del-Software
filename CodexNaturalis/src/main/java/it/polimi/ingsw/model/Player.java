@@ -105,10 +105,21 @@ public class  Player implements Serializable {
         Card card;
 
         card = pickPlaceableCard(cardPick);
+        if (card == null)
+            throw new noPlaceCardException();
+
         cardID = card.getID();
         position = pickPosition(x, y);
+
+        PlaceableCard selectedCard = deck.getPlaceableCards().stream().filter(placeableCard -> placeableCard.getID() == cardID).findFirst().orElse(null);
+
+        // Impossible, just to be sure
+        if(selectedCard == null)
+            throw new noPlaceCardException();
+
         try {
-            score = getScore() + playerArea.placeCard(deck.removeplaceableCard(cardID), position[0], position[1], pickSide(side));
+            score = getScore() + playerArea.placeCard(selectedCard, position[0], position[1], pickSide(side));
+            deck.removeplaceableCard(cardID);
             if(score > 29)
                 score = 29;
         } catch (noPlaceCardException e) {
@@ -148,11 +159,37 @@ public class  Player implements Serializable {
     /**
      * method {@code pickNewCard}: the player draws a card which is added to his personal deck.
      * @param drawPick integer that indicates the card chosen.
+     * @throws InvalidIdException if there is an error drawing the card.
      */
     public void pickNewCard(int drawPick) throws InvalidIdException {
 
         if(drawPick < 1 || drawPick > 6)
             throw new InvalidIdException();
+
+        // Check if the resource deck is empty
+        if(commonArea.getD1().getSize() == 0 && drawPick == 1)
+            throw new InvalidIdException();
+
+        // Check if the gold deck is empty
+        if(commonArea.getD2().getSize() == 0 && drawPick == 2)
+            throw new InvalidIdException();
+
+        // Check if there are less than 4 table cards
+        if(commonArea.getTableCards().size() < 4 && drawPick == 6)
+            throw new InvalidIdException();
+
+        // Check if there are less than 3 table cards
+        if(commonArea.getTableCards().size() < 3 && drawPick > 4)
+            throw new InvalidIdException();
+
+        // Check if there are less than 2 table cards
+        if(commonArea.getTableCards().size() < 2 && drawPick > 3)
+            throw new InvalidIdException();
+
+        // Check if there are no table cards
+        if(commonArea.getTableCards().isEmpty() && drawPick > 2)
+            throw new InvalidIdException();
+
 
         if (drawPick == 1)
             deck.addNewPlaceableCard(commonArea.drawFromToPlayer(1));
