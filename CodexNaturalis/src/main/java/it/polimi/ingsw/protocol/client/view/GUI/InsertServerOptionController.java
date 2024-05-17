@@ -24,7 +24,7 @@ public class InsertServerOptionController {
 
 
     public void newMatchPressed() {
-        serverOptionMessage = new serverOptionMessage(true, null, null, false, "");
+        serverOptionMessage = new serverOptionMessage(true, null, null, false, null);
         Stage stage = (Stage) new_match.getScene().getWindow();
         stage.close();
     }

@@ -5,6 +5,9 @@ import it.polimi.ingsw.model.cards.enumeration.Resource;
 import java.io.Serializable;
 import java.util.Objects;
 
+/**
+ * Class Cell: represents a cell of the matrix of cells of the player area
+ */
 public class Cell implements Serializable {
 
     private final int row;

@@ -434,7 +434,7 @@ public class ClientManager implements Runnable{
 
                 // End turn and update states
                 if(this.playersInfo.contains(playerInfo)) { // Checks if the player is online
-                    playerInfo.setState(State.Objective); // TODO keep only objective
+                    playerInfo.setState(State.Objective);
 
                     playerInfo.getPlayer().initialHand();
 

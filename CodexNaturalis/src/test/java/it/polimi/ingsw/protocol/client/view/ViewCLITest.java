@@ -4,10 +4,7 @@ import it.polimi.ingsw.model.CommonArea;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.PlayerArea;
 import it.polimi.ingsw.model.*;
-import it.polimi.ingsw.model.cards.Cell;
-import it.polimi.ingsw.model.cards.PlaceableCard;
-import it.polimi.ingsw.model.cards.ResourceCard;
-import it.polimi.ingsw.model.cards.StarterCard;
+import it.polimi.ingsw.model.cards.*;
 import it.polimi.ingsw.model.cards.enumeration.Reign;
 import it.polimi.ingsw.model.cards.enumeration.Resource;
 import it.polimi.ingsw.model.cards.exceptions.InvalidIdException;
@@ -109,6 +106,8 @@ class ViewCLITest {
         playerArea.placeCard(testCard, 1,1, true);
         playerArea.placeCard(testCard2,2,2,false);
         playerArea.placeCard(testCard3,3,3,true);
+
+//        viewCLI.showPlayerArea(playerArea);
 
 
 

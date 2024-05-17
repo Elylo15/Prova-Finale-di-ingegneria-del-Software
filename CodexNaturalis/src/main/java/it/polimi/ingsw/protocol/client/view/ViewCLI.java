@@ -1,6 +1,5 @@
 package it.polimi.ingsw.protocol.client.view;
 
-import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.model.CommonArea;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.PlayerArea;
@@ -8,6 +7,8 @@ import it.polimi.ingsw.model.cards.Cell;
 import it.polimi.ingsw.model.cards.ObjectiveCard;
 import it.polimi.ingsw.model.cards.PlaceableCard;
 import it.polimi.ingsw.model.cards.PlayerHand;
+import it.polimi.ingsw.model.cards.enumeration.Reign;
+import it.polimi.ingsw.model.cards.enumeration.Resource;
 import it.polimi.ingsw.protocol.messages.ConnectionState.*;
 import it.polimi.ingsw.protocol.messages.PlayerTurnState.updatePlayerMessage;
 import it.polimi.ingsw.protocol.messages.ServerOptionState.*;
@@ -26,6 +27,30 @@ public class ViewCLI extends View {
     //the purpose of ViewCLI is to handle the interaction with the user and
     // visualize what he needs to see in order to play the game
     // by printing it in the command line
+
+
+    //COLORS
+
+    // ANSI escape code constants for text color
+    private static final String RESET = "\033[0m";  // Reset to default color
+    private static final String BLACK_TEXT = "\033[0;30m";
+    private static final String RED_TEXT = "\033[0;31m";
+    private static final String GREEN_TEXT = "\033[0;32m";
+    private static final String YELLOW_TEXT = "\033[0;33m";
+    private static final String BLUE_TEXT = "\033[0;34m";
+    private static final String PURPLE_TEXT = "\033[0;35m";
+    private static final String CYAN_TEXT = "\033[0;36m";
+    private static final String WHITE_TEXT = "\033[0;37m";
+
+    // ANSI escape code constants for background color
+    private static final String BLACK_BACKGROUND = "\033[40m";
+    private static final String RED_BACKGROUND = "\033[41m";
+    private static final String GREEN_BACKGROUND = "\033[42m";
+    private static final String YELLOW_BACKGROUND = "\033[43m";
+    private static final String BLUE_BACKGROUND = "\033[44m";
+    private static final String PURPLE_BACKGROUND = "\033[45m";
+    private static final String CYAN_BACKGROUND = "\033[46m";
+    private static final String WHITE_BACKGROUND = "\033[47m";
 
     /**
      * method {@code ViewCLI}: constructs a new ViewCLI
@@ -113,7 +138,7 @@ public class ViewCLI extends View {
      * Prints the current state of the common area
      * @param area CommonArea to be printed
      */
-    public void showCommonArea(CommonArea area) {
+    private void showCommonArea(CommonArea area) {
        System.out.println("\nCARDS ON THE TABLE: ");
        System.out.println("(1) Resource deck top card: " + area.getD1().getList().getFirst().getReign());
        System.out.println("(2) Gold deck top card: " + area.getD2().getList().getFirst().getReign());
@@ -134,7 +159,7 @@ public class ViewCLI extends View {
      * Prints the current state of the player area
      * @param area PlayerArea to be printed
      */
-    public void showPlayerArea(PlayerArea area) {
+    private void showPlayerArea(PlayerArea area) {
         System.out.println("\n");
 
         ArrayList<Integer> resourceList = area.getResources();
@@ -171,28 +196,105 @@ public class ViewCLI extends View {
                 .max()
                 .orElse(0);
 
-        for(int i = minRow; i <= maxRow; i++) {
+        // Print the column numbers
+        System.out.print("   ");
+        for (int i = minColumn; i <= maxColumn; i++) {
+            System.out.print(String.format("%2d", i) + "  ");
+        }
+        System.out.println();
+
+        for (int i = minRow; i <= maxRow; i++) {
+            ArrayList<String> lines = new ArrayList<>();
+            lines.add(String.format("%2d", i) + " ");
+            // lines.add("");
+            lines.add("   ");
+            lines.add("   ");
+
+            // System.out.print(i + " ");
             for(int j = minColumn; j <= maxColumn; j++) {
                 Cell cell = findCell(i, j, Cells);
                 if(cell != null) {
                     PlaceableCard card = cell.getTopCard();
-                    if(card != null) {
-                        System.out.print(" " + String.format("%02d", card.getID()) + (cell.getTopCard().isFront() ? "F" : "B") + "/");
-                    } else {
-                        System.out.print(" " + "   " + "/");
+                    boolean isTopCard = true;
+                    if (card == null) {
+                        card = cell.getBottomCard();
+                        isTopCard = false;
                     }
 
-                    PlaceableCard bottomCard = cell.getBottomCard();
-                    if(bottomCard != null) {
-                        System.out.print(String.format("%02d", bottomCard.getID()) + (cell.getBottomCard().isFront() ? "F" : "B"));
-                    } else {
-                        System.out.print("   ");
+                    Integer relativePosition = findRelativeCellPosition(cell);
+
+                    switch (relativePosition) {
+                        case 0 -> {
+                            // The cell is the top left corner of the card
+                            // So all the printed space is of the same card
+                            String fillColor = this.fillColor(card.getReign());
+                            ArrayList<String> center = this.fillCenterCard(card);
+                            lines.set(0, lines.get(0) + WHITE_BACKGROUND + WHITE_TEXT + this.resourceToPrint(cell.getResource()) + RESET + fillColor);
+                            // lines.set(1, lines.get(1) + WHITE_BACKGROUND + WHITE_TEXT + "  " + RESET + fillColor);
+                            lines.set(1, lines.get(1) + fillColor + center.get(0));
+                            lines.set(2, lines.get(2) + fillColor + center.get(1));
+                        }
+                        case 1 -> {
+                            // The cell is the top right corner of the card
+                            // So the top-right part to be printed is not of the same card
+                            String fillColor;
+                            if(isTopCard) {
+                                fillColor = this.fillColor(cell.getBottomCard().getReign());
+                            } else {
+                                fillColor = BLACK_BACKGROUND + "  " + RESET;
+                            }
+                            lines.set(0, lines.get(0) + WHITE_BACKGROUND + WHITE_TEXT + this.resourceToPrint(cell.getResource()) + RESET + fillColor);
+                            // lines.set(1, lines.get(1) + WHITE_BACKGROUND + WHITE_TEXT + "  " + RESET + fillColor);
+
+                            fillColor = this.fillColor(card.getReign());
+
+                            lines.set(1, lines.get(1) + fillColor + BLACK_BACKGROUND + "  " + RESET);
+                            lines.set(2, lines.get(2) + fillColor + BLACK_BACKGROUND + "  " + RESET);
+                        }
+                        case 2 -> {
+                            // The cell is the bottom left corner of the card
+                            // So the bottom-left part to be printed is not of the same card
+                            String fillColor = this.fillColor(card.getReign());
+                            lines.set(0, lines.get(0) + WHITE_BACKGROUND + WHITE_TEXT + this.resourceToPrint(cell.getResource()) + RESET + fillColor);
+                            // lines.set(1, lines.get(1) + WHITE_BACKGROUND + WHITE_TEXT + "  " + RESET + fillColor);
+
+                            if(isTopCard) {
+                                fillColor = this.fillColor(cell.getBottomCard().getReign());
+                            } else {
+                                fillColor = BLACK_BACKGROUND + "  " + RESET;
+                            }
+
+                            lines.set(1, lines.get(1) + fillColor + BLACK_BACKGROUND + "  " + RESET);
+                            lines.set(2, lines.get(2) + fillColor + BLACK_BACKGROUND + "  " + RESET);
+                        }
+                        case 3 -> {
+                            // The cell is the bottom right corner of the card
+                            // So only the top right part is of the same card
+                            String fillColor;
+                            if (isTopCard) {
+                                fillColor = this.fillColor(cell.getBottomCard().getReign());
+                            } else {
+                                fillColor = BLACK_BACKGROUND + "  " + RESET;
+                            }
+
+                            lines.set(0, lines.get(0) + WHITE_BACKGROUND + WHITE_TEXT + this.resourceToPrint(cell.getResource()) + RESET + fillColor);
+                            // lines.set(1, lines.get(1) + WHITE_BACKGROUND + WHITE_TEXT + "  " + RESET + fillColor);
+                            lines.set(1, lines.get(1) + fillColor + fillColor);
+                            lines.set(2, lines.get(2) + fillColor + fillColor);
+                        }
                     }
+
                 } else {
-                    System.out.print("        ");
+                    // The cell doesn't exist, so it is all black
+                    for (int k = 0; k < 3; k++) {
+                        lines.set(k, lines.get(k) + BLACK_BACKGROUND + "    " + RESET);
+                    }
                 }
             }
-            System.out.println(" ");
+
+            for (String line : lines) {
+                System.out.println(line);
+            }
         }
 
         System.out.println("\n");
@@ -221,10 +323,134 @@ public class ViewCLI extends View {
     }
 
     /**
+     * Finds the relative position of a cell in a card
+     * @param cell the cell to find
+     * @return the relative position of the cell in the card
+     */
+    private Integer findRelativeCellPosition(Cell cell) {
+        if(cell == null)
+            return null;
+
+        PlaceableCard card = cell.getTopCard();
+        if (card == null) {
+            card = cell.getBottomCard();
+        }
+
+        ArrayList<Cell> cells = card.getCells();
+        for (int i = 0; i < cells.size(); i++) {
+            if (cells.get(i) == cell) {
+                return i;
+            }
+        }
+
+        return 0;
+
+    }
+
+    /**
+     * Converts a resource to a string to be printed
+     * @param res the resource to be converted
+     * @return the string to be printed
+     */
+    private String resourceToPrint(Resource res) {
+        String resource = "";
+        switch (res) {
+            case Fungus -> resource = "FU";
+            case Insect -> resource = "IN";
+            case Animal -> resource = "AN";
+            case Plant -> resource = "PL";
+            case Manuscript -> resource = "MA";
+            case Quill -> resource = "QU";
+            case Inkwell -> resource = "IK";
+            case Empty, Blocked -> resource = "  ";
+        }
+        return resource;
+    }
+
+    /**
+     * Prints two colored empty spaces
+     * @param res the reign of the card
+     * @return the string to be printed
+     */
+    private String fillColor(Reign res) {
+        String color = "";
+        switch (res) {
+            case Fungus -> {
+                color = RED_BACKGROUND + "  " + RESET;
+            }
+            case Insect -> {
+                color = PURPLE_BACKGROUND + "  " + RESET;
+            }
+            case Animal -> {
+                color = CYAN_BACKGROUND + "  " + RESET;
+            }
+            case Plant -> {
+                color = GREEN_BACKGROUND + "  " + RESET;
+            }
+            case null, default -> {
+                color = YELLOW_BACKGROUND + "  " + RESET;
+            }
+        }
+        return color;
+    }
+
+    /**
+     * Fills the center of the card with the correct color, resource and ID
+     * @param card the card to be printed
+     * @return the center of the card to be printed
+     */
+    private ArrayList<String> fillCenterCard(PlaceableCard card) {
+        ArrayList<String> center = new ArrayList<>();
+        center.add("");
+        center.add("");
+
+        switch (card.getReign()) {
+            case Fungus -> {
+                if (card.isFront()) {
+                    center.set(0, RED_BACKGROUND + "  " + RESET);
+                } else {
+                    center.set(0, RED_BACKGROUND + "FU" + RESET);
+                }
+                center.set(1, RED_BACKGROUND + String.format("%02d", card.getID()) + RESET);
+            }
+            case Insect -> {
+                if (card.isFront()) {
+                    center.set(0, PURPLE_BACKGROUND + "  " + RESET);
+                } else {
+                    center.set(0, PURPLE_BACKGROUND + "IN" + RESET);
+                }
+                center.set(1, PURPLE_BACKGROUND + String.format("%02d", card.getID()) + RESET);
+            }
+            case Animal -> {
+                if (card.isFront()) {
+                    center.set(0, CYAN_BACKGROUND + "  " + RESET);
+                } else {
+                    center.set(0, CYAN_BACKGROUND + "AN" + RESET);
+                }
+                center.set(1, CYAN_BACKGROUND + String.format("%02d", card.getID()) + RESET);
+            }
+            case Plant -> {
+                if (card.isFront()) {
+                    center.set(0, GREEN_BACKGROUND + "  " + RESET);
+                } else {
+                    center.set(0, GREEN_BACKGROUND + "PL" + RESET);
+                }
+                center.set(1, GREEN_BACKGROUND + String.format("%02d", card.getID()) + RESET);
+            }
+            case null, default -> {
+                center.set(0, YELLOW_BACKGROUND + "  " + RESET);
+                center.set(1, YELLOW_BACKGROUND + String.format("%02d", card.getID()) + RESET);
+            }
+        }
+
+        return center;
+    }
+
+    /**
      * Prints the current state of the player hand
      * @param currentPlayer the player whose hand is to be printed
      */
-    public void showPlayerHand(Player currentPlayer, String viewer) {
+    private void showPlayerHand(Player currentPlayer, String viewer) {
         //PlayerHand hand = message.getCurrentPlayer().getPlayerHand();
         PlayerHand hand = currentPlayer.getPlayerHand();
         System.out.println("\nPLAYER HAND: ");
