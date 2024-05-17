@@ -517,8 +517,6 @@ public class ViewCLI extends View {
                 System.out.println("ANSWER NOT VALID");
                 continue;
             }
-            newMatch = scanner.nextBoolean();
-            scanner.nextLine();
             break;
         }
 

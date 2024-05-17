@@ -1,12 +1,13 @@
 package it.polimi.ingsw.protocol.server.RMI;
 
+import java.io.*;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.ArrayList;
-import java.util.Objects;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class MessageExchanger extends UnicastRemoteObject implements MessageExchangerInterface {
-    private ArrayList<Object> storedObjects;
+    private BlockingQueue<byte[]> storedObjects;
 
 
     /**
@@ -14,7 +15,7 @@ public class MessageExchanger extends UnicastRemoteObject implements MessageExch
       * @throws RemoteException
      */
     public MessageExchanger() throws RemoteException {
-        storedObjects =  new ArrayList<>();
+        storedObjects = new LinkedBlockingQueue<>();
     }
 
 
@@ -25,13 +26,19 @@ public class MessageExchanger extends UnicastRemoteObject implements MessageExch
      * @throws RemoteException
      */
     @Override
-    public synchronized void write(Object message) throws RemoteException {
-
-        // Adds a new message to the list
-        this.storedObjects.add(message);
-
-        // Notify the receiver
-        this.notifyAll();
+    public void write(Object message) throws RemoteException {
+        try {
+            // Serialize the message
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
+            objectOutputStream.writeObject(message);
+            byte[] serializedMessage = byteArrayOutputStream.toByteArray();
+            // Send the message
+            storedObjects.put(serializedMessage);
+        } catch (IOException | InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new RemoteException("Error writing object.", e);
+        }
     }
 
     /**
@@ -41,22 +48,17 @@ public class MessageExchanger extends UnicastRemoteObject implements MessageExch
      * @throws RemoteException
      */
     @Override
-    public synchronized Object read() throws RemoteException {
-
-        // Wait until the sender has written
-        while (storedObjects.isEmpty())  {
-            try {
-                this.wait();
-            } catch (InterruptedException ignored) {}
+    public Object read() throws RemoteException {
+        try {
+            // Deserialize the message
+            byte[] serializedMessage = storedObjects.take();
+            ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(serializedMessage);
+            ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream);
+            // Return the message
+            return objectInputStream.readObject();
+        } catch (IOException | ClassNotFoundException | InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new RemoteException("Error reading object.", e);
         }
-
-        // Obtains the last message
-        return this.storedObjects.removeFirst();
     }
-
-    /**
-     * Retrieves last message. Created only for the tests.
-     * @return last stored message.
-     */
-    protected ArrayList<Object> getStoredObject() {return this.storedObjects;}
 }

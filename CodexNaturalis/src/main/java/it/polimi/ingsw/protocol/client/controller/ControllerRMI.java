@@ -288,7 +288,7 @@ public class ControllerRMI extends Controller {
         try {
             return (updatePlayerMessage) toClient.read();
         } catch (RemoteException e) {
-            System.out.println("Error in updatePlayer" + e.getMessage());
+            System.out.println("Error in updatePlayer: " + e.getMessage());
             throw new RuntimeException(e);
         }
     }
