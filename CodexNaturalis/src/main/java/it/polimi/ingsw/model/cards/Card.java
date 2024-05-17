@@ -13,9 +13,10 @@ public abstract class Card implements Serializable {
      * @param ID must be <103 and >0
      * @throws InvalidIdException if ID´s condition is not met.
      */
-    protected Card(int ID) throws InvalidIdException {
+    protected Card(int ID, boolean front) throws InvalidIdException {
         if(ID<0 || ID>102) throw new InvalidIdException("Invalid ID");
         this.ID = ID;
+        this.front = front;
     }
 
     /**

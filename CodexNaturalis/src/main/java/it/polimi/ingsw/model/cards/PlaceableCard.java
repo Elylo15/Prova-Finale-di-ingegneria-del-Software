@@ -13,16 +13,14 @@ public abstract class PlaceableCard extends Card implements Serializable {
     private final ArrayList<Resource> requirement;
     private int points;
     private Reign reign;
-    private boolean front;
     private ArrayList<Cell> cells;
 
     private ArrayList<Resource> resources;
 
     public PlaceableCard(int ID) throws InvalidIdException
     {
-        super(ID);
+        super(ID, true);
 
-        this.front = true;
         this.requirement = new ArrayList<>();
         this.cells = new ArrayList<>();
 
@@ -30,10 +28,9 @@ public abstract class PlaceableCard extends Card implements Serializable {
 
     public PlaceableCard(int ID, int points, Reign reign, boolean front, ArrayList<Resource> resources, ArrayList<Resource> requirement) throws InvalidIdException
     {
-        super(ID);
+        super(ID, front);
         this.points = points;
         this.reign = reign;
-        this.front = front;
         this.resources = resources;
         this.requirement = requirement;
     }
@@ -43,12 +40,12 @@ public abstract class PlaceableCard extends Card implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         PlaceableCard that = (PlaceableCard) o;
-        return points == that.points && front == that.front && Objects.equals(requirement, that.requirement) && reign == that.reign && Objects.equals(cells, that.cells) && Objects.equals(resources, that.resources);
+        return points == that.points && this.isFront() == that.isFront() && Objects.equals(requirement, that.requirement) && reign == that.reign && Objects.equals(cells, that.cells) && Objects.equals(resources, that.resources);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(requirement, points, reign, front, cells, resources);
+        return Objects.hash(requirement, points, reign, cells, resources);
     }
 
     /**
@@ -68,7 +65,7 @@ public abstract class PlaceableCard extends Card implements Serializable {
      * @return a boolean
      */
     public boolean checkRequirement(ArrayList<Integer> req) {
-        if(front) {
+        if(this.isFront()) {
             int playgroundFungus = req.get(0);
             int playgroundPlant = req.get(1);
             int playgroundAnimal = req.get(2);
@@ -107,17 +104,11 @@ public abstract class PlaceableCard extends Card implements Serializable {
         this.cells = cells;
     }
 
-    public void setFront(boolean front) {
-        this.front = front;
-    }
 
     public Reign getReign() {
         return reign;
     }
 
-    public boolean isFront() {
-        return front;
-    }
 
     public ArrayList<Cell> getCells() {
         return new ArrayList<>(cells);
@@ -132,7 +123,7 @@ public abstract class PlaceableCard extends Card implements Serializable {
     }
 
     public ArrayList<Resource> getResource() {
-        if(this.front) {
+        if(this.isFront()) {
             return new ArrayList<>(this.resources);
         } else {
             ArrayList<Resource> backResources = new ArrayList<>();
@@ -150,7 +141,7 @@ public abstract class PlaceableCard extends Card implements Serializable {
      */
     public ArrayList<Resource> getPermanentResource(){
         ArrayList<Resource> resources = new ArrayList<>();
-        if(!front) {
+        if(!this.isFront()) {
 
             if(this.reign == Reign.Fungus)
                 resources.add(Resource.Fungus);
@@ -188,7 +179,7 @@ public abstract class PlaceableCard extends Card implements Serializable {
                 ", requirement=" + requirement +
                 ", points=" + points +
                 ", reign=" + reign +
-                ", front=" + front +
+                ", front=" + this.isFront() +
                 ", resources=" + resources +
                 '}';
     }
