@@ -129,8 +129,24 @@ public class ViewGUI extends View {
         return "";
     }
 
+    /**
+     * visualize the response about the value entered
+     * @param message
+     */
     @Override
     public void answer(responseMessage message) {
+        if(!message.getCorrect()){
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/answer.fxml"));
+                Parent root = loader.load();
+                scene = new Scene(root);
+                stage.setScene(scene);
+                stage.show();
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 
     }
 
