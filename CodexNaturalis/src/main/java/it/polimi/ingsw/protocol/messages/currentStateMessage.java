@@ -14,15 +14,17 @@ public class currentStateMessage implements Message, Serializable {
     private final boolean lastTurn;
     private final ArrayList<String> onlinePlayers;
     private final ArrayList<ObjectiveCard> commonObjectiveCards;
+    private final Integer MatchID;
 
 
 
-    public currentStateMessage(Player currentPlayer, Player player, String stateName, boolean lastTurn, ArrayList<String> onlinePlayers, ObjectiveCard[] commonObjectiveCards){
+    public currentStateMessage(Player currentPlayer, Player player, String stateName, boolean lastTurn, ArrayList<String> onlinePlayers, ObjectiveCard[] commonObjectiveCards, Integer MatchID){
         this.currentPlayer = currentPlayer;
         this.player = player;
         this.stateName = stateName;
         this.lastTurn = lastTurn;
         this.onlinePlayers = onlinePlayers;
+        this.MatchID = MatchID;
         if(commonObjectiveCards == null) {
             this.commonObjectiveCards = null;
         }
@@ -35,24 +37,58 @@ public class currentStateMessage implements Message, Serializable {
 
 
 
+    /**
+     * Returns the player who is gaming
+     * @return the player who is gaming
+     */
     public Player getPlayer() {
         return player;
     }
 
+    /**
+     * Returns the player who receives the message
+     * @return the player who receives the message
+     */
     public Player getCurrentPlayer() {return currentPlayer;}
 
+    /**
+     * Returns the name of the state
+     * @return the name of the state
+     */
     public String getStateName() {
         return stateName;
     }
-    
+
+    /**
+     * Returns true if it is the last turn
+     * @return true if it is the last turn
+     */
     public boolean isLastTurn() {
         return lastTurn;
     }
 
+    /**
+     * Returns the list of online players
+     * @return the list of online players
+     */
     public ArrayList<String> getOnlinePlayers() {return onlinePlayers;}
 
+    /**
+     * Returns the list of common objective cards
+     * @return the list of common objective cards
+     */
     public ArrayList<ObjectiveCard> getCommonObjectiveCards() {return commonObjectiveCards;}
 
+    /**
+     * Returns the match ID
+     * @return the match ID
+     */
+    public Integer getMatchID() {return MatchID;}
+
+    /**
+     * Returns the string representation of the message
+     * @return the string representation of the message
+     */
     @Override
     public String toString() {
         return "currentStateMessage{" +

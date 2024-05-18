@@ -263,6 +263,12 @@ public class ViewGUI extends View {
         //load the mainGamePage with the general ending turn situation
     }
 
+
+    @Override
+    public String pickNameFA(unavailableNamesMessage message) {
+        return "";
+    }
+
     @Override
     public void endGame(declareWinnerMessage message) {
     }

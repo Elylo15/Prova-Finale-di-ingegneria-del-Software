@@ -33,4 +33,5 @@ public abstract class View {
     public abstract int pickCard();
     public abstract void endGame(declareWinnerMessage message);
     public abstract void update(updatePlayerMessage update);
+    public abstract String pickNameFA(unavailableNamesMessage message);
 }

@@ -141,14 +141,17 @@ public class Client {
                     case "EndGameState": {
                         declareWinnerMessage end = controller.endGame();
                         view.endGame(end);
+                        throw new Exception("Game ended.");
+                    }
+
+                    case "ConnectionFAState": {
+                        pickNameFA();
                         break;
                     }
                 }
             }
         } catch (Exception e) {
             view.playerDisconnected();
-
-            throw new RuntimeException();
         }
     }
 
@@ -403,6 +406,33 @@ public class Client {
             } catch (Exception e) {
                 view.playerDisconnected();
             }
+        }
+    }
+
+
+    /**
+     * method {@code pickNameFA}: invocations of controller methods to receive and send messages.
+     * Invocations of view methods to display and receive player's info.
+     * Asks the player to pick a name between the available ones.
+     */
+    public void pickNameFA() {
+        String name;
+
+        while (true) {
+            unavailableNamesMessage unavailableName = controller.getUnavailableName();
+            Future<String> future = executor.submit(() -> view.pickNameFA(unavailableName));
+
+            try {
+                name = future.get(120, TimeUnit.SECONDS);
+            } catch (Exception e) {
+                name = "1000";
+            }
+
+            controller.chooseName(name);
+            responseMessage answer = controller.correctAnswer();
+            view.answer(answer);
+            if (answer.getCorrect())
+                break;
         }
     }
 

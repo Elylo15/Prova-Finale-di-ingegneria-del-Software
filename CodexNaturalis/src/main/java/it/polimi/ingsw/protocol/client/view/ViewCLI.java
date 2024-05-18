@@ -96,6 +96,7 @@ public class ViewCLI extends View {
     public void updatePlayer (currentStateMessage message){
         System.out.println("Player " + message.getCurrentPlayer().getNickname() + " is in the state " + message.getStateName());
 
+        System.out.println("ID of the match: " + message.getMatchID());
         System.out.println("The online players are: " + message.getOnlinePlayers());
 
         if(!Objects.equals(message.getStateName(), "StarterCardState"))
@@ -509,9 +510,9 @@ public class ViewCLI extends View {
         while(true) {
             System.out.print("Do you want to join a new match? [YES/no] ");
             String choice = scanner.nextLine().toLowerCase();
-            if(choice.equals("yes") || choice.equals("y")) {
+            if(choice.equals("yes") || choice.equals("y") || choice.equals("ye" )) {
                 newMatch = true;
-            } else if(choice.equals("no") || choice.equals("n")) {
+            } else if(choice.equals("no") || choice.equals("n"))     {
                 newMatch = false;
             } else {
                 System.out.println("ANSWER NOT VALID");
@@ -531,13 +532,20 @@ public class ViewCLI extends View {
                         break;
                     } else {
                         System.out.println("Here are the matches you can join: ");
+                        int i = 1;
                         for (Integer id : message.getWaitingMatches()) {
-                            System.out.println(id);
+                            System.out.println("(" + i + ") " + id);
+                            i += 1;
                         }
-                        System.out.print("Enter the match ID: ");
+                        System.out.print("Enter the match number: ");
                         try {
                             matchID = scanner.nextInt();
                             scanner.nextLine();
+                            if (matchID < 1 || matchID > i) {
+                                System.out.println("ANSWER NOT VALID");
+                                continue;
+                            }
+                            matchID = message.getWaitingMatches().get(matchID - 1);
                             break;
                         } catch (Exception e) {
                             System.out.println("ANSWER NOT VALID");
@@ -559,7 +567,7 @@ public class ViewCLI extends View {
 
             boolean runMatch = false;
             while (true)  {
-                System.out.println("Join a running match? [YES/no]");
+                System.out.print("Join a running match? [YES/no] ");
                 String choice = scanner.nextLine().toLowerCase();
                 if(choice.equals("yes") || choice.equals("y")) {
                     runMatch = true;
@@ -584,13 +592,21 @@ public class ViewCLI extends View {
                         break;
                     } else {
                         System.out.println("Here are the matches you can join: ");
+                        int i = 1;
                         for (Integer id : message.getRunningMatches()) {
-                            System.out.println(id);
+                            System.out.println("(" + i + ") " + id);
+                            i += 1;
                         }
-                        System.out.println("Enter the started match ID");
+                        System.out.print("Enter the match numer: ");
                         try {
                             startedMatchID = scanner.nextInt();
                             scanner.nextLine();
+
+                            if (startedMatchID < 1 || startedMatchID > i) {
+                                System.out.println("ANSWER NOT VALID");
+                                continue;
+                            }
+                            startedMatchID = message.getRunningMatches().get(startedMatchID - 1);
                             break;
                         } catch (Exception e) {
                             System.out.println("You didn't enter an int value");
@@ -623,13 +639,22 @@ public class ViewCLI extends View {
                             break;
                         } else {
                             System.out.println("Here are the matches you can join: ");
+                            int i = 1;
                             for (Integer id : message.getSavedMatches()) {
-                                System.out.println(id);
+                                System.out.println("(" + i + ") " + id);
+                                i += 1;
                             }
-                            System.out.println("Enter the saved match ID");
+                            System.out.println("Enter the saved match number: ");
                             try {
                                 savedMatchID = scanner.nextInt();
                                 scanner.nextLine();
+
+                                if (savedMatchID < 1 || savedMatchID > i) {
+                                    System.out.println("ANSWER NOT VALID");
+                                    continue;
+                                }
+
+                                savedMatchID = message.getSavedMatches().get(savedMatchID - 1);
                                 break;
                             } catch (Exception e) {
                                 System.out.println("ANSWER NOT VALID");
@@ -708,11 +733,11 @@ public class ViewCLI extends View {
      */
     public int placeStarter () {
         int side = 1000;
-        System.out.println("Place your starter card.");
+        System.out.println("Place your STARTER card on the table");
         Scanner scanner = new Scanner(System.in);
 
         while (true) {
-            System.out.println("Do you want to place it on the front side or on the back side?");
+            System.out.print("FRONT or BACK? ");
             String choice = scanner.nextLine().toLowerCase();
             switch (choice) {
                 case "front", "front side" -> {
@@ -760,7 +785,8 @@ public class ViewCLI extends View {
             System.out.println("(" + (i + 1) + ") Objective  ID: " + objectives.get(i).getID());
         }
 
-        System.out.println("Enter '1' if you want to choose the first one, '2' if you want to choose the second one");
+        System.out.println("Choose your personal objective.");
+        System.out.print("FIRST (1) or SECOND (2) ?  ");
         while(true) {
             try {
                 Scanner scanner = new Scanner(System.in);
@@ -787,7 +813,7 @@ public class ViewCLI extends View {
         Scanner scanner = new Scanner(System.in);
         while(true) {
             try {
-                System.out.println("Enter the NUMBER of the card you want to place");
+                System.out.print("Enter the NUMBER of the card you want to place: ");
                 chosenCard[0] = scanner.nextInt();
                 scanner.nextLine();
                 break;
@@ -798,7 +824,7 @@ public class ViewCLI extends View {
 
         boolean correct = false;
         while(!correct) {
-            System.out.println("FRONT or BACK?");
+            System.out.print ("FRONT or BACK?" );
             String choice = scanner.nextLine().toLowerCase();
             switch (choice) {
                 case "front", "front side" -> {
@@ -847,7 +873,7 @@ public class ViewCLI extends View {
         int choice = 1000;
         Scanner scanner = new Scanner(System.in);
         try {
-            System.out.println("enter the NUMBER of the card you want to pick");
+            System.out.print("enter the NUMBER of the card you want to pick: ");
             choice = scanner.nextInt();
             scanner.nextLine();
         } catch (Exception e) {
@@ -882,6 +908,37 @@ public class ViewCLI extends View {
         this.showCommonArea(player.getCommonArea());
         this.showPlayerArea(player.getPlayerArea());
         this.showPlayerHand(player, update.getNicknameViewer());
+
+    }
+
+
+    /**
+     * this method allows the user to choose a nickname from the list of available names
+     * @param message the message containing the list of available names
+     * @return the chosen nickname
+     */
+    @Override
+    public String pickNameFA(unavailableNamesMessage message) {
+        System.out.println("Please choose a nickname: ");
+        int i = 1;
+        for(String name : message.getNames()) {
+            System.out.println("("+ i + ") " + name);
+            i += 1;
+        }
+        while (true) {
+            Scanner scanner = new Scanner(System.in);
+            try {
+                int choice = scanner.nextInt();
+                scanner.nextLine();
+                if (choice > 0 && choice <= message.getNames().size()) {
+                    return message.getNames().get(choice - 1);
+                } else {
+                    System.out.println("Please enter a valid number");
+                }
+            } catch (Exception e) {
+                System.out.println("Please enter a valid number");
+            }
+        }
 
     }
 }

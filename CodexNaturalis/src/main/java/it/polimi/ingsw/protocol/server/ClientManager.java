@@ -1,9 +1,7 @@
 package it.polimi.ingsw.protocol.server;
 
-import it.polimi.ingsw.model.CommonArea;
 import it.polimi.ingsw.model.Match;
 import it.polimi.ingsw.model.Player;
-import it.polimi.ingsw.model.PlayerArea;
 import it.polimi.ingsw.model.cards.ObjectiveCard;
 import it.polimi.ingsw.model.cards.PlaceableCard;
 import it.polimi.ingsw.model.cards.exceptions.InvalidIdException;
@@ -19,13 +17,16 @@ import it.polimi.ingsw.protocol.server.FSM.MatchState;
 import it.polimi.ingsw.protocol.server.FSM.State;
 import it.polimi.ingsw.protocol.server.exceptions.FailedToJoinMatch;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 public class ClientManager implements Runnable{
     private MatchInfo matchInfo;
-    private ArrayList<PlayerInfo> playersInfo; // Only online players
+    private CopyOnWriteArrayList<PlayerInfo> playersInfo; // Only online players
     private int timeout;
     private int turnNumber;
 
@@ -41,9 +42,9 @@ public class ClientManager implements Runnable{
         this.matchInfo.setLastTurn(false);
         this.turnNumber = 0;
 
-        playersInfo = new ArrayList<>();
+        playersInfo = new CopyOnWriteArrayList<>();
 
-        this.timeout = 2 * 60 * 1000;
+        this.timeout = 60 * 1000;
 
         logCreator = new LogCreator(this.matchInfo.getID().toString());
 
@@ -97,19 +98,31 @@ public class ClientManager implements Runnable{
     /**
      * Adds a player to the list of online players and removes it from the list of offline players
      *
-     * @param playerInfo player to be moved
+     * @param nickname nickname of the player to be moved
      */
-    public synchronized void movePlayer(PlayerInfo playerInfo) {
-        if (matchInfo.getOfflinePlayers().contains(playerInfo)) {
+    public synchronized void movePlayer(String nickname, ClientConnection connection) throws FailedToJoinMatch {
+
+        // Check if the state of the match allows the player to join
+        if(this.matchInfo.getStatus() == MatchState.Waiting || this.matchInfo.getStatus() == MatchState.KickingPlayers || this.matchInfo.getStatus() == MatchState.Endgame) {
+            throw new FailedToJoinMatch("Player cannot join the match, match is not in the right state");
+        }
+
+        // Check if the player is in the list of offline players
+        PlayerInfo playerInfo = matchInfo.getOfflinePlayers().stream()
+                .filter(playerInfo1 -> playerInfo1.getPlayer().getNickname().equalsIgnoreCase(nickname))
+                .findFirst().orElse(null);
+
+
+        // Eventually move the player to the list of online players
+        if (playerInfo != null) {
+            playerInfo.setConnection(connection);
             this.playersInfo.add(playerInfo);
             matchInfo.getOfflinePlayers().remove(playerInfo);
             this.notifyAll();
             logCreator.log("Player moved: " + playerInfo.getPlayer().getNickname() + " from offline to online players");
         } else {
-            if (playerInfo != null)
-                logCreator.log("Player " + playerInfo.getPlayer().getNickname() + " not found in offline players");
-            else
-                logCreator.log("Player is null and cannot be brought back online");
+            logCreator.log("Player " + nickname + " is null and cannot be brought back online");
+            throw new FailedToJoinMatch("Player cannot join the match");
         }
     }
 
@@ -132,9 +145,12 @@ public class ClientManager implements Runnable{
 
     /**
      * Getter of PlayersInfo
+     *
      * @return list of PlayersInfo
      */
-    public ArrayList<PlayerInfo> getPlayersInfo() {return this.playersInfo;}
+    public ArrayList<PlayerInfo> getPlayersInfo() {
+        return new ArrayList<>(this.playersInfo);
+    }
 
     /**
      * Getter of Match (model)
@@ -144,8 +160,21 @@ public class ClientManager implements Runnable{
 
 
     public synchronized void saveMatch() {
-        logCreator.log("Match saved");
+        File dir = new File("savedMatches");
+        if(!dir.exists())
+            dir.mkdir();
 
+        String fileName = "savedMatches/match_" + this.matchInfo.getID() + ".match";
+        try {
+            FileOutputStream fileOut = new FileOutputStream(fileName);
+            ObjectOutputStream out = new ObjectOutputStream(fileOut);
+            out.writeObject(this.matchInfo.getMatch());
+            logCreator.log("Match saved");
+            out.close();
+            fileOut.close();
+        } catch (Exception e) {
+            logCreator.log("Failed to save match");
+        }
     }
 
 
@@ -156,6 +185,7 @@ public class ClientManager implements Runnable{
     public void run() {
         boolean gameOver = false;
         while(!gameOver) {
+
 
             // After the first turns prioritizes the players who reconnect and are in the starter state
             // or objective state
@@ -261,6 +291,13 @@ public class ClientManager implements Runnable{
                 }
             }
             this.checkOnlinePlayersNumber();
+
+            // Leaves a pause between each turn in order to allow new clients to join
+            try{
+                Thread.sleep(1500);
+            } catch (InterruptedException e) {
+                logCreator.log("Thread interrupted, while sleeping");
+            }
         }
 
 
@@ -301,7 +338,7 @@ public class ClientManager implements Runnable{
                 if(host != null) {
                     // Sends current state data
                     this.playersInfo.forEach(playerInfo -> {
-                                currentStateMessage curr = new currentStateMessage(null, playerInfo.getPlayer(),"WaitingForPlayerState",false, this.onlinePlayers(), null);
+                                currentStateMessage curr = new currentStateMessage(null, playerInfo.getPlayer(),"WaitingForPlayerState",false, this.onlinePlayers(), null, this.matchInfo.getID());
                                 playerInfo.getConnection().sendCurrentState(curr);
                                 playerInfo.getConnection().sendNewHostMessage(host.getPlayer().getNickname());
                             });
@@ -355,11 +392,6 @@ public class ClientManager implements Runnable{
                 try {
                     this.wait();
                 } catch (InterruptedException ignore) {}
-
-//            // Gives a little of room to new players that want to join
-//            try {
-//                Thread.sleep(1000);
-//            } catch (Exception ignore) {}
             }
         }
 
@@ -393,6 +425,10 @@ public class ClientManager implements Runnable{
         executor.submit(this::saveMatch);
     }
 
+    /**
+     * Manages the game logic of the specified player if it is online.
+     * @param player player to manage.
+     */
     private synchronized void player(Player player) {
         if(player == null) {
             logCreator.log("Player is null");
@@ -593,7 +629,7 @@ public class ClientManager implements Runnable{
 
         // Sends current state messages to all clients
         for(PlayerInfo playerInfo1 : this.playersInfo) {
-            currentStateMessage currState = new currentStateMessage(player, playerInfo1.getPlayer(), "StarterCardState", this.matchInfo.isLastTurn(), this.onlinePlayers(), null);
+            currentStateMessage currState = new currentStateMessage(player, playerInfo1.getPlayer(), "StarterCardState", this.matchInfo.isLastTurn(), this.onlinePlayers(), null, this.matchInfo.getID());
             playerInfo1.getConnection().sendCurrentState(currState);
         }
 
@@ -656,7 +692,7 @@ public class ClientManager implements Runnable{
 
         // Sends current state messages to all clients
         for(PlayerInfo playerInfo1 : this.playersInfo) {
-            currentStateMessage currState = new currentStateMessage(player, playerInfo1.getPlayer(), "ObjectiveState", this.matchInfo.isLastTurn(), this.onlinePlayers(), this.matchInfo.getMatch().getCommonObjective());
+            currentStateMessage currState = new currentStateMessage(player, playerInfo1.getPlayer(), "ObjectiveState", this.matchInfo.isLastTurn(), this.onlinePlayers(), this.matchInfo.getMatch().getCommonObjective(), this.matchInfo.getID());
             playerInfo1.getConnection().sendCurrentState(currState);
         }
 
@@ -706,7 +742,7 @@ public class ClientManager implements Runnable{
 
         // Sends current state messages to all clients
         for(PlayerInfo playerInfo1 : this.playersInfo) {
-            currentStateMessage currState = new currentStateMessage(player, playerInfo1.getPlayer(), "PlaceTurnState", this.matchInfo.isLastTurn(), this.onlinePlayers(), this.matchInfo.getMatch().getCommonObjective());
+            currentStateMessage currState = new currentStateMessage(player, playerInfo1.getPlayer(), "PlaceTurnState", this.matchInfo.isLastTurn(), this.onlinePlayers(), this.matchInfo.getMatch().getCommonObjective(), this.matchInfo.getID());
             playerInfo1.getConnection().sendCurrentState(currState);
         }
 
@@ -760,7 +796,7 @@ public class ClientManager implements Runnable{
         Player player = playerInfo.getPlayer();
 
         for(PlayerInfo playerInfo1 : this.playersInfo) {
-            currentStateMessage currState = new currentStateMessage(player, playerInfo1.getPlayer(), "PickTurnState", this.matchInfo.isLastTurn(), this.onlinePlayers(), this.matchInfo.getMatch().getCommonObjective());
+            currentStateMessage currState = new currentStateMessage(player, playerInfo1.getPlayer(), "PickTurnState", this.matchInfo.isLastTurn(), this.onlinePlayers(), this.matchInfo.getMatch().getCommonObjective(), this.matchInfo.getID());
             playerInfo1.getConnection().sendCurrentState(currState);
         }
 
@@ -812,7 +848,7 @@ public class ClientManager implements Runnable{
         logCreator.log("ENDGAME");
         // Sends current state messages to all clients
         for(PlayerInfo playerInfo1 : this.playersInfo) {
-            currentStateMessage currState = new currentStateMessage(null, playerInfo1.getPlayer(), "EndGameState", this.matchInfo.isLastTurn(), this.onlinePlayers(), this.matchInfo.getMatch().getCommonObjective());
+            currentStateMessage currState = new currentStateMessage(null, playerInfo1.getPlayer(), "EndGameState", this.matchInfo.isLastTurn(), this.onlinePlayers(), this.matchInfo.getMatch().getCommonObjective(), this.matchInfo.getID());
             playerInfo1.getConnection().sendCurrentState(currState);
         }
 
@@ -854,7 +890,7 @@ public class ClientManager implements Runnable{
     }
 
     private void kickingPlayers() {
-        logCreator.log("Kicking out all players");
+        logCreator.log("Kicking out all players");;
         this.playersInfo.forEach(this::kickPlayer);
     }
 
@@ -888,13 +924,15 @@ public class ClientManager implements Runnable{
                     synchronized (manager) {
                         if(manager.playersInfo.size() == 1) {
                             manager.matchInfo.setStatus(MatchState.Endgame);
-                            this.notifyAll();
+                            logCreator.log("Only one player remains, he is the winner");
+                            manager.notifyAll();
                         }
 
                         if(manager.playersInfo.isEmpty()) {
                             manager.matchInfo.setStatus(MatchState.KickingPlayers);
+                            logCreator.log("No players remain, the match is over");
                             manager.saveMatch();
-                            this.notifyAll();
+                            manager.notifyAll();
                         }
                     }
                 }
@@ -903,13 +941,15 @@ public class ClientManager implements Runnable{
         }
 
         synchronized (this) {
-            while (this.playersInfo.size() == 1 && (
-                    this.matchInfo.getStatus() != MatchState.Endgame
-                            || this.matchInfo.getStatus() != MatchState.KickingPlayers
-            )) {
+            while (this.playersInfo.size() == 1
+                    && this.matchInfo.getStatus() != MatchState.Endgame
+                    && this.matchInfo.getStatus() != MatchState.KickingPlayers
+            ) {
                 try {
                     this.wait();
-                } catch (InterruptedException ignore) {}
+                } catch (InterruptedException e) {
+                    logCreator.log("Thread interrupted while waiting for players to join again");
+                }
             }
 
 
