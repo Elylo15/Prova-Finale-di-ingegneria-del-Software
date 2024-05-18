@@ -19,4 +19,7 @@ module CodexNaturalis {
     exports it.polimi.ingsw.protocol.messages;
 
     exports  it.polimi.ingsw.model.cards;
+    exports it.polimi.ingsw.model;
+    exports it.polimi.ingsw.model.cards.exceptions;
+    exports it.polimi.ingsw.model.cards.enumeration;
 }

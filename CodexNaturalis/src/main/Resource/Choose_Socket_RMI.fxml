@@ -22,7 +22,4 @@
             <Font size="19.0" />
          </font></Button>
    </children>
-   <cursor>
-      <Cursor fx:constant="E_RESIZE" />
-   </cursor>
 </AnchorPane>

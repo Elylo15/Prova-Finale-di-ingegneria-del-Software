@@ -8,7 +8,7 @@
   <packaging>jar</packaging>
 
   <name>Codex Naturalis</name>
-  <url>http://maven.apache.org</url>
+  <url>https://maven.apache.org</url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -38,12 +38,12 @@
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-controls</artifactId>
-      <version>11.0.2</version>
+      <version>21.0.3</version>
     </dependency>
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-fxml</artifactId>
-      <version>11.0.2</version>
+      <version>21.0.3</version>
     </dependency>
   </dependencies>
 

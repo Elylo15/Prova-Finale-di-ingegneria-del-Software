@@ -85,7 +85,7 @@ public class ViewGUI extends View {
 
             InsertServerOptionController controller = loader.getController();
             controller.setViewGUI(this);
-            controller.setServerOptionMessage(message);
+//            controller.setServerOptionMessage(message);
 
 
             newMessage = controller.getServerOptionMessage();
@@ -107,7 +107,12 @@ public class ViewGUI extends View {
             Parent root = loader.load();
             scene = new Scene(root);
             stage.setScene(scene);
-            stage.showAndWait();
+
+            if(stage.isShowing()) {
+                stage.toFront();
+            } else {
+                stage.showAndWait();
+            }
 
 
         } catch (IOException e) {
@@ -127,7 +132,7 @@ public class ViewGUI extends View {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/unavailableNames.fxml"));
             Parent root = loader.load();
-            anavailableNamesController controller = loader.getController();
+            unavailableNamesController controller = loader.getController();
             controller.setNames(message.toString());
             scene = new Scene(root);
             stage.setScene(scene);
