@@ -17,4 +17,6 @@ module CodexNaturalis {
     exports it.polimi.ingsw.protocol.messages.StaterCardState;
     exports it.polimi.ingsw.protocol.messages.WaitingforPlayerState;
     exports it.polimi.ingsw.protocol.messages;
+
+    exports  it.polimi.ingsw.model.cards;
 }
