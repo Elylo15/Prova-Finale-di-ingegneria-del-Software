@@ -464,7 +464,7 @@ public class PlayerArea implements Serializable {
 
         if(card.getPattern() != null && !card.getPattern().isEmpty()) {
             allCards = getAllCards();
-            ArrayList<Integer[]> pattern = card.getPattern();
+            ArrayList<int[]> pattern = card.getPattern();
             ArrayList<Reign> reigns = card.getReignCards();
             for(PlaceableCard card0 : allCards) {
                 if(!checkedCards.contains(card0) && card0.getReign() != null && card0.getReign().equals(reigns.getFirst())) {

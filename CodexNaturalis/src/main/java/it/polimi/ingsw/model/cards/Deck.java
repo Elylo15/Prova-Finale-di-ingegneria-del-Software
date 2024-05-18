@@ -9,7 +9,7 @@ import java.util.Collections;
  * @author elylo
  */
 public class Deck<E extends Card> implements Serializable {
-    ArrayList<E> list;
+    private final ArrayList<E> list;
     /**
      * Class constructor
      */

@@ -1,10 +1,14 @@
 package it.polimi.ingsw.model.cards;
 
-import com.google.gson.*;
 import it.polimi.ingsw.model.CommonArea;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.io.FileReader;
+import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
 
 /**
  * LoadDeck class
@@ -19,48 +23,31 @@ public class LoadDecks implements Serializable {
      */
     public CommonArea load() {
         CommonArea c = new CommonArea();
+        ObjectMapper mapper = new ObjectMapper();
+
         try {
-            // Read the JSON file into a Reader object
-            FileReader reader = new FileReader("CodexNaturalis/src/main/Resource/Json/Cards.json");
+            File file = new File("CodexNaturalis/src/main/Resource/Json/Cards.json");
+            Map<String, List<?>> cardMap = mapper.readValue(file, new TypeReference<>() {
+            });
 
-            //Parse the JSON file into a JsonObject
-            JsonObject jsonObject = JsonParser.parseReader(reader).getAsJsonObject();
+            List<ResourceCard> resourceCards = mapper.convertValue(cardMap.get("ResourceCard"), new TypeReference<>() {
+            });
+            List<GoldCard> goldCards = mapper.convertValue(cardMap.get("GoldCard"), new TypeReference<>() {
+            });
+            List<StarterCard> starterCards = mapper.convertValue(cardMap.get("StarterCard"), new TypeReference<>() {
+            });
+            List<ObjectiveCard> objectiveCards = mapper.convertValue(cardMap.get("ObjectiveCard"), new TypeReference<>() {
+            });
 
-            //for resourceCard
-            JsonArray ArrayResourceCard = jsonObject.getAsJsonArray("resourceCard");
-            for (int i = 0; i < ArrayResourceCard.size(); i++) {
-                JsonElement y = ArrayResourceCard.get(i);
-                ResourceCard resourceCard = new Gson().fromJson(y, ResourceCard.class);
-                c.getD1().addCard(resourceCard);
-            }
+            resourceCards.forEach(card -> c.getD1().addCard(card));
+            goldCards.forEach(card -> c.getD2().addCard(card));
+            starterCards.forEach(card -> c.getD3().addCard(card));
+            objectiveCards.forEach(card -> c.getD4().addCard(card));
 
-            //for GoldCard
-            JsonArray ArrayGoldCard = jsonObject.getAsJsonArray("GoldCard");
-            for (int i = 0; i < ArrayGoldCard.size(); i++) {
-                JsonElement y = ArrayGoldCard.get(i);
-                GoldCard goldCard = new Gson().fromJson(y, GoldCard.class);
-                c.getD2().addCard(goldCard);
-            }
-            //for starterCard
-            JsonArray ArrayStarterCard = jsonObject.getAsJsonArray("StarterCard");
-            for (int i = 0; i < ArrayStarterCard.size(); i++) {
-                JsonElement y = ArrayStarterCard.get(i);
-                StarterCard starterCard = new Gson().fromJson(y, StarterCard.class);
-                c.getD3().addCard(starterCard);
-            }
-            //for objectiveCard
-            JsonArray ArrayObjectiveCard = jsonObject.getAsJsonArray("ObjectiveCard");
-            for (int i = 0; i < ArrayObjectiveCard.size(); i++) {
-                JsonElement y = ArrayObjectiveCard.get(i);
-                ObjectiveCard objectiveCard = new Gson().fromJson(y, ObjectiveCard.class);
-                c.getD4().addCard(objectiveCard);
-            }
-
-        } catch (Exception e) {
+        } catch (IOException e) {
             System.out.println(e.getMessage());
         }
+
         return c;
-
     }
-
 }

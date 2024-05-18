@@ -1,5 +1,7 @@
 package it.polimi.ingsw.model.cards;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import it.polimi.ingsw.model.cards.enumeration.Reign;
 import it.polimi.ingsw.model.cards.enumeration.Resource;
 import it.polimi.ingsw.model.cards.exceptions.InvalidIdException;
@@ -24,6 +26,22 @@ public abstract class PlaceableCard extends Card implements Serializable {
         this.requirement = new ArrayList<>();
         this.cells = new ArrayList<>();
 
+    }
+
+    @JsonCreator
+    public PlaceableCard(@JsonProperty("ID") int ID,
+                         @JsonProperty("front") boolean front,
+                         @JsonProperty("requirement") ArrayList<Resource> requirement,
+                         @JsonProperty("points") int points,
+                         @JsonProperty("reign") Reign reign,
+                         @JsonProperty("cells") ArrayList<Cell> cells,
+                         @JsonProperty("resources") ArrayList<Resource> resources) throws InvalidIdException {
+        super(ID, front);
+        this.requirement = requirement;
+        this.points = points;
+        this.reign = reign;
+        this.cells = cells;
+        this.resources = resources;
     }
 
     public PlaceableCard(int ID, int points, Reign reign, boolean front, ArrayList<Resource> resources, ArrayList<Resource> requirement) throws InvalidIdException
