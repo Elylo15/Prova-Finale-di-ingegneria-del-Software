@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.control.Label?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="it.polimi.ingsw.protocol.client.view.GUI.MainViewController" onMouseClicked="#handleWindowClick">
+    <center>
+        <Label text="Benvenuto! Clicca ovunque per continuare." />
+    </center>
+    <!-- Definisci altre parti del layout principale qui -->
+</BorderPane>

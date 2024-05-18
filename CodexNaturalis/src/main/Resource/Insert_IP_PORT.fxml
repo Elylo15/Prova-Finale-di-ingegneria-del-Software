@@ -11,7 +11,7 @@
             <Insets />
         </opaqueInsets>
     </TextField>
-    <Text layoutX="270.0" layoutY="121.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Insert:">
+    <Text layoutX="270.0" layoutY="121.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Insert:" AnchorPane.bottomAnchor="272.478515625" AnchorPane.leftAnchor="270.0" AnchorPane.rightAnchor="270.0" AnchorPane.topAnchor="97.259765625">
         <font>
             <Font size="22.0" />
         </font>

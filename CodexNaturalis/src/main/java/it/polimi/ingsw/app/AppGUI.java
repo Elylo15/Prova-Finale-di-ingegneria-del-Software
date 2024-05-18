@@ -15,6 +15,7 @@ public class AppGUI {
         public void start(Stage stage) {
             ViewGUI view = new ViewGUI();
             Client client = new Client(view);
+
             client.run();
         }
     }

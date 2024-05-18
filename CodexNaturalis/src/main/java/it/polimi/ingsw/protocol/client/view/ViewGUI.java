@@ -14,6 +14,7 @@ import it.polimi.ingsw.protocol.messages.responseMessage;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -21,77 +22,113 @@ import java.util.*;
 
 
 public class ViewGUI extends View {
-    private final Stage stage;
-    private Scene scene;
+    private Stage mainstage;
 
 
     public ViewGUI() {
-        this.stage = new Stage();
+        this.mainstage = new Stage(); //finestra
     }
+
+    public void loadFXML(String fxmlPath) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+            Parent root = loader.load();
+
+            Scene scene = new Scene(root); //contenuto
+            mainstage.setScene(scene);
+            mainstage.setMaximized(true);
+            if (!mainstage.isShowing()) {
+                mainstage.showAndWait();
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     @Override
     public String[] askPortIP(){
+
         String[] server = new String[2];
-        try{
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Insert_IP_PORT.fxml"));
-            Parent root = loader.load();
-            stage.setScene(new Scene(root));
-            stage.showAndWait();
 
-            InsertIPPortController controller = loader.getController();
-            controller.setViewGUI(this);
-
-            server[0] = controller.getIP();
-            server[1] = controller.getPort();
-
-        }catch (IOException e){
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/Insert_IP_PORT.fxml"));
+        Parent root = null;
+        try {
+            root = loader.load();
+        } catch (IOException e) {
             e.printStackTrace();
         }
+        InsertIPPortController controller = loader.getController();
+        controller.setViewGUI(this);
+
+        Scene scene = new Scene(root);
+        mainstage.setScene(scene);
+        mainstage.setMaximized(true);
+        if (!mainstage.isShowing()) {
+            mainstage.showAndWait();
+        }
+        server[0] = controller.getIP();
+        server[1] = controller.getPort();
+
         return server;
     }
 
-    @Override
+        @Override
     public boolean askSocket() {// true = socket, false = rmi
         boolean useSocket = true;
+
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/Choose_Socket_RMI.fxml"));
+        Parent root = null;
         try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/Choose_Socket_RMI.fxml"));
-                Parent root = loader.load();
-                stage.setScene(new Scene(root));
-                stage.showAndWait();
+            root = loader.load();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        ChooseSocketRMIController controller = loader.getController();
+        controller.setViewGUI(this);
 
-                ChooseSocketRMIController controller = loader.getController();
-                controller.setViewGUI(this);
-                
-                useSocket = controller.useSocket();
+        Scene scene = new Scene(root);
+        mainstage.setScene(scene);
+        mainstage.setMaximized(true);
+        if (!mainstage.isShowing()) {
+            mainstage.showAndWait();
+        }
 
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        useSocket = controller.useSocket();
 
-            // Restituisci il valore di useSocket
-            return useSocket;
+        // Restituisci il valore di useSocket
+        return useSocket;
     }
 
 
+    //newMatch sei host di una nuova partita
+    //joinMatch ti unisci ad una nuova partita
+    //loadMatch carichi una partita da file
+    //joinRunningMatch ti unisci ad una partita in corso
 
-    @Override
+     @Override
     public serverOptionMessage serverOptions(serverOptionMessage message) {
         serverOptionMessage newMessage = null;
+
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/Insert_ServerOption.fxml"));
+        Parent root = null;
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Insert_ServerOption.fxml"));
-            Parent root = loader.load();
-            stage.setScene(new Scene(root));
-            stage.showAndWait();
-
-            InsertServerOptionController controller = loader.getController();
-            controller.setViewGUI(this);
-//            controller.setServerOptionMessage(message);
-
-
-            newMessage = controller.getServerOptionMessage();
-        }catch(IOException e){
-                e.printStackTrace();
+            root = loader.load();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+        InsertServerOptionController controller = loader.getController();
+        controller.setViewGUI(this);
+
+        Scene scene = new Scene(root);
+        mainstage.setScene(scene);
+        mainstage.setMaximized(true);
+        if (!mainstage.isShowing()) {
+            mainstage.showAndWait();
+        }
+
+        newMessage = controller.getServerOptionMessage();
         return newMessage;
     }
 
@@ -102,22 +139,7 @@ public class ViewGUI extends View {
 
     @Override
     public void playerDisconnected() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Disconnect.fxml"));
-            Parent root = loader.load();
-            scene = new Scene(root);
-            stage.setScene(scene);
-
-            if(stage.isShowing()) {
-                stage.toFront();
-            } else {
-                stage.showAndWait();
-            }
-
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        loadFXML("/Disconnect.fxml");
     }
 
     @Override
@@ -129,21 +151,27 @@ public class ViewGUI extends View {
     @Override
     public String unavailableNames(unavailableNamesMessage message) {
         String name = null;
+
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/unavailableNames.fxml"));
+        Parent root = null;
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/unavailableNames.fxml"));
-            Parent root = loader.load();
-            unavailableNamesController controller = loader.getController();
-            controller.setNames(message.toString());
-            scene = new Scene(root);
-            stage.setScene(scene);
-            stage.show();
-
-            name = controller.chooseName();
-
-
+            root = loader.load();
         } catch (IOException e) {
             e.printStackTrace();
         }
+        UnavailableNamesController controller = loader.getController();
+        controller.setViewGUI(this);
+
+        Scene scene = new Scene(root);
+        mainstage.setScene(scene);
+        mainstage.setMaximized(true);
+        if (!mainstage.isShowing()) {
+            mainstage.showAndWait();
+        }
+
+        controller.setNames(message.toString());
+        name = controller.chooseName();
+
         return name;
     }
 
@@ -153,38 +181,31 @@ public class ViewGUI extends View {
      */
     @Override
     public void answer(responseMessage message) {
-        if(!message.getCorrect()){
-            try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/answer.fxml"));
-                Parent root = loader.load();
-                scene = new Scene(root);
-                stage.setScene(scene);
-                stage.show();
-            }
-            catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
     }
 
     @Override
     public String availableColors(availableColorsMessage message) {
         String color=null;
+
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/availableColors.fxml"));
+        Parent root = null;
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/unavailableNames.fxml"));
-            Parent root = loader.load();
-            availableColorsController controller = loader.getController();
-            controller.setUp(message.toString());
-            scene = new Scene(root);
-            stage.setScene(scene);
-            stage.show();
-            color = controller.chooseColor();
-
-
+            root = loader.load();
         } catch (IOException e) {
             e.printStackTrace();
         }
+        availableColorsController controller = loader.getController();
+        controller.setViewGUI(this);
+
+        Scene scene = new Scene(root);
+        mainstage.setScene(scene);
+        mainstage.setMaximized(true);
+        if (!mainstage.isShowing()) {
+            mainstage.showAndWait();
+        }
+
+        controller.setUp(message.toString());
+        color = controller.chooseColor();
         return color;
     }
 
@@ -194,22 +215,27 @@ public class ViewGUI extends View {
      */
     @Override
     public int expectedPlayers() {
+
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/expectedPlayers.fxml"));
+        Parent root = null;
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/expectedPlayers.fxml"));
-            Parent root = loader.load();
-            scene = new Scene(root);
-            stage.setScene(scene);
-            stage.show();
-
-            expectedPlayersController controller = loader.getController();
-            controller.setViewGUI(this);
-            //int num = controller.getNumber();
-
+            root = loader.load();
         } catch (IOException e) {
             e.printStackTrace();
         }
-         //return num;
+        expectedPlayersController controller = loader.getController();
+        controller.setViewGUI(this);
 
+        Scene scene = new Scene(root);
+        mainstage.setScene(scene);
+        mainstage.setMaximized(true);
+        if (!mainstage.isShowing()) {
+            mainstage.showAndWait();
+        }
+
+        //int num = controller.getNumber();
+
+        //return num;
         return 0;
     }
 

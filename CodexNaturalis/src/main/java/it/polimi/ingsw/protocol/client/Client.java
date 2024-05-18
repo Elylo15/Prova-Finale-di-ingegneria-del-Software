@@ -70,6 +70,9 @@ public class Client {
      * Invocations of view methods to display and receive player's info.
      */
     public void run() {
+        if (view instanceof ViewGUI) {
+            ((ViewGUI) view).loadFXML("/MainView.fxml");
+        }
         String[] server = view.askPortIP();
         setIP(server[0]);
         setPort(server[1]);
