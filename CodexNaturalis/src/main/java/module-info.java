@@ -18,8 +18,17 @@ module CodexNaturalis {
     exports it.polimi.ingsw.protocol.messages.WaitingforPlayerState;
     exports it.polimi.ingsw.protocol.messages;
 
-    exports  it.polimi.ingsw.model.cards;
     exports it.polimi.ingsw.model;
+    exports  it.polimi.ingsw.model.cards;
     exports it.polimi.ingsw.model.cards.exceptions;
     exports it.polimi.ingsw.model.cards.enumeration;
+
+    exports it.polimi.ingsw.protocol.server;
+    exports it.polimi.ingsw.protocol.server.RMI;
+    exports it.polimi.ingsw.protocol.server.FSM;
+    exports it.polimi.ingsw.protocol.server.exceptions;
+
+    exports it.polimi.ingsw.protocol.client;
+    exports it.polimi.ingsw.protocol.client.controller;
+    exports it.polimi.ingsw.protocol.client.view;
 }
