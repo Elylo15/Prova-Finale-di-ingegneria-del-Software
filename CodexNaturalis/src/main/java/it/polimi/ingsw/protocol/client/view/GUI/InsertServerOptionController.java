@@ -2,6 +2,7 @@ package it.polimi.ingsw.protocol.client.view.GUI;
 
 import it.polimi.ingsw.protocol.client.view.ViewGUI;
 import it.polimi.ingsw.protocol.messages.ServerOptionState.serverOptionMessage;
+import javafx.fxml.FXML;
 
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
