@@ -1,10 +1,7 @@
 package it.polimi.ingsw.protocol.client.view;
 
 import it.polimi.ingsw.model.cards.ObjectiveCard;
-import it.polimi.ingsw.protocol.client.view.GUI.ChooseSocketRMIController;
-import it.polimi.ingsw.protocol.client.view.GUI.InsertIPPortController;
-import it.polimi.ingsw.protocol.client.view.GUI.InsertServerOptionController;
-import it.polimi.ingsw.protocol.client.view.GUI.expectedPlayersController;
+import it.polimi.ingsw.protocol.client.view.GUI.*;
 import it.polimi.ingsw.protocol.messages.ConnectionState.availableColorsMessage;
 import it.polimi.ingsw.protocol.messages.ConnectionState.connectionResponseMessage;
 import it.polimi.ingsw.protocol.messages.ConnectionState.unavailableNamesMessage;
@@ -126,7 +123,23 @@ public class ViewGUI extends View {
 
     @Override
     public String unavailableNames(unavailableNamesMessage message) {
-        return "";
+        String name = null;
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/unavailableNames.fxml"));
+            Parent root = loader.load();
+            anavailableNamesController controller = loader.getController();
+            controller.setNames(message.toString());
+            scene = new Scene(root);
+            stage.setScene(scene);
+            stage.show();
+
+            name = controller.chooseName();
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return name;
     }
 
     /**
