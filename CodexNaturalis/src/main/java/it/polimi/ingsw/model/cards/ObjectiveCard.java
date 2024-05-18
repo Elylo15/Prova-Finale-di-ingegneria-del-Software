@@ -1,5 +1,7 @@
 package it.polimi.ingsw.model.cards;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import it.polimi.ingsw.model.cards.enumeration.Reign;
 import it.polimi.ingsw.model.cards.enumeration.Resource;
 import it.polimi.ingsw.model.cards.exceptions.InvalidIdException;
@@ -14,7 +16,7 @@ public class ObjectiveCard extends Card implements Serializable {
 
     private ArrayList<Resource> requirements;
 
-    private ArrayList<Integer[]> pattern;
+    private ArrayList<int[]> pattern;
 
     private ArrayList<Reign> reignCards;
 
@@ -40,7 +42,21 @@ public class ObjectiveCard extends Card implements Serializable {
         }
     }
 
-    public ObjectiveCard(int ID, int points, ArrayList<Resource> requirements, ArrayList<Integer[]> pattern, ArrayList<Reign> reignCards) {
+    @JsonCreator
+    public ObjectiveCard(@JsonProperty("ID") int ID,
+                         @JsonProperty("front") boolean front,
+                         @JsonProperty("points") int points,
+                         @JsonProperty("requirement") ArrayList<Resource> requirements,
+                         @JsonProperty("pattern") ArrayList<int[]> pattern,
+                         @JsonProperty("reign") ArrayList<Reign> reignCards) throws InvalidIdException {
+        super(ID, front);
+        this.points = points;
+        this.requirements = requirements;
+        this.pattern = pattern;
+        this.reignCards = reignCards;
+    }
+
+    public ObjectiveCard(int ID, int points, ArrayList<Resource> requirements, ArrayList<int[]> pattern, ArrayList<Reign> reignCards) {
         super();
         this.ID = ID;
         this.points = points;
@@ -70,7 +86,7 @@ public class ObjectiveCard extends Card implements Serializable {
      * returns the relative positions of the other cards.
      * @return List of coordinates of the two cards or null if the objective requires no pattern
      */
-    public ArrayList<Integer[]> getPattern() {
+    public ArrayList<int[]> getPattern() {
         return pattern;
     }
 

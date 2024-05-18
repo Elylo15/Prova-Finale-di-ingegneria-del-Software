@@ -124,9 +124,9 @@ class MatchTest {
         starterCard = new StarterCard(81, 0, null, true, resources, permanentResources, bottomResources);
 
         ObjectiveCard obj1;
-        ArrayList<Integer[]> pattern = new ArrayList<>();
-        pattern.add(new Integer[]{2,0});
-        pattern.add(new Integer[]{3,1});
+        ArrayList<int[]> pattern = new ArrayList<>();
+        pattern.add(new int[]{2,0});
+        pattern.add(new int[]{3,1});
         ArrayList<Reign> reigns = new ArrayList<>();
         reigns.add(Reign.Fungus);
         reigns.add(Reign.Fungus);
@@ -233,9 +233,9 @@ class MatchTest {
         starterCard = new StarterCard(81, 0, null, true, resources, permanentResources, bottomResources);
 
         ObjectiveCard obj1;
-        ArrayList<Integer[]> pattern = new ArrayList<>();
-        pattern.add(new Integer[]{2,0});
-        pattern.add(new Integer[]{3,1});
+        ArrayList<int[]> pattern = new ArrayList<>();
+        pattern.add(new int[]{2,0});
+        pattern.add(new int[]{3,1});
         ArrayList<Reign> reigns = new ArrayList<>();
         reigns.add(Reign.Fungus);
         reigns.add(Reign.Fungus);
@@ -325,9 +325,9 @@ class MatchTest {
         starterCard = new StarterCard(81, 0, null, true, resources, permanentResources, bottomResources);
 
         ObjectiveCard obj1;
-        ArrayList<Integer[]> pattern = new ArrayList<>();
-        pattern.add(new Integer[]{2,0});
-        pattern.add(new Integer[]{3,1});
+        ArrayList<int[]> pattern = new ArrayList<>();
+        pattern.add(new int[]{2,0});
+        pattern.add(new int[]{3,1});
         ArrayList<Reign> reigns = new ArrayList<>();
         reigns.add(Reign.Fungus);
         reigns.add(Reign.Fungus);
@@ -402,9 +402,9 @@ class MatchTest {
     @Test
     public void getCommonObjectiveTest() {
         ObjectiveCard obj1;
-        ArrayList<Integer[]> pattern = new ArrayList<>();
-        pattern.add(new Integer[]{2,0});
-        pattern.add(new Integer[]{3,1});
+        ArrayList<int[]> pattern = new ArrayList<>();
+        pattern.add(new int[]{2,0});
+        pattern.add(new int[]{3,1});
         ArrayList<Reign> reigns = new ArrayList<>();
         reigns.add(Reign.Fungus);
         reigns.add(Reign.Fungus);

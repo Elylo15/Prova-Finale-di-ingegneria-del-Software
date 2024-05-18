@@ -1,5 +1,7 @@
 package it.polimi.ingsw.model.cards;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import it.polimi.ingsw.model.cards.enumeration.Reign;
 import it.polimi.ingsw.model.cards.enumeration.Resource;
 import it.polimi.ingsw.model.cards.exceptions.InvalidIdException;
@@ -24,6 +26,17 @@ public class ResourceCard extends PlaceableCard implements Serializable {
         else {
             throw new InvalidIdException("ID is too big");
         }
+    }
+
+    @JsonCreator
+    public ResourceCard(@JsonProperty("ID") int ID,
+                        @JsonProperty("front") boolean front,
+                        @JsonProperty("requirement") ArrayList<Resource> requirement,
+                        @JsonProperty("points") int points,
+                        @JsonProperty("reign") Reign reign,
+                        @JsonProperty("cells") ArrayList<Cell> cells,
+                        @JsonProperty("resources") ArrayList<Resource> resources) throws InvalidIdException {
+        super(ID, front, requirement, points, reign, cells, resources);
     }
 
 

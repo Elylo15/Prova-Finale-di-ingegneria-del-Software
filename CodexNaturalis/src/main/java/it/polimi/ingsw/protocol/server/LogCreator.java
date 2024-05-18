@@ -17,10 +17,13 @@ public class LogCreator {
      * Initializes the BufferedWriter for writing to the log file.
      */
     public LogCreator() {
+        boolean working;
         this.fileName = "logs/log_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")) + ".log";
         File dir = new File("logs");
-        if(!dir.exists())
-            dir.mkdir();
+        if(!dir.exists()) {
+            working = dir.mkdir();
+            System.out.println(working);
+        }
         this.matchID = null;
         File f = new File(fileName);
         try {

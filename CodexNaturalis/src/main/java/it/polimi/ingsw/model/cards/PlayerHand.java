@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
  * @author elylo
  */
 public class PlayerHand implements Serializable {
-    ArrayList<PlaceableCard> placeableCards;
+    private final ArrayList<PlaceableCard> placeableCards;
 
     /**
      * Class constructor
