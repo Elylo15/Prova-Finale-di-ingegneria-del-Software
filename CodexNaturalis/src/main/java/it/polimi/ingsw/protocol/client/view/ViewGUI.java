@@ -107,7 +107,12 @@ public class ViewGUI extends View {
             Parent root = loader.load();
             scene = new Scene(root);
             stage.setScene(scene);
-            stage.showAndWait();
+
+            if(stage.isShowing()) {
+                stage.toFront();
+            } else {
+                stage.showAndWait();
+            }
 
 
         } catch (IOException e) {
