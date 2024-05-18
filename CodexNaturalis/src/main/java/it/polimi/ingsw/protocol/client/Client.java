@@ -151,7 +151,8 @@ public class Client {
                 }
             }
         } catch (Exception e) {
-            view.playerDisconnected();
+            e.printStackTrace();
+//            view.playerDisconnected();
         }
     }
 

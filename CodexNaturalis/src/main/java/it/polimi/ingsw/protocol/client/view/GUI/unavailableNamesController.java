@@ -1,10 +1,9 @@
 package it.polimi.ingsw.protocol.client.view.GUI;
 
+import javafx.event.ActionEvent;
 import javafx.scene.control.TextField;
 
-import java.util.ArrayList;
-
-public class anavailableNamesController {
+public class unavailableNamesController {
 
     public TextField name;
     public TextField unavailable;
@@ -17,6 +16,5 @@ public class anavailableNamesController {
         return name.getText();
     }
 
-
-
 }
+
