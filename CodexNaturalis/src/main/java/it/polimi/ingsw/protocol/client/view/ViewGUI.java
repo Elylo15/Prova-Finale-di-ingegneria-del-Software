@@ -165,7 +165,22 @@ public class ViewGUI extends View {
 
     @Override
     public String availableColors(availableColorsMessage message) {
-        return "";
+        String color=null;
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/unavailableNames.fxml"));
+            Parent root = loader.load();
+            availableColorsController controller = loader.getController();
+            controller.setUp(message.toString());
+            scene = new Scene(root);
+            stage.setScene(scene);
+            stage.show();
+            color = controller.chooseColor();
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return color;
     }
 
     /**
