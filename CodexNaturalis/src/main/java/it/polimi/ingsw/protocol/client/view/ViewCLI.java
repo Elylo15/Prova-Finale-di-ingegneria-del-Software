@@ -645,7 +645,7 @@ public class ViewCLI extends View {
                                 System.out.println("(" + i + ") " + id);
                                 i += 1;
                             }
-                            System.out.println("Enter the saved match number: ");
+                            System.out.print("Enter the saved match number: ");
                             try {
                                 savedMatchID = scanner.nextInt();
                                 scanner.nextLine();
