@@ -165,12 +165,19 @@ public class ViewGUI extends View {
         Scene scene = new Scene(root);
         mainstage.setScene(scene);
         mainstage.setMaximized(true);
+
+        if(!message.toString().equalsIgnoreCase("[]")){ //set the unavailable names to show to the user
+            controller.setUp(message.toString());
+        }
+        else {
+            controller.setUpNoNames();
+        }
+
+
         if (!mainstage.isShowing()) {
             mainstage.showAndWait();
         }
-
-        controller.setNames(message.toString());
-        name = controller.chooseName();
+        name = controller.getName();
 
         return name;
     }
@@ -200,12 +207,16 @@ public class ViewGUI extends View {
         Scene scene = new Scene(root);
         mainstage.setScene(scene);
         mainstage.setMaximized(true);
+
+        controller.setUp(message.toString());
+
         if (!mainstage.isShowing()) {
             mainstage.showAndWait();
         }
+        color = controller.getColor();
 
-        controller.setUp(message.toString());
-        color = controller.chooseColor();
+
+
         return color;
     }
 
