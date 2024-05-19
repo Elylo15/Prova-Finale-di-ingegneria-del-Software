@@ -1004,15 +1004,19 @@ public class ClientManager implements Runnable{
         this.run();
     }
 
+    /**
+     * Checks if all players are still connected.
+     * If a player is not connected, they are kicked from the match.
+     */
     private synchronized void checkPlayersConnections() {
         ArrayList<Future<Boolean>> futures = new ArrayList<>();
-        ArrayList<Boolean> results = new ArrayList<>();
+        ArrayList<Future<Boolean>> results = new ArrayList<>();
 
         // Sends a ping to all players
         for(PlayerInfo playerInfo : this.playersInfo) {
             Future<Boolean> future = executor.submit(() -> playerInfo.getConnection().isConnected());
             futures.add(future);
-            results.add(null);
+
         }
 
         int timeout = 5;
@@ -1020,31 +1024,30 @@ public class ClientManager implements Runnable{
 
         // Expects a response from all players
         for(Future<Boolean> future : futures) {
-            executor.submit(() -> {
-                synchronized (future) {
-                    try {
-                        future.get(timeout, unit);
-                        results.set(futures.indexOf(future), true);
-                        logCreator.log("Player " + this.playersInfo.get(futures.indexOf(future)).getPlayer().getNickname() + " has responded to ping");
-                        future.notifyAll();
-                    } catch (Exception e) {
-                        logCreator.log("Player " + this.playersInfo.get(futures.indexOf(future)).getPlayer().getNickname() + " has not responded to ping");
-                        this.kickPlayer(this.playersInfo.get(futures.indexOf(future)));
-                        results.set(futures.indexOf(future), false);
-                        future.notifyAll();
-                    }
+            Future<Boolean> responseFuture = executor.submit(() -> {
+                try {
+                    future.get(timeout, unit);
+                    logCreator.log("Player " + this.playersInfo.get(futures.indexOf(future)).getPlayer().getNickname() + " has responded to ping");
+                    return true;
+                } catch (Exception e) {
+                    logCreator.log("Player " + this.playersInfo.get(futures.indexOf(future)).getPlayer().getNickname() + " has not responded to ping");
+                    this.kickPlayer(this.playersInfo.get(futures.indexOf(future)));
+                    return false;
+
                 }
             });
+
+            results.add(responseFuture);
         }
 
         // Waits for all tasks to complete
-        while(results.contains(null)) {
+        for(Future<Boolean> future : results) {
             try {
-                this.wait();
-            } catch (InterruptedException ignore) {
+                future.get();
+            } catch (Exception e) {
+                logCreator.log("Failed to get response from player");
             }
         }
 
-        return;
     }
 }
