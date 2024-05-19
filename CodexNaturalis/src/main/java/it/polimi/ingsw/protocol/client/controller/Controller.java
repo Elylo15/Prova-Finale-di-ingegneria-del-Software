@@ -42,4 +42,5 @@ public abstract class Controller {
     public abstract void pickCard(int card, boolean noResponse);
     public abstract updatePlayerMessage updatePlayer();
     public abstract declareWinnerMessage endGame() throws RemoteException;
+    public abstract void sendAnswerToPing();
 }

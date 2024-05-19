@@ -44,7 +44,7 @@ public class Client {
 
         if (isSocket) {
             try {
-                controller.connectToServer(serverIP, serverPort);
+                controller.connectToServer(serverIP, "1024");
                 connectionResponseMessage answer = controller.answerConnection();
                 view.answerToConnection(answer);
             } catch (Exception e) {
@@ -54,7 +54,7 @@ public class Client {
             }
         } else {
             try {
-                controller.connectToServer(serverIP, serverPort);
+                controller.connectToServer(serverIP, "1099");
                 connectionResponseMessage answer = controller.answerConnection();
                 view.answerToConnection(answer);
             } catch (Exception e) {
@@ -75,7 +75,7 @@ public class Client {
         }
         String[] server = view.askPortIP();
         setIP(server[0]);
-        setPort(server[1]);
+//        setPort(server[1]);
 
         boolean isSocket = view.askSocket();
         setController(server, isSocket);
@@ -149,6 +149,15 @@ public class Client {
 
                     case "ConnectionFAState": {
                         pickNameFA();
+                        break;
+                    }
+
+                    case "AnswerCheckConnection" : {
+                        controller.sendAnswerToPing();
+
+                        // REMOVE THIS
+                        System.out.println("Answered to ping");
+
                         break;
                     }
                 }
@@ -399,13 +408,13 @@ public class Client {
     public void setController(String[] server, boolean isSocket) {
         if (isSocket) {
             try {
-                this.controller = new ControllerSocket(server[0], server[1]);
+                this.controller = new ControllerSocket(server[0], "1024");
             } catch (Exception e) {
                 view.playerDisconnected();
             }
         } else {
             try {
-                this.controller = new ControllerRMI(server[0], server[1]);
+                this.controller = new ControllerRMI(server[0], "1099");
             } catch (Exception e) {
                 view.playerDisconnected();
             }

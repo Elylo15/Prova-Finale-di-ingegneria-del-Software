@@ -18,8 +18,8 @@ public class LogCreator {
      */
     public LogCreator() {
         boolean working;
-        this.fileName = "logs/log_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")) + ".log";
-        File dir = new File("logs");
+        this.fileName = "CodexNaturalis/logs/log_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")) + ".log";
+        File dir = new File("CodexNaturalis/logs");
         if(!dir.exists()) {
             working = dir.mkdir();
             System.out.println(working);
@@ -41,10 +41,18 @@ public class LogCreator {
      */
     public LogCreator(String matchID) {
         this.matchID = matchID;
-        this.fileName =  "logs/log_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")) + "_match"+ this.matchID +".log";
-        File dir = new File("logs");
-        if(!dir.exists())
-            dir.mkdir();
+        this.fileName =  "CodexNaturalis/logs/log_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")) + "_match"+ this.matchID +".log";
+        File dir = new File("CodexNaturalis/logs");
+        if (!dir.exists()) {
+            boolean dirCreated = dir.mkdir();
+
+            System.out.println("Failed to create directory: " + dir.getAbsolutePath());
+
+            if (!dirCreated) {
+                System.out.println("Failed to create directory: " + dir.getAbsolutePath());
+                System.err.println("Failed to create directory: " + dir.getAbsolutePath());
+            }
+        }
         File f = new File(fileName);
         try {
             FileWriter fw = new FileWriter(fileName, true);
@@ -82,6 +90,7 @@ public class LogCreator {
             writer.newLine();
             writer.flush();
         } catch (IOException e) {
+            System.out.println("Error writing to log file.");
             e.printStackTrace();
         }
     }
@@ -94,6 +103,7 @@ public class LogCreator {
             if(writer != null)
                 writer.close();
         } catch (IOException e) {
+            System.out.println("Error closing log file.");
             e.printStackTrace();
         }
     }

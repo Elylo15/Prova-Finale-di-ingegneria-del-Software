@@ -51,7 +51,7 @@ public class Server implements Runnable {
         portSocket = 1024;
         portRMI = 1099;
         games = new CopyOnWriteArrayList<>();
-        defaultPath = "savedGames";
+        defaultPath = "CodexNaturalis/savedGames";
         logCreator = new LogCreator();
         this.serverRunning = false;
         this.timeoutSeconds = 2*60;
@@ -132,12 +132,15 @@ public class Server implements Runnable {
      */
     public void acceptConnectionRMI() {
         try {
+            logCreator.log("Opening RMI service");
             Registry registry = LocateRegistry.createRegistry(portRMI);
             MainRemoteServer server = new MainRemoteServer();
             registry.bind("MainServer", server);
 
             while(this.serverRunning) {
                 try {
+                    logCreator.log("Waiting for new RMI client connection");
+
                     // Listens for new clients and returns a ClientConnection to them
                     ClientConnection connection = server.clientConnected(registry);
                     this.executor.submit(() -> this.handleConnection(connection));
@@ -425,11 +428,6 @@ public class Server implements Runnable {
      * @throws FailedToJoinMatch if the player cannot join the game.
      */
     private void joinSavedMatch(ClientConnection connection, serverOptionMessage message) throws FailedToJoinMatch{
-        // Player wants to load a saved game
-        // TODO implement loading of a game
-        // maybe start from here the custom loaded game and not from run
-        // TODO use synchronized and if it falis kickThePlayer
-
         // Obtains all matches in WaitingAfterLoad state
         ArrayList<ClientManager> waitingAfterLoad = games.stream()
                 .filter(clientManager -> clientManager.getMatchInfo().getStatus() == MatchState.WaitingAfterLoad)
@@ -445,7 +443,7 @@ public class Server implements Runnable {
 
             ClientManager lobbyManager = new ClientManager(matchInfo);
             games.add(lobbyManager);
-            executor.submit(lobbyManager);
+            executor.submit(lobbyManager::loadAndWaitSavedMatch);
         }
 
         // Finds the game
@@ -454,6 +452,8 @@ public class Server implements Runnable {
                 .limit(1)
                 .findAny().orElse(null);
 
+        if(lobbyManager == null)
+            throw new FailedToJoinMatch("Failed to join match " + message.getSavedMatchID() + " due to not found lobby");
 
         // Obtains the offline players nicknames
         ArrayList<String> offlineNames;
@@ -675,7 +675,7 @@ public class Server implements Runnable {
         ArrayList<Integer> matchFiles = new ArrayList<>();
         if(files != null) {
             for (File file : files) {
-                matchFiles.add(Integer.parseInt(file.getName().substring(5, file.getName().length() - 6)));
+                matchFiles.add(Integer.parseInt(file.getName().substring(6, file.getName().length() - 6)));
             }
         }
         return matchFiles;
@@ -687,7 +687,7 @@ public class Server implements Runnable {
      * @return MatchInfo of the loaded match.
      */
     private MatchInfo loadMatch(Integer matchID) {
-        String filename = "SavedGames/match" + matchID + ".match";
+        String filename = "CodexNaturalis/savedMatches/match_" + matchID + ".match";
         try (FileInputStream fileIn = new FileInputStream(filename);
              ObjectInputStream in = new ObjectInputStream(fileIn)) {
             return (MatchInfo) in.readObject();

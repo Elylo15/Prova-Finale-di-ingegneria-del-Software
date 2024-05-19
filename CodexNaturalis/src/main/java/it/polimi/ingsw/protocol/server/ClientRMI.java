@@ -301,6 +301,24 @@ public class ClientRMI extends ClientConnection implements Runnable, Serializabl
             throw new RuntimeException(e);
         }
     }
+
+
+    /**
+     * method {@code isConnected}: sends a currentStateMessage to check if the connection is still active
+     * and expects an answer
+     * @return boolean true if the connection is active, false or no answer otherwise
+     */
+    @Override
+    public boolean isConnected() {
+        try {
+            String answer = "ACK";
+            currentStateMessage message = new currentStateMessage(null, null, "AnswerCheckConnection", false, null, null, null );
+            this.sendCurrentState(message);
+            return answer.equals((String) toServer.read());
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }
 
 

@@ -306,4 +306,16 @@ public class ControllerRMI extends Controller {
             throw new RuntimeException(e);
         }
     }
+
+
+    @Override
+    public void sendAnswerToPing() {
+        try {
+            toServer.write("ACK");
+        } catch (RemoteException e) {
+            System.out.println("Error in sendAnswerToPing");
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }
 }

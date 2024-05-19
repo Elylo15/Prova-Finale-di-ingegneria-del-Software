@@ -71,8 +71,9 @@ public class ViewCLI extends View {
 
         System.out.println("Enter IP:");
         server[0] = scanner.nextLine();
-        System.out.println("Enter port:");
-        server[1] = scanner.nextLine();
+//        System.out.println("Enter port:");
+//        server[1] = scanner.nextLine();
+
 
         return server;
     }

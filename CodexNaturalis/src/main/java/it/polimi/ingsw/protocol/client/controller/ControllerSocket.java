@@ -299,4 +299,20 @@ public class ControllerSocket extends Controller {
             throw new RuntimeException(e);
         }
     }
+
+
+    @Override
+    public void sendAnswerToPing() {
+        try {
+            outputStream.reset();
+            outputStream.writeObject("ACK");
+            outputStream.flush();
+        } catch (IOException e) {
+
+            System.out.println("Error in sendAnswerToPing");
+            e.printStackTrace();
+
+            throw new RuntimeException(e);
+        }
+    }
 }

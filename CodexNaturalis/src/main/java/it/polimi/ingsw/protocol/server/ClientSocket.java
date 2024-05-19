@@ -17,6 +17,8 @@ import java.io.Serializable;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 public class ClientSocket extends ClientConnection implements Serializable {
     private ObjectOutputStream outputStream;
@@ -304,6 +306,23 @@ public class ClientSocket extends ClientConnection implements Serializable {
             inputStream.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * method {@code isConnected}: sends a currentStateMessage to check if the connection is still active
+     * and expects an answer
+     * @return boolean true if the connection is active, false or no answer otherwise
+     */
+    @Override
+    public boolean isConnected() {
+        try {
+            String answer = "ACK";
+            currentStateMessage message = new currentStateMessage(null, null, "AnswerCheckConnection", false, null, null, null );
+            this.sendCurrentState(message);
+            return answer.equals((String) inputStream.readObject());
+        } catch (Exception e) {
+            return false;
         }
     }
 }

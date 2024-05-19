@@ -64,8 +64,7 @@ public abstract class ClientConnection implements Runnable, Serializable {
     public abstract void sendEndGame(HashMap<String, Integer> score, HashMap<String, Integer> numberOfObjectives);
     public abstract void sendUpdatePlayer(updatePlayerMessage updateMessage);
     public abstract void closeConnection();
+    public abstract boolean isConnected();
 
-    // REMOVE THIS METHOD
-    public void sendPlayerInfo(PlayerInfo playerInfo) {}
 
 }

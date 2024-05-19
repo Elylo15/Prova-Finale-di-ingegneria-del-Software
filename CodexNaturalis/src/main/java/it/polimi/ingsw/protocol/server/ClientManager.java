@@ -65,7 +65,7 @@ public class ClientManager implements Runnable{
      * @param playerInfo player to be checked
      * @throws FailedToJoinMatch if the player is not found
      */
-    public synchronized void addPlayerInfo(PlayerInfo playerInfo) throws FailedToJoinMatch {
+    protected synchronized void addPlayerInfo(PlayerInfo playerInfo) throws FailedToJoinMatch {
         if(playerInfo != null
                 && matchInfo.getStatus() == MatchState.Waiting
                 && (matchInfo.getExpectedPlayers() == null || matchInfo.getExpectedPlayers() > this.playersInfo.size())
@@ -100,7 +100,7 @@ public class ClientManager implements Runnable{
      *
      * @param nickname nickname of the player to be moved
      */
-    public synchronized void movePlayer(String nickname, ClientConnection connection) throws FailedToJoinMatch {
+    protected synchronized void movePlayer(String nickname, ClientConnection connection) throws FailedToJoinMatch {
 
         // Check if the state of the match allows the player to join
         if(this.matchInfo.getStatus() == MatchState.Waiting || this.matchInfo.getStatus() == MatchState.KickingPlayers || this.matchInfo.getStatus() == MatchState.Endgame) {
@@ -132,7 +132,7 @@ public class ClientManager implements Runnable{
      * Checks if new players can join. If the number of player meets with expectedPlayers, the eventually new player is kicked.
      * @param connection connection manager of the new player.
      */
-    public synchronized void checkAvailability(ClientConnection connection) {
+    protected synchronized void checkAvailability(ClientConnection connection) {
         if(this.matchInfo.getExpectedPlayers() <= this.playersInfo.size())
             connection.closeConnection();
     }
@@ -141,14 +141,14 @@ public class ClientManager implements Runnable{
      * Getter of MathInfo
      * @return MatchInfo
      */
-    public MatchInfo getMatchInfo() {return this.matchInfo;}
+    protected MatchInfo getMatchInfo() {return this.matchInfo;}
 
     /**
      * Getter of PlayersInfo
      *
      * @return list of PlayersInfo
      */
-    public ArrayList<PlayerInfo> getPlayersInfo() {
+    protected ArrayList<PlayerInfo> getPlayersInfo() {
         return new ArrayList<>(this.playersInfo);
     }
 
@@ -156,15 +156,15 @@ public class ClientManager implements Runnable{
      * Getter of Match (model)
      * @return Match
      */
-    public Match getMatch() {return this.matchInfo.getMatch();}
+    protected Match getMatch() {return this.matchInfo.getMatch();}
 
 
-    public synchronized void saveMatch() {
-        File dir = new File("savedMatches");
+    private synchronized void saveMatch() {
+        File dir = new File("CodexNaturalis/savedMatches");
         if(!dir.exists())
             dir.mkdir();
 
-        String fileName = "savedMatches/match_" + this.matchInfo.getID() + ".match";
+        String fileName = "CodexNaturalis/savedMatches/match_" + this.matchInfo.getID() + ".match";
         try {
             FileOutputStream fileOut = new FileOutputStream(fileName);
             ObjectOutputStream out = new ObjectOutputStream(fileOut);
@@ -220,6 +220,8 @@ public class ClientManager implements Runnable{
                 }
 
             }
+
+            this.checkPlayersConnections();
 
             // Starts the normal flow of the game
             switch (this.matchInfo.getStatus()) {
@@ -290,13 +292,14 @@ public class ClientManager implements Runnable{
                     gameOver = true;
                 }
             }
+            this.checkPlayersConnections();
             this.checkOnlinePlayersNumber();
 
             // Leaves a pause between each turn in order to allow new clients to join
             try{
-                Thread.sleep(1500);
+                Thread.sleep(500);
             } catch (InterruptedException e) {
-                logCreator.log("Thread interrupted, while sleeping");
+                logCreator.log("Thread interrupted, while sleeping: " + e.getMessage());
             }
         }
 
@@ -422,7 +425,7 @@ public class ClientManager implements Runnable{
 
 
         // First save of the game
-        executor.submit(this::saveMatch);
+        this.saveMatch();
     }
 
     /**
@@ -467,10 +470,10 @@ public class ClientManager implements Runnable{
                 }
 
 
-                logCreator.log("Player " + player.getNickname() + " placed the starter card");
 
                 // End turn and update states
                 if(this.playersInfo.contains(playerInfo)) { // Checks if the player is online
+                    logCreator.log("Player " + player.getNickname() + " placed the starter card");
                     playerInfo.setState(State.Objective);
                     playerInfo.getPlayer().initialHand();
                 }
@@ -497,9 +500,9 @@ public class ClientManager implements Runnable{
                     playerInfo1.getConnection().sendUpdatePlayer(update);
                 }
 
-                logCreator.log("Player " + player.getNickname() + " has correctly chosen an objective");
                 // End turn and update states
                 if(this.playersInfo.contains(playerInfo)) {
+                    logCreator.log("Player " + player.getNickname() + " has correctly chosen an objective");
                     if(this.matchInfo.isLastTurn())
                         playerInfo.setState(State.EndGame);
                     else
@@ -878,9 +881,6 @@ public class ClientManager implements Runnable{
 
         for(PlayerInfo playerInfo1 : this.playersInfo) {
 
-            // REMOVE THIS
-            System.out.println("Sending endgame message to " + playerInfo1.getPlayer().getNickname());
-
             playerInfo1.getConnection().sendEndGame(scores, numberOfObjects);
         }
 
@@ -909,8 +909,11 @@ public class ClientManager implements Runnable{
 
 
 
-    // TODO check this method later
-    // This method is to check if all players are online and to eventually declare a winner
+    /**
+     * Checks if the number of online players is correct.
+     * If only one player remains, they are declared the winner.
+     * If no players remain, the match is over.
+     */
     private void checkOnlinePlayersNumber() {
         // This function must be used at the end of every turn
         if(this.playersInfo.size() == 1) {
@@ -922,6 +925,7 @@ public class ClientManager implements Runnable{
                 @Override
                 public void run() {
                     synchronized (manager) {
+                        manager.checkPlayersConnections();
                         if(manager.playersInfo.size() == 1) {
                             manager.matchInfo.setStatus(MatchState.Endgame);
                             logCreator.log("Only one player remains, he is the winner");
@@ -957,6 +961,7 @@ public class ClientManager implements Runnable{
             if (this.playersInfo.isEmpty()) {
                 // Closes and saves the match
                 this.saveMatch();
+                logCreator.log("No players remain, closing the match");
                 this.matchInfo.setStatus(MatchState.KickingPlayers);
             }
         }
@@ -973,4 +978,73 @@ public class ClientManager implements Runnable{
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 
+
+
+    protected void loadAndWaitSavedMatch() {
+        MatchState savedState = this.matchInfo.getStatus();
+        this.matchInfo.setStatus(MatchState.WaitingAfterLoad);
+
+        synchronized (this) {
+            while (this.playersInfo.size() < this.matchInfo.getExpectedPlayers()) {
+                try {
+                    this.wait();
+                } catch (InterruptedException ignore) {
+                }
+            }
+
+            while (this.playersInfo.size() > this.matchInfo.getExpectedPlayers()) {
+                logCreator.log("Too many players have joined the match");
+                this.kickPlayer(this.playersInfo.getLast());
+            }
+        }
+
+
+        this.matchInfo.setStatus(savedState);
+
+        this.run();
+    }
+
+    private synchronized void checkPlayersConnections() {
+        ArrayList<Future<Boolean>> futures = new ArrayList<>();
+        ArrayList<Boolean> results = new ArrayList<>();
+
+        // Sends a ping to all players
+        for(PlayerInfo playerInfo : this.playersInfo) {
+            Future<Boolean> future = executor.submit(() -> playerInfo.getConnection().isConnected());
+            futures.add(future);
+            results.add(null);
+        }
+
+        int timeout = 5;
+        TimeUnit unit = TimeUnit.SECONDS;
+
+        // Expects a response from all players
+        for(Future<Boolean> future : futures) {
+            executor.submit(() -> {
+                synchronized (future) {
+                    try {
+                        future.get(timeout, unit);
+                        results.set(futures.indexOf(future), true);
+                        logCreator.log("Player " + this.playersInfo.get(futures.indexOf(future)).getPlayer().getNickname() + " has responded to ping");
+                        future.notifyAll();
+                    } catch (Exception e) {
+                        logCreator.log("Player " + this.playersInfo.get(futures.indexOf(future)).getPlayer().getNickname() + " has not responded to ping");
+                        this.kickPlayer(this.playersInfo.get(futures.indexOf(future)));
+                        results.set(futures.indexOf(future), false);
+                        future.notifyAll();
+                    }
+                }
+            });
+        }
+
+        // Waits for all tasks to complete
+        while(results.contains(null)) {
+            try {
+                this.wait();
+            } catch (InterruptedException ignore) {
+            }
+        }
+
+        return;
+    }
 }
