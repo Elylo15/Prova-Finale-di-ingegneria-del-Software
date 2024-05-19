@@ -2,49 +2,47 @@ package it.polimi.ingsw.protocol.client.view.GUI;
 
 import it.polimi.ingsw.protocol.client.view.ViewGUI;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.event.ActionEvent;
 
-import java.net.URL;
-import java.util.ResourceBundle;
+import javafx.scene.control.Button;
+import javafx.stage.Stage;
 
 
-public class expectedPlayersController implements Initializable {
+
+public class expectedPlayersController {
+    public int numberOfPlayers = 0;
+    @FXML
+    private Button playerTwo;
+    @FXML
+    private Button playerThree;
+
+    @FXML
+    private Button playerFour;
 
     private ViewGUI viewGUI;
 
     public void setViewGUI(ViewGUI viewGUI) {
         this.viewGUI = viewGUI;
     }
-    @FXML
-    private Label label;
-
-    @FXML
-    private ChoiceBox<Integer> choice;
-
-    private Integer[] numPlayers = {1,2,3,4,5};
-
-    @Override
-    public void initialize(URL arg0, ResourceBundle arg1) {
-
-        choice.getItems().addAll(numPlayers); //populates the choice box
-        choice.setOnAction(this::getNumber);
-
+    public void ButtonTwo() {
+        numberOfPlayers = 2;
+        Stage stage = (Stage) playerTwo.getScene().getWindow();
+        stage.close();
+    }
+    public void ButtonThree() {
+        numberOfPlayers = 3;
+        Stage stage = (Stage) playerThree.getScene().getWindow();
+        stage.close();
+    }
+    public void ButtonFour() {
+        numberOfPlayers = 4;
+        Stage stage = (Stage) playerFour.getScene().getWindow();
+        stage.close();
     }
 
-    /**
-     *
-     * @param event
-     * @return the number the user chose
-     */
-    public int getNumber(ActionEvent event) {
-
-        Integer result = choice.getValue();
-        label.setText("You selected " + result.toString());
-        return result;
+    public int getNumberOfPlayers(){
+        return numberOfPlayers;
     }
+
 
 }
 

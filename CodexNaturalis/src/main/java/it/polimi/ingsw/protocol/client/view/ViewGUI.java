@@ -46,7 +46,10 @@ public class ViewGUI extends View {
         }
     }
 
-
+    /**
+     * allow the user to enter the ip of the server he wants to connect to
+     * @return array with ip and port of the server
+     */
     @Override
     public String[] askPortIP(){
 
@@ -74,6 +77,10 @@ public class ViewGUI extends View {
         return server;
     }
 
+    /**
+     * allow the user to choose if he wants to use socket or rmi
+     * @return  boolean
+     */
         @Override
     public boolean askSocket() {// true = socket, false = rmi
         boolean useSocket = true;
@@ -190,6 +197,11 @@ public class ViewGUI extends View {
     public void answer(responseMessage message) {
     }
 
+    /**
+     * allow the user to choose his color
+     * @param message
+     * @return color
+     */
     @Override
     public String availableColors(availableColorsMessage message) {
         String color=null;
@@ -226,6 +238,7 @@ public class ViewGUI extends View {
      */
     @Override
     public int expectedPlayers() {
+        int number = 0;
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/expectedPlayers.fxml"));
         Parent root = null;
@@ -240,14 +253,15 @@ public class ViewGUI extends View {
         Scene scene = new Scene(root);
         mainstage.setScene(scene);
         mainstage.setMaximized(true);
+
+
         if (!mainstage.isShowing()) {
             mainstage.showAndWait();
         }
 
-        //int num = controller.getNumber();
+        number = controller.getNumberOfPlayers();
 
-        //return num;
-        return 0;
+        return number;
     }
 
     @Override

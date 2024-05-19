@@ -686,14 +686,18 @@ public class ViewCLI extends View {
     }
 
     /**
-     * this method shows what nickname are not available and allows the user to choose his nickname
+     * this method shows which nicknames are not available and allows the user to choose his nickname
      * @param message
      * @return
      */
     public String unavailableNames(unavailableNamesMessage message){
         //the client can call the method view.unavailableNames passing as a parameter the arraylist of unavailable names received from server
-        if(!Objects.equals(message.toString(), "[]"))
+        if(!message.toString().equals("[]")) {
             System.out.println("This nicknames are not available: " + message.toString());
+        }
+        else {
+            System.out.println("All nicknames are available");
+        }
 
         String name;
         Scanner scanner = new Scanner(System.in);
