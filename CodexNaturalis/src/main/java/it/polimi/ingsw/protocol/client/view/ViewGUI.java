@@ -36,7 +36,7 @@ public class ViewGUI extends View {
 
             Scene scene = new Scene(root); //contenuto
             mainstage.setScene(scene);
-            mainstage.setMaximized(true);
+            mainstage.setFullScreen(true);
             if (!mainstage.isShowing()) {
                 mainstage.showAndWait();
             }
@@ -67,7 +67,7 @@ public class ViewGUI extends View {
 
         Scene scene = new Scene(root);
         mainstage.setScene(scene);
-        mainstage.setMaximized(true);
+        mainstage.setFullScreen(true);
         if (!mainstage.isShowing()) {
             mainstage.showAndWait();
         }
@@ -97,7 +97,7 @@ public class ViewGUI extends View {
 
         Scene scene = new Scene(root);
         mainstage.setScene(scene);
-        mainstage.setMaximized(true);
+        mainstage.setFullScreen(true);
         if (!mainstage.isShowing()) {
             mainstage.showAndWait();
         }
@@ -130,7 +130,7 @@ public class ViewGUI extends View {
 
         Scene scene = new Scene(root);
         mainstage.setScene(scene);
-        mainstage.setMaximized(true);
+        mainstage.setFullScreen(true);
         if (!mainstage.isShowing()) {
             mainstage.showAndWait();
         }
@@ -171,7 +171,7 @@ public class ViewGUI extends View {
 
         Scene scene = new Scene(root);
         mainstage.setScene(scene);
-        mainstage.setMaximized(true);
+        mainstage.setFullScreen(true);
 
         if(!message.toString().equalsIgnoreCase("[]")){ //set the unavailable names to show to the user
             controller.setUp(message.toString());
@@ -218,7 +218,7 @@ public class ViewGUI extends View {
 
         Scene scene = new Scene(root);
         mainstage.setScene(scene);
-        mainstage.setMaximized(true);
+        mainstage.setFullScreen(true);
 
         controller.setUp(message.toString());
 
@@ -252,7 +252,7 @@ public class ViewGUI extends View {
 
         Scene scene = new Scene(root);
         mainstage.setScene(scene);
-        mainstage.setMaximized(true);
+        mainstage.setFullScreen(true);
 
 
         if (!mainstage.isShowing()) {

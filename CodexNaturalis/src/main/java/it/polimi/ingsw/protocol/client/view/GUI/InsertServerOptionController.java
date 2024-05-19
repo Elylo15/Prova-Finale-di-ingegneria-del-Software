@@ -40,6 +40,12 @@ public class InsertServerOptionController {
         stage.close();
     }
 
+    public void JoinMatchPressed() {
+        //  serverOptionMessage = new serverOptionMessage(false, serverOptionMessage.getStartedMatchID(), serverOptionMessage.getNickname(), true, serverOptionMessage.getPathToLoad());
+          Stage stage = (Stage) load_game.getScene().getWindow();
+          stage.close();
+      }
+
 
     public void setServerOptionMessage(serverOptionMessage message) {
         this.serverOptionMessage = message;

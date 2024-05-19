@@ -1,25 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane id="panel" depthTest="DISABLE" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" prefHeight="400.0" prefWidth="600.0" style="-fx-border-color: black;" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.protocol.client.view.GUI.ChooseSocketRMIController">
-   <children>
-      <Text layoutX="204.0" layoutY="132.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Choose connection:">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.protocol.client.view.GUI.ChooseSocketRMIController">
+   <top>
+      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Choose connection:" BorderPane.alignment="CENTER">
          <font>
-            <Font size="22.0" />
+            <Font size="36.0" />
          </font>
       </Text>
-      <Button fx:id="socketButton" layoutX="109.0" layoutY="187.0" mnemonicParsing="false" onAction="#isSocket" prefHeight="55.0" prefWidth="94.0" text="Socket">
-         <font>
-            <Font size="19.0" />
-         </font>
-      </Button>
-      <Button fx:id="rmiButton" layoutX="395.0" layoutY="185.0" mnemonicParsing="false" onAction="#isRMI" prefHeight="55.0" prefWidth="94.0" text="RMI">
-         <font>
-            <Font size="19.0" />
-         </font></Button>
-   </children>
-</AnchorPane>
+   </top>
+   <center>
+      <GridPane prefHeight="351.0" prefWidth="349.0" BorderPane.alignment="CENTER">
+         <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+         </rowConstraints>
+         <children>
+            <Button fx:id="socketButton" mnemonicParsing="false" onAction="#isSocket" prefHeight="71.0" prefWidth="130.0" text="Socket" GridPane.halignment="CENTER">
+               <font>
+                  <Font size="20.0" />
+               </font></Button>
+            <Button fx:id="rmiButton" mnemonicParsing="false" onAction="#isRMI" prefHeight="71.0" prefWidth="127.0" text="RMI" GridPane.columnIndex="2" GridPane.halignment="CENTER">
+               <font>
+                  <Font size="20.0" />
+               </font></Button>
+         </children>
+      </GridPane>
+   </center>
+   <left>
+      <Pane prefHeight="350.0" prefWidth="130.0" BorderPane.alignment="CENTER" />
+   </left>
+   <right>
+      <Pane prefHeight="315.0" prefWidth="130.0" BorderPane.alignment="CENTER" />
+   </right>
+</BorderPane>
