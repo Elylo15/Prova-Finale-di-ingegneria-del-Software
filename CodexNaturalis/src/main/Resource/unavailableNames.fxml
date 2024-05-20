@@ -12,7 +12,7 @@
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.protocol.client.view.GUI.UnavailableNamesController">
    <left>
-      <Pane prefHeight="336.0" prefWidth="152.0" BorderPane.alignment="CENTER" />
+      <Pane prefHeight="336.0" prefWidth="150.0" BorderPane.alignment="CENTER" />
    </left>
    <right>
       <Pane prefHeight="336.0" prefWidth="150.0" BorderPane.alignment="CENTER" />
