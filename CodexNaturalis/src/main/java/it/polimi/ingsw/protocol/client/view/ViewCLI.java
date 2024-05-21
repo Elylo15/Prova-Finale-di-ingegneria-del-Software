@@ -161,7 +161,7 @@ public class ViewCLI extends View {
      * Prints the current state of the player area
      * @param area PlayerArea to be printed
      */
-    private void showPlayerArea(PlayerArea area) {
+    public void showPlayerArea(PlayerArea area) {
         System.out.println("\n");
 
         ArrayList<Integer> resourceList = area.getResources();
@@ -364,7 +364,8 @@ public class ViewCLI extends View {
             case Manuscript -> resource = "MA";
             case Quill -> resource = "QU";
             case Inkwell -> resource = "IK";
-            case Empty, Blocked -> resource = "  ";
+            case Empty -> resource = "  ";
+            case Blocked -> resource = "XX";
         }
         return resource;
     }
@@ -903,7 +904,7 @@ public class ViewCLI extends View {
         for (String playerName : points.keySet()) {
             Integer playerPoints = points.get(playerName);
             Integer playerObjectives = numObjectives.get(playerName);
-            System.out.println("Player Name: " + playerName + " - Points: " + playerPoints + " - Number of Objectives: " + playerObjectives);
+            System.out.println("Player Name: " + playerName + "  -  Points: " + playerPoints + "  -  Number of Objectives: " + playerObjectives);
         }
     }
 
