@@ -1,6 +1,7 @@
 package it.polimi.ingsw.protocol.client.view;
 
 import it.polimi.ingsw.model.cards.ObjectiveCard;
+import it.polimi.ingsw.protocol.client.Client;
 import it.polimi.ingsw.protocol.client.view.GUI.*;
 import it.polimi.ingsw.protocol.messages.ConnectionState.availableColorsMessage;
 import it.polimi.ingsw.protocol.messages.ConnectionState.connectionResponseMessage;
@@ -21,28 +22,11 @@ import java.util.*;
 
 
 public class ViewGUI extends View {
-    private Stage mainstage;
+    private Client client;
 
 
-    public ViewGUI() {
-        this.mainstage = new Stage(); //finestra
-    }
-
-    public void loadFXML(String fxmlPath) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
-            Parent root = loader.load();
-
-            Scene scene = new Scene(root); //contenuto
-            mainstage.setScene(scene);
-            mainstage.setFullScreen(true);
-            if (!mainstage.isShowing()) {
-                mainstage.showAndWait();
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public void setClient(Client client) {
+        this.client = client;
     }
 
     /**
@@ -51,28 +35,10 @@ public class ViewGUI extends View {
      */
     @Override
     public String[] askPortIP(){
-
         String[] server = new String[2];
-
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/Insert_IP_PORT.fxml"));
-        Parent root = null;
-        try {
-            root = loader.load();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        InsertIPPortController controller = loader.getController();
-        controller.setViewGUI(this);
-
-        Scene scene = new Scene(root);
-        mainstage.setScene(scene);
-        mainstage.setFullScreen(true);
-        if (!mainstage.isShowing()) {
-            mainstage.showAndWait();
-        }
+        InsertIPPortController controller = client.getMainViewController().getInsertIPPortController();
         server[0] = controller.getIP();
         server[1] = controller.getPort();
-
         return server;
     }
 
@@ -83,27 +49,8 @@ public class ViewGUI extends View {
         @Override
     public boolean askSocket() {// true = socket, false = rmi
         boolean useSocket = true;
-
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/Choose_Socket_RMI.fxml"));
-        Parent root = null;
-        try {
-            root = loader.load();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        ChooseSocketRMIController controller = loader.getController();
-        controller.setViewGUI(this);
-
-        Scene scene = new Scene(root);
-        mainstage.setScene(scene);
-        mainstage.setFullScreen(true);
-        if (!mainstage.isShowing()) {
-            mainstage.showAndWait();
-        }
-
+        ChooseSocketRMIController controller = client.getInsertIPPortController().getChooseSocketRMIController();
         useSocket = controller.useSocket();
-
-        // Restituisci il valore di useSocket
         return useSocket;
     }
 
@@ -116,24 +63,7 @@ public class ViewGUI extends View {
      @Override
     public serverOptionMessage serverOptions(serverOptionMessage message) {
         serverOptionMessage newMessage = null;
-
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/Insert_ServerOption.fxml"));
-        Parent root = null;
-        try {
-            root = loader.load();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        InsertServerOptionController controller = loader.getController();
-        controller.setViewGUI(this);
-
-        Scene scene = new Scene(root);
-        mainstage.setScene(scene);
-        mainstage.setFullScreen(true);
-        if (!mainstage.isShowing()) {
-            mainstage.showAndWait();
-        }
-
+        InsertServerOptionController controller = client.getChooseSocketRMIController().getInsertServerOptionController();
         newMessage = controller.getServerOptionMessage();
         return newMessage;
     }
@@ -145,7 +75,7 @@ public class ViewGUI extends View {
 
     @Override
     public void playerDisconnected() {
-        loadFXML("/Disconnect.fxml");
+        //loadFXML("/Disconnect.fxml");
     }
 
     @Override
@@ -157,34 +87,14 @@ public class ViewGUI extends View {
     @Override
     public String unavailableNames(unavailableNamesMessage message) {
         String name = null;
-
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/unavailableNames.fxml"));
-        Parent root = null;
-        try {
-            root = loader.load();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        UnavailableNamesController controller = loader.getController();
-        controller.setViewGUI(this);
-
-        Scene scene = new Scene(root);
-        mainstage.setScene(scene);
-        mainstage.setFullScreen(true);
-
+        UnavailableNamesController controller = client.getInsertServerOptionController().getUnavailableNamesController();
         if(!message.toString().equalsIgnoreCase("[]")){ //set the unavailable names to show to the user
             controller.setUp(message.toString());
         }
         else {
             controller.setUpNoNames();
         }
-
-
-        if (!mainstage.isShowing()) {
-            mainstage.showAndWait();
-        }
         name = controller.getName();
-
         return name;
     }
 
@@ -204,30 +114,17 @@ public class ViewGUI extends View {
     @Override
     public String availableColors(availableColorsMessage message) {
         String color=null;
-
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/availableColors.fxml"));
-        Parent root = null;
         try {
-            root = loader.load();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/availableColors.fxml"));
+            Parent root = loader.load();
+
+            AvailableColorsController controller = loader.getController();
+            controller.setUp(message.toString());
+            color = controller.getColor();
+
         } catch (IOException e) {
             e.printStackTrace();
         }
-        availableColorsController controller = loader.getController();
-        controller.setViewGUI(this);
-
-        Scene scene = new Scene(root);
-        mainstage.setScene(scene);
-        mainstage.setFullScreen(true);
-
-        controller.setUp(message.toString());
-
-        if (!mainstage.isShowing()) {
-            mainstage.showAndWait();
-        }
-        color = controller.getColor();
-
-
-
         return color;
     }
 
@@ -238,28 +135,16 @@ public class ViewGUI extends View {
     @Override
     public int expectedPlayers() {
         int number = 0;
+        /*try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/expectedPlayers.fxml"));
+            Parent root = loader.load();
 
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/expectedPlayers.fxml"));
-        Parent root = null;
-        try {
-            root = loader.load();
+            ExpectedPlayersController controller = loader.getController();
+            number = controller.getNumberOfPlayers();
+
         } catch (IOException e) {
             e.printStackTrace();
-        }
-        expectedPlayersController controller = loader.getController();
-        controller.setViewGUI(this);
-
-        Scene scene = new Scene(root);
-        mainstage.setScene(scene);
-        mainstage.setFullScreen(true);
-
-
-        if (!mainstage.isShowing()) {
-            mainstage.showAndWait();
-        }
-
-        number = controller.getNumberOfPlayers();
-
+        }*/
         return number;
     }
 
@@ -269,21 +154,6 @@ public class ViewGUI extends View {
      * The other players after choosing name and color will wait for the other players to choose to.
      */
     public void waiting(){
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/waiting.fxml"));
-        Parent root = null;
-        try {
-            root = loader.load();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        Scene scene = new Scene(root);
-        mainstage.setScene(scene);
-        mainstage.setFullScreen(true);
-        if (!mainstage.isShowing()) {
-            mainstage.showAndWait();
-        }
-
     }
 
     //load a mainGamePage with a backGround, scoreBoard etc.
@@ -328,8 +198,8 @@ public class ViewGUI extends View {
             }
 
             Scene scene = new Scene(root);
-            mainstage.setScene(scene);
-            mainstage.show();
+            //mainstage.setScene(scene);
+            //mainstage.show();
 
         } catch (Exception e) {
             System.out.println("Error: " + e.getMessage());

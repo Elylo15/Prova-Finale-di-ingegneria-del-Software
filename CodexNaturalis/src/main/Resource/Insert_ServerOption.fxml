@@ -46,12 +46,12 @@
                   <Font size="20.0" />
                </font>
             </Button>
-            <Button fx:id="load_game" mnemonicParsing="false" onAction="#loadGamePressed" prefHeight="60.0" prefWidth="200.0" text="Load Match" GridPane.halignment="CENTER" GridPane.rowIndex="2">
+            <Button fx:id="load_match" mnemonicParsing="false" onAction="#loadMatchPressed" prefHeight="60.0" prefWidth="200.0" text="Load Match" GridPane.halignment="CENTER" GridPane.rowIndex="2">
                <font>
                   <Font size="20.0" />
                </font>
             </Button>
-            <Button fx:id="running_match" mnemonicParsing="false" onAction="#runningMatchPressed" prefHeight="60.0" prefWidth="200.0" text="JoinRunning Match" GridPane.halignment="CENTER" GridPane.rowIndex="3">
+            <Button fx:id="join_running_match" mnemonicParsing="false" onAction="#JoinRunningMatchPressed" prefHeight="60.0" prefWidth="200.0" text="JoinRunning Match" GridPane.halignment="CENTER" GridPane.rowIndex="3">
                <font>
                   <Font size="20.0" />
                </font>

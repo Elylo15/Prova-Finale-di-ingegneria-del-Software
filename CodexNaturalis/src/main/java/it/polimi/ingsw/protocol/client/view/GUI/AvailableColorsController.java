@@ -1,5 +1,6 @@
 package it.polimi.ingsw.protocol.client.view.GUI;
 
+
 import it.polimi.ingsw.protocol.client.Client;
 import it.polimi.ingsw.protocol.client.view.ViewGUI;
 import javafx.fxml.FXML;
@@ -12,20 +13,17 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-public class UnavailableNamesController {
-    @FXML
-    public Label unavailableNames;
-    @FXML
-    public TextField nameToChoose;
-    @FXML
-    public Button submitButton;
+public class AvailableColorsController {
+    public Label label;
+    public TextField colorToChoose;
+    public Button submit;
 
     private Stage primaryStage;
     private Client client;
 
-    private AvailableColorsController availableColorsController;
+    private WaitingController waitingController;
 
-    public void setPrimaryStage(Stage primaryStage) {
+    void setPrimaryStage(Stage primaryStage) {
         this.primaryStage = primaryStage;
     }
 
@@ -33,38 +31,39 @@ public class UnavailableNamesController {
         this.client = client;
     }
 
-    public AvailableColorsController getAvailableColorsController() {
-        return availableColorsController;
+    public WaitingController getWaitingController() {
+        return waitingController;
     }
 
     public void setUp(String string){
-        unavailableNames.setText("These are the names that are not available: " + string);
-    }
-    public String getName(){
-        return nameToChoose.getText();
+        label.setText("These are the color that are available: " + string);
     }
 
-    public void setUpNoNames(){
-        unavailableNames.setText("All the nicknames are available");
+    public String getColor(){
+        return colorToChoose.getText();
     }
-
 
     @FXML
     private void handleSubmit() throws IOException {
-        client.name();
+        client.color();
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/availableColors.fxml"));
             Parent root = loader.load();
-            availableColorsController = loader.getController();
-            availableColorsController.setPrimaryStage(primaryStage);
-            availableColorsController.setClient(client);
+            waitingController = loader.getController();
+            waitingController.setPrimaryStage(primaryStage);
+            waitingController.setClient(client);
 
-            client.setAvailableColorsController(availableColorsController);
+            client.setWaitingController(waitingController);
 
             primaryStage.getScene().setRoot(root);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-}
 
+
+
+
+
+
+}

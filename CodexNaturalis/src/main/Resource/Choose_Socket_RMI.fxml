@@ -27,7 +27,7 @@
                <font>
                   <Font size="20.0" />
                </font></Button>
-            <Button fx:id="rmiButton" mnemonicParsing="false" onAction="#isRMI" prefHeight="71.0" prefWidth="127.0" text="RMI" GridPane.columnIndex="2" GridPane.halignment="CENTER">
+            <Button fx:id="rmiButton" mnemonicParsing="false" onAction="#isSocket" prefHeight="71.0" prefWidth="127.0" text="RMI" GridPane.columnIndex="2" GridPane.halignment="CENTER">
                <font>
                   <Font size="20.0" />
                </font></Button>

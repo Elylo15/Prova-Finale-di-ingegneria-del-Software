@@ -3,6 +3,7 @@ package it.polimi.ingsw.protocol.client;
 import it.polimi.ingsw.model.cards.ObjectiveCard;
 import it.polimi.ingsw.protocol.client.controller.*;
 import it.polimi.ingsw.protocol.client.view.*;
+import it.polimi.ingsw.protocol.client.view.GUI.*;
 import it.polimi.ingsw.protocol.messages.*;
 import it.polimi.ingsw.protocol.messages.ConnectionState.*;
 import it.polimi.ingsw.protocol.messages.EndGameState.*;
@@ -14,12 +15,25 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicIntegerArray;
 
+import static it.polimi.ingsw.protocol.messages.Message.lock;
+
 public class Client {
     private String serverIP;
     private String serverPort;
     private Controller controller;
     private final View view;
     private ThreadPoolExecutor executor;
+
+    private MainViewController mainViewController;
+    private InsertIPPortController insertIPPortController;
+    private ChooseSocketRMIController chooseSocketRMIController;
+    private InsertServerOptionController insertServerOptionController;
+    private UnavailableNamesController unavailableNamesController;
+    private AvailableColorsController availableColorsController;
+    private JoinMatchController joinMatchController;
+    private LoadMatchController loadMatchController;
+    private JoinRunningMatchController joinRunningMatchController;
+    private WaitingController waitingController;
 
     /**
      * method {@code Client}: constructs a new Client
@@ -34,6 +48,100 @@ public class Client {
         long keepAliveTime = 300;
         TimeUnit unit = TimeUnit.SECONDS;
         executor = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, unit, new LinkedBlockingQueue<Runnable>());
+
+    }
+
+
+
+    //servono per poter importare i controller a ViewGUI
+
+    public MainViewController getMainViewController() {
+        return mainViewController;
+    }
+
+    public void setMainViewController(MainViewController mainViewController) {
+        this.mainViewController = mainViewController;
+    }
+
+    public InsertIPPortController getInsertIPPortController() {
+        return insertIPPortController;
+    }
+
+    public void setInsertIPPortController(InsertIPPortController insertIPPortController) {
+        this.insertIPPortController = insertIPPortController;
+    }
+
+    public ChooseSocketRMIController getChooseSocketRMIController() {
+        return chooseSocketRMIController;
+    }
+
+    public void setChooseSocketRMIController(ChooseSocketRMIController chooseSocketRMIController) {
+        this.chooseSocketRMIController = chooseSocketRMIController;
+    }
+
+    public InsertServerOptionController getInsertServerOptionController() {
+        return insertServerOptionController;
+    }
+
+    public void setInsertServerOptionController(InsertServerOptionController insertServerOptionController) {
+        this.insertServerOptionController = insertServerOptionController;
+    }
+
+    public UnavailableNamesController getUnavailableNamesController() {
+        return unavailableNamesController;
+    }
+
+    public void setUnavailableNamesController(UnavailableNamesController unavailableNamesController) {
+        this.unavailableNamesController = unavailableNamesController;
+    }
+
+    public AvailableColorsController getAvailableColorsController() {
+        return availableColorsController;
+    }
+
+    public void setAvailableColorsController(AvailableColorsController availableColorsController) {
+        this.availableColorsController = availableColorsController;
+    }
+
+    public JoinMatchController getJoinMatchController() {
+        return joinMatchController;
+    }
+
+    public void setJoinMatchController(JoinMatchController joinMatchController) {
+        this.joinMatchController = joinMatchController;
+    }
+
+    public LoadMatchController getLoadMatchController() {
+        return loadMatchController;
+    }
+
+    public void setLoadMatchController(LoadMatchController loadMatchController) {
+        this.loadMatchController = loadMatchController;
+    }
+
+    public JoinRunningMatchController getJoinRunningMatchController() {
+        return joinRunningMatchController;
+    }
+
+    public void setJoinRunningMatchController(JoinRunningMatchController joinRunningMatchController) {
+        this.joinRunningMatchController = joinRunningMatchController;
+    }
+
+    public WaitingController getWaitingController() {
+        return waitingController;
+    }
+
+    public void setWaitingController(WaitingController waitingController) {
+        this.waitingController = waitingController;
+    }
+
+
+
+
+
+
+    public View getView() {
+        return view;
     }
 
     /**
@@ -70,101 +178,99 @@ public class Client {
      * Invocations of view methods to display and receive player's info.
      */
     public void run() {
-        if (view instanceof ViewGUI) {
-            ((ViewGUI) view).loadFXML("/MainView.fxml");
-        }
-        String[] server = view.askPortIP();
-        setIP(server[0]);
-        setPort(server[1]);
 
-        boolean isSocket = view.askSocket();
-        setController(server, isSocket);
-        connection(isSocket);
+            String[] server = view.askPortIP();
+            setIP(server[0]);
+            //setPort(server[1]);
 
-        try {
-            while (true) {
+            boolean isSocket = view.askSocket();
+            setController(server, isSocket);
+            connection(isSocket);
 
-                // REMOVE THIS
-                System.out.println("\nWaiting for current state");
+            try {
+                while (true) {
+
+                    // REMOVE THIS
+                    System.out.println("\nWaiting for current state");
 
 
-                currentStateMessage current = controller.getCurrent();
-                String state = current.getStateName();
+                    currentStateMessage current = controller.getCurrent();
+                    String state = current.getStateName();
 
-                // REMOVE THIS
-                System.out.println("Current state: " + state + "\n");
+                    // REMOVE THIS
+                    System.out.println("Current state: " + state + "\n");
 
-                switch (state) {
-                    case "ServerOptionState": {
-                        serverOptions();
-                        break;
-                    }
-                    case "ConnectionState": {
-                        name();
-                        color();
-                        break;
-                    }
-                    case "WaitingForPlayerState": {
-                        waitingPlayer(current);
-                        break;
-                    }
-                    case "StarterCardState": {
-                        view.updatePlayer(current);
-                        if (Objects.equals(current.getCurrentPlayer().getNickname(), current.getPlayer().getNickname()))
-                            starter();
-                        updatePlayerMessage update = controller.updatePlayer();
-                        view.update(update);
-                        break;
-                    }
-                    case "ObjectiveState": {
+                    switch (state) {
+                        case "ServerOptionState": {
+                            serverOptions();
+                            break;
+                        }
+                        case "ConnectionState": {
+                            name();
+                            color();
+                            break;
+                        }
+                        case "WaitingForPlayerState": {
+                            waitingPlayer(current);
+                            break;
+                        }
+                        case "StarterCardState": {
+                            view.updatePlayer(current);
+                            if (Objects.equals(current.getCurrentPlayer().getNickname(), current.getPlayer().getNickname()))
+                                starter();
+                            updatePlayerMessage update = controller.updatePlayer();
+                            view.update(update);
+                            break;
+                        }
+                        case "ObjectiveState": {
 
-                        view.updatePlayer(current);
-                        if (Objects.equals(current.getCurrentPlayer().getNickname(), current.getPlayer().getNickname()))
-                            pickObjective();
-                        updatePlayerMessage update = controller.updatePlayer();
-                        view.update(update);
-                        break;
-                    }
-                    case "PlaceTurnState": {
-                        view.updatePlayer(current);
-                        if (Objects.equals(current.getCurrentPlayer().getNickname(), current.getPlayer().getNickname()))
-                            placeCard();
-                        updatePlayerMessage update = controller.updatePlayer();
-                        view.update(update);
-                        break;
-                    }
-                    case "PickTurnState": {
-                        view.updatePlayer(current);
-                        if (Objects.equals(current.getCurrentPlayer().getNickname(), current.getPlayer().getNickname()))
-                            pickCard();
-                        updatePlayerMessage update = controller.updatePlayer();
-                        view.update(update);
-                        break;
-                    }
-                    case "EndGameState": {
-                        declareWinnerMessage end = controller.endGame();
-                        view.endGame(end);
-                        throw new Exception("Game ended.");
-                    }
+                            view.updatePlayer(current);
+                            if (Objects.equals(current.getCurrentPlayer().getNickname(), current.getPlayer().getNickname()))
+                                pickObjective();
+                            updatePlayerMessage update = controller.updatePlayer();
+                            view.update(update);
+                            break;
+                        }
+                        case "PlaceTurnState": {
+                            view.updatePlayer(current);
+                            if (Objects.equals(current.getCurrentPlayer().getNickname(), current.getPlayer().getNickname()))
+                                placeCard();
+                            updatePlayerMessage update = controller.updatePlayer();
+                            view.update(update);
+                            break;
+                        }
+                        case "PickTurnState": {
+                            view.updatePlayer(current);
+                            if (Objects.equals(current.getCurrentPlayer().getNickname(), current.getPlayer().getNickname()))
+                                pickCard();
+                            updatePlayerMessage update = controller.updatePlayer();
+                            view.update(update);
+                            break;
+                        }
+                        case "EndGameState": {
+                            declareWinnerMessage end = controller.endGame();
+                            view.endGame(end);
+                            throw new Exception("Game ended.");
+                        }
 
-                    case "ConnectionFAState": {
-                        pickNameFA();
-                        break;
-                    }
+                        case "ConnectionFAState": {
+                            pickNameFA();
+                            break;
+                        }
 
-                    case "AnswerCheckConnection" : {
-                        controller.sendAnswerToPing();
+                        case "AnswerCheckConnection": {
+                            controller.sendAnswerToPing();
 
-                        // REMOVE THIS
-                        System.out.println("Answered to ping");
+                            // REMOVE THIS
+                            System.out.println("Answered to ping");
 
-                        break;
+                            break;
+                        }
                     }
                 }
-            }
-        } catch (Exception e) {
+            } catch (Exception e) {
 //            view.playerDisconnected();
-        }
+            }
     }
 
     /**
@@ -172,7 +278,7 @@ public class Client {
      * Invocations of view methods to display and receive player's info.
      * invocations of controller methods to receive responseMessage. If responseMessage is correct, the loop ends.
      */
-    private void serverOptions() {
+    public void serverOptions() {
         while (true) {
             serverOptionMessage options = controller.serverOptions();
             options = view.serverOptions(options);
@@ -190,7 +296,7 @@ public class Client {
      * invocations of controller methods to send received info.
      * invocations of controller methods to receive responseMessage. If responseMessage is correct, the loop ends.
      */
-    private void name() {
+    public void name() {
         while (true) {
             unavailableNamesMessage unavailableName = controller.getUnavailableName();
             String name = view.unavailableNames(unavailableName);
@@ -208,7 +314,7 @@ public class Client {
      * invocations of controller methods to send received info.
      * invocations of controller methods to receive responseMessage. If responseMessage is correct, the loop ends.
      */
-    private void color() {
+    public void color() {
         while (true) {
             availableColorsMessage availableColor = controller.getAvailableColor();
             String color = view.availableColors(availableColor);
@@ -227,7 +333,7 @@ public class Client {
      * invocations of controller methods to send received info.
      * invocations of controller methods to receive responseMessage. If responseMessage is correct, the loop ends.
      */
-    private void waitingPlayer(currentStateMessage current) {
+    public void waitingPlayer(currentStateMessage current) {
         Integer expected;
         boolean noResponse = false;
 
@@ -259,7 +365,7 @@ public class Client {
      * invocations of controller methods to send received info.
      * invocations of controller methods to receive responseMessage. If responseMessage is correct, the loop ends.
      */
-    private void starter() {
+    public void starter() {
         Integer side;
         boolean noResponse = false;
 
@@ -289,7 +395,7 @@ public class Client {
      * invocations of controller methods to send received info.
      * invocations of controller methods to receive responseMessage. If responseMessage is correct, the loop ends.
      */
-    private void pickObjective() {
+    public void pickObjective() {
         Integer pick;
         boolean noResponse = false;
 
@@ -322,7 +428,7 @@ public class Client {
      * invocations of controller methods to send received info.
      * invocations of controller methods to receive responseMessage. If responseMessage is correct, the loop ends.
      */
-    private void pickCard() {
+    public void pickCard() {
         Integer card;
         boolean noResponse = false;
 
@@ -352,7 +458,7 @@ public class Client {
      * invocations of controller methods to send received info.
      * invocations of controller methods to receive responseMessage. If responseMessage is correct, the loop ends.
      */
-    private void placeCard() {
+    public void placeCard() {
         AtomicIntegerArray card = new AtomicIntegerArray(4);
         boolean noResponse = false;
 
