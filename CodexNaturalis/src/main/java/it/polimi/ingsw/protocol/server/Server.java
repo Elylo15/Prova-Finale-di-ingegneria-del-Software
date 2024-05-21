@@ -51,7 +51,7 @@ public class Server implements Runnable {
         portSocket = 1024;
         portRMI = 1099;
         games = new CopyOnWriteArrayList<>();
-        defaultPath = "CodexNaturalis/savedGames";
+        defaultPath = "CodexNaturalis/savedMatches";
         logCreator = new LogCreator();
         this.serverRunning = false;
         this.timeoutSeconds = 2*60;
@@ -164,10 +164,11 @@ public class Server implements Runnable {
     private void handleConnection(ClientConnection connection) {
         if(connection == null)
             return;
+        // Confirms the connection to the client
+        connection.sendAnswerToConnection(new connectionResponseMessage(true));
 
         while (true) {
-            // Confirms the connection to the client
-            connection.sendAnswerToConnection(new connectionResponseMessage(true));
+
 
             logCreator.log("New client accepted, answer sent: " + connection.getIP() + " " + connection.getPort());
 
@@ -240,7 +241,7 @@ public class Server implements Runnable {
             // Obtains the list of running games
             ArrayList<Integer> runningGames = games.stream()
                     .filter(game -> game.getMatchInfo().getStatus() != MatchState.Waiting && game.getMatchInfo().getStatus() != MatchState.Endgame)
-                    .filter(game -> game.getMatchInfo().getExpectedPlayers() != null && game.getPlayersInfo().size() < game.getMatchInfo().getExpectedPlayers())
+                    .filter(game -> game.getMatchInfo().getExpectedPlayers() != null && game.getOnlinePlayerInfo().size() < game.getMatchInfo().getExpectedPlayers())
                     .map(game -> game.getMatchInfo().getID())
                     .collect(Collectors.toCollection(ArrayList::new));
 
@@ -357,67 +358,13 @@ public class Server implements Runnable {
                 .findAny().orElse(null);
 
         // Checks again: Game not found
-        if(lobbyManager == null || lobbyManager.getMatchInfo().getExpectedPlayers() <= lobbyManager.getPlayersInfo().size()) {
+        if(lobbyManager == null || lobbyManager.getMatchInfo().getExpectedPlayers() <= lobbyManager.getOnlinePlayerInfo().size()) {
             logCreator.log("Client " + connection.getIP() + " " + connection.getPort() + " failed to join match " + msg.getMatchID() + " due to not found lobby");
             throw new FailedToJoinMatch("Failed to join match " + msg.getMatchID() + " due to not found lobby");
         }
 
-        // Obtains the offline players nicknames
-        ArrayList<String> offlineNames;
+        this.joinNotNewMatch(connection, msg, lobbyManager);
 
-        offlineNames = lobbyManager.getMatchInfo().getOfflinePlayers().stream()
-                .map(playerInfo -> playerInfo.getPlayer().getNickname().toLowerCase())
-                .collect(Collectors.toCollection(ArrayList::new));
-
-        if(offlineNames.isEmpty() || lobbyManager.getPlayersInfo().size() >= lobbyManager.getMatchInfo().getExpectedPlayers()) {
-            logCreator.log("Client " + connection.getIP() + " " + connection.getPort() + " failed to join match " + msg.getMatchID() + " due to full lobby");
-            throw new FailedToJoinMatch("Failed to join match " + msg.getMatchID() + " due to full lobby");
-        }
-
-        // Sends status information
-        currentStateMessage currState = new currentStateMessage(null,null,"ConnectionFAState", false, null, null, lobbyManager.getMatchInfo().getID());
-        connection.sendCurrentState(currState);
-
-        // Obtains the name of the player
-        String name = "";
-        boolean correctChoice = false;
-        while(!correctChoice) {
-
-            // Asks for the new player name
-            Future<String> nameFuture = executor.submit(() -> connection.getName(offlineNames).getName().toLowerCase());
-
-            try {
-                name = nameFuture.get(this.timeoutSeconds, TimeUnit.SECONDS);
-            } catch (TimeoutException e) {
-                connection.closeConnection();
-                logCreator.log("Client " + connection.getIP() + " kicked due to no name received");
-                return;
-            } catch (InterruptedException e) {
-                connection.closeConnection();
-                logCreator.log("Client " + connection.getIP() + " kicked due to INTERRUPT");
-                return;
-            } catch (ExecutionException e) {
-                connection.closeConnection();
-                logCreator.log("Client " + connection.getIP() + " kicked due to EXECUTION ERROR: \n" + e.getCause().getMessage());
-                return;
-            }
-
-            // Checks if the name is correct
-            if(offlineNames.contains(name)) {
-                connection.sendAnswer(true);
-                correctChoice = true;
-            } else {
-                connection.sendAnswer(false);
-            }
-        }
-
-        // Tries to add the player to the game
-        try {
-            lobbyManager.movePlayer(name, connection);
-        } catch (FailedToJoinMatch e) {
-            logCreator.log("Client " + connection.getIP() + " " + connection.getPort() + " failed to join match " + msg.getMatchID() + " due to full lobby");
-            throw new FailedToJoinMatch("Failed to join match " + msg.getMatchID() + " due to full lobby");
-        }
     }
 
     /**
@@ -427,43 +374,57 @@ public class Server implements Runnable {
      * @param message serverOptionMessage obtained from the client.
      * @throws FailedToJoinMatch if the player cannot join the game.
      */
-    private void joinSavedMatch(ClientConnection connection, serverOptionMessage message) throws FailedToJoinMatch{
-        // Obtains all matches in WaitingAfterLoad state
-        ArrayList<ClientManager> waitingAfterLoad = games.stream()
-                .filter(clientManager -> clientManager.getMatchInfo().getStatus() == MatchState.WaitingAfterLoad)
-                .collect(Collectors.toCollection(ArrayList::new));
+    private void joinSavedMatch(ClientConnection connection, serverOptionMessage message) throws FailedToJoinMatch {
 
-        // Loads the game if it is not already loaded
-        if(waitingAfterLoad.stream().noneMatch(clientManager -> Objects.equals(clientManager.getMatchInfo().getID(), message.getSavedMatchID()))) {
-            MatchInfo matchInfo = this.loadMatch(message.getSavedMatchID());
-            if(matchInfo == null) {
+        ClientManager lobbyManager = null;
+        synchronized (this) {
+            if (this.games.stream().anyMatch(clientManager -> Objects.equals(clientManager.getMatchInfo().getID(), message.getSavedMatchID()))) {
+                logCreator.log("Client " + connection.getIP() + " " + connection.getPort() + " failed to join match " + message.getSavedMatchID() + " due to already started game");
+                throw new FailedToJoinMatch("Failed to join match " + message.getSavedMatchID() + " due to already started game");
+            }
+
+            ArrayList<Integer> matchFiles = this.listSavedMatches();
+
+            // Loads the game
+            if (matchFiles.contains(message.getSavedMatchID())) {
+                MatchInfo matchInfo = this.loadMatch(message.getSavedMatchID());
+                if (matchInfo == null) {
+                    logCreator.log("Client " + connection.getIP() + " " + connection.getPort() + " failed to join match " + message.getSavedMatchID() + " due to not found saved game");
+                    throw new FailedToJoinMatch("Failed to join match " + message.getSavedMatchID() + " due to not found saved game");
+                }
+
+                lobbyManager = new ClientManager(matchInfo);
+                games.add(lobbyManager);
+                executor.submit(lobbyManager::loadAndWaitSavedMatch);
+            } else {
                 logCreator.log("Client " + connection.getIP() + " " + connection.getPort() + " failed to join match " + message.getSavedMatchID() + " due to not found saved game");
                 throw new FailedToJoinMatch("Failed to join match " + message.getSavedMatchID() + " due to not found saved game");
             }
 
-            ClientManager lobbyManager = new ClientManager(matchInfo);
-            games.add(lobbyManager);
-            executor.submit(lobbyManager::loadAndWaitSavedMatch);
         }
 
-        // Finds the game
-        ClientManager lobbyManager = games.stream()
-                .filter(clientManager -> Objects.equals(clientManager.getMatchInfo().getID(), message.getSavedMatchID()))
-                .limit(1)
-                .findAny().orElse(null);
 
-        if(lobbyManager == null)
-            throw new FailedToJoinMatch("Failed to join match " + message.getSavedMatchID() + " due to not found lobby");
+        this.joinNotNewMatch(connection, message, lobbyManager);
+    }
 
+    /**
+     * Tries to add a new player to a match that is not in Waiting state.
+     * @param connection connection with the client.
+     * @param msg serverOptionMessage obtained from the client.
+     * @param lobbyManager ClientManager of the game.
+     * @throws FailedToJoinMatch if the player cannot join the game.
+     */
+    private void joinNotNewMatch(ClientConnection connection, serverOptionMessage msg, ClientManager lobbyManager) throws FailedToJoinMatch {
         // Obtains the offline players nicknames
         ArrayList<String> offlineNames;
+
         offlineNames = lobbyManager.getMatchInfo().getOfflinePlayers().stream()
                 .map(playerInfo -> playerInfo.getPlayer().getNickname().toLowerCase())
                 .collect(Collectors.toCollection(ArrayList::new));
 
-        if(offlineNames.isEmpty() || lobbyManager.getPlayersInfo().size() >= lobbyManager.getMatchInfo().getExpectedPlayers()) {
-            logCreator.log("Client " + connection.getIP() + " " + connection.getPort() + " failed to join match " + message.getSavedMatchID() + " due to full lobby");
-            throw new FailedToJoinMatch("Failed to join match " + message.getSavedMatchID() + " due to full lobby");
+        if(offlineNames.isEmpty() || lobbyManager.getOnlinePlayerInfo().size() >= lobbyManager.getMatchInfo().getExpectedPlayers()) {
+            logCreator.log("Client " + connection.getIP() + " " + connection.getPort() + " failed to join match " + msg.getMatchID() + " due to full lobby");
+            throw new FailedToJoinMatch("Failed to join match " + msg.getMatchID() + " due to full lobby");
         }
 
         // Sends status information
@@ -507,8 +468,8 @@ public class Server implements Runnable {
         try {
             lobbyManager.movePlayer(name, connection);
         } catch (FailedToJoinMatch e) {
-            logCreator.log("Client " + connection.getIP() + " " + connection.getPort() + " failed to join match " + message.getMatchID() + " due to full lobby");
-            throw new FailedToJoinMatch("Failed to join match " + message.getMatchID() + " due to full lobby");
+            logCreator.log("Client " + connection.getIP() + " " + connection.getPort() + " failed to join match " + msg.getMatchID() + " due to full lobby");
+            throw new FailedToJoinMatch("Failed to join match " + msg.getMatchID() + " due to full lobby");
         }
     }
 
@@ -529,7 +490,7 @@ public class Server implements Runnable {
         // Obtains unavailable names
         ArrayList<String> unavailableNames;
         synchronized (lobbyManager) {
-            unavailableNames = lobbyManager.getPlayersInfo().stream()
+            unavailableNames = lobbyManager.getOnlinePlayerInfo().stream()
                     .map(playerInfo -> playerInfo.getPlayer().getNickname().toLowerCase())
                     .collect(Collectors.toCollection(ArrayList::new));
 
@@ -577,7 +538,7 @@ public class Server implements Runnable {
         // Obtains unavailable colors
         ArrayList<String> unavailableColors;
         synchronized (lobbyManager) {
-            unavailableColors = lobbyManager.getPlayersInfo().stream()
+            unavailableColors = lobbyManager.getOnlinePlayerInfo().stream()
                     .map(playerInfo -> playerInfo.getPlayer().getColor().toLowerCase())
                     .collect(Collectors.toCollection(ArrayList::new));
         }
@@ -651,10 +612,15 @@ public class Server implements Runnable {
         }
     }
 
+    /**
+     * Creates a new match ID avoiding duplicates.
+     * @return new match ID.
+     */
     private Integer createNewMatchID() {
         int MatchID = 0;
         boolean correct = false;
-        while(!correct || MatchID == 1000) {
+        ArrayList<Integer> matchFiles = this.listSavedMatches();
+        while(!correct || MatchID == 1000 || matchFiles.contains(MatchID)) {
             MatchID = (new Random()).nextInt(100000);
             Integer finalMatchID = MatchID;
             if(games.stream()
@@ -687,7 +653,7 @@ public class Server implements Runnable {
      * @return MatchInfo of the loaded match.
      */
     private MatchInfo loadMatch(Integer matchID) {
-        String filename = "CodexNaturalis/savedMatches/match_" + matchID + ".match";
+        String filename = this.defaultPath + "/match_" + matchID + ".match";
         try (FileInputStream fileIn = new FileInputStream(filename);
              ObjectInputStream in = new ObjectInputStream(fileIn)) {
             return (MatchInfo) in.readObject();

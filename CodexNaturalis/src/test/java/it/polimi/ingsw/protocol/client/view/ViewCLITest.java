@@ -9,6 +9,7 @@ import it.polimi.ingsw.model.cards.enumeration.Reign;
 import it.polimi.ingsw.model.cards.enumeration.Resource;
 import it.polimi.ingsw.model.cards.exceptions.InvalidIdException;
 import it.polimi.ingsw.model.cards.exceptions.noPlaceCardException;
+import it.polimi.ingsw.protocol.messages.EndGameState.declareWinnerMessage;
 import it.polimi.ingsw.protocol.messages.responseMessage;
 import org.junit.Before;
 import org.junit.jupiter.api.Assertions;
@@ -16,6 +17,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -28,29 +30,12 @@ class ViewCLITest {
     void setUp() {
         playerArea = new PlayerArea();
         viewCLI = new ViewCLI();
+
     }
 
 
     @Test
     void checkShowArea() throws noPlaceCardException {
-        String[][] test = new String[4][4];
-        test[0][0] = "81F/nullnull";
-        test[0][1] = "81F/nullnull";
-        test[0][2] = "null";
-        test[0][3] = "null";
-        test[1][0] = "81F/nullnull";
-        test[1][1] = "2F/81F";
-        test[1][2] = "2F/nullnull";
-        test[1][3] = "null";
-        test[2][0] = "null";
-        test[2][1] = "2F/nullnull";
-        test[2][2] = "3B/2F";
-        test[2][3] = "3B/nullnull";
-        test[3][0] = "null";
-        test[3][1] = "null";
-        test[3][2] = "3B/nullnull";
-        test[3][3] = "4F/3B";
-
 
 
         viewCLI = new ViewCLI();
@@ -75,9 +60,9 @@ class ViewCLITest {
 
         PlaceableCard testCard;
         resources = new ArrayList<>();
-        resources.add(Resource.Empty);
-        resources.add(Resource.Empty);
-        resources.add(Resource.Empty);
+        resources.add(Resource.Fungus);
+        resources.add(Resource.Fungus);
+        resources.add(Resource.Blocked);
         resources.add(Resource.Empty);
         try {
             testCard = new ResourceCard(2, 0, Reign.Fungus, true, resources);
@@ -86,18 +71,23 @@ class ViewCLITest {
         }
         PlaceableCard testCard2;
         resources = new ArrayList<>();
-        resources.add(Resource.Empty);
-        resources.add(Resource.Empty);
-        resources.add(Resource.Empty);
-        resources.add(Resource.Empty);
+        resources.add(Resource.Quill);
+        resources.add(Resource.Blocked);
+        resources.add(Resource.Animal);
+        resources.add(Resource.Fungus);
         try {
-            testCard2 = new ResourceCard(3, 0, Reign.Fungus, false, resources);
+            testCard2 = new ResourceCard(27, 0, Reign.Animal, false, resources);
         } catch (InvalidIdException e) {
             throw new RuntimeException(e);
         }
         PlaceableCard testCard3;
+        resources = new ArrayList<>();
+        resources.add(Resource.Insect);
+        resources.add(Resource.Insect);
+        resources.add(Resource.Empty);
+        resources.add(Resource.Blocked);
         try {
-            testCard3 = new ResourceCard(4, 0, Reign.Fungus, true, resources);
+            testCard3 = new ResourceCard(31, 0, Reign.Insect, true, resources);
         } catch (InvalidIdException e) {
             throw new RuntimeException(e);
         }
@@ -105,37 +95,24 @@ class ViewCLITest {
         playerArea.placeStarterCard(starterCard, true);
         playerArea.placeCard(testCard, 1,1, true);
         playerArea.placeCard(testCard2,2,2,false);
-        playerArea.placeCard(testCard3,3,3,true);
+        playerArea.placeCard(testCard3,-1,-1,true);
 
-//        viewCLI.showPlayerArea(playerArea);
-
-
-
-//        String[][] matrix = viewCLI.showPlayerArea(playerArea);
-//
-//        viewCLI.showPlayerArea(playerArea);
-//
-//        Assertions.assertEquals(test[0][0], matrix[0][0]);
-//        Assertions.assertEquals(test[0][1], matrix[0][1]);
-//        Assertions.assertNull(matrix[0][2]);
-//        Assertions.assertNull(matrix[0][3]);
-//        Assertions.assertEquals(test[1][0], matrix[1][0]);
-//        Assertions.assertEquals(test[1][1], matrix[1][1]);
-//        Assertions.assertEquals(test[1][2], matrix[1][2]);
-//        Assertions.assertNull(matrix[1][3]);
-//        Assertions.assertNull(matrix[2][0]);
-//        Assertions.assertEquals(test[2][1], matrix[2][1]);
-//        Assertions.assertEquals(test[2][2], matrix[2][2]);
-//        Assertions.assertEquals(test[2][3], matrix[2][3]);
-//        Assertions.assertNull(matrix[3][0]);
-//        Assertions.assertNull(matrix[3][1]);
-//        Assertions.assertEquals(test[3][2], matrix[3][2]);
-//        Assertions.assertEquals(test[3][3], matrix[3][3]);
+        viewCLI.showPlayerArea(playerArea);
 
 
-
-
-
+    }
+    @Test
+    void testEnd() {
+        HashMap<String, Integer> scores = new HashMap<>();
+        scores.put("player1", 10);
+        scores.put("player2", 20);
+        scores.put("player3", 16);
+        HashMap<String, Integer> objective = new HashMap<>();
+        objective.put("player1", 3);
+        objective.put("player2", 4);
+        objective.put("player3", 2);
+        declareWinnerMessage message = new declareWinnerMessage(scores,objective);
+        viewCLI.endGame(message);
     }
 
     @Test

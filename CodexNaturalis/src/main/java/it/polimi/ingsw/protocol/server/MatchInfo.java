@@ -7,6 +7,7 @@ import it.polimi.ingsw.protocol.server.FSM.MatchState;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class MatchInfo implements Serializable {
     private Match match;
@@ -15,7 +16,7 @@ public class MatchInfo implements Serializable {
     private Integer expectedPlayers;
     private MatchState status;
     private boolean lastTurn;
-    private ArrayList<PlayerInfo> offlinePlayers;
+    private CopyOnWriteArrayList<PlayerInfo> offlinePlayers;
 
     public MatchInfo(Match match, int ID, String path, Integer expectedPlayers, MatchState status) {
         this.match = match;
@@ -24,7 +25,7 @@ public class MatchInfo implements Serializable {
         this.expectedPlayers = expectedPlayers;
         this.status = status;
         this.lastTurn = false;
-        this.offlinePlayers = new ArrayList<>();
+        this.offlinePlayers = new CopyOnWriteArrayList<>();
     }
 
     public void addOfflinePlayer(PlayerInfo player) {
@@ -52,6 +53,6 @@ public class MatchInfo implements Serializable {
     public Integer getExpectedPlayers() {return expectedPlayers;}
     public MatchState getStatus() {return status;}
     public boolean isLastTurn() {return lastTurn;}
-    public ArrayList<PlayerInfo> getOfflinePlayers() {return offlinePlayers;}
+    public ArrayList<PlayerInfo> getOfflinePlayers() {return new ArrayList<>(this.offlinePlayers);}
 
 }

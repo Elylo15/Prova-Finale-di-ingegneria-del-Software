@@ -264,6 +264,29 @@ public class ViewGUI extends View {
         return number;
     }
 
+    /**
+     * visualize the waiting status of the match.
+     * The first player to connect to the server is the host and will wait for other players to be ready after choosing the number of players.
+     * The other players after choosing name and color will wait for the other players to choose to.
+     */
+    public void waiting(){
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/waiting.fxml"));
+        Parent root = null;
+        try {
+            root = loader.load();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        Scene scene = new Scene(root);
+        mainstage.setScene(scene);
+        mainstage.setFullScreen(true);
+        if (!mainstage.isShowing()) {
+            mainstage.showAndWait();
+        }
+
+    }
+
     @Override
     public void updatePlayer(currentStateMessage message) {
         //load a mainGamePage with a backGround, scoreBoard etc.
@@ -325,8 +348,14 @@ public class ViewGUI extends View {
         return "";
     }
 
+    /**
+     * visualize the final information about the game, the number of objectives achieved by each player and then
+     * show the scoreboard with the personal points of the players
+     * @param message
+     */
     @Override
     public void endGame(declareWinnerMessage message) {
+
     }
 
 }

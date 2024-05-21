@@ -71,7 +71,8 @@ public class ControllerRMI extends Controller {
         try {
             return (currentStateMessage) toClient.read();
         } catch (RemoteException e) {
-            System.out.println("Error in getCurrent");
+            System.out.println("Error in getCurrent: " + e.getMessage());
+            e.printStackTrace();
             throw new RuntimeException(e);
         }
     }

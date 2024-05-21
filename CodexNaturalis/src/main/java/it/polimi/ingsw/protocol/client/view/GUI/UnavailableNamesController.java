@@ -11,7 +11,6 @@ import java.io.IOException;
 
 public class UnavailableNamesController {
     public Label unavailableNames;
-    public Label label2;
 
     public TextField nameToChoose;
 
