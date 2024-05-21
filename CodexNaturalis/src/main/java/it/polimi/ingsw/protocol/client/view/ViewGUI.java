@@ -14,7 +14,6 @@ import it.polimi.ingsw.protocol.messages.responseMessage;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -287,59 +286,124 @@ public class ViewGUI extends View {
 
     }
 
+    //load a mainGamePage with a backGround, scoreBoard etc.
+    //load the playerCards in the correct positions and visualize the playerArea
+    //and the general starting turn situation
+
+    //get playerHand, load card images based on id in correct place, when selected, select the id
+    //playerHand is an array of 3 cards, get id and place (placeHolder?) use imageBinder with Card
+
+    //playerArea like a grid
+
+    //scoreboard -> based on points, color goes to specific position (placeholder?)
+
+    //decks -> load back of card on top, load front of card on table (imageBinder)
+
+    //if notYourTurn button -> onClick back to your page
+    //if notYourTurn back of currentPlayer hand and of objective cards
+
     @Override
     public void updatePlayer(currentStateMessage message) {
-        //load a mainGamePage with a backGround, scoreBoard etc.
-        //load the playerCards in the correct positions and visualize the playerArea
-        //and the general starting turn situation
+        try {
+            FXMLLoader loader;
+            Parent root;
 
-        //get playerHand, load card images based on id in correct place, when selected, select the id
-        //playerHand is an array of 3 cards, get id and place (placeHolder?) use imageBinder with Card
+            if (Objects.equals(message.getStateName(), "StarterCardState")) {
+                loader = new FXMLLoader(getClass().getResource("/starterPage.fxml"));
+            } else if (Objects.equals(message.getStateName(), "ObjectiveState")) {
+                loader = new FXMLLoader(getClass().getResource("/objectivePage.fxml"));
+            } else {
+                loader = new FXMLLoader(getClass().getResource("/myselfGamePage.fxml"));
+            }
 
-        //playerArea like a grid
+            root = loader.load();
+            Object controller = loader.getController();
 
-        //scoreboard -> based on points, color goes to specific position (placeholder?)
+            if (controller instanceof StarterController) {
+                ((StarterController) controller).set(message);
+            } else if (controller instanceof ObjectiveController) {
+                ((ObjectiveController) controller).set(message);
+            } else if (controller instanceof MyselfPageController) {
+                ((MyselfPageController) controller).set(message);
+            }
 
-        //decks -> load back of card on top, load front of card on table (imageBinder)
+            Scene scene = new Scene(root);
+            mainstage.setScene(scene);
+            mainstage.show();
 
-        //if notYourTurn button -> onClick back to your page
-        //if notYourTurn back of currentPlayer hand and of objective cards
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+        }
     }
 
     @Override
     public int placeStarter() {
-        //animations and things happen in a mainGamePage
-        //addEventListener -> onClick on border turn around the card
-        //addEventListener -> onClick select, on click place where clicked and click place button(o doubleClick)
-        return 0;
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/starterPage.fxml"));
+            Parent root = loader.load();
+            StarterController controller = loader.getController();
+
+            return controller.getChoice();
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+            return 1000;
+        }
     }
 
     @Override
     public int chooseObjective(ArrayList<ObjectiveCard> objectives) {
-        //animations and things happen in a mainGamePage
-        //addEventListener -> onClick select and click button choose (or double click is definitive)
-        return 0;
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/objectivePage.fxml"));
+            Parent root = loader.load();
+            ObjectiveController controller = loader.getController();
+
+            controller.setObjectives(objectives);
+            return controller.getChoice();
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+            return 1000;
+        }
     }
 
     @Override
     public int[] placeCard() {
-        //animations and things happen in a mainGamePage
-        //addEventListener -> onClick on border turn around the card
-        //addEventListener -> onClick select, on double click place where clicked and click place button (or double click is definitive)
-        return new int[0];
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/myselfGamePage.fxml"));
+            Parent root = loader.load();
+            MyselfPageController controller = loader.getController();
+
+            return controller.getPlaced();
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+            return new int[]{1000, 1000, 1000, 1000};
+        }
     }
 
     @Override
     public int pickCard() {
-        //animations and things happen in a mainGamePage
-        //addEventListener -> onClick select and click button choose (or first click is definitive)
-        //update what is seen (load back of card on top, load front of card on table)
-        return 0;
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/myselfGamePage.fxml"));
+            Parent root = loader.load();
+            MyselfPageController controller = loader.getController();
+
+            return controller.getDraw();
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+            return 1000;
+        }
     }
 
     @Override
     public void update(updatePlayerMessage update) {
-        //load the mainGamePage with the general ending turn situation
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/currentGamePage.fxml"));
+            Parent root = loader.load();
+            CurrentPageController controller = loader.getController();
+
+            controller.update(update);
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+        }
     }
 
 

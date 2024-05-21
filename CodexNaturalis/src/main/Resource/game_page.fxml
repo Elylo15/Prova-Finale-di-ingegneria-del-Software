@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<?import javafx.scene.layout.VBox?>
-
-<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/" fx:controller="it.polimi.ingsw.protocol.client.view.GUI.gamePageController" spacing="10">
-    <VBox fx:id="cardContainer" spacing="10" />
-</VBox>
-

@@ -914,7 +914,6 @@ public class ViewCLI extends View {
         this.showCommonArea(player.getCommonArea());
         this.showPlayerArea(player.getPlayerArea());
         this.showPlayerHand(player, update.getNicknameViewer());
-
     }
 
 
