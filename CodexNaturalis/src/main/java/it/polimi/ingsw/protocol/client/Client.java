@@ -75,7 +75,7 @@ public class Client {
         }
         String[] server = view.askPortIP();
         setIP(server[0]);
-//        setPort(server[1]);
+        setPort(server[1]);
 
         boolean isSocket = view.askSocket();
         setController(server, isSocket);
