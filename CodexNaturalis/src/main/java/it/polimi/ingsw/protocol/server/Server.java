@@ -423,7 +423,7 @@ public class Server implements Runnable {
         // Obtains the offline players nicknames
         ArrayList<String> offlineNames;
 
-        offlineNames = lobbyManager.getMatchInfo().getOfflinePlayers().stream()
+        offlineNames = lobbyManager.getMatchInfo().getAllPlayersInfo().stream()
                 .map(playerInfo -> playerInfo.getPlayer().getNickname().toLowerCase())
                 .collect(Collectors.toCollection(ArrayList::new));
 
@@ -477,7 +477,7 @@ public class Server implements Runnable {
 
         // Tries to add the player to the game
         try {
-            lobbyManager.movePlayer(name, connection);
+            lobbyManager.wakeUpPlayer(name, connection);
         } catch (FailedToJoinMatch e) {
             logCreator.log("Client " + connection.getIP() + " " + connection.getPort() + " failed to join match " + msg.getMatchID() + " due to full lobby");
             throw new FailedToJoinMatch("Failed to join match " + msg.getMatchID() + " due to full lobby");

@@ -1,7 +1,6 @@
 package it.polimi.ingsw.protocol.server;
 
 import it.polimi.ingsw.model.Match;
-import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.protocol.server.FSM.MatchState;
 
 import java.io.Serializable;
@@ -16,7 +15,7 @@ public class MatchInfo implements Serializable {
     private Integer expectedPlayers;
     private MatchState status;
     private boolean lastTurn;
-    private CopyOnWriteArrayList<PlayerInfo> offlinePlayers;
+    private CopyOnWriteArrayList<PlayerInfo> allPlayersInfo;
 
     public MatchInfo(Match match, int ID, String path, Integer expectedPlayers, MatchState status) {
         this.match = match;
@@ -25,20 +24,30 @@ public class MatchInfo implements Serializable {
         this.expectedPlayers = expectedPlayers;
         this.status = status;
         this.lastTurn = false;
-        this.offlinePlayers = new CopyOnWriteArrayList<>();
+        this.allPlayersInfo = new CopyOnWriteArrayList<>();
     }
 
-    public void addOfflinePlayer(PlayerInfo player) {
-        this.offlinePlayers.add(player);
+    public void addPlayer(PlayerInfo player) {
+        this.allPlayersInfo.add(player);
     }
 
-    public PlayerInfo removeOfflinePlayer(String Nickname) {
-        PlayerInfo player = this.offlinePlayers.stream()
-                .filter(playerInfo -> Objects.equals(playerInfo.getPlayer().getNickname(), Nickname))
-                .findFirst()
-                .orElse(null);
-        this.offlinePlayers.remove(player);
-        return player;
+    public void setOffline(String Nickname) {
+        for (PlayerInfo player : allPlayersInfo) {
+            if (player.getPlayer().getNickname().equalsIgnoreCase(Nickname)) {
+                player.getConnection().closeConnection();
+                player.setConnection(null);
+                return;
+            }
+        }
+    }
+
+    public void bringOnline(String Nickname, ClientConnection connection) {
+        for (PlayerInfo player : allPlayersInfo) {
+            if (player.getPlayer().getNickname().equalsIgnoreCase(Nickname)) {
+                player.setConnection(connection);
+                return;
+            }
+        }
     }
 
     public void setExpectedPlayers(Integer expectedPlayers) {this.expectedPlayers = expectedPlayers;}
@@ -53,6 +62,6 @@ public class MatchInfo implements Serializable {
     public Integer getExpectedPlayers() {return expectedPlayers;}
     public MatchState getStatus() {return status;}
     public boolean isLastTurn() {return lastTurn;}
-    public ArrayList<PlayerInfo> getOfflinePlayers() {return new ArrayList<>(this.offlinePlayers);}
+    public ArrayList<PlayerInfo> getAllPlayersInfo() {return new ArrayList<>(this.allPlayersInfo);}
 
 }

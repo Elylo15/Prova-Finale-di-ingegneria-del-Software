@@ -26,7 +26,6 @@ import java.util.stream.Collectors;
 
 public class ClientManager implements Runnable {
     private MatchInfo matchInfo;
-    private CopyOnWriteArrayList<PlayerInfo> onlinePlayerInfo; // Only online players
     private int timeout;
     private int turnNumber;
 
@@ -41,8 +40,6 @@ public class ClientManager implements Runnable {
         this.matchInfo = match;
         this.matchInfo.setLastTurn(false);
         this.turnNumber = 0;
-
-        onlinePlayerInfo = new CopyOnWriteArrayList<>();
 
         this.timeout = 60 * 1000;
 
@@ -61,20 +58,18 @@ public class ClientManager implements Runnable {
 
 
     /**
-     * Checks if the player is in the list of online players or offline players
-     * @param playerInfo player to be checked
-     * @throws FailedToJoinMatch if the player is not found
+     * Adds a player to the list of players in the match
+     * @param playerInfo player to be added
+     * @throws FailedToJoinMatch if the player cannot join the match
      */
     protected synchronized void addPlayerInfo(PlayerInfo playerInfo) throws FailedToJoinMatch {
         if(playerInfo != null
                 && matchInfo.getStatus() == MatchState.Waiting
-                && (matchInfo.getExpectedPlayers() == null || matchInfo.getExpectedPlayers() > this.onlinePlayerInfo.size())
-                && this.onlinePlayerInfo.stream().noneMatch(playerInfo1 -> playerInfo1.getPlayer().getNickname().equalsIgnoreCase(playerInfo.getPlayer().getNickname()))
-                && this.onlinePlayerInfo.stream().noneMatch(playerInfo1 -> playerInfo1.getPlayer().getColor().equalsIgnoreCase(playerInfo.getPlayer().getColor()))
-                && this.matchInfo.getOfflinePlayers().stream().noneMatch(playerInfo1 -> playerInfo1.getPlayer().getNickname().equalsIgnoreCase(playerInfo.getPlayer().getNickname())
-                && playerInfo1.getPlayer().getColor().equalsIgnoreCase(playerInfo.getPlayer().getColor())))
+                && (matchInfo.getExpectedPlayers() == null || matchInfo.getExpectedPlayers() > matchInfo.getAllPlayersInfo().size())
+                && matchInfo.getAllPlayersInfo().stream().noneMatch(playerInfo1 -> playerInfo1.getPlayer().getNickname().equalsIgnoreCase(playerInfo.getPlayer().getNickname()))
+                && matchInfo.getAllPlayersInfo().stream().noneMatch(playerInfo1 -> playerInfo1.getPlayer().getColor().equalsIgnoreCase(playerInfo.getPlayer().getColor())))
         {
-            this.onlinePlayerInfo.add(playerInfo);
+            this.matchInfo.addPlayer(playerInfo);
             logCreator.log("Player added: " + playerInfo.getPlayer().getNickname() + " " + playerInfo.getPlayer().getColor());
             this.notifyAll();
         } else {
@@ -83,16 +78,14 @@ public class ClientManager implements Runnable {
     }
 
     /**
-     * Kicks a player from the match, removing it from the list of online players and adding it to the list of offline players
+     * Kicks a player from the match, closing its connection.
      *
      * @param playerInfo player to be kicked
      */
     private void kickPlayer(PlayerInfo playerInfo) {
-        this.onlinePlayerInfo.remove(playerInfo);
-        playerInfo.getConnection().closeConnection();
-        playerInfo.setConnection(null);
-        matchInfo.addOfflinePlayer(playerInfo);
-        logCreator.log("Player kicked: " + playerInfo.getPlayer().getNickname() + " and added to offline players");
+        String nickname = playerInfo.getPlayer().getNickname();
+        this.matchInfo.setOffline(nickname);
+        logCreator.log("Player kicked: " + nickname + " and added to offline players");
     }
 
     /**
@@ -100,41 +93,41 @@ public class ClientManager implements Runnable {
      *
      * @param nickname nickname of the player to be moved
      */
-    protected synchronized void movePlayer(String nickname, ClientConnection connection) throws FailedToJoinMatch {
+    protected synchronized void wakeUpPlayer(String nickname, ClientConnection connection) throws FailedToJoinMatch {
 
         // Check if the state of the match allows the player to join
         if(this.matchInfo.getStatus() == MatchState.Waiting || this.matchInfo.getStatus() == MatchState.KickingPlayers || this.matchInfo.getStatus() == MatchState.Endgame) {
             throw new FailedToJoinMatch("Player cannot join the match, match is not in the right state");
         }
 
-        // Check if the player is in the list of offline players
-        PlayerInfo playerInfo = matchInfo.getOfflinePlayers().stream()
+        // Check if the player is in the list of players and it is offline
+        PlayerInfo playerInfo = matchInfo.getAllPlayersInfo().stream()
                 .filter(playerInfo1 -> playerInfo1.getPlayer().getNickname().equalsIgnoreCase(nickname))
+                .filter(playerInfo1 -> playerInfo1.getConnection() == null)
                 .findFirst().orElse(null);
 
 
-        // Eventually move the player to the list of online players
+        // Eventually sets up a new connection for the player
         if (playerInfo != null) {
             playerInfo.setConnection(connection);
-            this.onlinePlayerInfo.add(playerInfo);
-            matchInfo.getOfflinePlayers().remove(playerInfo);
-            this.notifyAll();
             logCreator.log("Player moved: " + playerInfo.getPlayer().getNickname() + " from offline to online players");
+            this.notifyAll();
         } else {
             logCreator.log("Player " + nickname + " is null and cannot be brought back online");
             throw new FailedToJoinMatch("Player cannot join the match");
         }
     }
 
-
-
     /**
-     * Checks if new players can join. If the number of player meets with expectedPlayers, the eventually new player is kicked.
-     * @param connection connection manager of the new player.
+     * Retrieves a list of all online players in the match.
+     * A player is considered online if their connection is not null.
+     *
+     * @return An ArrayList of PlayerInfo objects representing the online players.
      */
-    protected synchronized void checkAvailability(ClientConnection connection) {
-        if(this.matchInfo.getExpectedPlayers() <= this.onlinePlayerInfo.size())
-            connection.closeConnection();
+    protected ArrayList<PlayerInfo> getOnlinePlayerInfo() {
+        return this.matchInfo.getAllPlayersInfo().stream()
+                .filter(playerInfo -> playerInfo.getConnection() != null)
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     /**
@@ -143,16 +136,6 @@ public class ClientManager implements Runnable {
      */
     protected MatchInfo getMatchInfo() {return this.matchInfo;}
 
-    /**
-     * Getter of PlayersInfo
-     *
-     * @return list of PlayersInfo
-     */
-    protected ArrayList<PlayerInfo> getOnlinePlayerInfo() {
-        return new ArrayList<>(this.onlinePlayerInfo);
-    }
-
-    // Maybe remove this and the matchInfo from this class
     /**
      * Getter of Match (model)
      * @return Match
@@ -196,7 +179,7 @@ public class ClientManager implements Runnable {
 
                 // Checks if there are online player in the starter state after the initial turns
                 if (this.turnNumber > 1) {
-                    this.onlinePlayerInfo.stream()
+                    this.getOnlinePlayerInfo().stream()
                             .filter(playerInfo -> playerInfo.getState() == State.StarterCard)
                             .forEach(playerInfo -> this.player(playerInfo.getPlayer()));
                 }
@@ -204,7 +187,7 @@ public class ClientManager implements Runnable {
 
                 // Checks if there are online player in the objective state after the initial turns
                 if (this.turnNumber > 2) {
-                    this.onlinePlayerInfo.stream()
+                    this.getOnlinePlayerInfo().stream()
                             .filter(playerInfo -> playerInfo.getState() == State.Objective)
                             .forEach(playerInfo -> this.player(playerInfo.getPlayer()));
                 }
@@ -212,7 +195,7 @@ public class ClientManager implements Runnable {
 
                 // Eventually update all players to last turn
                 if (this.matchInfo.isLastTurn()) {
-                    this.onlinePlayerInfo.stream()
+                    this.getOnlinePlayerInfo().stream()
                             .filter(playerInfo -> playerInfo.getState() == State.PlaceCard)
                             .forEach(playerInfo -> playerInfo.setState(State.LastTurn));
                 }
@@ -321,7 +304,7 @@ public class ClientManager implements Runnable {
 
             synchronized(this) {
                 // Waiting for the first player that will be indicated as the "host"
-                while (this.onlinePlayerInfo.isEmpty()) {
+                while (this.getOnlinePlayerInfo().isEmpty()) {
                     try{
                         this.wait();
                     } catch (InterruptedException ignore) {
@@ -334,12 +317,12 @@ public class ClientManager implements Runnable {
             synchronized(this) {
 
 
-                PlayerInfo host = this.onlinePlayerInfo.getFirst();
+                PlayerInfo host = this.getOnlinePlayerInfo().getFirst();
 
                 if(host != null) {
                     // Sends current state data
-                    this.onlinePlayerInfo.forEach(playerInfo -> {
-                                currentStateMessage curr = new currentStateMessage(null, playerInfo.getPlayer(),"WaitingForPlayerState",false, this.onlinePlayers(), null, this.matchInfo.getID());
+                    this.getOnlinePlayerInfo().forEach(playerInfo -> {
+                                currentStateMessage curr = new currentStateMessage(null, playerInfo.getPlayer(),"WaitingForPlayerState",false, this.onlinePlayersNicknames(), null, this.matchInfo.getID());
                                 playerInfo.getConnection().sendCurrentState(curr);
                                 playerInfo.getConnection().sendNewHostMessage(host.getPlayer().getNickname());
                             });
@@ -388,21 +371,21 @@ public class ClientManager implements Runnable {
 
         }
 
-        logCreator.log("Expected players obtained : " + this.matchInfo.getExpectedPlayers() + " from " + this.onlinePlayerInfo.getFirst().getPlayer().getNickname());
+        logCreator.log("Expected players obtained : " + this.matchInfo.getExpectedPlayers() + " from " + this.getOnlinePlayerInfo().getFirst().getPlayer().getNickname());
 
         synchronized (this) {
 
             // Wait for the specified number of expected players
-            while(this.onlinePlayerInfo.size() < this.matchInfo.getExpectedPlayers()) {
+            while(this.getOnlinePlayerInfo().size() < this.matchInfo.getExpectedPlayers()) {
                 try {
                     this.wait();
                 } catch (InterruptedException ignore) {}
             }
         }
 
-        while(this.onlinePlayerInfo.size() > this.matchInfo.getExpectedPlayers()) {
+        while(this.getOnlinePlayerInfo().size() > this.matchInfo.getExpectedPlayers()) {
             logCreator.log("Too many players have joined the match");
-            this.kickPlayer(this.onlinePlayerInfo.getLast());
+            this.kickPlayer(this.getOnlinePlayerInfo().getLast());
         }
 
         // Updates state of the match
@@ -411,7 +394,7 @@ public class ClientManager implements Runnable {
 
 
         // Adds all players to the match (match of the model)
-        for(PlayerInfo playerInfo : this.onlinePlayerInfo) {
+        for(PlayerInfo playerInfo : this.getOnlinePlayerInfo()) {
             try {
                 this.matchInfo.getMatch().addPlayer(playerInfo.getPlayer());
                 playerInfo.setState(State.StarterCard);
@@ -437,24 +420,13 @@ public class ClientManager implements Runnable {
     private synchronized void player(Player player) {
         if(player == null) {
             logCreator.log("Player is null");
-            switch (this.matchInfo.getStatus()) {
-                case Player1 -> this.matchInfo.setStatus(MatchState.Player2);
-                case Player2 -> this.matchInfo.setStatus(MatchState.Player3);
-                case Player3 -> this.matchInfo.setStatus(MatchState.Player4);
-                case Player4 -> this.matchInfo.setStatus(MatchState.Player1);
-            }
+            updateMatchStatus();
             return;
         }
         PlayerInfo playerInfo = this.findPlayer(player);
         if(playerInfo == null) {
             logCreator.log("Player " + player.getNickname() + " not found and skipped");
-            switch (this.matchInfo.getStatus()) {
-                case Player1 -> this.matchInfo.setStatus(MatchState.Player2);
-                case Player2 -> this.matchInfo.setStatus(MatchState.Player3);
-                case Player3 -> this.matchInfo.setStatus(MatchState.Player4);
-                case Player4 -> this.matchInfo.setStatus(MatchState.Player1);
-            }
-            return;
+            updateMatchStatus();
         }
 
 
@@ -466,7 +438,7 @@ public class ClientManager implements Runnable {
                 this.starterState(playerInfo);
 
                 // Updates the view of every player about the current one
-                for(PlayerInfo playerInfo1 : this.onlinePlayerInfo) {
+                for(PlayerInfo playerInfo1 : this.getOnlinePlayerInfo()) {
                     updatePlayerMessage update = new updatePlayerMessage(player, playerInfo1.getPlayer().getNickname());
                     playerInfo1.getConnection().sendUpdatePlayer(update);
                 }
@@ -474,17 +446,13 @@ public class ClientManager implements Runnable {
 
 
                 // End turn and update states
-                if(this.onlinePlayerInfo.contains(playerInfo)) { // Checks if the player is online
+                if(this.getOnlinePlayerInfo().contains(playerInfo)) { // Checks if the player is online
                     logCreator.log("Player " + player.getNickname() + " placed the starter card");
                     playerInfo.setState(State.Objective);
                     playerInfo.getPlayer().initialHand();
                 }
-                switch (this.matchInfo.getStatus()) {
-                    case Player1 -> this.matchInfo.setStatus(MatchState.Player2);
-                    case Player2 -> this.matchInfo.setStatus(MatchState.Player3);
-                    case Player3 -> this.matchInfo.setStatus(MatchState.Player4);
-                    case Player4 -> this.matchInfo.setStatus(MatchState.Player1);
-                }
+
+                this.updateMatchStatus();
 
                 // Saves the progress of the game
                 this.saveMatch();
@@ -497,25 +465,21 @@ public class ClientManager implements Runnable {
 
 
                 // Updates the view of every player about the current one
-                for(PlayerInfo playerInfo1 : this.onlinePlayerInfo) {
+                for(PlayerInfo playerInfo1 : this.getOnlinePlayerInfo()) {
                     updatePlayerMessage update = new updatePlayerMessage(player, playerInfo1.getPlayer().getNickname());
                     playerInfo1.getConnection().sendUpdatePlayer(update);
                 }
 
                 // End turn and update states
-                if(this.onlinePlayerInfo.contains(playerInfo)) {
+                if(this.getOnlinePlayerInfo().contains(playerInfo)) {
                     logCreator.log("Player " + player.getNickname() + " has correctly chosen an objective");
                     if(this.matchInfo.isLastTurn())
                         playerInfo.setState(State.EndGame);
                     else
                         playerInfo.setState(State.PlaceCard);
                 }
-                switch (this.matchInfo.getStatus()) {
-                    case Player1 -> this.matchInfo.setStatus(MatchState.Player2);
-                    case Player2 -> this.matchInfo.setStatus(MatchState.Player3);
-                    case Player3 -> this.matchInfo.setStatus(MatchState.Player4);
-                    case Player4 -> this.matchInfo.setStatus(MatchState.Player1);
-                }
+
+                this.updateMatchStatus();
 
                 // Saves the progress of the game
                 this.saveMatch();
@@ -529,13 +493,13 @@ public class ClientManager implements Runnable {
 
 
                 // Updates all clients on the current situation
-                for(PlayerInfo playerInfo1 : this.onlinePlayerInfo) {
+                for(PlayerInfo playerInfo1 : this.getOnlinePlayerInfo()) {
                     updatePlayerMessage update = new updatePlayerMessage(playerInfo.getPlayer(), playerInfo1.getPlayer().getNickname());
                     playerInfo1.getConnection().sendUpdatePlayer(update);
                 }
 
                 // Update the states
-                if(this.onlinePlayerInfo.contains(playerInfo)) {
+                if(this.getOnlinePlayerInfo().contains(playerInfo)) {
                     playerInfo.setState(State.PickCard);
                 }
 
@@ -558,7 +522,7 @@ public class ClientManager implements Runnable {
 
 
                     // Updates all clients on the current situation
-                    for(PlayerInfo playerInfo1 : this.onlinePlayerInfo) {
+                    for(PlayerInfo playerInfo1 : this.getOnlinePlayerInfo()) {
                         updatePlayerMessage update = new updatePlayerMessage(playerInfo.getPlayer(), playerInfo1.getPlayer().getNickname());
                         playerInfo1.getConnection().sendUpdatePlayer(update);
                     }
@@ -568,18 +532,14 @@ public class ClientManager implements Runnable {
 
                 // End turn
                 // Update all states
-                if(this.onlinePlayerInfo.contains(playerInfo)) {
+                if(this.getOnlinePlayerInfo().contains(playerInfo)) {
                     if(this.matchInfo.isLastTurn())
                         playerInfo.setState(State.EndGame);
                     else
                         playerInfo.setState(State.PlaceCard);
                 }
-                switch (this.matchInfo.getStatus()) {
-                    case Player1 -> this.matchInfo.setStatus(MatchState.Player2);
-                    case Player2 -> this.matchInfo.setStatus(MatchState.Player3);
-                    case Player3 -> this.matchInfo.setStatus(MatchState.Player4);
-                    case Player4 -> this.matchInfo.setStatus(MatchState.Player1);
-                }
+
+                this.updateMatchStatus();
 
 
                 // Saves the progress of the game
@@ -594,7 +554,7 @@ public class ClientManager implements Runnable {
                 this.placeCardState(playerInfo);
 
                 // Updates all clients on the current situation
-                for(PlayerInfo playerInfo1 : this.onlinePlayerInfo) {
+                for(PlayerInfo playerInfo1 : this.getOnlinePlayerInfo()) {
                     updatePlayerMessage update = new updatePlayerMessage(playerInfo.getPlayer(), playerInfo1.getPlayer().getNickname());
                     playerInfo1.getConnection().sendUpdatePlayer(update);
                 }
@@ -602,7 +562,7 @@ public class ClientManager implements Runnable {
                 logCreator.log("Player " + player.getNickname() + " has ended his last turn");
 
                 // Update the state
-                if(this.onlinePlayerInfo.contains(playerInfo))
+                if(this.getOnlinePlayerInfo().contains(playerInfo))
                     playerInfo.setState(State.EndGame);
 
                 switch (this.matchInfo.getStatus()) {
@@ -621,6 +581,18 @@ public class ClientManager implements Runnable {
     }
 
     /**
+     * Updates the status of the match.
+     */
+    private void updateMatchStatus() {
+        switch (this.matchInfo.getStatus()) {
+            case Player1 -> this.matchInfo.setStatus(MatchState.Player2);
+            case Player2 -> this.matchInfo.setStatus(MatchState.Player3);
+            case Player3 -> this.matchInfo.setStatus(MatchState.Player4);
+            case Player4 -> this.matchInfo.setStatus(MatchState.Player1);
+        }
+    }
+
+    /**
      * Manages the starter state of a player.
      * @param playerInfo data about the player to manage.
      */
@@ -633,8 +605,8 @@ public class ClientManager implements Runnable {
             playerInfo.getPlayer().drawStarter();
 
         // Sends current state messages to all clients
-        for(PlayerInfo playerInfo1 : this.onlinePlayerInfo) {
-            currentStateMessage currState = new currentStateMessage(player, playerInfo1.getPlayer(), "StarterCardState", this.matchInfo.isLastTurn(), this.onlinePlayers(), null, this.matchInfo.getID());
+        for(PlayerInfo playerInfo1 : this.getOnlinePlayerInfo()) {
+            currentStateMessage currState = new currentStateMessage(player, playerInfo1.getPlayer(), "StarterCardState", this.matchInfo.isLastTurn(), this.onlinePlayersNicknames(), null, this.matchInfo.getID());
             playerInfo1.getConnection().sendCurrentState(currState);
         }
 
@@ -676,7 +648,7 @@ public class ClientManager implements Runnable {
                     }
                 }
             } else {
-                if(this.onlinePlayerInfo.contains(playerInfo)) {
+                if(this.getOnlinePlayerInfo().contains(playerInfo)) {
                     logCreator.log("Player " + player.getNickname() + " failed to answer");
                     this.kickPlayer(playerInfo);
                     correctAnswer = true;
@@ -697,8 +669,8 @@ public class ClientManager implements Runnable {
             playerInfo.setSavedObjectives(playerInfo.getPlayer().drawObjectives());
 
         // Sends current state messages to all clients
-        for(PlayerInfo playerInfo1 : this.onlinePlayerInfo) {
-            currentStateMessage currState = new currentStateMessage(player, playerInfo1.getPlayer(), "ObjectiveState", this.matchInfo.isLastTurn(), this.onlinePlayers(), this.matchInfo.getMatch().getCommonObjective(), this.matchInfo.getID());
+        for(PlayerInfo playerInfo1 : this.getOnlinePlayerInfo()) {
+            currentStateMessage currState = new currentStateMessage(player, playerInfo1.getPlayer(), "ObjectiveState", this.matchInfo.isLastTurn(), this.onlinePlayersNicknames(), this.matchInfo.getMatch().getCommonObjective(), this.matchInfo.getID());
             playerInfo1.getConnection().sendCurrentState(currState);
         }
 
@@ -750,8 +722,8 @@ public class ClientManager implements Runnable {
         Player player = playerInfo.getPlayer();
 
         // Sends current state messages to all clients
-        for(PlayerInfo playerInfo1 : this.onlinePlayerInfo) {
-            currentStateMessage currState = new currentStateMessage(player, playerInfo1.getPlayer(), "PlaceTurnState", this.matchInfo.isLastTurn(), this.onlinePlayers(), this.matchInfo.getMatch().getCommonObjective(), this.matchInfo.getID());
+        for(PlayerInfo playerInfo1 : this.getOnlinePlayerInfo()) {
+            currentStateMessage currState = new currentStateMessage(player, playerInfo1.getPlayer(), "PlaceTurnState", this.matchInfo.isLastTurn(), this.onlinePlayersNicknames(), this.matchInfo.getMatch().getCommonObjective(), this.matchInfo.getID());
             playerInfo1.getConnection().sendCurrentState(currState);
         }
 
@@ -808,15 +780,15 @@ public class ClientManager implements Runnable {
     private void pickCardState(PlayerInfo playerInfo) {
         Player player = playerInfo.getPlayer();
 
-        for(PlayerInfo playerInfo1 : this.onlinePlayerInfo) {
-            currentStateMessage currState = new currentStateMessage(player, playerInfo1.getPlayer(), "PickTurnState", this.matchInfo.isLastTurn(), this.onlinePlayers(), this.matchInfo.getMatch().getCommonObjective(), this.matchInfo.getID());
+        for(PlayerInfo playerInfo1 : this.getOnlinePlayerInfo()) {
+            currentStateMessage currState = new currentStateMessage(player, playerInfo1.getPlayer(), "PickTurnState", this.matchInfo.isLastTurn(), this.onlinePlayersNicknames(), this.matchInfo.getMatch().getCommonObjective(), this.matchInfo.getID());
             playerInfo1.getConnection().sendCurrentState(currState);
         }
 
 
         // If the client is still online, it proceeds to ask to pick a card
         boolean correctAnswer;
-        if(this.onlinePlayerInfo.contains(playerInfo)) {
+        if(this.getOnlinePlayerInfo().contains(playerInfo)) {
             correctAnswer = false;
             while(!correctAnswer) {
                 Future<pickCardMessage> future = executor.submit(() -> playerInfo.getConnection().getChosenPick());
@@ -864,15 +836,15 @@ public class ClientManager implements Runnable {
     private void endgame() {
         logCreator.log("ENDGAME");
         // Sends current state messages to all clients
-        for(PlayerInfo playerInfo1 : this.onlinePlayerInfo) {
-            currentStateMessage currState = new currentStateMessage(null, playerInfo1.getPlayer(), "EndGameState", this.matchInfo.isLastTurn(), this.onlinePlayers(), this.matchInfo.getMatch().getCommonObjective(), this.matchInfo.getID());
+        for(PlayerInfo playerInfo1 : this.getOnlinePlayerInfo()) {
+            currentStateMessage currState = new currentStateMessage(null, playerInfo1.getPlayer(), "EndGameState", this.matchInfo.isLastTurn(), this.onlinePlayersNicknames(), this.matchInfo.getMatch().getCommonObjective(), this.matchInfo.getID());
             playerInfo1.getConnection().sendCurrentState(currState);
         }
 
         HashMap<String, Integer> scores = new HashMap<>();
         HashMap<String, Integer> numberOfObjects = new HashMap<>();
 
-        ArrayList<Player> players =this.onlinePlayerInfo.stream()
+        ArrayList<Player> players =this.getOnlinePlayerInfo().stream()
                 .map(PlayerInfo::getPlayer)
                 .collect(Collectors.toCollection(ArrayList::new));
 
@@ -893,7 +865,7 @@ public class ClientManager implements Runnable {
             numberOfObjects.put(player.getNickname(), count);
         }
 
-        for(PlayerInfo playerInfo1 : this.onlinePlayerInfo) {
+        for(PlayerInfo playerInfo1 : this.getOnlinePlayerInfo()) {
 
             playerInfo1.getConnection().sendEndGame(scores, numberOfObjects);
         }
@@ -905,7 +877,7 @@ public class ClientManager implements Runnable {
 
     private void kickingPlayers() {
         logCreator.log("Kicking out all players");;
-        this.onlinePlayerInfo.forEach(this::kickPlayer);
+        this.getOnlinePlayerInfo().forEach(this::kickPlayer);
     }
 
     /**
@@ -914,7 +886,7 @@ public class ClientManager implements Runnable {
      * @return The player information if found, or {@code null} if not found.
      */
     private PlayerInfo findPlayer(Player player) {
-        return this.onlinePlayerInfo.stream()
+        return this.getOnlinePlayerInfo().stream()
                 .filter(playerInfo -> Objects.equals(player.getNickname(), playerInfo.getPlayer().getNickname()))
                 .findFirst()
                 .orElse(null);
@@ -934,35 +906,35 @@ public class ClientManager implements Runnable {
 
         Timer timer = new Timer();
 
-        // This function must be used at the end of every turn
-        if(this.onlinePlayerInfo.size() == 1) {
-            // Waits for a timeout.
-            // Then, if a player remains, he is declared the new winner
-            ClientManager manager = this;
-            TimerTask task = new TimerTask() {
-                @Override
-                public void run() {
-                    synchronized (manager) {
-                        manager.checkPlayersConnections();
-                        if(manager.onlinePlayerInfo.size() == 1) {
-                            manager.matchInfo.setStatus(MatchState.Endgame);
-                            logCreator.log("Only one player remains, he is the winner");
-                            manager.notifyAll();
-                        }
+        synchronized (this) {
+            // This function must be used at the end of every turn
+            if(this.getOnlinePlayerInfo().size() == 1) {
+                // Waits for a timeout.
+                // Then, if a player remains, he is declared the new winner
+                ClientManager manager = this;
+                TimerTask task = new TimerTask() {
+                    @Override
+                    public void run() {
+                        synchronized (manager) {
+                            manager.checkPlayersConnections();
+                            if(manager.getOnlinePlayerInfo().size() == 1) {
+                                manager.matchInfo.setStatus(MatchState.Endgame);
+                                logCreator.log("Only one player remains, he is the winner");
+                                manager.notifyAll();
+                            }
 
-                        if(manager.onlinePlayerInfo.isEmpty()) {
-                            manager.matchInfo.setStatus(MatchState.KickingPlayers);
-                            logCreator.log("No players remain, the match is over");
-                            manager.notifyAll();
+                            if(manager.getOnlinePlayerInfo().isEmpty()) {
+                                manager.matchInfo.setStatus(MatchState.KickingPlayers);
+                                logCreator.log("No players remain, the match is over");
+                                manager.notifyAll();
+                            }
                         }
                     }
-                }
-            };
-            timer.schedule(task, this.timeout);
-        }
+                };
+                timer.schedule(task, this.timeout);
+            }
 
-        synchronized (this) {
-            while (this.onlinePlayerInfo.size() == 1
+            while (this.getOnlinePlayerInfo().size() == 1
                     && this.matchInfo.getStatus() != MatchState.Endgame
                     && this.matchInfo.getStatus() != MatchState.KickingPlayers
             ) {
@@ -975,7 +947,7 @@ public class ClientManager implements Runnable {
 
 
 
-            if (this.onlinePlayerInfo.isEmpty()) {
+            if (this.getOnlinePlayerInfo().isEmpty()) {
                 // Closes and doesn't save the match
                 logCreator.log("No player remains, closing the match");
                 this.matchInfo.setStatus(MatchState.KickingPlayers);
@@ -988,31 +960,36 @@ public class ClientManager implements Runnable {
 
 
     /**
-     * Returns a list of all online players
+     * Returns a list of nicknames of all online players
      * @return list of online players
      */
-    private ArrayList<String> onlinePlayers() {
-        return this.onlinePlayerInfo.stream()
+    private ArrayList<String> onlinePlayersNicknames() {
+        return this.matchInfo.getAllPlayersInfo().stream()
+                .filter(playerInfo -> playerInfo.getConnection() != null)
                 .map(playerInfo -> playerInfo.getPlayer().getNickname())
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 
 
 
+
+
+
+
     protected synchronized void loadAndWaitSavedMatch() {
         logCreator.log("Saved match " + this.matchInfo.getID() + " loaded: in state " + this.matchInfo.getStatus());
-        logCreator.log("Waiting for players; expected players: " + this.matchInfo.getExpectedPlayers() + " players to be loaded: " + this.matchInfo.getOfflinePlayers());
+        logCreator.log("Waiting for players; expected players: " + this.matchInfo.getExpectedPlayers() + " players to be loaded: " + this.matchInfo.getAllPlayersInfo());
 
 
-        while (this.onlinePlayerInfo.size() < this.matchInfo.getExpectedPlayers()) {
+        while (this.getOnlinePlayerInfo().size() < this.matchInfo.getExpectedPlayers()) {
             try {
                 this.wait();
             } catch (InterruptedException ignore) {}
         }
 
-        while (this.onlinePlayerInfo.size() > this.matchInfo.getExpectedPlayers()) {
+        while (this.getOnlinePlayerInfo().size() > this.matchInfo.getExpectedPlayers()) {
             logCreator.log("Too many players have joined the match");
-            this.kickPlayer(this.onlinePlayerInfo.getLast());
+            this.kickPlayer(this.getOnlinePlayerInfo().getLast());
         }
 
         this.run();
@@ -1027,7 +1004,7 @@ public class ClientManager implements Runnable {
         ArrayList<Future<Boolean>> results = new ArrayList<>();
 
         // Sends a ping to all players
-        for(PlayerInfo playerInfo : this.onlinePlayerInfo) {
+        for(PlayerInfo playerInfo : this.getOnlinePlayerInfo()) {
             Future<Boolean> future = executor.submit(() -> playerInfo.getConnection().isConnected());
             futures.add(future);
 
@@ -1041,11 +1018,11 @@ public class ClientManager implements Runnable {
             Future<Boolean> responseFuture = executor.submit(() -> {
                 try {
                     future.get(timeout, unit);
-                    logCreator.log("Player " + this.onlinePlayerInfo.get(futures.indexOf(future)).getPlayer().getNickname() + " has responded to ping");
+                    logCreator.log("Player " + this.getOnlinePlayerInfo().get(futures.indexOf(future)).getPlayer().getNickname() + " has responded to ping");
                     return true;
                 } catch (Exception e) {
-                    logCreator.log("Player " + this.onlinePlayerInfo.get(futures.indexOf(future)).getPlayer().getNickname() + " has not responded to ping");
-                    this.kickPlayer(this.onlinePlayerInfo.get(futures.indexOf(future)));
+                    logCreator.log("Player " + this.getOnlinePlayerInfo().get(futures.indexOf(future)).getPlayer().getNickname() + " has not responded to ping");
+                    this.kickPlayer(this.getOnlinePlayerInfo().get(futures.indexOf(future)));
                     return false;
 
                 }
