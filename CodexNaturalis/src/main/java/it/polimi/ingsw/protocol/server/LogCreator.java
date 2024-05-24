@@ -79,7 +79,7 @@ public class LogCreator {
      * The log message includes a timestamp and optionally a match ID.
      * @param message the content of the log message
      */
-    public void log(String message) {
+    public synchronized void log(String message) {
         LocalDateTime currentTime = LocalDateTime.now();
         String timestamp = currentTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS"));
         try {

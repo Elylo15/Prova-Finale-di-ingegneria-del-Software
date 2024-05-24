@@ -307,7 +307,7 @@ public class Server implements Runnable {
         boolean correctJoining = false;
         while(!correctJoining) {
             Integer id = this.createNewMatchID();
-            MatchInfo matchInfo = new MatchInfo(new Match(),id,this.defaultPath + id.toString() + ".savedgame" ,null, MatchState.Waiting);
+            MatchInfo matchInfo = new MatchInfo(new Match(),id, null, MatchState.Waiting);
 
             ClientManager lobbyManager = new ClientManager(matchInfo);
             games.add(lobbyManager);
@@ -423,7 +423,7 @@ public class Server implements Runnable {
         // Obtains the offline players nicknames
         ArrayList<String> offlineNames;
 
-        offlineNames = lobbyManager.getMatchInfo().getAllPlayersInfo().stream()
+        offlineNames = lobbyManager.getOfflinePlayerInfo().stream()
                 .map(playerInfo -> playerInfo.getPlayer().getNickname().toLowerCase())
                 .collect(Collectors.toCollection(ArrayList::new));
 

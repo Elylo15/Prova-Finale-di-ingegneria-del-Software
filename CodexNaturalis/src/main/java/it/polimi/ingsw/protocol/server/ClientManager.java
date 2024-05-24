@@ -24,6 +24,10 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
+/**
+ * This class manages the clients connected and the game logic.
+ * It is responsible for handling the connection of clients, the game flow, and the disconnection of clients.
+ */
 public class ClientManager implements Runnable {
     private MatchInfo matchInfo;
     private int timeout;
@@ -41,7 +45,7 @@ public class ClientManager implements Runnable {
         this.matchInfo.setLastTurn(false);
         this.turnNumber = 0;
 
-        this.timeout = 60 * 1000;
+        this.timeout = 120 * 1000;
 
         logCreator = new LogCreator(this.matchInfo.getID().toString());
 
@@ -83,9 +87,8 @@ public class ClientManager implements Runnable {
      * @param playerInfo player to be kicked
      */
     private void kickPlayer(PlayerInfo playerInfo) {
-        String nickname = playerInfo.getPlayer().getNickname();
-        this.matchInfo.setOffline(nickname);
-        logCreator.log("Player kicked: " + nickname + " and added to offline players");
+        this.matchInfo.setOffline(playerInfo);
+        logCreator.log("Player kicked: " + playerInfo.getPlayer().getNickname() + " and added to offline players");
     }
 
     /**
@@ -108,12 +111,12 @@ public class ClientManager implements Runnable {
 
 
         // Eventually sets up a new connection for the player
-        if (playerInfo != null) {
-            playerInfo.setConnection(connection);
-            logCreator.log("Player moved: " + playerInfo.getPlayer().getNickname() + " from offline to online players");
+        if (playerInfo != null && playerInfo.getConnection() == null) {
+            matchInfo.bringOnline(nickname, connection);
             this.notifyAll();
+            logCreator.log("Player moved: " + playerInfo.getPlayer().getNickname() + " from offline to online players");
         } else {
-            logCreator.log("Player " + nickname + " is null and cannot be brought back online");
+            logCreator.log("Player " + nickname + " cannot be brought back online");
             throw new FailedToJoinMatch("Player cannot join the match");
         }
     }
@@ -127,6 +130,12 @@ public class ClientManager implements Runnable {
     protected ArrayList<PlayerInfo> getOnlinePlayerInfo() {
         return this.matchInfo.getAllPlayersInfo().stream()
                 .filter(playerInfo -> playerInfo.getConnection() != null)
+                .collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    protected ArrayList<PlayerInfo> getOfflinePlayerInfo() {
+        return this.matchInfo.getAllPlayersInfo().stream()
+                .filter(playerInfo -> playerInfo.getConnection() == null)
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 
@@ -144,17 +153,19 @@ public class ClientManager implements Runnable {
 
 
     private synchronized void saveMatch() {
+        MatchInfo copy = matchInfo.cloneForSerialization();
         File dir = new File("CodexNaturalis/savedMatches");
         if(!dir.exists())
             dir.mkdir();
 
-        String filename = "CodexNaturalis/savedMatches/match_" + this.matchInfo.getID() + ".match";
+        String filename = "CodexNaturalis/savedMatches/match_" + copy.getID() + ".match";
         try (FileOutputStream fileOut = new FileOutputStream(filename);
              ObjectOutputStream out = new ObjectOutputStream(fileOut)) {
-            out.writeObject(matchInfo);
-            logCreator.log("Match " + this.matchInfo.getID() +" saved");
+            out.writeObject(copy);
+            logCreator.log("Match " + copy.getID() +" saved");
         } catch (Exception e) {
-            logCreator.log("Failed to save match");
+            e.printStackTrace();
+            logCreator.log("Failed to save match " + e.getMessage());
         }
     }
 
@@ -905,6 +916,7 @@ public class ClientManager implements Runnable {
         this.checkPlayersConnections();
 
         Timer timer = new Timer();
+        Timer timerCheckConnections = new Timer();
 
         synchronized (this) {
             // This function must be used at the end of every turn
@@ -932,12 +944,29 @@ public class ClientManager implements Runnable {
                     }
                 };
                 timer.schedule(task, this.timeout);
+
+                // Timer taskCheckConnections that checks every 15 seconds if all players are still connected
+
+                TimerTask taskCheckConnections = new TimerTask() {
+                    @Override
+                    public void run() {
+                        synchronized (manager) {
+                            manager.checkPlayersConnections();
+                            manager.notifyAll();
+                        }
+                    }
+                };
+
+                timerCheckConnections.schedule(taskCheckConnections, 0, 15000);
             }
+
+
+
+
 
             while (this.getOnlinePlayerInfo().size() == 1
                     && this.matchInfo.getStatus() != MatchState.Endgame
-                    && this.matchInfo.getStatus() != MatchState.KickingPlayers
-            ) {
+                    && this.matchInfo.getStatus() != MatchState.KickingPlayers) {
                 try {
                     this.wait();
                 } catch (InterruptedException e) {
@@ -955,6 +984,7 @@ public class ClientManager implements Runnable {
 
             // Eventually cancels the timer
             timer.cancel();
+            timerCheckConnections.cancel();
         }
     }
 
@@ -971,22 +1001,24 @@ public class ClientManager implements Runnable {
     }
 
 
-
-
-
-
-
+    /**
+     * Loads a saved match and waits for all players to join. Then starts the game.
+     */
     protected synchronized void loadAndWaitSavedMatch() {
         logCreator.log("Saved match " + this.matchInfo.getID() + " loaded: in state " + this.matchInfo.getStatus());
         logCreator.log("Waiting for players; expected players: " + this.matchInfo.getExpectedPlayers() + " players to be loaded: " + this.matchInfo.getAllPlayersInfo());
 
+        // Sets all players to offline
+        this.matchInfo.getAllPlayersInfo().forEach(playerInfo -> this.matchInfo.setOffline(playerInfo));
 
+        // Waits for all players to join
         while (this.getOnlinePlayerInfo().size() < this.matchInfo.getExpectedPlayers()) {
             try {
                 this.wait();
             } catch (InterruptedException ignore) {}
         }
 
+        // Kicks players that are not supposed to be in the match
         while (this.getOnlinePlayerInfo().size() > this.matchInfo.getExpectedPlayers()) {
             logCreator.log("Too many players have joined the match");
             this.kickPlayer(this.getOnlinePlayerInfo().getLast());
@@ -1000,31 +1032,31 @@ public class ClientManager implements Runnable {
      * If a player is not connected, they are kicked from the match.
      */
     private synchronized void checkPlayersConnections() {
-        ArrayList<Future<Boolean>> futures = new ArrayList<>();
+        HashMap<Future<Boolean>, PlayerInfo> futures = new HashMap<>();
         ArrayList<Future<Boolean>> results = new ArrayList<>();
 
         // Sends a ping to all players
         for(PlayerInfo playerInfo : this.getOnlinePlayerInfo()) {
             Future<Boolean> future = executor.submit(() -> playerInfo.getConnection().isConnected());
-            futures.add(future);
-
+            futures.put(future, playerInfo);
         }
 
         int timeout = 5;
         TimeUnit unit = TimeUnit.SECONDS;
 
         // Expects a response from all players
-        for(Future<Boolean> future : futures) {
+        for(Future<Boolean> currFuture : futures.keySet()) {
             Future<Boolean> responseFuture = executor.submit(() -> {
                 try {
-                    future.get(timeout, unit);
-                    logCreator.log("Player " + this.getOnlinePlayerInfo().get(futures.indexOf(future)).getPlayer().getNickname() + " has responded to ping");
+                    boolean response = currFuture.get(timeout, unit);
+                    if(!response)
+                        throw new Exception();
+                    logCreator.log("Player " + futures.get(currFuture).getPlayer().getNickname() + " is online");
                     return true;
                 } catch (Exception e) {
-                    logCreator.log("Player " + this.getOnlinePlayerInfo().get(futures.indexOf(future)).getPlayer().getNickname() + " has not responded to ping");
-                    this.kickPlayer(this.getOnlinePlayerInfo().get(futures.indexOf(future)));
+                    logCreator.log("Player " + futures.get(currFuture).getPlayer().getNickname() + " has not answered to ping");
+                    this.kickPlayer(futures.get(currFuture));
                     return false;
-
                 }
             });
 
@@ -1039,6 +1071,8 @@ public class ClientManager implements Runnable {
                 logCreator.log("Failed to get response from player");
             }
         }
+
+        this.matchInfo.printPlayersStatus();
 
     }
 }

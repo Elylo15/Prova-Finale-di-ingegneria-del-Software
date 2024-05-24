@@ -91,9 +91,21 @@ public class currentStateMessage implements Message, Serializable {
      */
     @Override
     public String toString() {
+        String currentPlayerNickname;
+        if(currentPlayer == null)
+            currentPlayerNickname = "null";
+        else
+            currentPlayerNickname = currentPlayer.getNickname();
+
+        String playerNickname;
+        if(player == null)
+            playerNickname = "null";
+        else
+            playerNickname = player.getNickname();
+
         return "currentStateMessage{" +
-                "currentPlayer=" + currentPlayer.getNickname() +
-                ", player=" + player.getNickname() +
+                "currentPlayer=" + currentPlayerNickname+
+                ", player=" + playerNickname +
                 ", stateName='" + stateName + '\'' +
                 ", lastTurn=" + lastTurn +
                 '}';

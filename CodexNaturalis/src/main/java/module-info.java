@@ -29,4 +29,5 @@ module CodexNaturalis {
     exports it.polimi.ingsw.protocol.server;
     exports it.polimi.ingsw.protocol.server.RMI;
     exports it.polimi.ingsw.protocol.server.exceptions;
+    exports it.polimi.ingsw.protocol.server.FSM;
 }
