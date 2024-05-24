@@ -176,6 +176,8 @@ public class Server implements Runnable {
             serverOptionMessage msg = this.obtainServerOption(connection);
 
             if(msg == null) {
+                logCreator.log("Client " + connection.getIP() + " " + connection.getPort() + " kicked due to no serverOption received");
+                connection.closeConnection();
                 return;
             }
 
@@ -268,6 +270,9 @@ public class Server implements Runnable {
                 logCreator.log("Client " + connection.getIP() + " kicked due to EXECUTION ERROR: \n" + e.getCause().getMessage());
                 return null;
             }
+
+            if(msg == null)
+                return null;
 
             // Checks if the response message is valid
             if(msg.isNewMatch() && (msg.getMatchID() == null || waitingGames.contains(msg.getMatchID()))) {
@@ -455,6 +460,12 @@ public class Server implements Runnable {
                 return;
             }
 
+            if(name == null) {
+                connection.closeConnection();
+                logCreator.log("Client " + connection.getIP() + " kicked due to no name received");
+                return;
+            }
+
             // Checks if the name is correct
             if(offlineNames.contains(name)) {
                 connection.sendAnswer(true);
@@ -509,6 +520,13 @@ public class Server implements Runnable {
 
             try {
                 name = nameFuture.get(this.timeoutSeconds, TimeUnit.SECONDS);
+
+                if(name == null) {
+                    connection.closeConnection();
+                    logCreator.log("Client " + connection.getIP() + " kicked due to no name received");
+                    return;
+                }
+
                 if (unavailableNames.contains(name.toLowerCase()))
                     connection.sendAnswer(false);
                 else {
@@ -566,6 +584,13 @@ public class Server implements Runnable {
 
             try {
                 color = colorFuture.get(this.timeoutSeconds, TimeUnit.SECONDS);
+
+                if(color == null) {
+                    connection.closeConnection();
+                    logCreator.log("Client " + connection.getIP() + " kicked due to no color received");
+                    return;
+                }
+
                 if (availableColors.contains(color)) {
                     connection.sendAnswer(true);
                     correctChoice = true;

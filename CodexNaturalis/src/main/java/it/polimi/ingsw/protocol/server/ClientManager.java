@@ -24,7 +24,7 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
-public class ClientManager implements Runnable{
+public class ClientManager implements Runnable {
     private MatchInfo matchInfo;
     private CopyOnWriteArrayList<PlayerInfo> onlinePlayerInfo; // Only online players
     private int timeout;
@@ -152,6 +152,7 @@ public class ClientManager implements Runnable{
         return new ArrayList<>(this.onlinePlayerInfo);
     }
 
+    // Maybe remove this and the matchInfo from this class
     /**
      * Getter of Match (model)
      * @return Match
@@ -373,6 +374,10 @@ public class ClientManager implements Runnable{
                                 }
                             }
 
+                        } else {
+                            logCreator.log("Player " + host.getPlayer().getNickname() + " has not answered");
+                            this.kickPlayer(host);
+                            correctAnswer = true;
                         }
                     }
 
@@ -672,8 +677,9 @@ public class ClientManager implements Runnable{
                 }
             } else {
                 if(this.onlinePlayerInfo.contains(playerInfo)) {
-                    logCreator.log("Player " + player.getNickname() + " wanted to place a null card");
+                    logCreator.log("Player " + player.getNickname() + " failed to answer");
                     this.kickPlayer(playerInfo);
+                    correctAnswer = true;
                 }
             }
         }
@@ -728,8 +734,11 @@ public class ClientManager implements Runnable{
                         logCreator.log("Player " + player.getNickname() + " has not correctly answered");
                     }
                 }
+            } else {
+                logCreator.log("Player " + player.getNickname() + " failed to answer");
+                this.kickPlayer(playerInfo);
+                correctAnswer = true;
             }
-
         }
     }
 
@@ -784,6 +793,10 @@ public class ClientManager implements Runnable{
                         logCreator.log("Player " + player.getNickname() + " has not correctly answered");
                     }
                 }
+            } else {
+                logCreator.log("Player " + player.getNickname() + " failed to answer");
+                this.kickPlayer(playerInfo);
+                correctAnswer = true;
             }
         }
     }
@@ -835,6 +848,10 @@ public class ClientManager implements Runnable{
                         }
 
                     }
+                } else {
+                    logCreator.log("Player " + player.getNickname() + " failed to answer");
+                    this.kickPlayer(playerInfo);
+                    correctAnswer = true;
                 }
             }
         }
@@ -915,11 +932,12 @@ public class ClientManager implements Runnable{
 
         this.checkPlayersConnections();
 
+        Timer timer = new Timer();
+
         // This function must be used at the end of every turn
         if(this.onlinePlayerInfo.size() == 1) {
             // Waits for a timeout.
             // Then, if a player remains, he is declared the new winner
-            Timer timer = new Timer();
             ClientManager manager = this;
             TimerTask task = new TimerTask() {
                 @Override
@@ -958,10 +976,13 @@ public class ClientManager implements Runnable{
 
 
             if (this.onlinePlayerInfo.isEmpty()) {
-                // Closes and saves the match
+                // Closes and doesn't save the match
                 logCreator.log("No player remains, closing the match");
                 this.matchInfo.setStatus(MatchState.KickingPlayers);
             }
+
+            // Eventually cancels the timer
+            timer.cancel();
         }
     }
 

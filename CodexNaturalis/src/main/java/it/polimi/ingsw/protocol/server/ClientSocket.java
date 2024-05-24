@@ -37,6 +37,7 @@ public class ClientSocket extends ClientConnection implements Serializable {
             outputStream = new ObjectOutputStream(socket.getOutputStream());
             inputStream = new ObjectInputStream(socket.getInputStream());
         } catch (IOException e) {
+            e.printStackTrace();
             throw new RuntimeException(e);
         }
     }
@@ -61,7 +62,7 @@ public class ClientSocket extends ClientConnection implements Serializable {
             outputStream.flush();
             return (serverOptionMessage) inputStream.readObject();
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            return null;
         }
     }
 
@@ -75,9 +76,7 @@ public class ClientSocket extends ClientConnection implements Serializable {
             outputStream.reset();
             outputStream.writeObject(new newHostMessage(hostNickname));
             outputStream.flush();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        } catch (IOException ignore) {}
     }
 
     /**
@@ -89,7 +88,7 @@ public class ClientSocket extends ClientConnection implements Serializable {
         try {
             return (expectedPlayersMessage) inputStream.readObject();
         } catch (IOException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
+            return null;
         }
     }
 
@@ -103,9 +102,7 @@ public class ClientSocket extends ClientConnection implements Serializable {
             outputStream.reset();
             outputStream.writeObject(message);
             outputStream.flush();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        } catch (IOException ignore) {}
     }
 
     /**
@@ -120,9 +117,7 @@ public class ClientSocket extends ClientConnection implements Serializable {
             outputStream.reset();
             outputStream.writeObject(new responseMessage(correct));
             outputStream.flush();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        } catch (IOException ignore) {}
     }
 
     /**
@@ -135,9 +130,7 @@ public class ClientSocket extends ClientConnection implements Serializable {
             outputStream.reset();
             outputStream.writeObject(new unavailableNamesMessage(unavailableNames));
             outputStream.flush();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        } catch (IOException ignore) {}
     }
 
     /**
@@ -150,7 +143,7 @@ public class ClientSocket extends ClientConnection implements Serializable {
             this.sendUnavailableName(unavailableNames);
             return (chosenNameMessage) inputStream.readObject();
         } catch (IOException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
+            return null;
         }
     }
 
@@ -164,9 +157,7 @@ public class ClientSocket extends ClientConnection implements Serializable {
             outputStream.reset();
             outputStream.writeObject(new availableColorsMessage(availableColors));
             outputStream.flush();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        } catch (IOException ignore) {}
     }
 
     /**
@@ -179,7 +170,7 @@ public class ClientSocket extends ClientConnection implements Serializable {
             this.sendAvailableColor(color);
             return (chosenColorMessage) inputStream.readObject();
         } catch (IOException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
+            return null;
         }
     }
 
@@ -194,9 +185,7 @@ public class ClientSocket extends ClientConnection implements Serializable {
             outputStream.reset();
             outputStream.writeObject(currentState);
             outputStream.flush();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        } catch (IOException ignore) {}
     }
 
     /**
@@ -208,7 +197,7 @@ public class ClientSocket extends ClientConnection implements Serializable {
         try {
             return (starterCardMessage) inputStream.readObject();
         } catch (IOException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
+            return null;
         }
     }
 
@@ -223,13 +212,11 @@ public class ClientSocket extends ClientConnection implements Serializable {
             outputStream.reset();
             outputStream.writeObject(new objectiveCardMessage(objectiveCards));
             outputStream.flush();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        } catch (IOException ignore) {}
         try {
             return (objectiveCardMessage) inputStream.readObject();
         } catch (IOException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
+            return null;
         }
     }
 
@@ -245,7 +232,7 @@ public class ClientSocket extends ClientConnection implements Serializable {
             outputStream.reset();
             return (placeCardMessage) inputStream.readObject();
         } catch (IOException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
+            return null;
         }
     }
 
@@ -258,7 +245,7 @@ public class ClientSocket extends ClientConnection implements Serializable {
         try {
             return (pickCardMessage) inputStream.readObject();
         } catch (IOException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
+            return null;
         }
     }
 
@@ -273,9 +260,7 @@ public class ClientSocket extends ClientConnection implements Serializable {
             outputStream.reset();
             outputStream.writeObject(new declareWinnerMessage(scores, numberOfObjectives));
             outputStream.flush();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        } catch (IOException ignore) {}
     }
 
     /**
@@ -288,9 +273,7 @@ public class ClientSocket extends ClientConnection implements Serializable {
             outputStream.reset();
             outputStream.writeObject(updateMessage);
             outputStream.flush();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        } catch (IOException ignore) {}
     }
 
     /**
@@ -304,9 +287,7 @@ public class ClientSocket extends ClientConnection implements Serializable {
             }
             outputStream.close();
             inputStream.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        } catch (IOException ignore) {}
     }
 
     /**
