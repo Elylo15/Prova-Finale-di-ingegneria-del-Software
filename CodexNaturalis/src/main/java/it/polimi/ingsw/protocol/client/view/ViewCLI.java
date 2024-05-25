@@ -75,16 +75,12 @@ public class ViewCLI extends View {
      * @return String[]
      */
     @Override
-    public String[] askPortIP(){
+    public String askIP(){
         Scanner scanner = new Scanner(System.in);
-        String[] server = new String[2];
+        String server = "";
 
-        System.out.println("Enter IP:");
-        server[0] = scanner.nextLine();
-//        System.out.println("Enter port:");
-//        server[1] = scanner.nextLine();
-
-
+        System.out.print("Enter IP: ");
+        server = scanner.nextLine();
         return server;
     }
 

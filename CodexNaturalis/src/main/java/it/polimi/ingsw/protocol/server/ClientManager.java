@@ -572,8 +572,14 @@ public class ClientManager implements Runnable {
             case LastTurn -> {
                 logCreator.log("Player " + player.getNickname() + " plays his last turn");
 
-                // Compute place card state itself
-                this.placeCardState(playerInfo);
+                if(playerInfo.getPlayer().getPlayerArea().getAvailablePosition().isEmpty()) {
+                    logCreator.log("Player " + player.getNickname() + " cannot place a card. Ending his turn.");
+                    this.updateMatchStatus();
+                } else {
+                    // Compute place card state itself
+                    this.placeCardState(playerInfo);
+                }
+
 
                 // Updates all clients on the current situation
                 for(PlayerInfo playerInfo1 : this.getOnlinePlayerInfo()) {

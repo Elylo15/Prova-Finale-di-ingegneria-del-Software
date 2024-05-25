@@ -16,7 +16,7 @@ public abstract class View {
     //every client will have its GUI or CLI view and will call the methods of the view to visualize what the user needs to see to play the game
     public View(){ }
 
-    public abstract String[] askPortIP();
+    public abstract String askIP();
     public abstract void playerDisconnected();
     public abstract boolean askSocket();
     public abstract void updatePlayer(currentStateMessage message);

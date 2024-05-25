@@ -178,9 +178,9 @@ public class Client {
      * Invocations of view methods to display and receive player's info.
      */
     public void run() {
-
-            String[] server = view.askPortIP();
-            setIP(server[0]);
+        while(true) {
+            String server = view.askIP();
+            setIP(server);
             //setPort(server[1]);
 
             boolean isSocket = view.askSocket();
@@ -191,14 +191,14 @@ public class Client {
                 while (true) {
 
                     // REMOVE THIS
-                    System.out.println("\nWaiting for current state");
+                    System.out.println("\n\033[41mWaiting for current state");
 
 
                     currentStateMessage current = controller.getCurrent();
                     String state = current.getStateName();
 
                     // REMOVE THIS
-                    System.out.println("Current state: " + state + "\n");
+                    System.out.println("Current state: " + state + "\n\033[0m");
 
                     switch (state) {
                         case "ServerOptionState": {
@@ -260,17 +260,14 @@ public class Client {
 
                         case "AnswerCheckConnection": {
                             controller.sendAnswerToPing();
-
-                            // REMOVE THIS
-                            System.out.println("Answered to ping");
-
                             break;
                         }
                     }
                 }
             } catch (Exception e) {
-//            view.playerDisconnected();
+                view.playerDisconnected();
             }
+        }
     }
 
     /**
@@ -511,16 +508,16 @@ public class Client {
      * @param server:   String[]
      * @param isSocket: boolean
      */
-    public void setController(String[] server, boolean isSocket) {
+    public void setController(String server, boolean isSocket) {
         if (isSocket) {
             try {
-                this.controller = new ControllerSocket(server[0], "1024");
+                this.controller = new ControllerSocket(server, "1024");
             } catch (Exception e) {
                 view.playerDisconnected();
             }
         } else {
             try {
-                this.controller = new ControllerRMI(server[0], "1099");
+                this.controller = new ControllerRMI(server, "1099");
             } catch (Exception e) {
                 view.playerDisconnected();
             }
