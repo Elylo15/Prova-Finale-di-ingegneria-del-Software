@@ -52,6 +52,16 @@ public class ViewCLI extends View {
     private static final String CYAN_BACKGROUND = "\033[46m";
     private static final String WHITE_BACKGROUND = "\033[47m";
 
+    private static final String BRIGHT_BLACK_BACKGROUND = "\033[100m";
+    private static final String BRIGHT_RED_BACKGROUND = "\033[101m";
+    private static final String BRIGHT_GREEN_BACKGROUND = "\033[102m";
+    private static final String BRIGHT_YELLOW_BACKGROUND = "\033[103m";
+    private static final String BRIGHT_BLUE_BACKGROUND = "\033[104m";
+    private static final String BRIGHT_PURPLE_BACKGROUND = "\033[105m";
+    private static final String BRIGHT_CYAN_BACKGROUND = "\033[106m";
+    private static final String BRIGHT_WHITE_BACKGROUND = "\033[107m";
+
+
     /**
      * method {@code ViewCLI}: constructs a new ViewCLI
      */
@@ -81,10 +91,10 @@ public class ViewCLI extends View {
 
 
     /**
-     * communicates to the user he lost connection
+     * Communicates to the user he lost connection
      */
     public void playerDisconnected() {
-        System.out.println("\nYou have been disconnected.\n");
+        System.out.println("\n" + RED_BACKGROUND + "You have been disconnected." + RESET + "\n");
     }
 
 
@@ -95,8 +105,7 @@ public class ViewCLI extends View {
      * @param message: currentStateMessage
      */
     public void updatePlayer (currentStateMessage message){
-        System.out.println("Player " + message.getCurrentPlayer().getNickname() + " is in the state " + message.getStateName());
-
+        System.out.println("\n This is the turn of " + message.getCurrentPlayer().getNickname());
         System.out.println("ID of the match: " + message.getMatchID());
         System.out.println("The online players are: " + message.getOnlinePlayers());
 
@@ -124,7 +133,6 @@ public class ViewCLI extends View {
 
         if(!Objects.equals(message.getStateName(), "StarterCardState")) {
             this.showPlayerArea(message.getCurrentPlayer().getPlayerArea());
-
         }
 
         this.showPlayerHand(message.getCurrentPlayer(), message.getPlayer().getNickname());
@@ -140,22 +148,246 @@ public class ViewCLI extends View {
      * Prints the current state of the common area
      * @param area CommonArea to be printed
      */
-    private void showCommonArea(CommonArea area) {
-       System.out.println("\nCARDS ON THE TABLE: ");
-       System.out.println("(1) Resource deck top card: " + area.getD1().getList().getFirst().getReign());
-       System.out.println("(2) Gold deck top card: " + area.getD2().getList().getFirst().getReign());
+    protected void showCommonArea(CommonArea area) {
+        System.out.println("\nCARDS ON THE TABLE: ");
+        this.firstRowCommonArea(area);
+        this.secondRowCommonArea(area);
+    }
 
-       for(int i=0; i<area.getTableCards().size(); i++) {
-           PlaceableCard card = area.getTableCards().get(i);
-           if (card != null)
-               System.out.println("("+ (i + 3) +") Card ID: " + area.getTableCards().get(i).getID());
-           else
-               System.out.println("("+ (i + 3) +") Card ID: " + "empty");
-       }
+    /**
+     * Prints the first row of the common area
+     * @param area CommonArea to be printed
+     */
+    private void firstRowCommonArea(CommonArea area) {
+        String index = "";
+        ArrayList<String> output = new ArrayList<>();
+        // Sets up the first 4 lines of the output
+        output.add("");
+        output.add("");
+        output.add("");
+        output.add("");
 
-       System.out.println("\n");
+        index += String.format("%11s", " (1) DECK");
+        index += String.format("%11s", " (2) DECK");
+        index += " (3)  " + "     ";
+
+        this.printDeck(output, area.getD1().getList().getFirst());
+        this.printDeck(output, area.getD2().getList().getFirst());
+        this.printCard(output, area.getTableCards().get(0));
+
+        System.out.println(index);
+        System.out.println(output.get(0));
+        System.out.println(output.get(1));
+        System.out.println(output.get(2));
+        System.out.println(output.get(3));
+        System.out.println("\n");
+    }
+
+    /**
+     * Prints the second row of the common area
+     * @param area CommonArea to be printed
+     */
+    private void secondRowCommonArea(CommonArea area) {
+        String index = "";
+        ArrayList<String> output = new ArrayList<>();
+        // Sets up the first 4 lines of the output
+        output.add("");
+        output.add("");
+        output.add("");
+        output.add("");
+
+        index += " (4)  " + "     ";
+        index += " (5)  " + "     ";
+        index += " (6)  " + "     ";
+
+        this.printCard(output, area.getTableCards().get(1));
+        this.printCard(output, area.getTableCards().get(2));
+        this.printCard(output, area.getTableCards().get(3));
+
+        System.out.println(index);
+        System.out.println(output.get(0));
+        System.out.println(output.get(1));
+        System.out.println(output.get(2));
+        System.out.println(output.get(3));
+        System.out.println("\n");
+    }
+
+    /**
+     * Prints the back of the first card on top of the deck
+     * @param output ArrayList<String> to be printed
+     * @param card PlaceableCard on top of the deck
+     */
+    private void printDeck(ArrayList<String> output,PlaceableCard card) {
+
+        // Adds a space column between the decks
+        output.set(0, output.get(0) + " ");
+        output.set(1, output.get(1) + " ");
+        output.set(2, output.get(2) + " ");
+        output.set(3, output.get(3) + " ");
+
+
+        if(card == null) {
+            output.set(0, output.get(0) + BLACK_BACKGROUND + String.format("%10s", "") + RESET);
+            output.set(1, output.get(1) + BLACK_BACKGROUND + String.format("%10s", "") + RESET);
+            output.set(2, output.get(2) + BLACK_BACKGROUND +  String.format("%3s", "") + "EMPTY" + String.format("%3s", "")  + RESET);
+            output.set(3, output.get(3) + BLACK_BACKGROUND + String.format("%10s", "") + RESET);
+
+        } else {
+            Reign reign = card.getReign();
+            switch (reign) {
+                case Fungus -> {
+                    output.set(0, output.get(0) + RED_BACKGROUND + String.format("%10s", "") + RESET);
+                    output.set(1, output.get(1) + RED_BACKGROUND + String.format("%10s", "") + RESET);
+                    output.set(2, output.get(2) + RED_BACKGROUND + String.format("%2s", "") + "FUNGUS" + RED_BACKGROUND + String.format("%2s", "") + RESET);
+                    output.set(3, output.get(3) + RED_BACKGROUND + String.format("%10s", "") + RESET);
+                }
+                case Insect -> {
+                    output.set(0, output.get(0) + PURPLE_BACKGROUND + String.format("%10s", "") + RESET);
+                    output.set(1, output.get(1) + PURPLE_BACKGROUND + String.format("%10s", "") + RESET);
+                    output.set(2, output.get(2) + PURPLE_BACKGROUND + String.format("%2s" , "") + "INSECT" + PURPLE_BACKGROUND + String.format("%2s", "") + RESET);
+                    output.set(3, output.get(3) + PURPLE_BACKGROUND + String.format("%10s", "") + RESET);
+                }
+                case Animal -> {
+                    output.set(0, output.get(0) + CYAN_BACKGROUND + String.format("%10s", "") + RESET);
+                    output.set(1, output.get(1) + CYAN_BACKGROUND + String.format("%10s", "") + RESET);
+                    output.set(2, output.get(2) + CYAN_BACKGROUND + String.format("%2s", "") + "ANIMAL" + CYAN_BACKGROUND + String.format("%2s", "") + RESET);
+                    output.set(3, output.get(3) + CYAN_BACKGROUND + String.format("%10s", "") + RESET);
+                }
+                case Plant -> {
+                    output.set(0, output.get(0) + GREEN_BACKGROUND + String.format("%10s", "") + RESET);
+                    output.set(1, output.get(1) + GREEN_BACKGROUND + String.format("%10s", "") + RESET);
+                    output.set(2, output.get(2) + GREEN_BACKGROUND + String.format("%2s", "") + "PLANT" + GREEN_BACKGROUND + String.format("%3s", "") + RESET);
+                    output.set(3, output.get(3) + GREEN_BACKGROUND + String.format("%10s", "") + RESET);
+                }
+                case null -> {
+                    output.set(0, output.get(0) + YELLOW_BACKGROUND + String.format("%10s", "") + RESET);
+                    output.set(1, output.get(1) + YELLOW_BACKGROUND + String.format("%10s", "") + RESET);
+                    output.set(2, output.get(2) + YELLOW_BACKGROUND + String.format("%10s", "") + RESET);
+                    output.set(3, output.get(3) + YELLOW_BACKGROUND + String.format("%10s", "") + RESET);
+                }
+            }
+
+        }
+    }
+
+
+    /**
+     * Adds a card to be printed in the ArrayList<String> output
+     * @param output ArrayList<String> to be printed
+     * @param card PlaceableCard to be printed
+     */
+    private void printCard(ArrayList<String> output, PlaceableCard card) {
+
+        // Adds a space column between the cards
+        output.set(0, output.get(0) + " ");
+        output.set(1, output.get(1) + " ");
+        output.set(2, output.get(2) + " ");
+        output.set(3, output.get(3) + " ");
+
+
+        if(card == null) {
+            output.set(0, output.get(0) + BLACK_BACKGROUND + String.format("%10s", "") + RESET);
+            output.set(1, output.get(1) + BLACK_BACKGROUND + String.format("%10s", "") + RESET);
+            output.set(2, output.get(2) + BLACK_BACKGROUND + String.format("%2s", "") + "EMPTY" + String.format("%3s", "")  + RESET);
+            output.set(3, output.get(3) + BLACK_BACKGROUND + String.format("%10s", "") + RESET);
+            return;
+        }
+
+        Reign reign = card.getReign();
+        String BGColor = "";
+        switch (reign) {
+            case Fungus -> {
+                BGColor = RED_BACKGROUND;
+            }
+            case Insect -> {
+                BGColor = PURPLE_BACKGROUND;
+            }
+            case Animal -> {
+                BGColor = CYAN_BACKGROUND;
+            }
+            case Plant -> {
+                BGColor = GREEN_BACKGROUND;
+            }
+            case null -> {
+               BGColor = YELLOW_BACKGROUND;
+            }
+        }
+
+        // Gets all the resources of the card
+        ArrayList<String> resources = this.resourceToPrint(card);
+
+        if(card.isGold()) {
+            output.set(0, output.get(0) + BGColor + resources.get(0) + YELLOW_BACKGROUND + String.format("%4s", "") + resources.get(1)  + RESET);
+            if(card.isFront())
+                output.set(1, output.get(1) + YELLOW_BACKGROUND + " " + BGColor + String.format("%8s", "") + YELLOW_BACKGROUND + " " + RESET);
+            else
+                output.set(1, output.get(1) + YELLOW_BACKGROUND + " " + BGColor + String.format("%2s%3s%3s", "", this.reignToPrint(card), "") + YELLOW_BACKGROUND + " " + RESET);
+            output.set(2, output.get(2) + YELLOW_BACKGROUND + " " + BGColor + String.format("%3s%2d%3s", "", card.getID(),"") + YELLOW_BACKGROUND + " " + RESET);
+            output.set(3, output.get(3) + BGColor + resources.get(2) +  YELLOW_BACKGROUND + String.format("%4s", "") + resources.get(3)  + RESET);
+            return;
+        }
+
+        output.set(0, output.get(0) + BGColor + resources.get(0) + BGColor + String.format("%4s", "") + resources.get(1)  + RESET);
+        if (card.isFront())
+            output.set(1, output.get(1) + BGColor + String.format("%10s", "") + RESET);
+        else if (card.isResource())
+            output.set(1, output.get(1) + BGColor + String.format("%3s%3s%4s", "", this.reignToPrint(card), "") + RESET);
+        else if (card.isStarter())
+            output.set(1, output.get(1) + BGColor + String.format("%10s", "") + RESET);
+        output.set(2, output.get(2) + BGColor + String.format("%4s%2d%4s", "", card.getID(),"") + RESET);
+        output.set(3, output.get(3) + BGColor + resources.get(2) + BGColor + String.format("%4s", "") + resources.get(3)  + RESET);
 
     }
+
+    /**
+     * Converts the resources of a card to a string to be printed
+     * @param card the card to be converted
+     * @return the string to be printed
+     */
+    private ArrayList<String> resourceToPrint(PlaceableCard card) {
+        ArrayList<String> output = new ArrayList<>();
+        for (Resource resource : card.getResource()) {
+            switch (resource) {
+                case Fungus -> output.add(BLACK_TEXT + BRIGHT_WHITE_BACKGROUND + "FUN" + RESET);
+                case Insect -> output.add(BLACK_TEXT + BRIGHT_WHITE_BACKGROUND  + "INS" + RESET);
+                case Animal -> output.add(BLACK_TEXT + BRIGHT_WHITE_BACKGROUND + "ANI" + RESET);
+                case Plant -> output.add(BLACK_TEXT + BRIGHT_WHITE_BACKGROUND  + "PLA" + RESET);
+                case Manuscript -> output.add(BLACK_TEXT + BRIGHT_WHITE_BACKGROUND + "MAN" + RESET);
+                case Quill -> output.add(BLACK_TEXT + BRIGHT_WHITE_BACKGROUND + "QUI" + RESET);
+                case Inkwell -> output.add(BLACK_TEXT + BRIGHT_WHITE_BACKGROUND + "INK" + RESET);
+                case Empty -> output.add(BLACK_TEXT + BRIGHT_WHITE_BACKGROUND + "   " + RESET);
+                case Blocked -> {
+                    switch (card.getReign()) {
+                        case Fungus -> output.add(RED_BACKGROUND + "   " + RESET);
+                        case Insect -> output.add(PURPLE_BACKGROUND + "   " + RESET);
+                        case Animal -> output.add(CYAN_BACKGROUND + "   " + RESET);
+                        case Plant -> output.add(GREEN_BACKGROUND + "   " + RESET);
+                        case null -> output.add(YELLOW_BACKGROUND + "   " + RESET);
+                    }
+                }
+            }
+        }
+        return output;
+    }
+
+    /**
+     * Converts the reign of a card to a string to be printed
+     * @param card the card to be converted
+     * @return the string to be printed
+     */
+    private String reignToPrint(PlaceableCard card) {
+        String output = "";
+        switch (card.getReign()) {
+            case Fungus -> output = "FUN";
+            case Insect -> output = "INS";
+            case Animal -> output = "ANI";
+            case Plant -> output = "PLA";
+            case null -> output = "   ";
+        }
+        return output;
+    }
+
+
 
     /**
      * Prints the current state of the player area
@@ -488,7 +720,7 @@ public class ViewCLI extends View {
 
     /**
      * this method allow the client to visualize the server response about the connection
-     * @param message
+     * @param message the message received from the server
      */
     public void answerToConnection (connectionResponseMessage message){
         if (message.getCorrect())
@@ -497,7 +729,7 @@ public class ViewCLI extends View {
 
     /**
      *
-     * @param message
+     * @param message the message received from the server
      * @return message with the values chosen by the user
      */
     public serverOptionMessage serverOptions (serverOptionMessage message){
@@ -677,7 +909,7 @@ public class ViewCLI extends View {
 
     /**
      * allow the user to see if he managed to join the match
-     * @param message
+     * @param message the message received from the server
      */
     public void answerToOption (serverOptionResponseMessage message){
         if (message.getCorrect()) {
@@ -689,8 +921,8 @@ public class ViewCLI extends View {
 
     /**
      * this method shows which nicknames are not available and allows the user to choose his nickname
-     * @param message
-     * @return
+     * @param message the message received from the server
+     * @return the chosen nickname
      */
     public String unavailableNames(unavailableNamesMessage message){
         //the client can call the method view.unavailableNames passing as a parameter the arraylist of unavailable names received from server
@@ -710,7 +942,7 @@ public class ViewCLI extends View {
 
     /**
      * visualize the response about the value entered
-     * @param message
+     * @param message the message received from the server
      */
     public void answer (responseMessage message){
         if (!message.getCorrect())
@@ -720,7 +952,7 @@ public class ViewCLI extends View {
 
     /**
      * this method shows what colors are available and allows the user to choose his color
-     * @param message
+     * @param message the message received from the server
      */
     public String availableColors (availableColorsMessage message){
         //the client can call the method view.availableColors passing as a parameter the arraylist of available colors received from server
@@ -735,10 +967,9 @@ public class ViewCLI extends View {
 
     /**
      *this method allow the user to place his starter card
-     * @return int
+     * @return the side of the card
      */
     public int placeStarter () {
-        int side = 1000;
         System.out.println("Place your STARTER card on the table");
         Scanner scanner = new Scanner(System.in);
 
@@ -808,7 +1039,7 @@ public class ViewCLI extends View {
 
     /**
      * allow the user to say what card he wants to play, front or back, and in which position
-     * @return
+     * @return Array of int representing the card chosen by the user
      */
     public int[] placeCard () {
         int[] chosenCard = new int[4];
@@ -891,7 +1122,7 @@ public class ViewCLI extends View {
 
     /**
      * visualize the final information about the game, points and number of objectives achieved by the players
-     * @param message
+     * @param message the message received from the server
      */
     public void endGame (declareWinnerMessage message){
         HashMap<String, Integer> points = new HashMap<>();
@@ -908,6 +1139,10 @@ public class ViewCLI extends View {
         }
     }
 
+    /**
+     * Visualizes the updated state of the current player
+     * @param update the message received from the server
+     */
     @Override
     public void update(updatePlayerMessage update) {
         Player player = update.getPlayer();
