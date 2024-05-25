@@ -499,8 +499,18 @@ public class ClientManager implements Runnable {
             case PlaceCard -> {
                 logCreator.log("Player " + player.getNickname() + " starts normal turn and has to place a card");
 
-                // Compute place card state itself
-                this.placeCardState(playerInfo);
+                // Check if the current player can place a card
+                boolean canPlace = true;
+                if(playerInfo.getPlayer().getPlayerArea().getAvailablePosition().isEmpty()) {
+                    logCreator.log("Player " + player.getNickname() + " cannot place a card. Ending his turn.");
+                    this.updateMatchStatus();
+                    canPlace = false;
+                } else {
+                    // Compute place card state itself
+                    this.placeCardState(playerInfo);
+                }
+
+
 
 
 
@@ -511,7 +521,7 @@ public class ClientManager implements Runnable {
                 }
 
                 // Update the states
-                if(this.getOnlinePlayerInfo().contains(playerInfo)) {
+                if(this.getOnlinePlayerInfo().contains(playerInfo) && canPlace) {
                     playerInfo.setState(State.PickCard);
                 }
 
