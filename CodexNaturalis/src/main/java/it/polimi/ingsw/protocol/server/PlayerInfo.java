@@ -28,6 +28,20 @@ public class PlayerInfo implements Serializable {
 
 
     /**
+     * Constructs a new PlayerInfo object by copying the player and state from another PlayerInfo object.
+     * The connection is set to null and the saved objectives are copied from the original PlayerInfo object.
+     *
+     * @param playerInfo The PlayerInfo object to copy from.
+     */
+    public PlayerInfo(PlayerInfo playerInfo) {
+        this.player = playerInfo.getPlayer();
+        this.state = playerInfo.getState();
+        this.connection = null;
+        this.savedObjectives = playerInfo.getSavedObjectives();
+    }
+
+
+    /**
      * Sets the array of objective cards saved by the player.
      *
      * @param savedObjectives The array of saved objective cards.

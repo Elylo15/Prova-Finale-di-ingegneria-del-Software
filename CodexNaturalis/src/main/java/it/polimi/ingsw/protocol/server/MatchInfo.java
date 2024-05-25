@@ -43,21 +43,21 @@ public class MatchInfo implements Serializable {
         clonedMatchInfo.setLastTurn(this.lastTurn);
 
         for (PlayerInfo playerInfo : this.allPlayersInfo) {
-            PlayerInfo clonedPlayerInfo = new PlayerInfo(playerInfo.getPlayer(), playerInfo.getState(), null);
+            PlayerInfo clonedPlayerInfo = new PlayerInfo(playerInfo);
             clonedMatchInfo.addPlayer(clonedPlayerInfo);
         }
 
         return clonedMatchInfo;
     }
 
-    // REMOVE THIS
-    public void printPlayersStatus() {
-        for (PlayerInfo player : allPlayersInfo) {
-            String connection = player.getConnection() == null ? "null" : "not null";
-            System.out.println(player.getPlayer().getNickname() + " " + connection);
-        }
-        System.out.println(" ");
-    }
+//    // Uncomment to show the status of all players' connections when checked
+//    public void printPlayersStatus() {
+//        for (PlayerInfo player : allPlayersInfo) {
+//            String connection = player.getConnection() == null ? "null" : "not null";
+//            System.out.println(player.getPlayer().getNickname() + " " + connection);
+//        }
+//        System.out.println(" ");
+//    }
 
     /**
      * Adds a player to the match.

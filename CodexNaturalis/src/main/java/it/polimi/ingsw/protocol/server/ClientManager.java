@@ -20,6 +20,7 @@ import it.polimi.ingsw.protocol.server.exceptions.FailedToJoinMatch;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
+import java.rmi.MarshalException;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
@@ -863,14 +864,20 @@ public class ClientManager implements Runnable {
         for(Player player : players) {
             int score = player.getScore();
             int count = 0;
-            score += player.getPlayerArea().checkPattern(player.getObjective());
-            count += player.getPlayerArea().countPattern(player.getObjective());
+            if(player.getObjective() != null) {
+                score += player.getPlayerArea().checkPattern(player.getObjective());
+                count += player.getPlayerArea().countPattern(player.getObjective());
+            }
 
-            score += player.getPlayerArea().checkPattern(this.matchInfo.getMatch().getCommonObjective()[0]);
-            count += player.getPlayerArea().countPattern(this.matchInfo.getMatch().getCommonObjective()[0]);
+            if(matchInfo.getMatch().getCommonObjective()[0] != null){
+                score += player.getPlayerArea().checkPattern(this.matchInfo.getMatch().getCommonObjective()[0]);
+                count += player.getPlayerArea().countPattern(this.matchInfo.getMatch().getCommonObjective()[0]);
+            }
 
-            score += player.getPlayerArea().checkPattern(this.matchInfo.getMatch().getCommonObjective()[1]);
-            count += player.getPlayerArea().countPattern(this.matchInfo.getMatch().getCommonObjective()[1]);
+            if(matchInfo.getMatch().getCommonObjective()[1] != null){
+                score += player.getPlayerArea().checkPattern(this.matchInfo.getMatch().getCommonObjective()[1]);
+                count += player.getPlayerArea().countPattern(this.matchInfo.getMatch().getCommonObjective()[1]);
+            }
 
             scores.put(player.getNickname(), score);
             numberOfObjects.put(player.getNickname(), count);
@@ -1072,7 +1079,8 @@ public class ClientManager implements Runnable {
             }
         }
 
-        this.matchInfo.printPlayersStatus();
+        // Uncomment to print the status of all players' connections
+        //this.matchInfo.printPlayersStatus();
 
     }
 }
