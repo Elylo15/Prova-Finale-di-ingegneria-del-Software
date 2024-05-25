@@ -213,7 +213,7 @@ public class ViewCLI extends View {
     }
 
     /**
-     * Prints the back of the first card on top of the deck
+     * Prints the color and the type (resource or gold) of the first card on top of the deck
      * @param output ArrayList<String> to be printed
      * @param card PlaceableCard on top of the deck
      */
@@ -234,6 +234,37 @@ public class ViewCLI extends View {
 
         } else {
             Reign reign = card.getReign();
+
+            if(card.isGold()) {
+                switch (reign) {
+                    case Fungus -> {
+                        output.set(0, output.get(0) + RED_BACKGROUND + String.format("%3s", "") + YELLOW_BACKGROUND + String.format("%4s", "") + RED_BACKGROUND + String.format("%3s", "") + RESET);
+                        output.set(1, output.get(1) + YELLOW_BACKGROUND + " " + RED_BACKGROUND + String.format("%8s", "") + YELLOW_BACKGROUND + " " + RESET);
+                        output.set(2, output.get(2) + YELLOW_BACKGROUND + " " + RED_BACKGROUND + String.format("%1s", "") + "FUNGUS" + RED_BACKGROUND + String.format("%1s", "") + YELLOW_BACKGROUND + " " + RESET);
+                        output.set(3, output.get(3) + RED_BACKGROUND + String.format("%3s", "") + YELLOW_BACKGROUND + String.format("%4s", "") + RED_BACKGROUND + String.format("%3s", "") + RESET);
+                    }
+                    case Insect -> {
+                        output.set(0, output.get(0) + PURPLE_BACKGROUND + String.format("%3s", "") + YELLOW_BACKGROUND + String.format("%4s", "") + PURPLE_BACKGROUND + String.format("%3s", "") + RESET);
+                        output.set(1, output.get(1) + YELLOW_BACKGROUND + " " + PURPLE_BACKGROUND + String.format("%8s", "") + YELLOW_BACKGROUND + " " + RESET);
+                        output.set(2, output.get(2) + YELLOW_BACKGROUND + " " + PURPLE_BACKGROUND + String.format("%1s", "") + "INSECT" + PURPLE_BACKGROUND + String.format("%1s", "") + YELLOW_BACKGROUND + " " + RESET);
+                        output.set(3, output.get(3) + PURPLE_BACKGROUND + String.format("%3s", "") + YELLOW_BACKGROUND + String.format("%4s", "") + PURPLE_BACKGROUND + String.format("%3s", "") + RESET);
+                    }
+                    case Animal -> {
+                        output.set(0, output.get(0) + CYAN_BACKGROUND + String.format("%3s", "") + YELLOW_BACKGROUND + String.format("%4s", "") + CYAN_BACKGROUND + String.format("%3s", "") + RESET);
+                        output.set(1, output.get(1) + YELLOW_BACKGROUND + " " + CYAN_BACKGROUND + String.format("%8s", "") + YELLOW_BACKGROUND + " " + RESET);
+                        output.set(2, output.get(2) + YELLOW_BACKGROUND + " " + CYAN_BACKGROUND + String.format("%1s", "") + "ANIMAL" + CYAN_BACKGROUND + String.format("%1s", "") + YELLOW_BACKGROUND + " " + RESET);
+                        output.set(3, output.get(3) + CYAN_BACKGROUND + String.format("%3s", "") + YELLOW_BACKGROUND + String.format("%4s", "") + CYAN_BACKGROUND + String.format("%3s", "") + RESET);
+                    }
+                    case Plant -> {
+                        output.set(0, output.get(0) + GREEN_BACKGROUND + String.format("%3s", "") + YELLOW_BACKGROUND + String.format("%4s", "") + GREEN_BACKGROUND + String.format("%3s", "") + RESET);
+                        output.set(1, output.get(1) + YELLOW_BACKGROUND + " " + GREEN_BACKGROUND + String.format("%8s", "") + YELLOW_BACKGROUND + " " + RESET);
+                        output.set(2, output.get(2) + YELLOW_BACKGROUND + " " + GREEN_BACKGROUND + String.format("%1s", "") + "PLANT" + GREEN_BACKGROUND + String.format("%2s", "") + YELLOW_BACKGROUND + " " + RESET);
+                        output.set(3, output.get(3) + GREEN_BACKGROUND + String.format("%3s", "") + YELLOW_BACKGROUND + String.format("%4s", "") + GREEN_BACKGROUND + String.format("%3s", "") + RESET);
+                    }
+                }
+                return;
+            }
+
             switch (reign) {
                 case Fungus -> {
                     output.set(0, output.get(0) + RED_BACKGROUND + String.format("%10s", "") + RESET);
@@ -685,16 +716,29 @@ public class ViewCLI extends View {
      * Prints the current state of the player hand
      * @param currentPlayer the player whose hand is to be printed
      */
-    private void showPlayerHand(Player currentPlayer, String viewer) {
+    protected void showPlayerHand(Player currentPlayer, String viewer) {
         //PlayerHand hand = message.getCurrentPlayer().getPlayerHand();
         PlayerHand hand = currentPlayer.getPlayerHand();
+        String index = "";
+        ArrayList<String> output = new ArrayList<>();
+        output.add("");
+        output.add("");
+        output.add("");
+        output.add("");
+        index += " (1)  " + "     ";
+        index += " (2)  " + "     ";
+        index += " (3)  " + "     ";
         System.out.println("\nPLAYER HAND: ");
         if (currentPlayer.getNickname().equals(viewer)) {
-            int i = 0;
-            for (PlaceableCard card : hand.getPlaceableCards()) {
-                System.out.println("("+i+") Card ID: " + card.getID());
-                i += 1;
-            }
+            hand.getPlaceableCards().forEach((card) -> this.printCard(output, card));
+
+            System.out.println(index);
+            System.out.println(output.get(0));
+            System.out.println(output.get(1));
+            System.out.println(output.get(2));
+            System.out.println(output.get(3));
+            System.out.println("\n");
+
         } else {
             for (PlaceableCard card : hand.getPlaceableCards()) {
                 System.out.println("Card: " + card.getReign());
