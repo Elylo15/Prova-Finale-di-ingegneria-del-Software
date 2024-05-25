@@ -20,7 +20,6 @@ import it.polimi.ingsw.protocol.server.exceptions.FailedToJoinMatch;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
-import java.rmi.MarshalException;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
@@ -29,7 +28,7 @@ import java.util.stream.Collectors;
  * This class manages the clients connected and the game logic.
  * It is responsible for handling the connection of clients, the game flow, and the disconnection of clients.
  */
-public class ClientManager implements Runnable {
+public class MatchManager implements Runnable {
     private MatchInfo matchInfo;
     private int timeout;
     private int turnNumber;
@@ -41,7 +40,7 @@ public class ClientManager implements Runnable {
      * Standard constructor for ClientManager
      * @param match object representing the model and data related to the server
      */
-    public ClientManager(MatchInfo match) {
+    public MatchManager(MatchInfo match) {
         this.matchInfo = match;
         this.matchInfo.setLastTurn(false);
         this.turnNumber = 0;
@@ -946,7 +945,7 @@ public class ClientManager implements Runnable {
             if(this.getOnlinePlayerInfo().size() == 1) {
                 // Waits for a timeout.
                 // Then, if a player remains, he is declared the new winner
-                ClientManager manager = this;
+                MatchManager manager = this;
                 TimerTask task = new TimerTask() {
                     @Override
                     public void run() {

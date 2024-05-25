@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
  * Server class that manages the connections with the clients.
  */
 public class Server implements Runnable {
-    private CopyOnWriteArrayList<ClientManager> games;
+    private CopyOnWriteArrayList<MatchManager> games;
     private int portSocket;
     private int portRMI;
 
@@ -309,7 +309,7 @@ public class Server implements Runnable {
             Integer id = this.createNewMatchID();
             MatchInfo matchInfo = new MatchInfo(new Match(),id, null, MatchState.Waiting);
 
-            ClientManager lobbyManager = new ClientManager(matchInfo);
+            MatchManager lobbyManager = new MatchManager(matchInfo);
             games.add(lobbyManager);
             executor.submit(lobbyManager);
 
@@ -333,8 +333,8 @@ public class Server implements Runnable {
      */
     private void joinWaitingMatch(ClientConnection connection, serverOptionMessage msg) throws FailedToJoinMatch {
         // Player wants to join a waiting game
-        ClientManager lobbyManager = games.stream()
-                .filter(clientManager -> Objects.equals(clientManager.getMatchInfo().getID(), msg.getMatchID()))
+        MatchManager lobbyManager = games.stream()
+                .filter(matchManager -> Objects.equals(matchManager.getMatchInfo().getID(), msg.getMatchID()))
                 .limit(1)
                 .findAny().orElse(null);
 
@@ -357,8 +357,8 @@ public class Server implements Runnable {
     private void joinStartedMatch(ClientConnection connection, serverOptionMessage msg) throws FailedToJoinMatch {
 
         // Finds the game
-        ClientManager lobbyManager = games.stream()
-                .filter(clientManager -> Objects.equals(clientManager.getMatchInfo().getID(), msg.getStartedMatchID()))
+        MatchManager lobbyManager = games.stream()
+                .filter(matchManager -> Objects.equals(matchManager.getMatchInfo().getID(), msg.getStartedMatchID()))
                 .limit(1)
                 .findAny().orElse(null);
 
@@ -381,9 +381,9 @@ public class Server implements Runnable {
      */
     private void joinSavedMatch(ClientConnection connection, serverOptionMessage message) throws FailedToJoinMatch {
 
-        ClientManager lobbyManager = null;
+        MatchManager lobbyManager = null;
         synchronized (this) {
-            if (this.games.stream().anyMatch(clientManager -> Objects.equals(clientManager.getMatchInfo().getID(), message.getSavedMatchID()))) {
+            if (this.games.stream().anyMatch(matchManager -> Objects.equals(matchManager.getMatchInfo().getID(), message.getSavedMatchID()))) {
                 logCreator.log("Client " + connection.getIP() + " " + connection.getPort() + " failed to join match " + message.getSavedMatchID() + " due to already started game");
                 throw new FailedToJoinMatch("Failed to join match " + message.getSavedMatchID() + " due to already started game");
             }
@@ -398,7 +398,7 @@ public class Server implements Runnable {
                     throw new FailedToJoinMatch("Failed to join match " + message.getSavedMatchID() + " due to not found saved game");
                 }
 
-                lobbyManager = new ClientManager(matchInfo);
+                lobbyManager = new MatchManager(matchInfo);
                 games.add(lobbyManager);
                 executor.submit(lobbyManager::loadAndWaitSavedMatch);
             } else {
@@ -419,7 +419,7 @@ public class Server implements Runnable {
      * @param lobbyManager ClientManager of the game.
      * @throws FailedToJoinMatch if the player cannot join the game.
      */
-    private void joinNotNewMatch(ClientConnection connection, serverOptionMessage msg, ClientManager lobbyManager) throws FailedToJoinMatch {
+    private void joinNotNewMatch(ClientConnection connection, serverOptionMessage msg, MatchManager lobbyManager) throws FailedToJoinMatch {
         // Obtains the offline players nicknames
         ArrayList<String> offlineNames;
 
@@ -492,7 +492,7 @@ public class Server implements Runnable {
      * @param connection connection with the client.
      * @throws FailedToJoinMatch if the player cannot join the game.
      */
-    private void welcomeNewPlayer(ClientManager lobbyManager, ClientConnection connection) throws FailedToJoinMatch {
+    private void welcomeNewPlayer(MatchManager lobbyManager, ClientConnection connection) throws FailedToJoinMatch {
         // Sends status information
         currentStateMessage currState = new currentStateMessage(null,null,"ConnectionState", false, null, null, lobbyManager.getMatchInfo().getID());
         connection.sendCurrentState(currState);
@@ -633,7 +633,7 @@ public class Server implements Runnable {
      */
     private void closeMatch() {
         while(this.serverRunning || !this.games.isEmpty()) {
-            games.removeIf(clientManager -> clientManager.getMatchInfo().getStatus() == MatchState.KickingPlayers);
+            games.removeIf(matchManager -> matchManager.getMatchInfo().getStatus() == MatchState.KickingPlayers);
         }
     }
 
@@ -649,7 +649,7 @@ public class Server implements Runnable {
             MatchID = (new Random()).nextInt(100000);
             Integer finalMatchID = MatchID;
             if(games.stream()
-                    .map(clientManager -> clientManager.getMatchInfo().getID())
+                    .map(matchManager -> matchManager.getMatchInfo().getID())
                     .noneMatch(a -> Objects.equals(a, finalMatchID)))
                 correct = true;
         }

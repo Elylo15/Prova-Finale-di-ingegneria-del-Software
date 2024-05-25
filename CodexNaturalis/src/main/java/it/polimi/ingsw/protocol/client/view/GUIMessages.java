@@ -4,7 +4,7 @@ import java.io.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-public class MessageFromGUI {
+public class GUIMessages {
     private static BlockingQueue<byte[]> storedObjectsToClient;
     private static BlockingQueue<byte[]> storedObjectsToGUI;
 
@@ -12,7 +12,7 @@ public class MessageFromGUI {
     /**
      * Constructor for MessageExchanger
      */
-    public MessageFromGUI() {
+    public GUIMessages() {
         storedObjectsToGUI = new LinkedBlockingQueue<>();
         storedObjectsToClient = new LinkedBlockingQueue<>();
     }
