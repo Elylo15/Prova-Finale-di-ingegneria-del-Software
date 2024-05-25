@@ -101,6 +101,8 @@ class ViewCLITest {
 
 
     }
+
+
     @Test
     void testEnd() {
         HashMap<String, Integer> scores = new HashMap<>();
@@ -122,6 +124,16 @@ class ViewCLITest {
     }
 
 
+    @Test
+    void commonAreaPrintingTest() throws Exception {
+        Match match = new Match();
+        match.start();
+        Player player1 = new Player("player1", "RED", match.getCommonArea());
+        match.addPlayer(player1);
+        player1.initialHand();
+        viewCLI.showCommonArea(match.getCommonArea());
+        viewCLI.showPlayerHand(player1, "player1");
+    }
 
 
 }

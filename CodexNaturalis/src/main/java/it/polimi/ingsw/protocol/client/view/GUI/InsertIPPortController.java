@@ -34,9 +34,9 @@ public class InsertIPPortController {
         return chooseSocketRMIController;
     }
 
-    public String[] setIPPORT() {
-        String[] server = client.getView().askPortIP();
-        client.setIP(server[0]);
+    public String setIPPORT() {
+        String server = client.getView().askIP();
+        client.setIP(server);
         //setPort(server[1]);
         return server;
     }
@@ -44,7 +44,7 @@ public class InsertIPPortController {
 
     @FXML
     private void loadNextPage()  {
-        String[] server = setIPPORT();
+        String server = setIPPORT();
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/Choose_Socket_RMI.fxml"));
             Parent root = loader.load();

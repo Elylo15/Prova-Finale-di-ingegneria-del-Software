@@ -34,11 +34,10 @@ public class ViewGUI extends View {
      * @return array with ip and port of the server
      */
     @Override
-    public String[] askPortIP(){
-        String[] server = new String[2];
+    public String askIP(){
+        String server = "";
         InsertIPPortController controller = client.getMainViewController().getInsertIPPortController();
-        server[0] = controller.getIP();
-        server[1] = controller.getPort();
+        server = controller.getIP();
         return server;
     }
 

@@ -26,7 +26,7 @@ public class ChooseSocketRMIController {
 
     private Stage primaryStage;
     private Client client;
-    private String[] server;
+    private String server;
     private InsertServerOptionController insertServerOptionController;
 
     private Controller controller;
@@ -39,7 +39,7 @@ public class ChooseSocketRMIController {
         this.client = client;
     }
 
-    public void setServer(String[] server) {
+    public void setServer(String server) {
         this.server = server;
 
     }

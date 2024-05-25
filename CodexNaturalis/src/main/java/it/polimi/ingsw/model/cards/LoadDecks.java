@@ -26,7 +26,7 @@ public class LoadDecks implements Serializable {
         ObjectMapper mapper = new ObjectMapper();
 
         try {
-            File file = new File("CodexNaturalis/src/main/Resource/Json/Cards.json");
+            File file = new File("src/main/Resource/Json/Cards.json");
             Map<String, List<?>> cardMap = mapper.readValue(file, new TypeReference<>() {
             });
 
