@@ -133,6 +133,8 @@ class ViewCLITest {
         player1.initialHand();
         viewCLI.showCommonArea(match.getCommonArea());
         viewCLI.showPlayerHand(player1, "player1");
+
+        viewCLI.showPlayerHand(player1, "player2");
     }
 
 
