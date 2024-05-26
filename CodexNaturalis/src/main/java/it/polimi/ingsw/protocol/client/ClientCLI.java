@@ -1,80 +1,20 @@
 package it.polimi.ingsw.protocol.client;
 
-import it.polimi.ingsw.model.cards.ObjectiveCard;
-import it.polimi.ingsw.protocol.client.controller.*;
 import it.polimi.ingsw.protocol.client.view.*;
-import it.polimi.ingsw.protocol.client.view.GUI.*;
 import it.polimi.ingsw.protocol.messages.*;
-import it.polimi.ingsw.protocol.messages.ConnectionState.*;
 import it.polimi.ingsw.protocol.messages.EndGameState.*;
 import it.polimi.ingsw.protocol.messages.PlayerTurnState.updatePlayerMessage;
-import it.polimi.ingsw.protocol.messages.ServerOptionState.*;
-import it.polimi.ingsw.protocol.messages.WaitingforPlayerState.*;
-
 import java.util.*;
-import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicIntegerArray;
-
-import static it.polimi.ingsw.protocol.messages.Message.lock;
 
 public class ClientCLI extends Client{
-    private String serverIP;
-    private String serverPort;
-    private Controller controller;
-    private final View view;
-    private ThreadPoolExecutor executor;
-
 
     /**
      * method {@code Client}: constructs a new Client
      *
      * @param view: default ViewGUI
      */
-    public ClientCLI(View view) {
-        this.view = view;
-
-        int corePoolSize = 5;
-        int maximumPoolSize = 200;
-        long keepAliveTime = 300;
-        TimeUnit unit = TimeUnit.SECONDS;
-        executor = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, unit, new LinkedBlockingQueue<Runnable>());
-
-    }
-
-
-
-    public View getView() {
-        return view;
-    }
-
-    /**
-     * method {@code connection}: sets socket or rmi. Enables GUI or CLI.
-     * Connects to a socket server or rmi server.
-     */
-    @Override
-    public void connection(boolean isSocket) {
-
-        if (isSocket) {
-            try {
-                controller.connectToServer(serverIP, "1024");
-                connectionResponseMessage answer = controller.answerConnection();
-                view.answerToConnection(answer);
-            } catch (Exception e) {
-                e.printStackTrace();
-                view.playerDisconnected();
-                throw new RuntimeException();
-            }
-        } else {
-            try {
-                controller.connectToServer(serverIP, "1099");
-                connectionResponseMessage answer = controller.answerConnection();
-                view.answerToConnection(answer);
-            } catch (Exception e) {
-                e.printStackTrace();
-                view.playerDisconnected();
-                throw new RuntimeException();
-            }
-        }
+    public ClientCLI(ViewCLI view) {
+        super(view);
     }
 
     /**
@@ -85,10 +25,10 @@ public class ClientCLI extends Client{
     public void run() {
         while(true) {
             try {
-                String server = view.askIP();
+                String server = getView().askIP();
                 setIP(server);
 
-                boolean isSocket = view.askSocket();
+                boolean isSocket = getView().askSocket();
                 setController(server, isSocket);
                 connection(isSocket);
             } catch (Exception e) {
@@ -103,7 +43,7 @@ public class ClientCLI extends Client{
 //                    System.out.println("\n\033[41mWaiting for current state");
 
 
-                    currentStateMessage current = controller.getCurrent();
+                    currentStateMessage current = getController().getCurrent();
                     String state = current.getStateName();
 
 //                    // REMOVE THIS
@@ -124,41 +64,41 @@ public class ClientCLI extends Client{
                             break;
                         }
                         case "StarterCardState": {
-                            view.updatePlayer(current);
+                            getView().updatePlayer(current);
                             if (Objects.equals(current.getCurrentPlayer().getNickname(), current.getPlayer().getNickname()))
                                 starter();
-                            updatePlayerMessage update = controller.updatePlayer();
-                            view.update(update);
+                            updatePlayerMessage update = getController().updatePlayer();
+                            getView().update(update);
                             break;
                         }
                         case "ObjectiveState": {
 
-                            view.updatePlayer(current);
+                            getView().updatePlayer(current);
                             if (Objects.equals(current.getCurrentPlayer().getNickname(), current.getPlayer().getNickname()))
                                 pickObjective();
-                            updatePlayerMessage update = controller.updatePlayer();
-                            view.update(update);
+                            updatePlayerMessage update = getController().updatePlayer();
+                            getView().update(update);
                             break;
                         }
                         case "PlaceTurnState": {
-                            view.updatePlayer(current);
+                            getView().updatePlayer(current);
                             if (Objects.equals(current.getCurrentPlayer().getNickname(), current.getPlayer().getNickname()))
                                 placeCard();
-                            updatePlayerMessage update = controller.updatePlayer();
-                            view.update(update);
+                            updatePlayerMessage update = getController().updatePlayer();
+                            getView().update(update);
                             break;
                         }
                         case "PickTurnState": {
-                            view.updatePlayer(current);
+                            getView().updatePlayer(current);
                             if (Objects.equals(current.getCurrentPlayer().getNickname(), current.getPlayer().getNickname()))
                                 pickCard();
-                            updatePlayerMessage update = controller.updatePlayer();
-                            view.update(update);
+                            updatePlayerMessage update = getController().updatePlayer();
+                            getView().update(update);
                             break;
                         }
                         case "EndGameState": {
-                            declareWinnerMessage end = controller.endGame();
-                            view.endGame(end);
+                            declareWinnerMessage end = getController().endGame();
+                            getView().endGame(end);
                             throw new Exception("Game ended.");
                         }
 
@@ -168,298 +108,14 @@ public class ClientCLI extends Client{
                         }
 
                         case "AnswerCheckConnection": {
-                            controller.sendAnswerToPing();
+                            getController().sendAnswerToPing();
                             break;
                         }
                     }
                 }
             } catch (Exception e) {
-                view.playerDisconnected();
+                getView().playerDisconnected();
             }
         }
     }
-
-    /**
-     * method {@code serverOptions}: invocations of controller methods to send and receive serverOptionMessage.
-     * Invocations of view methods to display and receive player's info.
-     * invocations of controller methods to receive responseMessage. If responseMessage is correct, the loop ends.
-     */
-    @Override
-    public void serverOptions() {
-        while (true) {
-            serverOptionMessage options = controller.serverOptions();
-            options = view.serverOptions(options);
-            controller.sendOptions(options);
-            responseMessage answer = controller.correctAnswer();
-            view.answer(answer);
-            if (answer.getCorrect())
-                break;
-        }
-    }
-
-    /**
-     * method {@code name}: invocations of controller methods to receive unavailableNamesMessage.
-     * Invocations of view methods to display and receive player's info.
-     * invocations of controller methods to send received info.
-     * invocations of controller methods to receive responseMessage. If responseMessage is correct, the loop ends.
-     */
-    @Override
-    public void name() {
-        while (true) {
-            unavailableNamesMessage unavailableName = controller.getUnavailableName();
-            String name = view.unavailableNames(unavailableName);
-            controller.chooseName(name);
-            responseMessage answer = controller.correctAnswer();
-            view.answer(answer);
-            if (answer.getCorrect())
-                break;
-        }
-    }
-
-    /**
-     * method {@code color}: invocations of controller methods to receive availableColorsMessage.
-     * Invocations of view methods to display and receive player's info.
-     * invocations of controller methods to send received info.
-     * invocations of controller methods to receive responseMessage. If responseMessage is correct, the loop ends.
-     */
-    @Override
-    public void color() {
-        while (true) {
-            availableColorsMessage availableColor = controller.getAvailableColor();
-            String color = view.availableColors(availableColor);
-            controller.chooseColor(color);
-            responseMessage answer = controller.correctAnswer();
-            view.answer(answer);
-            if (answer.getCorrect())
-                break;
-        }
-    }
-
-
-    /**
-     * method {@code color}: invocations of controller methods to receive availableColorsMessage.
-     * Invocations of view methods to display and receive player's info.
-     * invocations of controller methods to send received info.
-     * invocations of controller methods to receive responseMessage. If responseMessage is correct, the loop ends.
-     */
-    @Override
-    public void waitingPlayer(currentStateMessage current) {
-        Integer expected;
-        boolean noResponse = false;
-
-        newHostMessage newHost = controller.newHost();
-
-        while (Objects.equals(newHost.getNewHostNickname(), current.getPlayer().getNickname())) {
-            Future<Integer> future = executor.submit(view::expectedPlayers);
-
-            try {
-                expected = future.get(120, TimeUnit.SECONDS);
-            } catch (Exception e) {
-                expected = 1000;
-                noResponse = true;
-            }
-
-            controller.expectedPlayers(expected, noResponse);
-            responseMessage answer = controller.correctAnswer();
-            view.answer(answer);
-            if (answer.getCorrect())
-                break;
-        }
-
-    }
-
-
-    /**
-     * method {@code starter}: invocations of controller methods to receive and send messages.
-     * Invocations of view methods to display and receive player's info.
-     * invocations of controller methods to send received info.
-     * invocations of controller methods to receive responseMessage. If responseMessage is correct, the loop ends.
-     */
-    @Override
-    public void starter() {
-        Integer side;
-        boolean noResponse = false;
-
-        while (true) {
-            Future<Integer> future = executor.submit(view::placeStarter);
-
-            try {
-                side = future.get(120, TimeUnit.SECONDS);
-            } catch (Exception e) {
-                side = 1000;
-                noResponse = true;
-            }
-
-            controller.placeStarter(side, noResponse);
-            responseMessage answer = controller.correctAnswer();
-
-            view.answer(answer);
-            if (answer.getCorrect())
-                break;
-        }
-    }
-
-
-    /**
-     * method {@code pickObjective}: invocations of controller methods to receive and send messages.
-     * Invocations of view methods to display and receive player's info.
-     * invocations of controller methods to send received info.
-     * invocations of controller methods to receive responseMessage. If responseMessage is correct, the loop ends.
-     */
-    @Override
-    public void pickObjective() {
-        Integer pick;
-        boolean noResponse = false;
-
-
-        while (true) {
-            ArrayList<ObjectiveCard> objectives = controller.getObjectiveCards().getObjectiveCard();
-
-            Future<Integer> future = executor.submit(() -> view.chooseObjective(objectives));
-
-            try {
-                pick = future.get(120, TimeUnit.SECONDS);
-            } catch (Exception e) {
-                pick = 1000;
-                noResponse = true;
-            }
-
-            controller.chooseObjective(pick, noResponse);
-            responseMessage answer = controller.correctAnswer();
-            view.answer(answer);
-            if (answer.getCorrect())
-                break;
-        }
-
-    }
-
-
-    /**
-     * method {@code pickCard}: invocations of controller methods to receive and send messages.
-     * Invocations of view methods to display and receive player's info.
-     * invocations of controller methods to send received info.
-     * invocations of controller methods to receive responseMessage. If responseMessage is correct, the loop ends.
-     */
-    @Override
-    public void pickCard() {
-        Integer card;
-        boolean noResponse = false;
-
-        while (true) {
-            Future<Integer> future = executor.submit(view::pickCard);
-
-            try {
-                card = future.get(120, TimeUnit.SECONDS);
-            } catch (Exception e) {
-                card = 1000;
-                noResponse = true;
-            }
-
-            controller.pickCard(card, noResponse);
-            responseMessage answer = controller.correctAnswer();
-            view.answer(answer);
-            if (answer.getCorrect())
-                break;
-        }
-    }
-
-
-
-    /**
-     * method {@code placeCard}: invocations of controller methods to receive and send messages.
-     * Invocations of view methods to display and receive player's info.
-     * invocations of controller methods to send received info.
-     * invocations of controller methods to receive responseMessage. If responseMessage is correct, the loop ends.
-     */
-    @Override
-    public void placeCard() {
-        AtomicIntegerArray card = new AtomicIntegerArray(4);
-        boolean noResponse = false;
-
-        while (true) {
-            Future<int[]> future = executor.submit(view::placeCard);
-
-            try {
-                int[] cardArray = future.get(240, TimeUnit.SECONDS);
-                card.set(0, cardArray[0]);
-                card.set(1, cardArray[1]);
-                card.set(2, cardArray[2]);
-                card.set(3, cardArray[3]);
-            } catch (Exception e) {
-                card.set(0, 1000);
-                card.set(1, 1000);
-                card.set(2, 1000);
-                card.set(3, 1000);
-                noResponse = true;
-            }
-
-            controller.placeCard(card.get(0), card.get(1), card.get(2), card.get(3), noResponse);
-            responseMessage answer = controller.correctAnswer();
-            view.answer(answer);
-            if (answer.getCorrect())
-                break;
-        }
-    }
-
-    /**
-     * method {@code setIP}: sets serverIP
-     *
-     * @param serverIP: String
-     */
-    @Override
-    public void setIP(String serverIP) {
-        this.serverIP = serverIP;
-    }
-
-    /**
-     * method {@code setController}: sets the Controller
-     *
-     * @param server:   String[]
-     * @param isSocket: boolean
-     */
-    @Override
-    public void setController(String server, boolean isSocket) {
-        if (isSocket) {
-            try {
-                this.controller = new ControllerSocket(server, "1024");
-            } catch (Exception e) {
-                view.playerDisconnected();
-            }
-        } else {
-            try {
-                this.controller = new ControllerRMI(server, "1099");
-            } catch (Exception e) {
-                view.playerDisconnected();
-            }
-        }
-    }
-
-
-    /**
-     * method {@code pickNameFA}: invocations of controller methods to receive and send messages.
-     * Invocations of view methods to display and receive player's info.
-     * Asks the player to pick a name between the available ones.
-     */
-    @Override
-    public void pickNameFA() {
-        String name;
-
-        while (true) {
-            unavailableNamesMessage unavailableName = controller.getUnavailableName();
-            Future<String> future = executor.submit(() -> view.pickNameFA(unavailableName));
-
-            try {
-                name = future.get(120, TimeUnit.SECONDS);
-            } catch (Exception e) {
-                name = "1000";
-            }
-
-            controller.chooseName(name);
-            responseMessage answer = controller.correctAnswer();
-            view.answer(answer);
-            if (answer.getCorrect())
-                break;
-        }
-    }
-
 }
