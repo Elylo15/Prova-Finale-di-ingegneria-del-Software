@@ -6,15 +6,15 @@
 <?import javafx.scene.text.Font?>
 
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.protocol.clientCLI.view.GUI.expectedPlayersController">
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.protocol.client.view.GUI.controller.">
    <children>
       <Label layoutX="132.0" layoutY="66.0" text="How many players do you want to be in the game?">
          <font>
             <Font size="15.0" />
          </font>
       </Label>
-      <Button fx:id="playerTwo" layoutX="73.0" layoutY="217.0" mnemonicParsing="false" onAction="#ButtonTwo" text="2 Players" />
-      <Button fx:id="playerThree" layoutX="274.0" layoutY="217.0" mnemonicParsing="false" onAction="#ButtonThree" text="3 Players" />
-      <Button fx:id="playerFour" layoutX="469.0" layoutY="217.0" mnemonicParsing="false" onAction="#ButtonFour" text="4 Players" />
+      <Button fx:id="playerTwo" layoutX="73.0" layoutY="217.0" mnemonicParsing="false" text="2 Players" />
+      <Button fx:id="playerThree" layoutX="274.0" layoutY="217.0" mnemonicParsing="false" text="3 Players" />
+      <Button fx:id="playerFour" layoutX="469.0" layoutY="217.0" mnemonicParsing="false" text="4 Players" />
    </children>
 </AnchorPane>

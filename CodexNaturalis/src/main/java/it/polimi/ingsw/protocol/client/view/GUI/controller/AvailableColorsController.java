@@ -42,23 +42,6 @@ public class AvailableColorsController {
         return colorToChoose.getText();
     }
 
-    @FXML
-    private void handleSubmit() throws IOException {
-        clientCLI.color();
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/availableColors.fxml"));
-            Parent root = loader.load();
-            waitingController = loader.getController();
-            waitingController.setPrimaryStage(primaryStage);
-            waitingController.setClient(clientCLI);
-
-            clientCLI.setWaitingController(waitingController);
-
-            primaryStage.getScene().setRoot(root);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
 
 
