@@ -190,15 +190,15 @@ public class Client {
             try {
                 while (true) {
 
-                    // REMOVE THIS
-                    System.out.println("\n\033[41mWaiting for current state");
+//                    // REMOVE THIS
+//                    System.out.println("\n\033[41mWaiting for current state");
 
 
                     currentStateMessage current = controller.getCurrent();
                     String state = current.getStateName();
 
-                    // REMOVE THIS
-                    System.out.println("Current state: " + state + "\n\033[0m");
+//                    // REMOVE THIS
+//                    System.out.println("Current state: " + state + "\n\033[0m");
 
                     switch (state) {
                         case "ServerOptionState": {
@@ -265,6 +265,9 @@ public class Client {
                     }
                 }
             } catch (Exception e) {
+                // REMOVE THIS
+                e.printStackTrace();
+
                 view.playerDisconnected();
             }
         }

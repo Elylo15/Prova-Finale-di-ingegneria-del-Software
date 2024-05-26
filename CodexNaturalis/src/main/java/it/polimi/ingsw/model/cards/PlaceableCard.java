@@ -85,9 +85,9 @@ public abstract class PlaceableCard extends Card implements Serializable {
     public boolean checkRequirement(ArrayList<Integer> req) {
         if(this.isFront()) {
             int playgroundFungus = req.get(0);
-            int playgroundPlant = req.get(1);
+            int playgroundInsect = req.get(1);
             int playgroundAnimal = req.get(2);
-            int playgroundInsect = req.get(3);
+            int playgroundPlant = req.get(3);
             int cardFungus = 0;
             int cardPlant = 0;
             int cardAnimal = 0;

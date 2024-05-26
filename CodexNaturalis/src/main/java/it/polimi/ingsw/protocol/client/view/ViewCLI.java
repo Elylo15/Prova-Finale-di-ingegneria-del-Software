@@ -675,9 +675,9 @@ public class ViewCLI extends View {
         output.add("");
         output.add("");
         output.add("");
+        index += " (0)  " + "     ";
         index += " (1)  " + "     ";
         index += " (2)  " + "     ";
-        index += " (3)  " + "     ";
         System.out.println("\nPLAYER HAND: ");
         if (currentPlayer.getNickname().equals(viewer)) {
             hand.getPlaceableCards().forEach((card) -> this.printCard(output, card));
@@ -687,7 +687,7 @@ public class ViewCLI extends View {
             System.out.println(output.get(0));
             System.out.println(output.get(1));
             System.out.println(output.get(2));
-            int i = 1;
+            int i = 0;
             for (PlaceableCard card : hand.getPlaceableCards()) {
                 this.printRequirementCard(card, i);
                 i += 1;
@@ -806,6 +806,7 @@ public class ViewCLI extends View {
                             matchID = message.getWaitingMatches().get(matchID - 1);
                             break;
                         } catch (Exception e) {
+                            scanner.nextLine();
                             System.out.println("ANSWER NOT VALID");
                             continue;
                         }
@@ -867,6 +868,7 @@ public class ViewCLI extends View {
                             startedMatchID = message.getRunningMatches().get(startedMatchID - 1);
                             break;
                         } catch (Exception e) {
+                            scanner.nextLine();
                             System.out.println("You didn't enter an int value");
                             continue;
                         }
@@ -915,6 +917,7 @@ public class ViewCLI extends View {
                                 savedMatchID = message.getSavedMatches().get(savedMatchID - 1);
                                 break;
                             } catch (Exception e) {
+                                scanner.nextLine();
                                 System.out.println("ANSWER NOT VALID");
                                 continue;
                             }
@@ -1027,6 +1030,7 @@ public class ViewCLI extends View {
                 scanner.nextLine();
                 break;
             } catch (Exception e) {
+                scanner.nextLine();
                 System.out.println("You didn't enter an integer value");
             }
         }
@@ -1048,13 +1052,14 @@ public class ViewCLI extends View {
 
         System.out.println("Choose your personal objective.");
         System.out.print("FIRST (1) or SECOND (2) ?  ");
+        Scanner scanner = new Scanner(System.in);
         while(true) {
             try {
-                Scanner scanner = new Scanner(System.in);
                 objective = scanner.nextInt();
                 scanner.nextLine();
                 break;
             } catch (Exception e) {
+                scanner.nextLine();
                 System.out.println("You didn't enter an integer value");
             }
         }
@@ -1079,6 +1084,7 @@ public class ViewCLI extends View {
                 scanner.nextLine();
                 break;
             } catch (Exception e) {
+                scanner.nextLine();
                 System.out.println("You didn't enter an integer value");
             }
         }
@@ -1107,6 +1113,7 @@ public class ViewCLI extends View {
                 scanner.nextLine();
                 break;
             } catch (Exception e) {
+                scanner.nextLine();
                 System.out.println("You didn't enter an integer value");
             }
         }
@@ -1119,6 +1126,7 @@ public class ViewCLI extends View {
                 scanner.nextLine();
                 break;
             } catch (Exception e) {
+                scanner.nextLine();
                 System.out.println("You didn't enter an integer value");
             }
         }
@@ -1138,6 +1146,7 @@ public class ViewCLI extends View {
             choice = scanner.nextInt();
             scanner.nextLine();
         } catch (Exception e) {
+            scanner.nextLine();
             System.out.println("you didn't enter an integer value");
         }
         return choice;
@@ -1200,6 +1209,7 @@ public class ViewCLI extends View {
                     System.out.println("Please enter a valid number");
                 }
             } catch (Exception e) {
+                scanner.nextLine();
                 System.out.println("Please enter a valid number");
             }
         }

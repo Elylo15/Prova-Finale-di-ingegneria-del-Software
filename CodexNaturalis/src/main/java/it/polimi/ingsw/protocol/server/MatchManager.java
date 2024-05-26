@@ -154,11 +154,11 @@ public class MatchManager implements Runnable {
 
     private synchronized void saveMatch() {
         MatchInfo copy = matchInfo.cloneForSerialization();
-        File dir = new File("CodexNaturalis/savedMatches");
+        File dir = new File("savedMatches");
         if(!dir.exists())
             dir.mkdir();
 
-        String filename = "CodexNaturalis/savedMatches/match_" + copy.getID() + ".match";
+        String filename = "savedMatches/match_" + copy.getID() + ".match";
         try (FileOutputStream fileOut = new FileOutputStream(filename);
              ObjectOutputStream out = new ObjectOutputStream(fileOut)) {
             out.writeObject(copy);

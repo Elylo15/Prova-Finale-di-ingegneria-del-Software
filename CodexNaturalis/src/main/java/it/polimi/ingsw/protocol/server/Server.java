@@ -51,7 +51,7 @@ public class Server implements Runnable {
         portSocket = 1024;
         portRMI = 1099;
         games = new CopyOnWriteArrayList<>();
-        defaultPath = "CodexNaturalis/savedMatches";
+        defaultPath = "savedMatches";
         logCreator = new LogCreator();
         this.serverRunning = false;
         this.timeoutSeconds = 2*60;
