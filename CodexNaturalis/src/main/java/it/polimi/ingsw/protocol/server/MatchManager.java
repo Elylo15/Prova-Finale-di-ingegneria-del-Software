@@ -527,6 +527,8 @@ public class MatchManager implements Runnable {
                 /*
                 Match status is not updated, because this player has yet to pick a card to finish his turn.
                  */
+
+                this.saveMatch();
             }
             case PickCard -> {
 
@@ -680,6 +682,7 @@ public class MatchManager implements Runnable {
                     this.kickPlayer(playerInfo);
                     correctAnswer = true;
                 }
+                return;
             }
         }
     }
@@ -796,6 +799,7 @@ public class MatchManager implements Runnable {
                 logCreator.log("Player " + player.getNickname() + " failed to answer");
                 this.kickPlayer(playerInfo);
                 correctAnswer = true;
+                return;
             }
         }
     }
@@ -851,6 +855,7 @@ public class MatchManager implements Runnable {
                     logCreator.log("Player " + player.getNickname() + " failed to answer");
                     this.kickPlayer(playerInfo);
                     correctAnswer = true;
+                    return;
                 }
             }
         }

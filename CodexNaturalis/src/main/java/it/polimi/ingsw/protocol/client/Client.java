@@ -179,13 +179,17 @@ public class Client {
      */
     public void run() {
         while(true) {
-            String server = view.askIP();
-            setIP(server);
-            //setPort(server[1]);
+            try {
+                String server = view.askIP();
+                setIP(server);
 
-            boolean isSocket = view.askSocket();
-            setController(server, isSocket);
-            connection(isSocket);
+                boolean isSocket = view.askSocket();
+                setController(server, isSocket);
+                connection(isSocket);
+            } catch (Exception e) {
+                System.out.println("\033[31mConnection failed.\033[0m");
+                continue;
+            }
 
             try {
                 while (true) {
@@ -265,9 +269,6 @@ public class Client {
                     }
                 }
             } catch (Exception e) {
-                // REMOVE THIS
-                e.printStackTrace();
-
                 view.playerDisconnected();
             }
         }

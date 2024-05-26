@@ -20,11 +20,13 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.*;
 
 public class ClientRMI extends ClientConnection implements Runnable, Serializable {
     private MessageExchangerInterface toServer;
     private MessageExchangerInterface toClient;
     private Registry registry;
+    private String lookupString;
 
     /**
      * method {@code ClientRMI}: constructs a new ClientRMI
@@ -45,6 +47,8 @@ public class ClientRMI extends ClientConnection implements Runnable, Serializabl
 
         this.registry.bind(lookupString + "_toServer", this.toServer);
         this.registry.bind(lookupString + "_toClient", this.toClient);
+
+        this.lookupString = lookupString;
     }
 
 
@@ -67,7 +71,6 @@ public class ClientRMI extends ClientConnection implements Runnable, Serializabl
             this.toClient.write(new serverOptionMessage(false,null,null,false,null, waitingMatches, runningMatches, savedMatches));
             return (serverOptionMessage) this.toServer.read();
         } catch (RemoteException e) {
-            System.out.println("Error in getServerOption");
             return null;
         }
     }
@@ -80,9 +83,7 @@ public class ClientRMI extends ClientConnection implements Runnable, Serializabl
     public synchronized void sendNewHostMessage(String hostNickname){
         try {
             toClient.write(new newHostMessage(hostNickname));
-        } catch (RemoteException e) {
-            System.out.println("Error in sendNewHostMessage");
-        }
+        } catch (RemoteException ignore) {}
     }
 
     /**
@@ -94,7 +95,6 @@ public class ClientRMI extends ClientConnection implements Runnable, Serializabl
         try {
             return (expectedPlayersMessage) toServer.read();
         } catch (RemoteException e) {
-            System.out.println("Error in getExpectedPlayer");
             return null;
         }
     }
@@ -107,9 +107,7 @@ public class ClientRMI extends ClientConnection implements Runnable, Serializabl
     public synchronized void sendAnswer(boolean correct){
         try {
             toClient.write(new responseMessage(correct));
-        } catch (RemoteException e) {
-            System.out.println("Error in sendAnswer");
-        }
+        } catch (RemoteException ignore) {}
     }
 
     /**
@@ -120,9 +118,7 @@ public class ClientRMI extends ClientConnection implements Runnable, Serializabl
     public synchronized void sendAnswerToConnection(connectionResponseMessage message){
         try {
             toClient.write(message);
-        } catch (RemoteException e) {
-            System.out.println("Error in sendAnswerToConnection");
-        }
+        } catch (RemoteException ignore) {}
     }
 
     /**
@@ -133,9 +129,7 @@ public class ClientRMI extends ClientConnection implements Runnable, Serializabl
     public synchronized void sendUnavailableName(ArrayList<String> unavailableNames) {
         try {
             toClient.write(new unavailableNamesMessage(unavailableNames));
-        } catch (RemoteException e) {
-            System.out.println("Error in sendUnavailableName");
-        }
+        } catch (RemoteException ignore) {}
     }
 
 
@@ -149,7 +143,6 @@ public class ClientRMI extends ClientConnection implements Runnable, Serializabl
             this.sendUnavailableName(unavailableNames);
             return (chosenNameMessage) toServer.read();
         } catch (RemoteException e) {
-            System.out.println("Error in getName");
             return null;
         }
     }
@@ -162,9 +155,7 @@ public class ClientRMI extends ClientConnection implements Runnable, Serializabl
     public synchronized void sendAvailableColor(ArrayList<String> availableColors){
         try {
             toClient.write(new availableColorsMessage(availableColors));
-        } catch (RemoteException e) {
-            System.out.println("Error in sendAvailableColor");
-        }
+        } catch (RemoteException ignore) {}
     }
 
     /**
@@ -177,7 +168,6 @@ public class ClientRMI extends ClientConnection implements Runnable, Serializabl
             this.sendAvailableColor(availableColors);
             return (chosenColorMessage) toServer.read();
         } catch (RemoteException e) {
-            System.out.println("Error in getColor");
             return null;
         }
     }
@@ -190,9 +180,7 @@ public class ClientRMI extends ClientConnection implements Runnable, Serializabl
     public synchronized void sendCurrentState(currentStateMessage currentState){
         try {
             toClient.write(currentState);
-        } catch (RemoteException e) {
-            System.out.println("Error in sendCurrentState");
-        }
+        } catch (RemoteException ignore) {}
     }
 
     /**
@@ -204,7 +192,6 @@ public class ClientRMI extends ClientConnection implements Runnable, Serializabl
         try {
             return (starterCardMessage) toServer.read();
         } catch (RemoteException e) {
-            System.out.println("Error in getStaterCard");
             return null;
         }
     }
@@ -220,7 +207,6 @@ public class ClientRMI extends ClientConnection implements Runnable, Serializabl
             toClient.write(new objectiveCardMessage(objectiveCards));
             return (objectiveCardMessage) toServer.read();
         } catch (RemoteException e) {
-            System.out.println("Error in getChosenObjective");
             return null;
         }
     }
@@ -234,7 +220,6 @@ public class ClientRMI extends ClientConnection implements Runnable, Serializabl
         try {
             return (placeCardMessage) toServer.read();
         } catch (RemoteException e) {
-            System.out.println("Error in getPlaceCard");
             return null;
         }
     }
@@ -248,7 +233,6 @@ public class ClientRMI extends ClientConnection implements Runnable, Serializabl
         try {
             return (pickCardMessage) toServer.read();
         } catch (RemoteException e) {
-            System.out.println("Error in getChosenPick");
             return null;
         }
     }
@@ -262,9 +246,7 @@ public class ClientRMI extends ClientConnection implements Runnable, Serializabl
     public synchronized void sendEndGame(HashMap<String, Integer> score, HashMap<String, Integer> numberOfObjectives){
         try {
             toClient.write(new declareWinnerMessage(score, numberOfObjectives));
-        } catch (RemoteException e) {
-            System.out.println("Error in sendEndGame");
-        }
+        } catch (RemoteException ignore) {}
     }
 
     /**
@@ -275,21 +257,30 @@ public class ClientRMI extends ClientConnection implements Runnable, Serializabl
     public synchronized void sendUpdatePlayer(updatePlayerMessage updateMessage) {
         try {
             toClient.write(updateMessage);
-        } catch (RemoteException e) {
-            System.out.println("Error in sendUpdatePlayer");
-        }
+        } catch (RemoteException ignore) {}
     }
 
     /**
      * method {@code closeConnection}: closes the connection
      */
     @Override
-    public synchronized void closeConnection() {
+    public void closeConnection() {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Future<Void> future = executor.submit(new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                registry.unbind(lookupString + "_toServer");
+                registry.unbind(lookupString + "_toClient");
+                return null;
+            }
+        });
         try {
-            UnicastRemoteObject.unexportObject(toServer, true);
-            UnicastRemoteObject.unexportObject(toClient, true);
-        } catch (Exception e) {
-            System.out.println("Error in closeConnection");
+            future.get(10, TimeUnit.SECONDS);
+        } catch (TimeoutException e) {
+            future.cancel(true);
+        } catch (ExecutionException | InterruptedException ignore) {
+        } finally {
+            executor.shutdownNow();
         }
     }
 

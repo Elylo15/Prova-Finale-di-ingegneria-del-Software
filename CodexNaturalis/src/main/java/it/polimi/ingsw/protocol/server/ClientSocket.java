@@ -280,7 +280,7 @@ public class ClientSocket extends ClientConnection implements Serializable {
      * method {@code closeConnection}: closes the connection closing socket, inputStream, outputStream
      */
     @Override
-    public synchronized void closeConnection() {
+    public void closeConnection() {
         try {
             if (socket != null && !socket.isClosed()) {
                 socket.close();
