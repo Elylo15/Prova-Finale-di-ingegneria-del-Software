@@ -1,4 +1,4 @@
-package it.polimi.ingsw.protocol.client.view;
+package it.polimi.ingsw.protocol.client.view.GUI.message;
 
 import java.io.*;
 import java.util.concurrent.BlockingQueue;

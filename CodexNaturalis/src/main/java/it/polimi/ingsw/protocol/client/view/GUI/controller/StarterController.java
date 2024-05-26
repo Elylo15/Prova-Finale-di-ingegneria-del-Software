@@ -1,4 +1,4 @@
-package it.polimi.ingsw.protocol.client.view.GUI;
+package it.polimi.ingsw.protocol.client.view.GUI.controller;
 
 import it.polimi.ingsw.model.CommonArea;
 import it.polimi.ingsw.model.Player;
@@ -6,16 +6,11 @@ import it.polimi.ingsw.model.PlayerArea;
 import it.polimi.ingsw.model.cards.ObjectiveCard;
 import it.polimi.ingsw.protocol.messages.currentStateMessage;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.stage.Stage;
 
 import java.net.URL;
 import java.util.ArrayList;

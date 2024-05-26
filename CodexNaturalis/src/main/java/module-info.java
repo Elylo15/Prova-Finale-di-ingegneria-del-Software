@@ -30,4 +30,8 @@ module CodexNaturalis {
     exports it.polimi.ingsw.protocol.server.RMI;
     exports it.polimi.ingsw.protocol.server.exceptions;
     exports it.polimi.ingsw.protocol.server.FSM;
+    exports it.polimi.ingsw.protocol.client.view.GUI.controller;
+    opens it.polimi.ingsw.protocol.client.view.GUI.controller to javafx.fxml;
+    exports it.polimi.ingsw.protocol.client.view.GUI.message;
+    opens it.polimi.ingsw.protocol.client.view.GUI.message to javafx.fxml;
 }

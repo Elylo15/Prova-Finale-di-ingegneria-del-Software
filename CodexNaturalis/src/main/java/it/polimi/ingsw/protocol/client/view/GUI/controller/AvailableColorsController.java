@@ -1,8 +1,7 @@
-package it.polimi.ingsw.protocol.client.view.GUI;
+package it.polimi.ingsw.protocol.client.view.GUI.controller;
 
 
-import it.polimi.ingsw.protocol.client.Client;
-import it.polimi.ingsw.protocol.client.view.ViewGUI;
+import it.polimi.ingsw.protocol.client.ClientCLI;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -19,7 +18,7 @@ public class AvailableColorsController {
     public Button submit;
 
     private Stage primaryStage;
-    private Client client;
+    private ClientCLI clientCLI;
 
     private WaitingController waitingController;
 
@@ -27,8 +26,8 @@ public class AvailableColorsController {
         this.primaryStage = primaryStage;
     }
 
-    public void setClient(Client client) {
-        this.client = client;
+    public void setClient(ClientCLI clientCLI) {
+        this.clientCLI = clientCLI;
     }
 
     public WaitingController getWaitingController() {
@@ -45,15 +44,15 @@ public class AvailableColorsController {
 
     @FXML
     private void handleSubmit() throws IOException {
-        client.color();
+        clientCLI.color();
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/availableColors.fxml"));
             Parent root = loader.load();
             waitingController = loader.getController();
             waitingController.setPrimaryStage(primaryStage);
-            waitingController.setClient(client);
+            waitingController.setClient(clientCLI);
 
-            client.setWaitingController(waitingController);
+            clientCLI.setWaitingController(waitingController);
 
             primaryStage.getScene().setRoot(root);
         } catch (Exception e) {

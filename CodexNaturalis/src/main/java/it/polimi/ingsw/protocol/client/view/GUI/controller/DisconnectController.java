@@ -1,4 +1,4 @@
-package it.polimi.ingsw.protocol.client.view.GUI;
+package it.polimi.ingsw.protocol.client.view.GUI.controller;
 
 import it.polimi.ingsw.protocol.client.view.ViewGUI;
 import javafx.animation.PauseTransition;

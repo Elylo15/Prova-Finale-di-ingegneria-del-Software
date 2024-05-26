@@ -1,7 +1,5 @@
 package it.polimi.ingsw.protocol.client.view;
 
-import it.polimi.ingsw.model.CommonArea;
-import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.cards.ObjectiveCard;
 import it.polimi.ingsw.protocol.messages.ConnectionState.*;
 import it.polimi.ingsw.protocol.messages.ServerOptionState.*;

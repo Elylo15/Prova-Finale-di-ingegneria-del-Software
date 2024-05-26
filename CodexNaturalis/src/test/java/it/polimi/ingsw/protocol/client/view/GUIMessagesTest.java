@@ -1,9 +1,8 @@
 package it.polimi.ingsw.protocol.client.view;
 
+import it.polimi.ingsw.protocol.client.view.GUI.message.GUIMessages;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.io.Serializable;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;

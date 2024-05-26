@@ -1,6 +1,7 @@
-package it.polimi.ingsw.protocol.client.view.GUI;
+package it.polimi.ingsw.protocol.client.view.GUI.controller;
 
 import it.polimi.ingsw.model.cards.Card;
+import it.polimi.ingsw.protocol.client.view.GUI.ImageBinder;
 import javafx.fxml.FXML;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;

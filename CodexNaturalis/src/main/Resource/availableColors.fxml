@@ -1,27 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.Pane?>
-<?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.text.Font?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.protocol.client.view.GUI.availableColorsController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.protocol.client.view.GUI.controller.AvailableColorsController">
    <left>
       <Pane prefHeight="340.0" prefWidth="174.0" BorderPane.alignment="CENTER" />
    </left>
    <right>
       <Pane prefHeight="340.0" prefWidth="173.0" BorderPane.alignment="CENTER" />
    </right>
-   <top>
-      <Label fx:id="label" BorderPane.alignment="CENTER" />
-   </top>
    <bottom>
-      <Button fx:id="submit" mnemonicParsing="false" onAction="#handleSubmit" prefHeight="42.0" prefWidth="82.0" text="submit" BorderPane.alignment="CENTER" />
+      <Button fx:id="submit" mnemonicParsing="false" prefHeight="42.0" prefWidth="82.0" text="submit" BorderPane.alignment="CENTER" />
    </bottom>
    <center>
       <GridPane alignment="CENTER" BorderPane.alignment="CENTER">
@@ -42,6 +33,7 @@
                </font>
             </Label>
             <TextField fx:id="colorToChoose" alignment="CENTER" promptText="enter color" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <Label fx:id="label" GridPane.columnIndex="1" GridPane.rowIndex="1" />
          </children>
       </GridPane>
    </center>

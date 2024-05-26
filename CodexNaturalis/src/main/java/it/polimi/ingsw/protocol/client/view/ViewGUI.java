@@ -1,8 +1,9 @@
 package it.polimi.ingsw.protocol.client.view;
 
 import it.polimi.ingsw.model.cards.ObjectiveCard;
-import it.polimi.ingsw.protocol.client.Client;
-import it.polimi.ingsw.protocol.client.view.GUI.*;
+import it.polimi.ingsw.protocol.client.ClientGUI;
+import it.polimi.ingsw.protocol.client.view.GUI.controller.*;
+import it.polimi.ingsw.protocol.client.view.GUI.message.GUIMessages;
 import it.polimi.ingsw.protocol.messages.ConnectionState.availableColorsMessage;
 import it.polimi.ingsw.protocol.messages.ConnectionState.connectionResponseMessage;
 import it.polimi.ingsw.protocol.messages.ConnectionState.unavailableNamesMessage;
@@ -12,33 +13,38 @@ import it.polimi.ingsw.protocol.messages.ServerOptionState.serverOptionMessage;
 import it.polimi.ingsw.protocol.messages.ServerOptionState.serverOptionResponseMessage;
 import it.polimi.ingsw.protocol.messages.currentStateMessage;
 import it.polimi.ingsw.protocol.messages.responseMessage;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.Future;
 
 
 public class ViewGUI extends View {
-    private Client client;
+    private GUIMessages guiMessages ;
 
+    public ViewGUI() {
+        guiMessages = new GUIMessages();
 
-    public void setClient(Client client) {
-        this.client = client;
     }
 
     /**
      * allow the user to enter the ip of the server he wants to connect to
+     *
      * @return array with ip and port of the server
      */
-    @Override
+    public void startMain(){
+        Platform.runLater(SceneManager::MainView);
+    }
+
     public String askIP(){
-        String server = "";
-        InsertIPPortController controller = client.getMainViewController().getInsertIPPortController();
-        server = controller.getIP();
-        return server;
+        String ip = "";
+        Platform.runLater(SceneManager::InsertIP); //update the scene
+        ip = (String)GUIMessages.readToClient(); //read the ip entered by the user
+        return ip;
     }
 
     /**
@@ -48,52 +54,43 @@ public class ViewGUI extends View {
         @Override
     public boolean askSocket() {// true = socket, false = rmi
         boolean useSocket = true;
-        ChooseSocketRMIController controller = client.getInsertIPPortController().getChooseSocketRMIController();
-        useSocket = controller.useSocket();
-        return useSocket;
+            Platform.runLater(SceneManager::Choose_Socket_RMI);
+            useSocket = (boolean)GUIMessages.readToClient();
+            return useSocket;
     }
 
-
-    //newMatch sei host di una nuova partita
-    //joinMatch ti unisci ad una nuova partita
-    //loadMatch carichi una partita da file
-    //joinRunningMatch ti unisci ad una partita in corso
 
      @Override
     public serverOptionMessage serverOptions(serverOptionMessage message) {
         serverOptionMessage newMessage = null;
-        InsertServerOptionController controller = client.getChooseSocketRMIController().getInsertServerOptionController();
-        newMessage = controller.getServerOptionMessage();
+        GUIMessages.writeToGUI(message);
+        Platform.runLater(SceneManager::InsertServerOption);
+        newMessage = (serverOptionMessage)GUIMessages.readToClient();
         return newMessage;
     }
 
     @Override
     public void answerToOption(serverOptionResponseMessage message) {
-
+        //da vedere poi
     }
 
     @Override
     public void playerDisconnected() {
-        //loadFXML("/Disconnect.fxml");
+        Platform.runLater(SceneManager::Disconnect);
     }
 
     @Override
     public void answerToConnection(connectionResponseMessage message) {
-
+        //da vedere poi
     }
 
 
     @Override
     public String unavailableNames(unavailableNamesMessage message) {
         String name = null;
-        UnavailableNamesController controller = client.getInsertServerOptionController().getUnavailableNamesController();
-        if(!message.toString().equalsIgnoreCase("[]")){ //set the unavailable names to show to the user
-            controller.setUp(message.toString());
-        }
-        else {
-            controller.setUpNoNames();
-        }
-        name = controller.getName();
+        GUIMessages.writeToGUI(message);
+        Platform.runLater(SceneManager::unavailableNames);
+        name = (String)GUIMessages.readToClient();
         return name;
     }
 
@@ -103,6 +100,7 @@ public class ViewGUI extends View {
      */
     @Override
     public void answer(responseMessage message) {
+        //da vedere successivamente
     }
 
     /**
@@ -113,17 +111,9 @@ public class ViewGUI extends View {
     @Override
     public String availableColors(availableColorsMessage message) {
         String color=null;
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/availableColors.fxml"));
-            Parent root = loader.load();
-
-            AvailableColorsController controller = loader.getController();
-            controller.setUp(message.toString());
-            color = controller.getColor();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        GUIMessages.writeToGUI(message);
+        Platform.runLater(SceneManager::availableColors);
+        color = (String)GUIMessages.readToClient();
         return color;
     }
 

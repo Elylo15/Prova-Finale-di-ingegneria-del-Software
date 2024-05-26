@@ -72,6 +72,7 @@ public class ViewCLI extends View {
 
     /**
      * method {@code askPortIP}: asks the user to enter the IP and the port of the server
+     *
      * @return String[]
      */
     @Override
