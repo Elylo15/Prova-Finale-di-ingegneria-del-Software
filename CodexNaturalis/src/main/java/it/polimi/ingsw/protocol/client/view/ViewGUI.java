@@ -24,13 +24,15 @@ import java.util.concurrent.Future;
 
 
 public class ViewGUI extends View {
-    private GUIMessages guiMessages ;
+    private GUIMessages guiMessages;
 
     public ViewGUI() {
         new GUIMessages();
     }
 
-    public void startMain(){
+    public void startMain() {
+        //to avoid reading unexpected messages
+        GUIMessages.clearQueue();
         Platform.runLater(SceneManager::MainView);
     }
 
@@ -40,93 +42,121 @@ public class ViewGUI extends View {
      *
      * @return array with ip and port of the server
      */
-    public String askIP(){
+    public String askIP() {
+        //to avoid reading unexpected messages
         GUIMessages.clearQueue();
         String ip = "";
         Platform.runLater(SceneManager::InsertIP); //update the scene
-        ip = (String)GUIMessages.readToClient(); //read the ip entered by the user
+        ip = (String) GUIMessages.readToClient(); //read the ip entered by the user
         System.out.println(ip);
         return ip;
     }
 
     /**
      * allow the user to choose if he wants to use socket or rmi
-     * @return  boolean
+     *
+     * @return boolean
      */
-        @Override
+    @Override
     public boolean askSocket() {// true = socket, false = rmi
+        //to avoid reading unexpected messages
         GUIMessages.clearQueue();
         boolean useSocket = true;
         Platform.runLater(SceneManager::Choose_Socket_RMI);
-        useSocket = (boolean)GUIMessages.readToClient();
+        useSocket = (boolean) GUIMessages.readToClient();
         System.out.println(useSocket);
         return useSocket;
     }
 
 
-     @Override
+    @Override
     public serverOptionMessage serverOptions(serverOptionMessage message) {
+        //to avoid reading unexpected messages
+        GUIMessages.clearQueue();
         serverOptionMessage newMessage = null;
         GUIMessages.writeToGUI(message);
         Platform.runLater(SceneManager::InsertServerOption);
-        newMessage = (serverOptionMessage)GUIMessages.readToClient();
+        newMessage = (serverOptionMessage) GUIMessages.readToClient();
+        System.out.println(newMessage);
         return newMessage;
     }
 
     @Override
     public void answerToOption(serverOptionResponseMessage message) {
+        //to avoid reading unexpected messages
+        GUIMessages.clearQueue();
         //da vedere poi
     }
 
     @Override
     public void playerDisconnected() {
+        //to avoid reading unexpected messages
+        GUIMessages.clearQueue();
         Platform.runLater(SceneManager::Disconnect);
+        try {
+            Thread.sleep(2000);
+        }catch (InterruptedException e){
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void answerToConnection(connectionResponseMessage message) {
+        //to avoid reading unexpected messages
+        GUIMessages.clearQueue();
         //da vedere poi
     }
 
 
     @Override
     public String unavailableNames(unavailableNamesMessage message) {
+        //to avoid reading unexpected messages
+        GUIMessages.clearQueue();
         String name = null;
         GUIMessages.writeToGUI(message);
         Platform.runLater(SceneManager::unavailableNames);
-        name = (String)GUIMessages.readToClient();
+        name = (String) GUIMessages.readToClient();
         return name;
     }
 
     /**
      * visualize the response about the value entered
+     *
      * @param message
      */
     @Override
     public void answer(responseMessage message) {
+        //to avoid reading unexpected messages
+        GUIMessages.clearQueue();
         //da vedere successivamente
     }
 
     /**
      * allow the user to choose his color
+     *
      * @param message
      * @return color
      */
     @Override
     public String availableColors(availableColorsMessage message) {
-        String color=null;
+        //to avoid reading unexpected messages
+        GUIMessages.clearQueue();
+        String color = null;
         GUIMessages.writeToGUI(message);
         Platform.runLater(SceneManager::availableColors);
-        color = (String)GUIMessages.readToClient();
+        color = (String) GUIMessages.readToClient();
         return color;
     }
 
     /**
      * allow the user to choose how many players will play
+     *
      * @return number of expected players
      */
     @Override
     public int expectedPlayers() {
+        //to avoid reading unexpected messages
+        GUIMessages.clearQueue();
         int number = 0;
         /*try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/expectedPlayers.fxml"));
@@ -146,7 +176,9 @@ public class ViewGUI extends View {
      * The first player to connect to the server is the host and will wait for other players to be ready after choosing the number of players.
      * The other players after choosing name and color will wait for the other players to choose to.
      */
-    public void waiting(){
+    public void waiting() {
+        //to avoid reading unexpected messages
+        GUIMessages.clearQueue();
     }
 
     //load a mainGamePage with a backGround, scoreBoard etc.
@@ -167,6 +199,8 @@ public class ViewGUI extends View {
 
     @Override
     public void updatePlayer(currentStateMessage message) {
+        //to avoid reading unexpected messages
+        GUIMessages.clearQueue();
         try {
             FXMLLoader loader;
             Parent root;
@@ -201,6 +235,8 @@ public class ViewGUI extends View {
 
     @Override
     public int placeStarter() {
+        //to avoid reading unexpected messages
+        GUIMessages.clearQueue();
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/starterPage.fxml"));
             Parent root = loader.load();
@@ -215,6 +251,8 @@ public class ViewGUI extends View {
 
     @Override
     public int chooseObjective(ArrayList<ObjectiveCard> objectives) {
+        //to avoid reading unexpected messages
+        GUIMessages.clearQueue();
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/objectivePage.fxml"));
             Parent root = loader.load();
@@ -230,6 +268,8 @@ public class ViewGUI extends View {
 
     @Override
     public int[] placeCard() {
+        //to avoid reading unexpected messages
+        GUIMessages.clearQueue();
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/myselfGamePage.fxml"));
             Parent root = loader.load();
@@ -244,6 +284,8 @@ public class ViewGUI extends View {
 
     @Override
     public int pickCard() {
+        //to avoid reading unexpected messages
+        GUIMessages.clearQueue();
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/myselfGamePage.fxml"));
             Parent root = loader.load();
@@ -258,6 +300,8 @@ public class ViewGUI extends View {
 
     @Override
     public void update(updatePlayerMessage update) {
+        //to avoid reading unexpected messages
+        GUIMessages.clearQueue();
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/currentGamePage.fxml"));
             Parent root = loader.load();
@@ -272,16 +316,21 @@ public class ViewGUI extends View {
 
     @Override
     public String pickNameFA(unavailableNamesMessage message) {
+        //to avoid reading unexpected messages
+        GUIMessages.clearQueue();
         return "";
     }
 
     /**
      * visualize the final information about the game, the number of objectives achieved by each player and then
      * show the scoreboard with the personal points of the players
+     *
      * @param message
      */
     @Override
     public void endGame(declareWinnerMessage message) {
+        //to avoid reading unexpected messages
+        GUIMessages.clearQueue();
 
     }
 

@@ -24,6 +24,7 @@ public class UnavailableNamesController {
 
     private unavailableNamesMessage message;
 
+    @FXML
     public void initialize() {
         this.message = (unavailableNamesMessage) GUIMessages.readToGUI();
         // Converti la lista di nomi non disponibili in una string
