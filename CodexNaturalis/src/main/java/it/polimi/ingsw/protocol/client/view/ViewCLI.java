@@ -944,6 +944,7 @@ public class ViewCLI extends View {
             case 100 -> {
                 output.set(1, output.get(1) + String.format("%7s", ""));
                 output.set(2, output.get(2) + YELLOW_BACKGROUND + String.format("%7s", "x2 MAN") + RESET);
+                output.set(3, output.get(3) + String.format("%7s", ""));
                 output.set(4, output.get(4) + String.format("%7s", ""));
                 output.set(5, output.get(5) + String.format("%7s", ""));
                 output.set(6, output.get(6) + YELLOW_BACKGROUND + String.format("%7s", "+2 ") + RESET);
@@ -952,6 +953,7 @@ public class ViewCLI extends View {
             case 101 -> {
                 output.set(1, output.get(1) + String.format("%7s", ""));
                 output.set(2, output.get(2) + YELLOW_BACKGROUND + String.format("%7s", "x2 INK") + RESET);
+                output.set(3, output.get(3) + String.format("%7s", ""));
                 output.set(4, output.get(4) + String.format("%7s", ""));
                 output.set(5, output.get(5) + String.format("%7s", ""));
                 output.set(6, output.get(6) + YELLOW_BACKGROUND + String.format("%7s", "+2 ") + RESET);
@@ -960,6 +962,7 @@ public class ViewCLI extends View {
             case 102 -> {
                 output.set(1, output.get(1) + String.format("%7s", ""));
                 output.set(2, output.get(2) + YELLOW_BACKGROUND + String.format("%7s", "x2 QUI") + RESET);
+                output.set(3, output.get(3) + String.format("%7s", ""));
                 output.set(4, output.get(4) + String.format("%7s", ""));
                 output.set(5, output.get(5) + String.format("%7s", ""));
                 output.set(6, output.get(6) + YELLOW_BACKGROUND + String.format("%7s", "+2 ") + RESET);

@@ -134,7 +134,7 @@ class ViewCLITest {
         output.add("");
         output.add("");
         output.add("");
-        for(int i = 87; i <= 102 ; i++) {
+        for(int i = 102; i != 86 ; i--) {
             viewCLI.printObjective(i, output);
             output.forEach(System.out::println);
         }
