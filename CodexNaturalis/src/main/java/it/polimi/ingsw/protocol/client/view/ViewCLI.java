@@ -108,15 +108,49 @@ public class ViewCLI extends View {
 
         if(!Objects.equals(message.getStateName(), "StarterCardState"))
         {
-            ArrayList<Integer> objectivesID = new ArrayList<>();
-            objectivesID.add(message.getCommonObjectiveCards().get(0).getID());
-            objectivesID.add(message.getCommonObjectiveCards().get(1).getID());
+            ArrayList<String> objectives = new ArrayList<>();
+            objectives.add("");
+            objectives.add("");
+            objectives.add("");
+            objectives.add("");
+            objectives.add("");
+            objectives.add("");
+            objectives.add("");
+            objectives.add("");
+            printObjective(message.getCommonObjectiveCards().get(0).getID(), objectives);
+            printObjective(message.getCommonObjectiveCards().get(1).getID(), objectives);
 
-            System.out.println("The common objectives are: " + objectivesID);
+            System.out.println("The common objectives are: ");
+            System.out.println(objectives.get(0));
+            System.out.println(objectives.get(1));
+            System.out.println(objectives.get(2));
+            System.out.println(objectives.get(3));
+            System.out.println(objectives.get(4));
+            System.out.println(objectives.get(5));
+            System.out.println(objectives.get(6));
+            System.out.println(objectives.get(7));
 
             if(!Objects.equals(message.getStateName(), "ObjectiveState")) {
                 if(message.getPlayer().getNickname().equals(message.getCurrentPlayer().getNickname())){
-                    System.out.println("The private objective is: " + message.getCurrentPlayer().getObjective().getID());
+                    System.out.println("The private objective is: ");
+                    objectives = new ArrayList<>();
+                    objectives.add("");
+                    objectives.add("");
+                    objectives.add("");
+                    objectives.add("");
+                    objectives.add("");
+                    objectives.add("");
+                    objectives.add("");
+                    objectives.add("");
+                    printObjective(message.getPlayer().getObjective().getID(), objectives);
+                    System.out.println(objectives.get(0));
+                    System.out.println(objectives.get(1));
+                    System.out.println(objectives.get(2));
+                    System.out.println(objectives.get(3));
+                    System.out.println(objectives.get(4));
+                    System.out.println(objectives.get(5));
+                    System.out.println(objectives.get(6));
+                    System.out.println(objectives.get(7));
                 }
                 else {
                     System.out.println("The private objective is: ?");
@@ -727,6 +761,164 @@ public class ViewCLI extends View {
 
     }
 
+
+    protected void printObjective(int i, ArrayList<String> output) {
+        output.set(0, output.get(0) + " ID: " + String.format("%2d", i) + " ");
+        output.set(1, output.get(1) + " ");
+        output.set(2, output.get(2) + " ");
+        output.set(3, output.get(3) + " ");
+        output.set(4, output.get(4) + " ");
+        output.set(5, output.get(5) + " ");
+        output.set(6, output.get(6) + " ");
+        output.set(7, output.get(7) + " ");
+        switch (i) {
+            case 87 ->{
+                output.set(1, output.get(1) + String.format("%7s", ""));
+                output.set(2, output.get(2) + String.format("%4s", "") + RED_BACKGROUND + String.format("%3s", "") + RESET);
+                output.set(3, output.get(3) + String.format("%2s", "") + RED_BACKGROUND + String.format("%3s", "") + RESET + String.format("%2s", ""));
+                output.set(4, output.get(4) + RED_BACKGROUND + String.format("%3s", "") + RESET + String.format("%4s", ""));
+                output.set(5, output.get(5) + String.format("%7s", ""));
+                output.set(6, output.get(6) + RED_BACKGROUND + String.format("%7s", "+2 ") + RESET);
+                output.set(7, output.get(7) + RED_BACKGROUND + String.format("%7s", "Points") + RESET);
+            }
+            case 88 ->{
+                output.set(1, output.get(1) + String.format("%7s", ""));
+                output.set(2, output.get(2) + GREEN_BACKGROUND + String.format("%3s", "") + RESET + String.format("%4s", ""));
+                output.set(3, output.get(3) + String.format("%2s", "") + GREEN_BACKGROUND + String.format("%3s", "") + RESET + String.format("%2s", ""));
+                output.set(4, output.get(4) + String.format("%4s", "") + GREEN_BACKGROUND + String.format("%3s", "") + RESET);
+                output.set(5, output.get(5) + String.format("%7s", ""));
+                output.set(6, output.get(6) + GREEN_BACKGROUND + String.format("%7s", "+2 ") + RESET);
+                output.set(7, output.get(7) + GREEN_BACKGROUND + String.format("%7s", "Points") + RESET);
+            }
+            case 89 ->{
+                output.set(1, output.get(1) + String.format("%7s", ""));
+                output.set(2, output.get(2) + String.format("%4s", "") + CYAN_BACKGROUND + String.format("%3s", "") + RESET);
+                output.set(3, output.get(3) + String.format("%2s", "") + CYAN_BACKGROUND + String.format("%3s", "") + RESET + String.format("%2s", ""));
+                output.set(4, output.get(4) + CYAN_BACKGROUND + String.format("%3s", "") + RESET + String.format("%4s", ""));
+                output.set(5, output.get(5) + String.format("%7s", ""));
+                output.set(6, output.get(6) + CYAN_BACKGROUND + String.format("%7s", "+2 ") + RESET);
+                output.set(7, output.get(7) + CYAN_BACKGROUND + String.format("%7s", "Points") + RESET);
+
+            }
+            case 90 -> {
+                output.set(1, output.get(1) + String.format("%7s", ""));
+                output.set(2, output.get(2) + PURPLE_BACKGROUND + String.format("%3s", "") + RESET + String.format("%4s", ""));
+                output.set(3, output.get(3) + String.format("%2s", "") + PURPLE_BACKGROUND + String.format("%3s", "") + RESET + String.format("%2s", ""));
+                output.set(4, output.get(4) + String.format("%4s", "") + PURPLE_BACKGROUND + String.format("%3s", "") + RESET);
+                output.set(5, output.get(5) + String.format("%7s", ""));
+                output.set(6, output.get(6) + PURPLE_BACKGROUND + String.format("%7s", "+2 ") + RESET);
+                output.set(7, output.get(7) + PURPLE_BACKGROUND + String.format("%7s", "Points") + RESET);
+            }
+            case 91 -> {
+                output.set(1, output.get(1) + " " + String.format("%6s", ""));
+                output.set(2, output.get(2) + " " + RED_BACKGROUND + String.format("%3s", "") + RESET + String.format("%3s", ""));
+                output.set(3, output.get(3) + " " + RED_BACKGROUND + String.format("%3s", "") + RESET + String.format("%3s", ""));
+                output.set(4, output.get(4) + " " + String.format("%2s", "") + GREEN_BACKGROUND + String.format("%3s", "") + RESET + " ");
+                output.set(5, output.get(5) + " " + String.format("%6s", ""));
+                output.set(6, output.get(6) + RED_BACKGROUND + String.format("%7s", "+3 ") + RESET);
+                output.set(7, output.get(7) + RED_BACKGROUND + String.format("%7s", "Points") + RESET);
+            }
+            case 92 -> {
+                output.set(1, output.get(1) + " " + String.format("%6s", ""));
+                output.set(2, output.get(2) + " " + String.format("%2s", "") + GREEN_BACKGROUND + String.format("%3s", "") + RESET + " ");
+                output.set(3, output.get(3) + " " + String.format("%2s", "") + GREEN_BACKGROUND + String.format("%3s", "") + RESET + " ");
+                output.set(4, output.get(4) + " " + PURPLE_BACKGROUND + String.format("%3s", "") + RESET + String.format("%2s", "")  + " ");
+                output.set(5, output.get(5) + " " + String.format("%6s", ""));
+                output.set(6, output.get(6) + GREEN_BACKGROUND + String.format("%7s", "+3 ") + RESET);
+                output.set(7, output.get(7) + GREEN_BACKGROUND + String.format("%7s", "Points") + RESET);
+            }
+            case 93 -> {
+                output.set(1, output.get(1) + " " + String.format("%6s", ""));
+                output.set(2, output.get(2) + " " + String.format("%2s", "") + RED_BACKGROUND + String.format("%3s", "") + RESET + " ");
+                output.set(3, output.get(3) + " " + CYAN_BACKGROUND + String.format("%3s", "") + RESET + String.format("%2s", "") + " ");
+                output.set(4, output.get(4) + " " + CYAN_BACKGROUND + String.format("%3s", "") + RESET + String.format("%2s", "") + " ");
+                output.set(5, output.get(5) + " " + String.format("%6s", ""));
+                output.set(6, output.get(6) + CYAN_BACKGROUND + String.format("%7s", "+3 ") + RESET);
+                output.set(7, output.get(7) + CYAN_BACKGROUND + String.format("%7s", "Points") + RESET);
+            }
+            case 94 -> {
+                output.set(1, output.get(1) + " " + String.format("%6s", ""));
+                output.set(2, output.get(2) + " " + CYAN_BACKGROUND + String.format("%3s", "") + RESET + String.format("%3s", ""));
+                output.set(3, output.get(3) + " " + String.format("%2s", "") + PURPLE_BACKGROUND + String.format("%3s", "") + RESET + " ");
+                output.set(4, output.get(4) + " " + String.format("%2s", "") + PURPLE_BACKGROUND + String.format("%3s", "") + RESET + " ");
+                output.set(5, output.get(5) + " " + String.format("%6s", ""));
+                output.set(6, output.get(6) + PURPLE_BACKGROUND + String.format("%7s", "+3 ") + RESET);
+                output.set(7, output.get(7) + PURPLE_BACKGROUND + String.format("%7s", "Points") + RESET);
+            }
+            case 95 -> {
+                output.set(1, output.get(1) + String.format("%7s", ""));
+                output.set(2, output.get(2) + RED_BACKGROUND + String.format("%7s", "x3") + RESET );
+                output.set(3, output.get(3) + RED_BACKGROUND + String.format("%7s", "FUNGUS") + RESET );
+                output.set(4, output.get(4) + String.format("%7s", ""));
+                output.set(5, output.get(5) + String.format("%7s", ""));
+                output.set(6, output.get(6) + RED_BACKGROUND + String.format("%7s", "+2 ") + RESET);
+                output.set(7, output.get(7) + RED_BACKGROUND + String.format("%7s", "Points") + RESET);
+            }
+            case 96 -> {
+                output.set(1, output.get(1) + String.format("%7s", ""));
+                output.set(2, output.get(2) + GREEN_BACKGROUND + String.format("%7s", "x3") + RESET );
+                output.set(3, output.get(3) + GREEN_BACKGROUND + String.format("%7s", "PLANT") + RESET );
+                output.set(4, output.get(4) + String.format("%7s", ""));
+                output.set(5, output.get(5) + String.format("%7s", ""));
+                output.set(6, output.get(6) + GREEN_BACKGROUND + String.format("%7s", "+2 ") + RESET);
+                output.set(7, output.get(7) + GREEN_BACKGROUND + String.format("%7s", "Points") + RESET);
+            }
+            case 97 -> {
+                output.set(1, output.get(1) + String.format("%7s", ""));
+                output.set(2, output.get(2) + CYAN_BACKGROUND + String.format("%7s", "x3") + RESET );
+                output.set(3, output.get(3) + CYAN_BACKGROUND + String.format("%7s", "ANIMAL") + RESET );
+                output.set(4, output.get(4) + String.format("%7s", ""));
+                output.set(5, output.get(5) + String.format("%7s", ""));
+                output.set(6, output.get(6) + CYAN_BACKGROUND + String.format("%7s", "+2 ") + RESET);
+                output.set(7, output.get(7) + CYAN_BACKGROUND + String.format("%7s", "Points") + RESET);
+            }
+            case 98 -> {
+                output.set(1, output.get(1) + String.format("%7s", ""));
+                output.set(2, output.get(2) + PURPLE_BACKGROUND + String.format("%7s", "x3") + RESET );
+                output.set(3, output.get(3) + PURPLE_BACKGROUND + String.format("%7s", "INSECT") + RESET );
+                output.set(4, output.get(4) + String.format("%7s", ""));
+                output.set(5, output.get(5) + String.format("%7s", ""));
+                output.set(6, output.get(6) + PURPLE_BACKGROUND + String.format("%7s", "+2 ") + RESET);
+                output.set(7, output.get(7) + PURPLE_BACKGROUND + String.format("%7s", "Points") + RESET);
+            }
+            case 99 -> {
+                output.set(1, output.get(1) + String.format("%7s", ""));
+                output.set(2, output.get(2) + YELLOW_BACKGROUND + String.format("%7s", "x1 QUI") + RESET);
+                output.set(3, output.get(3) + YELLOW_BACKGROUND + String.format("%7s", "x1 INK") + RESET);
+                output.set(4, output.get(4) + YELLOW_BACKGROUND + String.format("%7s", "x1 MAN") + RESET);
+                output.set(5, output.get(5) + String.format("%7s", ""));
+                output.set(6, output.get(6) + YELLOW_BACKGROUND + String.format("%7s", "+3 ") + RESET);
+                output.set(7, output.get(7) + YELLOW_BACKGROUND + String.format("%7s", "Points") + RESET);
+            }
+            case 100 -> {
+                output.set(1, output.get(1) + String.format("%7s", ""));
+                output.set(2, output.get(2) + YELLOW_BACKGROUND + String.format("%7s", "x2 MAN") + RESET);
+                output.set(4, output.get(4) + String.format("%7s", ""));
+                output.set(5, output.get(5) + String.format("%7s", ""));
+                output.set(6, output.get(6) + YELLOW_BACKGROUND + String.format("%7s", "+2 ") + RESET);
+                output.set(7, output.get(7) + YELLOW_BACKGROUND + String.format("%7s", "Points") + RESET);
+            }
+            case 101 -> {
+                output.set(1, output.get(1) + String.format("%7s", ""));
+                output.set(2, output.get(2) + YELLOW_BACKGROUND + String.format("%7s", "x2 INK") + RESET);
+                output.set(4, output.get(4) + String.format("%7s", ""));
+                output.set(5, output.get(5) + String.format("%7s", ""));
+                output.set(6, output.get(6) + YELLOW_BACKGROUND + String.format("%7s", "+2 ") + RESET);
+                output.set(7, output.get(7) + YELLOW_BACKGROUND + String.format("%7s", "Points") + RESET);
+            }
+            case 102 -> {
+                output.set(1, output.get(1) + String.format("%7s", ""));
+                output.set(2, output.get(2) + YELLOW_BACKGROUND + String.format("%7s", "x2 QUI") + RESET);
+                output.set(4, output.get(4) + String.format("%7s", ""));
+                output.set(5, output.get(5) + String.format("%7s", ""));
+                output.set(6, output.get(6) + YELLOW_BACKGROUND + String.format("%7s", "+2 ") + RESET);
+                output.set(7, output.get(7) + YELLOW_BACKGROUND + String.format("%7s", "Points") + RESET);
+
+            }
+        }
+
+    }
+
     /**
      * this method allow the user to say if he wants to connect with socket or rmi
      * @return boolean
@@ -1052,6 +1244,26 @@ public class ViewCLI extends View {
         }
 
         System.out.println("Choose your personal objective.");
+        ArrayList<String> output = new ArrayList<>();
+        output.add("");
+        output.add("");
+        output.add("");
+        output.add("");
+        output.add("");
+        output.add("");
+        output.add("");
+        output.add("");
+        this.printObjective(objectives.get(0).getID(), output);
+        this.printObjective(objectives.get(1).getID(), output);
+        System.out.println(output.get(0));
+        System.out.println(output.get(1));
+        System.out.println(output.get(2));
+        System.out.println(output.get(3));
+        System.out.println(output.get(4));
+        System.out.println(output.get(5));
+        System.out.println(output.get(6));
+        System.out.println(output.get(7));
+
         System.out.print("FIRST (1) or SECOND (2) ?  ");
         Scanner scanner = new Scanner(System.in);
         while(true) {

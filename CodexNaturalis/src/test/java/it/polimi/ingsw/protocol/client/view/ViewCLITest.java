@@ -123,6 +123,23 @@ class ViewCLITest {
         viewCLI.answer(message);
     }
 
+    @Test
+    void printObjectives() {
+        ArrayList<String> output = new ArrayList<>();
+        output.add("");
+        output.add("");
+        output.add("");
+        output.add("");
+        output.add("");
+        output.add("");
+        output.add("");
+        output.add("");
+        for(int i = 87; i <= 102 ; i++) {
+            viewCLI.printObjective(i, output);
+            output.forEach(System.out::println);
+        }
+    }
+
 
     @Test
     void commonAreaPrintingTest() throws Exception {
