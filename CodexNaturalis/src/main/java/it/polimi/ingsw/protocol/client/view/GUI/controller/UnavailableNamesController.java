@@ -26,17 +26,21 @@ public class UnavailableNamesController {
 
     @FXML
     public void initialize() {
+        //deserialize the unavailableNamesMessage
         this.message = (unavailableNamesMessage) GUIMessages.readToGUI();
         // Converti la lista di nomi non disponibili in una string
-        String names = String.join("Already taken names: ", message.getNames());
-
-        // Imposta il testo della label con la stringa dei nomi
-        unavailableNames.setText(names);
-
+        String names=null;
+        if(message.toString().equals("[]")){
+            unavailableNames.setText("All nicknames are available");
+        }
+        else {
+            unavailableNames.setText("These nicknames are not available: " + message.getNames());
+        }
         submitButton.setOnAction(event -> {
             if (nameToChoose.getText().isEmpty()) {
                 return;
             }
+            //serialize the name chosen by the user. The method unavailable names in viewGUI can than deserialize it
             GUIMessages.writeToClient(nameToChoose.getText());
         });
 

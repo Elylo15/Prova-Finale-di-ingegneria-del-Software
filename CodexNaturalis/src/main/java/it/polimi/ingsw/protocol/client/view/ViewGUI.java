@@ -111,11 +111,11 @@ public class ViewGUI extends View {
     @Override
     public String unavailableNames(unavailableNamesMessage message) {
         //to avoid reading unexpected messages
-        GUIMessages.clearQueue();
+        GUIMessages.clearQueue();  //remove all elements that could be in the queue
         String name = null;
-        GUIMessages.writeToGUI(message);
-        Platform.runLater(SceneManager::unavailableNames);
-        name = (String) GUIMessages.readToClient();
+        GUIMessages.writeToGUI(message);  //serialize the message and send it to the gui
+        Platform.runLater(SceneManager::unavailableNames); //run the method unavailableNames in SceneManager
+        name = (String) GUIMessages.readToClient(); //deserialize the string the method must return
         return name;
     }
 
@@ -142,9 +142,9 @@ public class ViewGUI extends View {
         //to avoid reading unexpected messages
         GUIMessages.clearQueue();
         String color = null;
-        GUIMessages.writeToGUI(message);
-        Platform.runLater(SceneManager::availableColors);
-        color = (String) GUIMessages.readToClient();
+        GUIMessages.writeToGUI(message); //in AvailableColorsController we call GUImessages.readToGui() to receive this message
+        Platform.runLater(SceneManager::availableColors); //run the method availableColors in SceneManager
+        color = (String) GUIMessages.readToClient(); //read the object we sent calling GUImessages.writeToClient() in AvailableColorsController
         return color;
     }
 
@@ -179,6 +179,7 @@ public class ViewGUI extends View {
     public void waiting() {
         //to avoid reading unexpected messages
         GUIMessages.clearQueue();
+        //Platform.runLater(SceneManager::waiting);
     }
 
     //load a mainGamePage with a backGround, scoreBoard etc.
