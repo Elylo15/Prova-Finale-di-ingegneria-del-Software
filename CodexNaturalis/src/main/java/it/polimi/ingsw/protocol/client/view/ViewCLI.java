@@ -497,12 +497,15 @@ public class ViewCLI extends View {
         System.out.println("\n");
 
         ArrayList<Integer> resourceList = area.getResources();
-            String[] resourceNames = {RED_TEXT + "FUNGUS", PURPLE_TEXT + "INSECT", CYAN_TEXT + "ANIMAL", GREEN_TEXT + "PLANT", YELLOW_TEXT + "MANUSCRIPT", YELLOW_TEXT + "QUILL", YELLOW_TEXT + "INKWELL", WHITE_TEXT + "EMPTY"};
+        String[] resourceNames = {RED_TEXT + "FUNGUS", PURPLE_TEXT + "INSECT", CYAN_TEXT + "ANIMAL", GREEN_TEXT + "PLANT", YELLOW_TEXT + "MANUSCRIPT", YELLOW_TEXT + "QUILL", YELLOW_TEXT + "INKWELL", WHITE_TEXT + "EMPTY"};
+
 
         for (int i = 0; i < resourceList.size() - 1; i++) {
-            System.out.println(resourceNames[i] + ": " + resourceList.get(i) + RESET);
+            resourceNames[i] = String.format("%-25s", resourceNames[i] + ": " + resourceList.get(i) + RESET);
         }
-        System.out.println("\n");
+        System.out.println(resourceNames[0] + " " + resourceNames[1] + " " + resourceNames[2] + " " + resourceNames[3]);
+        System.out.println(resourceNames[4] + " " + resourceNames[5] + " " + resourceNames[6] + " " + resourceNames[7]);
+        System.out.println();
 
         ArrayList<Cell> Cells = area.getAllCards().stream()
                 .map(PlaceableCard::getCells)
@@ -555,7 +558,7 @@ public class ViewCLI extends View {
         // Print the column numbers
         System.out.print("   ");
         for (int i = minColumn; i <= maxColumn; i++) {
-            System.out.print("" + String.format("%2d%5s", i, ""));
+            System.out.print(String.format("%2d%5s", i, ""));
         }
         System.out.println();
 
@@ -1195,7 +1198,7 @@ public class ViewCLI extends View {
     public String unavailableNames(unavailableNamesMessage message){
         //the client can call the method view.unavailableNames passing as a parameter the arraylist of unavailable names received from server
         if(!message.toString().equals("[]")) {
-            System.out.println("This nicknames are not available: " + message.toString());
+            System.out.println("This nicknames are not available: " + message);
         }
         else {
             System.out.println("All nicknames are available");
