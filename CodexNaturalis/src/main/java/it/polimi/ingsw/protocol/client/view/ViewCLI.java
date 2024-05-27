@@ -67,7 +67,6 @@ public class ViewCLI extends View {
      */
     public ViewCLI() {
         super();
-
     }
 
     /**
@@ -498,10 +497,10 @@ public class ViewCLI extends View {
         System.out.println("\n");
 
         ArrayList<Integer> resourceList = area.getResources();
-        String[] resourceNames = {"FUNGUS", "INSECT", "ANIMAL", "PLANT", "MANUSCRIPT", "QUILL", "INKWELL", "EMPTY"};
+            String[] resourceNames = {RED_TEXT + "FUNGUS", PURPLE_TEXT + "INSECT", CYAN_TEXT + "ANIMAL", GREEN_TEXT + "PLANT", YELLOW_TEXT + "MANUSCRIPT", YELLOW_TEXT + "QUILL", YELLOW_TEXT + "INKWELL", WHITE_TEXT + "EMPTY"};
 
         for (int i = 0; i < resourceList.size() - 1; i++) {
-            System.out.println(resourceNames[i] + ": " + resourceList.get(i));
+            System.out.println(resourceNames[i] + ": " + resourceList.get(i) + RESET);
         }
         System.out.println("\n");
 
@@ -511,25 +510,47 @@ public class ViewCLI extends View {
                 .distinct()
                 .collect(Collectors.toCollection(ArrayList::new));
 
-        int minRow = Cells.stream()
+        ArrayList<Integer[]> availablePositions = area.getAvailablePosition();
+
+        int minCellRow = Cells.stream()
                         .mapToInt(Cell::getRow)
                         .min()
                         .orElse(0);
+        int minAvailableRow = availablePositions.stream()
+                        .mapToInt(position -> position[0])
+                        .min()
+                        .orElse(0);
+        int minRow = Math.min(minCellRow, minAvailableRow);
 
-        int maxRow = Cells.stream()
+        int maxCellRow = Cells.stream()
                         .mapToInt(Cell::getRow)
                         .max()
                         .orElse(0);
+        int maxAvailableRow = availablePositions.stream()
+                        .mapToInt(position -> position[0])
+                        .max()
+                        .orElse(0);
+        int maxRow = Math.max(maxCellRow, maxAvailableRow);
 
-        int minColumn = Cells.stream()
+        int minCellColumn = Cells.stream()
                 .mapToInt(Cell::getColumn)
                 .min()
                 .orElse(0);
+        int minAvailableColumn = availablePositions.stream()
+                .mapToInt(position -> position[1])
+                .min()
+                .orElse(0);
+        int minColumn = Math.min(minCellColumn, minAvailableColumn);
 
-        int maxColumn = Cells.stream()
+        int maxCellColumn = Cells.stream()
                 .mapToInt(Cell::getColumn)
                 .max()
                 .orElse(0);
+        int maxAvailableColumn = availablePositions.stream()
+                .mapToInt(position -> position[1])
+                .max()
+                .orElse(0);
+        int maxColumn = Math.max(maxCellColumn, maxAvailableColumn);
 
         // Print the column numbers
         System.out.print("   ");
@@ -566,7 +587,7 @@ public class ViewCLI extends View {
                             // The cell is the top left corner of the card
                             // So all the printed space is of the same card
                             lines.set(0, lines.get(0) + resourceToPrint(cell) + fillColor + String.format("%4s", "") + RESET);
-                            if(card.isFront())
+                            if (card.isFront())
                                 lines.set(1, lines.get(1) + fillColor + String.format("%1s%2s%1s%3s", "", card.getID(), "", "") + RESET);
                             else
                                 lines.set(1, lines.get(1) + fillColor + String.format("%1s%2s%1s%3s", "", card.getID(), "", reignToPrint(card)) + RESET);
@@ -587,9 +608,16 @@ public class ViewCLI extends View {
                             // The cell is the bottom right corner of the card
                             // So only the top right part is of the same card
                             lines.set(0, lines.get(0) + resourceToPrint(cell) + otherCardColor(cell, isTopCard) + String.format("%4s", "") + RESET);
-                            lines.set(1, lines.get(1) + otherCardColor(cell, isTopCard) + String.format("%7s", "") + RESET);
+                            if (isAvailablePosition(i, j, availablePositions))
+                                lines.set(1, lines.get(1) + printAvailablePosition(i, j));
+                            else
+                                lines.set(1, lines.get(1) + otherCardColor(cell, isTopCard) + String.format("%7s", "") + RESET);
                         }
                     }
+                } else if(isAvailablePosition(i, j, availablePositions)) {
+                    // The cell is an available position
+                    lines.set(0, lines.get(0) + BLACK_BACKGROUND + String.format("%7s", "") + RESET);
+                    lines.set(1, lines.get(1) + printAvailablePosition(i, j));
 
                 } else {
                     // The cell doesn't exist, so it is all black
@@ -604,15 +632,25 @@ public class ViewCLI extends View {
             }
         }
 
+        System.out.println("\n" + YELLOW_TEXT + "The available positions [row, column] are on the graph." + RESET);
+
         System.out.println("\n");
-        ArrayList<String> availablePositionsString = area.getAvailablePosition().stream()
-                .map(position -> "[" + position[0] + ", " + position[1] + "]")
-                .collect(Collectors.toCollection(ArrayList::new));
-        System.out.println("The available positions are [row, column]: ");
-        for (String position : availablePositionsString) {
-            System.out.println("> " + position);
+    }
+
+    /**
+     * Checks if a position is in a list of available positions
+     * @param row the row of the position
+     * @param column the column of the position
+     * @param availablePositions the list of available positions
+     * @return true if the position is available, false otherwise
+     */
+    private boolean isAvailablePosition(int row, int column, ArrayList<Integer[]> availablePositions) {
+        for (Integer[] position : availablePositions) {
+            if (position[0] == row && position[1] == column) {
+                return true;
+            }
         }
-        System.out.println("\n");
+        return false;
     }
 
     /**
@@ -651,6 +689,16 @@ public class ViewCLI extends View {
         }
 
         return 0;
+    }
+
+    /**
+     * Prints a label for the available positions
+     * @param row the row of the position
+     * @param column the column of the position
+     * @return the string to be printed
+     */
+    private String printAvailablePosition(int row, int column) {
+        return BLACK_BACKGROUND + String.format("[%2d,%2d]", row, column) + RESET;
     }
 
     /**
