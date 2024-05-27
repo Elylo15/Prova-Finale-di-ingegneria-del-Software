@@ -28,16 +28,5 @@ public class serverOptionResponseMessage implements Message, Serializable {
     public void setMatchID(String matchID) {
         this.matchID = matchID;
     }
-
-    @Override
-    public void setLock() {}
-
-    @Override
-    public boolean isLocked() {
-        return false;
-    }
-
-    @Override
-    public void unlock() {}
 }
 

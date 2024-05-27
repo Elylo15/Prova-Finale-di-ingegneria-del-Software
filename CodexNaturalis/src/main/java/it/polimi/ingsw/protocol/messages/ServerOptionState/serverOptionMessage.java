@@ -108,18 +108,6 @@ public class serverOptionMessage implements Message, Serializable {
      */
     public ArrayList<Integer> getSavedMatches() {return savedMatches;}
 
-
-    @Override
-    public void setLock() {}
-
-    @Override
-    public boolean isLocked() {
-        return false;
-    }
-
-    @Override
-    public void unlock() {}
-
     /**
      * @return a string representation of the serverOptionMessage
      */
@@ -130,7 +118,7 @@ public class serverOptionMessage implements Message, Serializable {
                 ", matchID=" + matchID +
                 ", startedMatchID=" + startedMatchID +
                 ", loadMatch=" + loadMatch +
-                ", filename='" + savedMatchID + '\'' +
+                ", savedMatch='" + savedMatchID + '\'' +
                 ", WaitingMatches=" + WaitingMatches +
                 ", runningMatches=" + runningMatches +
                 ", savedMatches=" + savedMatches +

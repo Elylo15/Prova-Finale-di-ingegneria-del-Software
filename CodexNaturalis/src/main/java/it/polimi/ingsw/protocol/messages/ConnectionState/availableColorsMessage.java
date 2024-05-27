@@ -13,18 +13,8 @@ public class availableColorsMessage implements Message, Serializable {
     public String toString(){
         return colors.toString();
     }
-    @Override
-    public void setLock() {
 
-    }
-
-    @Override
-    public boolean isLocked() {
-        return false;
-    }
-
-    @Override
-    public void unlock() {
-
+    public ArrayList<String> getColors() {
+        return colors;
     }
 }

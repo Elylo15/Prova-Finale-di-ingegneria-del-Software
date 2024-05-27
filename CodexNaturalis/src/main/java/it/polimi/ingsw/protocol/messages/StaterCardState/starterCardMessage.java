@@ -20,15 +20,4 @@ public class starterCardMessage implements Message,Serializable {
     public boolean isNoResponse() {
         return noResponse;
     }
-
-    @Override
-    public void setLock() {}
-
-    @Override
-    public boolean isLocked() {
-        return false;
-    }
-
-    @Override
-    public void unlock() {}
 }

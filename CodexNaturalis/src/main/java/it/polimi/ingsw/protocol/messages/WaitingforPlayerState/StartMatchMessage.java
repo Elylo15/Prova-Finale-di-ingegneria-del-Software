@@ -19,18 +19,4 @@ public class StartMatchMessage implements Message, Serializable {
             return startSignal;
     }
 
-    @Override
-    public void setLock() {
-
-    }
-
-    @Override
-    public boolean isLocked() {
-        return false;
-    }
-
-    @Override
-    public void unlock() {
-
-    }
 }

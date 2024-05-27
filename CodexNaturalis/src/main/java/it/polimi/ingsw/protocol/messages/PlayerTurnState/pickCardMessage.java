@@ -20,14 +20,4 @@ public class pickCardMessage implements Message, Serializable {
         return noResponse;
     }
 
-    @Override
-    public void setLock() {}
-
-    @Override
-    public boolean isLocked() {
-        return false;
-    }
-
-    @Override
-    public void unlock() {}
 }

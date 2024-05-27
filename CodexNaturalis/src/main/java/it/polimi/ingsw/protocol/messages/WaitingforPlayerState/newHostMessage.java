@@ -20,15 +20,4 @@ public class newHostMessage implements Message, Serializable {
         this.newHostNickname = newHostNickname;
     }
 
-    @Override
-    public void setLock() {}
-
-    @Override
-    public boolean isLocked() {
-        return false;
-    }
-
-    @Override
-    public void unlock() {}
-
 }

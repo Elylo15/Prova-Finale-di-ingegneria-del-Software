@@ -20,18 +20,4 @@ public class declareWinnerMessage implements Message, Serializable {
         return numberOfObjects;
     }
 
-    @Override
-    public void setLock() {
-
-    }
-
-    @Override
-    public boolean isLocked() {
-        return false;
-    }
-
-    @Override
-    public void unlock() {
-
-    }
 }

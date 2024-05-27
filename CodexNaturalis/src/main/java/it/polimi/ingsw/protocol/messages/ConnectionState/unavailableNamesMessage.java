@@ -32,18 +32,5 @@ public class unavailableNamesMessage implements Message, Serializable {
         return unavaibleNames.toString();
     }
 
-    @Override
-    public void setLock() {
 
-    }
-
-    @Override
-    public boolean isLocked() {
-        return false;
-    }
-
-    @Override
-    public void unlock() {
-
-    }
 }

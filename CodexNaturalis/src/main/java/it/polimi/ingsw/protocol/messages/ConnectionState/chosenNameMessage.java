@@ -17,18 +17,4 @@ public class chosenNameMessage implements Message, Serializable {
      */
     public String getName() {return name;}
 
-    @Override
-    public void setLock() {
-
-    }
-
-    @Override
-    public boolean isLocked() {
-        return false;
-    }
-
-    @Override
-    public void unlock() {
-
-    }
 }

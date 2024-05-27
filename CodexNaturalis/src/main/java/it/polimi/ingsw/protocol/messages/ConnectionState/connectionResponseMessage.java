@@ -19,14 +19,4 @@ public class connectionResponseMessage implements Message, Serializable {
         this.correct = correct;
     }
 
-    @Override
-    public void setLock() {}
-
-    @Override
-    public boolean isLocked() {
-        return false;
-    }
-
-    @Override
-    public void unlock() {}
 }

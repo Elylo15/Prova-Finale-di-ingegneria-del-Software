@@ -37,18 +37,4 @@ public class updatePlayerMessage implements Message, Serializable {
         return nicknameViewer;
     }
 
-    @Override
-    public void setLock() {
-
-    }
-
-    @Override
-    public boolean isLocked() {
-        return false;
-    }
-
-    @Override
-    public void unlock() {
-
-    }
 }

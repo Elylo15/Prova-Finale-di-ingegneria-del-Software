@@ -108,20 +108,10 @@ public class currentStateMessage implements Message, Serializable {
                 ", player=" + playerNickname +
                 ", stateName='" + stateName + '\'' +
                 ", lastTurn=" + lastTurn +
+                ", onlinePlayers=" + onlinePlayers +
+                ", commonObjectiveCards=" + commonObjectiveCards +
+                ", MatchID=" + MatchID +
                 '}';
     }
-
-    @Override
-    public void setLock() {}
-
-    @Override
-    public boolean isLocked() {
-        return false;
-    }
-
-    @Override
-    public void unlock() {}
-
-
 
 }
