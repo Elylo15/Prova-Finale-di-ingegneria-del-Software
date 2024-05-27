@@ -22,7 +22,7 @@ public class InsertServerOptionController {
     public Button join_running_match;
 
     private serverOptionMessage serverOptionMessage;
-
+    @FXML
     private void initialize() {
         this.serverOptionMessage = (serverOptionMessage) GUIMessages.readToGUI();
 

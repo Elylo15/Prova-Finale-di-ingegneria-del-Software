@@ -95,4 +95,10 @@ public class GUIMessages {
         }
     }
 
+    public static void clearQueue(){
+        storedObjectsToClient.clear();
+        storedObjectsToGUI.clear();
+    }
+
+
 }

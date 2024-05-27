@@ -27,23 +27,25 @@ public class ViewGUI extends View {
     private GUIMessages guiMessages ;
 
     public ViewGUI() {
-        guiMessages = new GUIMessages();
-
+        new GUIMessages();
     }
+
+    public void startMain(){
+        Platform.runLater(SceneManager::MainView);
+    }
+
 
     /**
      * allow the user to enter the ip of the server he wants to connect to
      *
      * @return array with ip and port of the server
      */
-    public void startMain(){
-        Platform.runLater(SceneManager::MainView);
-    }
-
     public String askIP(){
+        GUIMessages.clearQueue();
         String ip = "";
         Platform.runLater(SceneManager::InsertIP); //update the scene
         ip = (String)GUIMessages.readToClient(); //read the ip entered by the user
+        System.out.println(ip);
         return ip;
     }
 
@@ -53,10 +55,12 @@ public class ViewGUI extends View {
      */
         @Override
     public boolean askSocket() {// true = socket, false = rmi
+        GUIMessages.clearQueue();
         boolean useSocket = true;
-            Platform.runLater(SceneManager::Choose_Socket_RMI);
-            useSocket = (boolean)GUIMessages.readToClient();
-            return useSocket;
+        Platform.runLater(SceneManager::Choose_Socket_RMI);
+        useSocket = (boolean)GUIMessages.readToClient();
+        System.out.println(useSocket);
+        return useSocket;
     }
 
 

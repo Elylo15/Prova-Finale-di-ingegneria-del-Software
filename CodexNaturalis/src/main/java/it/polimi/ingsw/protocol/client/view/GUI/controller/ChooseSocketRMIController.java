@@ -14,15 +14,15 @@ public class ChooseSocketRMIController {
     private Button socketButton;
     @FXML
     private Button rmiButton;
-
-    private boolean useSocket;
-
+    @FXML
     private void initialize() {
         socketButton.setOnAction(event -> {
+            System.out.println("Socket");
             GUIMessages.writeToClient(true);
         });
 
         rmiButton.setOnAction(event -> {
+            System.out.println("RMI");
             GUIMessages.writeToClient(false);
         });
     }

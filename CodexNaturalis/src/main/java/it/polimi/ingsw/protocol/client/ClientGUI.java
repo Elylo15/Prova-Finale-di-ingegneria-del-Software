@@ -38,7 +38,6 @@ public class ClientGUI extends Client implements Runnable{
         super(view);
     }
 
-
     @Override
     public void run() {
         ((ViewGUI) getView()).startMain();

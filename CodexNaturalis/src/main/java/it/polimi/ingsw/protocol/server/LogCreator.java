@@ -18,8 +18,8 @@ public class LogCreator {
      */
     public LogCreator() {
         boolean working;
-        this.fileName = "CodexNaturalis/logs/log_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")) + ".log";
-        File dir = new File("CodexNaturalis/logs");
+        this.fileName = "logs/log_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")) + ".log";
+        File dir = new File("logs");
         if(!dir.exists()) {
             working = dir.mkdir();
             System.out.println(working);
@@ -41,8 +41,8 @@ public class LogCreator {
      */
     public LogCreator(String matchID) {
         this.matchID = matchID;
-        this.fileName =  "CodexNaturalis/logs/log_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")) + "_match"+ this.matchID +".log";
-        File dir = new File("CodexNaturalis/logs");
+        this.fileName =  "logs/log_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")) + "_match"+ this.matchID +".log";
+        File dir = new File("logs");
         if (!dir.exists()) {
             boolean dirCreated = dir.mkdir();
 
