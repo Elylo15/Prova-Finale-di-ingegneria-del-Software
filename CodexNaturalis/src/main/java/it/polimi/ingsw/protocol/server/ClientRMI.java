@@ -51,6 +51,14 @@ public class ClientRMI extends ClientConnection implements Runnable, Serializabl
         this.lookupString = lookupString;
     }
 
+    /**
+     * method {@code getLookupString}: returns the lookupString
+     * @return lookupString
+     */
+    public String getLookupString() {
+        return lookupString;
+    }
+
 
 
     /**

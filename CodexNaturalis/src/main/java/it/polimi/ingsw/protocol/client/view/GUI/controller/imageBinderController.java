@@ -18,16 +18,16 @@ public class imageBinderController {
 
     }
 
-    private void addCardToContainer(Card card) {
-        ImageView cardImageView = imageBinder.bindImage(card.getID(), card.isFront());
-        if (cardImageView != null) {
-            cardContainer.getChildren().add(cardImageView);
-            cardImageView.setOnMouseClicked(event -> {
-                card.setFront(!card.isFront());
-                cardImageView.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream(imageBinder.imageMap.get(card.getID())[card.isFront() ? 0 : 1]))));
-            });
-        }
-    }
+//    private void addCardToContainer(Card card) {
+//        ImageView cardImageView = imageBinder.bindImage(card.getID(), card.isFront());
+//        if (cardImageView != null) {
+//            cardContainer.getChildren().add(cardImageView);
+//            cardImageView.setOnMouseClicked(event -> {
+//                card.setFront(!card.isFront());
+//                cardImageView.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream(imageBinder.imageMap.get(card.getID())[card.isFront() ? 0 : 1]))));
+//            });
+//        }
+//    }
 
 
 }
