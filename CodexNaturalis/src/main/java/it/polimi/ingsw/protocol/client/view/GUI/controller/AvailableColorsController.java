@@ -70,9 +70,6 @@ public class AvailableColorsController {
                 yellow.setDisable(false);
             }
         }
-    }
-
-    public void getColor(){
         //send the result
         red.setOnAction(event -> {
             GUIMessages.writeToClient("red");
@@ -88,7 +85,6 @@ public class AvailableColorsController {
             GUIMessages.writeToClient("blue");
         });
     }
-
 
 
 

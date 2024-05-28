@@ -81,8 +81,8 @@ public class SceneManager {
         try {
             Parent root = FXMLLoader.load(SceneManager.class.getResource("/expectedPlayers.fxml"));
             primaryStage.setScene(new Scene(root));
-            primaryStage.setFullScreen(true);
-            primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
+            //primaryStage.setFullScreen(true);
+            //primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
             primaryStage.show();
         } catch (IOException e) {
             e.printStackTrace();
