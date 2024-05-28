@@ -88,19 +88,9 @@ public class Server implements Runnable {
     }
 
     /**
-     * Sets the timeout to the new value.
-     *
-     * @param timeoutSeconds new value, accepted only if positive.
-     */
-    public void setTimeoutSeconds(int timeoutSeconds) {
-        if(timeoutSeconds > 0)
-            this.timeoutSeconds = timeoutSeconds;
-    }
-
-    /**
      * Accepts a connection via socket from a client and creates a new ClientConnection.
       */
-    public void acceptConnectionSocket() {
+    protected void acceptConnectionSocket() {
         try {
             this.serverSocket = new ServerSocket(portSocket);
 
@@ -130,7 +120,7 @@ public class Server implements Runnable {
     /**
      * Accepts the connection from the client and creates a new ClientConnection.
      */
-    public void acceptConnectionRMI() {
+    protected void acceptConnectionRMI() {
         try {
             logCreator.log("Opening RMI service");
             Registry registry = LocateRegistry.createRegistry(portRMI);

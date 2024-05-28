@@ -156,6 +156,7 @@ public abstract  class Client {
             try {
                 expected = future.get(120, TimeUnit.SECONDS);
             } catch (Exception e) {
+                future.cancel(true);
                 expected = 1000;
                 noResponse = true;
             }
@@ -186,6 +187,7 @@ public abstract  class Client {
             try {
                 side = future.get(120, TimeUnit.SECONDS);
             } catch (Exception e) {
+                future.cancel(true);
                 side = 1000;
                 noResponse = true;
             }
@@ -219,6 +221,7 @@ public abstract  class Client {
             try {
                 pick = future.get(120, TimeUnit.SECONDS);
             } catch (Exception e) {
+                future.cancel(true);
                 pick = 1000;
                 noResponse = true;
             }
@@ -249,6 +252,7 @@ public abstract  class Client {
             try {
                 card = future.get(120, TimeUnit.SECONDS);
             } catch (Exception e) {
+                future.cancel(true);
                 card = 1000;
                 noResponse = true;
             }
@@ -281,6 +285,7 @@ public abstract  class Client {
                 card.set(2, cardArray[2]);
                 card.set(3, cardArray[3]);
             } catch (Exception e) {
+                future.cancel(true);
                 card.set(0, 1000);
                 card.set(1, 1000);
                 card.set(2, 1000);
@@ -343,6 +348,7 @@ public abstract  class Client {
             try {
                 name = future.get(120, TimeUnit.SECONDS);
             } catch (Exception e) {
+                future.cancel(true);
                 name = "1000";
             }
 
