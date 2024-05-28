@@ -20,16 +20,16 @@ public class CommonArea implements Serializable {
      */
     public CommonArea(){
 
-        d1 = new Deck<>();
-        d2 = new Deck<>();
-        d3 = new Deck<>();
-        d4 = new Deck<>();
+        d1 = new Deck<>(); //resource cards
+        d2 = new Deck<>(); //gold cards
+        d3 = new Deck<>(); //starter cards
+        d4 = new Deck<>(); //objective cards
         tableCards = new ArrayList<>();
     }
     /**
      * method pickTableCard: remove a face-up card
      * @param cardNumber: card you want to take from the exposed cards
-     * @return PlaceableCard: card removed from those discovered and which will go to a player
+     * @return PlaceableCard: card removed from those face up and which will go to a player
      * @throws IllegalArgumentException: if the card is a StarterCard
      */
     public PlaceableCard pickTableCard(int cardNumber){
@@ -52,7 +52,7 @@ public class CommonArea implements Serializable {
     }
     /**
      * method drawFromDeck: remove the top GoldCard/ResourceCard of the deck and places it as a face-up card
-     * @param d: number of the deck from witch you want to remove a card to put in among those discovered
+     * @param d: number of the deck from which you want to remove a card to put in among the face up cards
      */
     public void drawFromDeck(int d){
         PlaceableCard c = null;
@@ -60,7 +60,7 @@ public class CommonArea implements Serializable {
             case 1 -> c= d1.removeCard();
             case 2 -> c= d2.removeCard();
         }
-        tableCards.add(c);
+        tableCards.add(c); //add the card to the table cards
     }
     /**
      * method drawFromPlayer: the player draws from the GoldCardDeck/ResourceCardDeck/StarterCardDeck and keeps the card
@@ -75,7 +75,7 @@ public class CommonArea implements Serializable {
             case 3 -> c = d3.removeCard();
             case 4 -> throw new IllegalArgumentException("Cannot draw from ObjectiveCardDeck");
         }
-        return c;
+        return c;  //return the card picked
     }
     /**
      * method getTableCards:show the player the cards face-up
