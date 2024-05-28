@@ -51,15 +51,6 @@ public class ClientRMI extends ClientConnection implements Runnable, Serializabl
         this.lookupString = lookupString;
     }
 
-    /**
-     * method {@code getLookupString}: returns the lookupString
-     * @return lookupString
-     */
-    public String getLookupString() {
-        return lookupString;
-    }
-
-
 
     /**
      *  Empty method, needed for executors to work
@@ -74,7 +65,7 @@ public class ClientRMI extends ClientConnection implements Runnable, Serializabl
      * @return serverOptionMessage
      */
     @Override
-    public synchronized serverOptionMessage getServerOption(ArrayList<Integer> waitingMatches,ArrayList<Integer> runningMatches, ArrayList<Integer> savedMatches) {
+    protected synchronized serverOptionMessage getServerOption(ArrayList<Integer> waitingMatches,ArrayList<Integer> runningMatches, ArrayList<Integer> savedMatches) {
         try {
             this.toClient.write(new serverOptionMessage(false,null,null,false,null, waitingMatches, runningMatches, savedMatches));
             return (serverOptionMessage) this.toServer.read();
@@ -88,7 +79,7 @@ public class ClientRMI extends ClientConnection implements Runnable, Serializabl
      * @param hostNickname: String
      */
     @Override
-    public synchronized void sendNewHostMessage(String hostNickname){
+    protected synchronized void sendNewHostMessage(String hostNickname){
         try {
             toClient.write(new newHostMessage(hostNickname));
         } catch (RemoteException ignore) {}
@@ -99,7 +90,7 @@ public class ClientRMI extends ClientConnection implements Runnable, Serializabl
      * @return expectedPlayersMessage
      */
     @Override
-    public synchronized expectedPlayersMessage getExpectedPlayer(){
+    protected synchronized expectedPlayersMessage getExpectedPlayer(){
         try {
             return (expectedPlayersMessage) toServer.read();
         } catch (RemoteException e) {
@@ -112,7 +103,7 @@ public class ClientRMI extends ClientConnection implements Runnable, Serializabl
      * @param correct: boolean
      */
     @Override
-    public synchronized void sendAnswer(boolean correct){
+    protected synchronized void sendAnswer(boolean correct){
         try {
             toClient.write(new responseMessage(correct));
         } catch (RemoteException ignore) {}
@@ -134,7 +125,7 @@ public class ClientRMI extends ClientConnection implements Runnable, Serializabl
      * @param unavailableNames: ArrayList<String>
      */
     @Override
-    public synchronized void sendUnavailableName(ArrayList<String> unavailableNames) {
+    protected synchronized void sendUnavailableName(ArrayList<String> unavailableNames) {
         try {
             toClient.write(new unavailableNamesMessage(unavailableNames));
         } catch (RemoteException ignore) {}
@@ -146,7 +137,7 @@ public class ClientRMI extends ClientConnection implements Runnable, Serializabl
      * @return chosenNameMessage
      */
     @Override
-    public synchronized chosenNameMessage getName(ArrayList<String> unavailableNames){
+    protected synchronized chosenNameMessage getName(ArrayList<String> unavailableNames){
         try {
             this.sendUnavailableName(unavailableNames);
             return (chosenNameMessage) toServer.read();
@@ -160,7 +151,7 @@ public class ClientRMI extends ClientConnection implements Runnable, Serializabl
      * @param availableColors: ArrayList<String>
      */
     @Override
-    public synchronized void sendAvailableColor(ArrayList<String> availableColors){
+    protected synchronized void sendAvailableColor(ArrayList<String> availableColors){
         try {
             toClient.write(new availableColorsMessage(availableColors));
         } catch (RemoteException ignore) {}
@@ -171,7 +162,7 @@ public class ClientRMI extends ClientConnection implements Runnable, Serializabl
      * @return chosenColorMessage
      */
     @Override
-    public synchronized chosenColorMessage getColor(ArrayList<String> availableColors){
+    protected synchronized chosenColorMessage getColor(ArrayList<String> availableColors){
         try {
             this.sendAvailableColor(availableColors);
             return (chosenColorMessage) toServer.read();
@@ -185,7 +176,7 @@ public class ClientRMI extends ClientConnection implements Runnable, Serializabl
      * @param currentState: currentStateMessage
      */
     @Override
-    public synchronized void sendCurrentState(currentStateMessage currentState){
+    protected synchronized void sendCurrentState(currentStateMessage currentState){
         try {
             toClient.write(currentState);
         } catch (RemoteException ignore) {}
@@ -196,7 +187,7 @@ public class ClientRMI extends ClientConnection implements Runnable, Serializabl
      * @return starterCardMessage
      */
     @Override
-    public synchronized starterCardMessage getStaterCard(){
+    protected synchronized starterCardMessage getStaterCard(){
         try {
             return (starterCardMessage) toServer.read();
         } catch (RemoteException e) {
@@ -210,7 +201,7 @@ public class ClientRMI extends ClientConnection implements Runnable, Serializabl
      * @return objectiveCardMessage
      */
     @Override
-    public synchronized objectiveCardMessage getChosenObjective(ArrayList<ObjectiveCard> objectiveCards) {
+    protected synchronized objectiveCardMessage getChosenObjective(ArrayList<ObjectiveCard> objectiveCards) {
         try {
             toClient.write(new objectiveCardMessage(objectiveCards));
             return (objectiveCardMessage) toServer.read();
@@ -224,7 +215,7 @@ public class ClientRMI extends ClientConnection implements Runnable, Serializabl
      * @return placeCardMessage
      */
     @Override
-    public synchronized placeCardMessage getPlaceCard(){
+    protected synchronized placeCardMessage getPlaceCard(){
         try {
             return (placeCardMessage) toServer.read();
         } catch (RemoteException e) {
@@ -237,7 +228,7 @@ public class ClientRMI extends ClientConnection implements Runnable, Serializabl
      * @return pickCardMessage
      */
     @Override
-    public synchronized pickCardMessage getChosenPick(){
+    protected synchronized pickCardMessage getChosenPick(){
         try {
             return (pickCardMessage) toServer.read();
         } catch (RemoteException e) {
@@ -251,7 +242,7 @@ public class ClientRMI extends ClientConnection implements Runnable, Serializabl
      * @param numberOfObjectives: HashMap<String, Integer> score
      */
     @Override
-    public synchronized void sendEndGame(HashMap<String, Integer> score, HashMap<String, Integer> numberOfObjectives){
+    protected synchronized void sendEndGame(HashMap<String, Integer> score, HashMap<String, Integer> numberOfObjectives){
         try {
             toClient.write(new declareWinnerMessage(score, numberOfObjectives));
         } catch (RemoteException ignore) {}
@@ -262,7 +253,7 @@ public class ClientRMI extends ClientConnection implements Runnable, Serializabl
      * @param updateMessage: updatePlayerMessage
      */
     @Override
-    public synchronized void sendUpdatePlayer(updatePlayerMessage updateMessage) {
+    protected synchronized void sendUpdatePlayer(updatePlayerMessage updateMessage) {
         try {
             toClient.write(updateMessage);
         } catch (RemoteException ignore) {}
@@ -272,7 +263,7 @@ public class ClientRMI extends ClientConnection implements Runnable, Serializabl
      * method {@code closeConnection}: closes the connection
      */
     @Override
-    public void closeConnection() {
+    protected void closeConnection() {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Future<Void> future = executor.submit(new Callable<Void>() {
             @Override
@@ -299,7 +290,7 @@ public class ClientRMI extends ClientConnection implements Runnable, Serializabl
      * @return boolean true if the connection is active, false or no answer otherwise
      */
     @Override
-    public synchronized boolean isConnected() {
+    protected synchronized boolean isConnected() {
         try {
             String answer = "ACK";
             currentStateMessage message = new currentStateMessage(null, null, "AnswerCheckConnection", false, null, null, null );

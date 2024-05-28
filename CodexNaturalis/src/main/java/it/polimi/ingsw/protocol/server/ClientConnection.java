@@ -47,24 +47,24 @@ public abstract class ClientConnection implements Runnable, Serializable {
         return port;
     }
 
-    public abstract serverOptionMessage getServerOption(ArrayList<Integer> waitingMatches,ArrayList<Integer> runningMatches, ArrayList<Integer> savedMatches);
-    public abstract void sendNewHostMessage(String hostNickname);
-    public abstract expectedPlayersMessage getExpectedPlayer();
-    public abstract void sendAnswer(boolean correct);
+    protected abstract serverOptionMessage getServerOption(ArrayList<Integer> waitingMatches,ArrayList<Integer> runningMatches, ArrayList<Integer> savedMatches);
+    protected abstract void sendNewHostMessage(String hostNickname);
+    protected abstract expectedPlayersMessage getExpectedPlayer();
+    protected abstract void sendAnswer(boolean correct);
     public abstract void sendAnswerToConnection(connectionResponseMessage message);
-    public abstract void sendUnavailableName(ArrayList<String> unavailableNames);
-    public abstract chosenNameMessage getName(ArrayList<String> unavailableNames);
-    public abstract void sendAvailableColor(ArrayList<String> availableColors);
-    public abstract chosenColorMessage getColor(ArrayList<String> availableColors);
-    public abstract void sendCurrentState(currentStateMessage currentState);
-    public abstract starterCardMessage getStaterCard();
-    public abstract objectiveCardMessage getChosenObjective(ArrayList<ObjectiveCard> objectiveCards);
-    public abstract placeCardMessage getPlaceCard();
-    public abstract pickCardMessage getChosenPick();
-    public abstract void sendEndGame(HashMap<String, Integer> score, HashMap<String, Integer> numberOfObjectives);
-    public abstract void sendUpdatePlayer(updatePlayerMessage updateMessage);
-    public abstract void closeConnection();
-    public abstract boolean isConnected();
+    protected abstract void sendUnavailableName(ArrayList<String> unavailableNames);
+    protected abstract chosenNameMessage getName(ArrayList<String> unavailableNames);
+    protected abstract void sendAvailableColor(ArrayList<String> availableColors);
+    protected abstract chosenColorMessage getColor(ArrayList<String> availableColors);
+    protected abstract void sendCurrentState(currentStateMessage currentState);
+    protected abstract starterCardMessage getStaterCard();
+    protected abstract objectiveCardMessage getChosenObjective(ArrayList<ObjectiveCard> objectiveCards);
+    protected abstract placeCardMessage getPlaceCard();
+    protected abstract pickCardMessage getChosenPick();
+    protected abstract void sendEndGame(HashMap<String, Integer> score, HashMap<String, Integer> numberOfObjectives);
+    protected abstract void sendUpdatePlayer(updatePlayerMessage updateMessage);
+    protected abstract void closeConnection();
+    protected abstract boolean isConnected();
 
 
 }

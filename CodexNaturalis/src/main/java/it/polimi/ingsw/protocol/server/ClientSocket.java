@@ -55,7 +55,7 @@ public class ClientSocket extends ClientConnection implements Serializable {
      * @return serverOptionMessage
      */
     @Override
-    public synchronized serverOptionMessage getServerOption(ArrayList<Integer> waitingMatches,ArrayList<Integer> runningMatches, ArrayList<Integer> savedMatches) {
+    protected synchronized serverOptionMessage getServerOption(ArrayList<Integer> waitingMatches,ArrayList<Integer> runningMatches, ArrayList<Integer> savedMatches) {
         try {
             outputStream.reset();
             outputStream.writeObject(new serverOptionMessage(false,null,null,false,null,waitingMatches, runningMatches, savedMatches));
@@ -71,7 +71,7 @@ public class ClientSocket extends ClientConnection implements Serializable {
      * @param hostNickname: String
      */
     @Override
-    public synchronized void sendNewHostMessage(String hostNickname){
+    protected synchronized void sendNewHostMessage(String hostNickname){
         try {
             outputStream.reset();
             outputStream.writeObject(new newHostMessage(hostNickname));
@@ -84,7 +84,7 @@ public class ClientSocket extends ClientConnection implements Serializable {
      * @return expectedPlayersMessage
      */
     @Override
-    public synchronized expectedPlayersMessage getExpectedPlayer(){
+    protected synchronized expectedPlayersMessage getExpectedPlayer(){
         try {
             return (expectedPlayersMessage) inputStream.readObject();
         } catch (IOException | ClassNotFoundException e) {
@@ -112,7 +112,7 @@ public class ClientSocket extends ClientConnection implements Serializable {
      * @param correct: boolean
      */
     @Override
-    public synchronized void sendAnswer(boolean correct){
+    protected synchronized void sendAnswer(boolean correct){
         try {
             outputStream.reset();
             outputStream.writeObject(new responseMessage(correct));
@@ -125,7 +125,7 @@ public class ClientSocket extends ClientConnection implements Serializable {
      * @param unavailableNames: ArrayList<String>
      */
     @Override
-    public synchronized void sendUnavailableName(ArrayList<String> unavailableNames) {
+    protected synchronized void sendUnavailableName(ArrayList<String> unavailableNames) {
         try {
             outputStream.reset();
             outputStream.writeObject(new unavailableNamesMessage(unavailableNames));
@@ -138,7 +138,7 @@ public class ClientSocket extends ClientConnection implements Serializable {
      * @return chosenNameMessage
      */
     @Override
-    public synchronized chosenNameMessage getName(ArrayList<String> unavailableNames) {
+    protected synchronized chosenNameMessage getName(ArrayList<String> unavailableNames) {
         try {
             this.sendUnavailableName(unavailableNames);
             return (chosenNameMessage) inputStream.readObject();
@@ -152,7 +152,7 @@ public class ClientSocket extends ClientConnection implements Serializable {
      * @param availableColors: ArrayList<String>
      */
     @Override
-    public synchronized void sendAvailableColor(ArrayList<String> availableColors){
+    protected synchronized void sendAvailableColor(ArrayList<String> availableColors){
         try {
             outputStream.reset();
             outputStream.writeObject(new availableColorsMessage(availableColors));
@@ -165,7 +165,7 @@ public class ClientSocket extends ClientConnection implements Serializable {
      * @return chosenColorMessage
      */
     @Override
-    public synchronized chosenColorMessage getColor(ArrayList<String> color){
+    protected synchronized chosenColorMessage getColor(ArrayList<String> color){
         try {
             this.sendAvailableColor(color);
             return (chosenColorMessage) inputStream.readObject();
@@ -179,7 +179,7 @@ public class ClientSocket extends ClientConnection implements Serializable {
      * @param currentState: currentStateMessage
      */
     @Override
-    public synchronized void sendCurrentState(currentStateMessage currentState){
+    protected void sendCurrentState(currentStateMessage currentState){
         try {
             outputStream.reset();
             outputStream.reset();
@@ -193,7 +193,7 @@ public class ClientSocket extends ClientConnection implements Serializable {
      * @return starterCardMessage
      */
     @Override
-    public synchronized starterCardMessage getStaterCard(){
+    protected synchronized starterCardMessage getStaterCard(){
         try {
             return (starterCardMessage) inputStream.readObject();
         } catch (IOException | ClassNotFoundException e) {
@@ -207,7 +207,7 @@ public class ClientSocket extends ClientConnection implements Serializable {
      * @return objectiveCardMessage
      */
     @Override
-    public synchronized objectiveCardMessage getChosenObjective(ArrayList<ObjectiveCard> objectiveCards){
+    protected synchronized objectiveCardMessage getChosenObjective(ArrayList<ObjectiveCard> objectiveCards){
         try {
             outputStream.reset();
             outputStream.writeObject(new objectiveCardMessage(objectiveCards));
@@ -227,7 +227,7 @@ public class ClientSocket extends ClientConnection implements Serializable {
      * @return placeCardMessage
      */
     @Override
-    public synchronized placeCardMessage getPlaceCard(){
+    protected synchronized placeCardMessage getPlaceCard(){
         try {
             outputStream.reset();
             return (placeCardMessage) inputStream.readObject();
@@ -241,7 +241,7 @@ public class ClientSocket extends ClientConnection implements Serializable {
      * @return pickCardMessage
      */
     @Override
-    public synchronized pickCardMessage getChosenPick(){
+    protected synchronized pickCardMessage getChosenPick(){
         try {
             return (pickCardMessage) inputStream.readObject();
         } catch (IOException | ClassNotFoundException e) {
@@ -255,7 +255,7 @@ public class ClientSocket extends ClientConnection implements Serializable {
      * @param numberOfObjectives: HashMap<String, Integer> score
      */
     @Override
-    public synchronized void sendEndGame(HashMap<String, Integer> scores, HashMap<String, Integer> numberOfObjectives){
+    protected synchronized void sendEndGame(HashMap<String, Integer> scores, HashMap<String, Integer> numberOfObjectives){
         try {
             outputStream.reset();
             outputStream.writeObject(new declareWinnerMessage(scores, numberOfObjectives));
@@ -268,7 +268,7 @@ public class ClientSocket extends ClientConnection implements Serializable {
      * @param updateMessage: updatePlayerMessage
      */
     @Override
-    public synchronized void sendUpdatePlayer(updatePlayerMessage updateMessage) {
+    protected synchronized void sendUpdatePlayer(updatePlayerMessage updateMessage) {
         try {
             outputStream.reset();
             outputStream.writeObject(updateMessage);
@@ -280,7 +280,7 @@ public class ClientSocket extends ClientConnection implements Serializable {
      * method {@code closeConnection}: closes the connection closing socket, inputStream, outputStream
      */
     @Override
-    public void closeConnection() {
+    protected void closeConnection() {
         try {
             if (socket != null && !socket.isClosed()) {
                 socket.close();
@@ -296,7 +296,7 @@ public class ClientSocket extends ClientConnection implements Serializable {
      * @return boolean true if the connection is active, false or no answer otherwise
      */
     @Override
-    public boolean isConnected() {
+    protected boolean isConnected() {
         try {
             String answer = "ACK";
             currentStateMessage message = new currentStateMessage(null, null, "AnswerCheckConnection", false, null, null, null );
