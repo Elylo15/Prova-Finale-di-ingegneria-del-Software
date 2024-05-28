@@ -116,6 +116,7 @@ public class ViewGUI extends View {
         GUIMessages.writeToGUI(message);  //serialize the message and send it to the gui
         Platform.runLater(SceneManager::unavailableNames); //run the method unavailableNames in SceneManager
         name = (String) GUIMessages.readToClient(); //deserialize the string the method must return
+        System.out.println(name);
         return name;
     }
 
@@ -172,9 +173,8 @@ public class ViewGUI extends View {
      * The other players after choosing name and color will wait for the other players to choose to.
      */
     public void waiting() {
-        //to avoid reading unexpected messages
         GUIMessages.clearQueue();
-        //Platform.runLater(SceneManager::waiting);
+        Platform.runLater(SceneManager::waiting);
     }
 
     //load a mainGamePage with a backGround, scoreBoard etc.

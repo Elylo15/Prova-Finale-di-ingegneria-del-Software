@@ -8,17 +8,17 @@ public class expectedPlayersController {
 
 
     @FXML
-    private Button four;
+    private Button two;
 
     @FXML
     private Button three;
 
     @FXML
-    private Button two;
+    private Button four;
 
 
     @FXML
-    private void getNumber() {
+    private void initialize() {
         //serialize the number to send corresponding on the button clicked
         two.setOnAction(event -> {
             GUIMessages.writeToClient(2);

@@ -32,12 +32,12 @@
                   <Font name="System Bold" size="13.0" />
                </font>
             </Label>
-            <Button fx:id="three" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" text="TWO" GridPane.columnIndex="1" GridPane.rowIndex="2">
+            <Button fx:id="two" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" text="TWO" GridPane.columnIndex="1" GridPane.rowIndex="2">
                <font>
                   <Font name="System Bold" size="12.0" />
                </font>
             </Button>
-            <Button fx:id="two" alignment="CENTER" mnemonicParsing="false" text="THREE" GridPane.columnIndex="3" GridPane.rowIndex="2">
+            <Button fx:id="three" alignment="CENTER" mnemonicParsing="false" text="THREE" GridPane.columnIndex="3" GridPane.rowIndex="2">
                <font>
                   <Font name="System Bold" size="12.0" />
                </font></Button>
