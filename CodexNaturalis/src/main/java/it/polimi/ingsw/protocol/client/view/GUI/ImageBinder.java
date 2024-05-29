@@ -25,4 +25,14 @@ public class ImageBinder {
         Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream(imagePath)));
         return new ImageView(image);
     }
+
+    public Image getImage(int id, boolean front) {
+        String[] imagePaths = imageMap.get(id);
+        String imagePath = front ? imagePaths[0] : imagePaths[1];
+        return new Image(Objects.requireNonNull(getClass().getResourceAsStream(imagePath)));
+    }
+
+    public Image getOppositeImage(int id, boolean currentFront) {
+        return getImage(id, !currentFront);
+    }
 }

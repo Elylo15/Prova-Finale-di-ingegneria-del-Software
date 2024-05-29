@@ -3,7 +3,11 @@ package it.polimi.ingsw.protocol.client.view.GUI.controller;
 import it.polimi.ingsw.model.CommonArea;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.PlayerArea;
+import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.cards.ObjectiveCard;
+import it.polimi.ingsw.protocol.client.view.GUI.ImageBinder;
+import it.polimi.ingsw.protocol.client.view.GUI.message.GUIMessages;
+import it.polimi.ingsw.protocol.messages.PlayerTurnState.updatePlayerMessage;
 import it.polimi.ingsw.protocol.messages.currentStateMessage;
 import javafx.animation.TranslateTransition;
 import javafx.fxml.FXML;
@@ -30,6 +34,12 @@ public class MyselfPageController implements Initializable {
     private ArrayList<ObjectiveCard> commonObjective;
     private PlayerArea playerArea;
     private CommonArea commonArea;
+    private Object message;
+
+    private int selectedCardID;
+    private ImageView selectedCard;
+    private int selectedDrawCardID;
+    private ImageView selectedDrawCard;
 
     private Stage stage;
     private Scene scene;
@@ -77,16 +87,18 @@ public class MyselfPageController implements Initializable {
 
     @FXML
     public void switchToCurrentGamePage(MouseEvent event) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("currentGamePage.fxml"));
-            Parent root = loader.load();
+        if(!Objects.equals(myself.getNickname(), current.getNickname())) {
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("currentGamePage.fxml"));
+                Parent root = loader.load();
 
-            stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            scene = new Scene(root);
-            stage.setScene(scene);
-            stage.show();
-        } catch (Exception e) {
-            System.out.println("Error: " + e.getMessage());
+                stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                scene = new Scene(root);
+                stage.setScene(scene);
+                stage.show();
+            } catch (Exception e) {
+                System.out.println("Error: " + e.getMessage());
+            }
         }
     }
 
@@ -96,119 +108,201 @@ public class MyselfPageController implements Initializable {
         this.commonObjective = message.getCommonObjectiveCards();
         this.playerArea = message.getPlayer().getPlayerArea();
         this.commonArea = message.getPlayer().getCommonArea();
+        playerName.setText(myself.getNickname());
         setMyself();
         setPions();
     }
 
-
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        playerName.setText(myself.getNickname());
+        this.message = GUIMessages.readToGUI();
+        if( this.message instanceof currentStateMessage){
+            set(Objects.requireNonNull((currentStateMessage) message));
+            CurrentPageController.setAll(Objects.requireNonNull((currentStateMessage)message));
+        } else if (this.message instanceof updatePlayerMessage){
+           CurrentPageController.update(Objects.requireNonNull((updatePlayerMessage) message));
+        }
     }
 
-    public void setPions(){
-       myPion = StarterController.myPion;
-    }
-
-    private void setMyself(){
-        int ID;
-        String imagePath;
-        Image cardImage;
-
-        //COMMON AREA
-        ID = commonArea.getD1().getList().getFirst().getID();
-        imagePath = "CodexNaturalis/src/main/Resource/img/Cards/Back/" + ID + ".png";
-        cardImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream(imagePath)));
-        resourceBack.setImage(cardImage);
+    private void setMyself() {
+        // COMMON AREA
+        setupCard(resourceBack, commonArea.getD1().getList().getFirst().getID(), false, commonArea.getD1().getList().getFirst());
         resourceBack.setVisible(true);
 
-        ID = commonArea.getD2().getList().getFirst().getID();
-        imagePath = "CodexNaturalis/src/main/Resource/img/Cards/Back/" + ID + ".png";
-        cardImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream(imagePath)));
-        goldBack.setImage(cardImage);
+        setupCard(goldBack, commonArea.getD2().getList().getFirst().getID(), false, commonArea.getD2().getList().getFirst());
         goldBack.setVisible(true);
 
-        //FRONT CARDS
-        ID = commonArea.getTableCards().getFirst().getID();
-        imagePath = "CodexNaturalis/src/main/Resource/img/Cards/Front/" + ID + ".png";
-        cardImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream(imagePath)));
-        res0.setImage(cardImage);
+        // FRONT CARDS
+        setupCard(res0, commonArea.getTableCards().getFirst().getID(), true, commonArea.getTableCards().getFirst());
         res0.setVisible(true);
 
-        ID = commonArea.getTableCards().get(1).getID();
-        imagePath = "CodexNaturalis/src/main/Resource/img/Cards/Front/" + ID + ".png";
-        cardImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream(imagePath)));
-        res1.setImage(cardImage);
+        setupCard(res1, commonArea.getTableCards().get(1).getID(), true, commonArea.getTableCards().get(1));
         res1.setVisible(true);
 
-        ID = commonArea.getTableCards().get(2).getID();
-        imagePath = "CodexNaturalis/src/main/Resource/img/Cards/Front/" + ID + ".png";
-        cardImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream(imagePath)));
-        gold0.setImage(cardImage);
+        setupCard(gold0, commonArea.getTableCards().get(2).getID(), true, commonArea.getTableCards().get(2));
         gold0.setVisible(true);
 
-        ID = commonArea.getTableCards().get(3).getID();
-        imagePath = "CodexNaturalis/src/main/Resource/img/Cards/Front/" + ID + ".png";
-        cardImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream(imagePath)));
-        gold1.setImage(cardImage);
+        setupCard(gold1, commonArea.getTableCards().get(3).getID(), true, commonArea.getTableCards().get(3));
         gold1.setVisible(true);
 
-        //COMMON OBJECTIVE
-        ID = commonObjective.getFirst().getID();
-        imagePath = "CodexNaturalis/src/main/Resource/img/Cards/Front/" + ID + ".png";
-        cardImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream(imagePath)));
-        obj0.setImage(cardImage);
+        // COMMON OBJECTIVE
+        setupCard(obj0, commonObjective.getFirst().getID(), true, commonObjective.getFirst());
         obj0.setVisible(true);
 
-        ID = commonObjective.get(1).getID();
-        imagePath = "CodexNaturalis/src/main/Resource/img/Cards/Front/" + ID + ".png";
-        cardImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream(imagePath)));
-        obj1.setImage(cardImage);
+        setupCard(obj1, commonObjective.get(1).getID(), true, commonObjective.get(1));
         obj1.setVisible(true);
 
-        //Objective
-        ID = myself.getObjective().getID();
-        imagePath = "CodexNaturalis/src/main/Resource/img/Cards/Front/" + ID + ".png";
-        cardImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream(imagePath)));
-        myObj.setImage(cardImage);
+        // Objective
+        setupCard(myObj, myself.getObjective().getID(), true, myself.getObjective());
 
-        //Cards
-        ID = current.getPlayerHand().getPlaceableCards().getFirst().getID();
-        imagePath = "CodexNaturalis/src/main/Resource/img/Cards/Front/" + ID + ".png";
-        cardImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream(imagePath)));
-        card0.setImage(cardImage);
+        // Cards
+        setupCard(card0, current.getPlayerHand().getPlaceableCards().getFirst().getID(), true, current.getPlayerHand().getPlaceableCards().getFirst());
 
-        ID = current.getPlayerHand().getPlaceableCards().get(1).getID();
-        imagePath = "CodexNaturalis/src/main/Resource/img/Cards/Front/" + ID + ".png";
-        cardImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream(imagePath)));
-        card1.setImage(cardImage);
+        setupCard(card1, current.getPlayerHand().getPlaceableCards().get(1).getID(), true, current.getPlayerHand().getPlaceableCards().get(1));
 
-        ID = current.getPlayerHand().getPlaceableCards().get(2).getID();
-        imagePath = "CodexNaturalis/src/main/Resource/img/Cards/Front/" + ID + ".png";
-        cardImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream(imagePath)));
-        card2.setImage(cardImage);
+        setupCard(card2, current.getPlayerHand().getPlaceableCards().get(2).getID(), true, current.getPlayerHand().getPlaceableCards().get(2));
+    }
+
+
+    private void setupCard(ImageView imageView, int cardID, boolean front, Card card) {
+        ImageBinder imageBinder = new ImageBinder();
+        ImageView cardImageView = imageBinder.bindImage(cardID, front);
+        imageView.setImage(cardImageView.getImage());
+        imageView.setUserData(card); // Store card ID and state
     }
 
     @FXML
     public void turnAround(MouseEvent event) {
+        ImageView clickedCard = (ImageView) event.getSource();
+        Card card = (Card) clickedCard.getUserData();
 
+        if (card != null) {
+            ImageBinder imageBinder = new ImageBinder();
+            Image newImage = imageBinder.getOppositeImage(card.getID(), card.isFront());
+            clickedCard.setImage(newImage);
+
+            // Update the card state
+            card.setFront(!card.isFront());
+        }
     }
 
     @FXML
-    public void select(MouseEvent event){
+    public void select(MouseEvent event) {
+        if(message instanceof currentStateMessage) {
+            if(((currentStateMessage) message).getStateName().equals("PlaceTurnState") && !Objects.equals(myself.getNickname(), current.getNickname())) {
+                if (event.getClickCount() == 1) {
+                    ImageView clickedCard = (ImageView) event.getSource();
+                    Card card = (Card) clickedCard.getUserData();
 
+                    if (card != null) {
+                        ImageBinder imageBinder = new ImageBinder();
+                        Image newImage = imageBinder.getOppositeImage(card.getID(), card.isFront());
+                        clickedCard.setImage(newImage);
+
+                        // Update the card state
+                        card.setFront(!card.isFront());
+                    }
+                } else if (event.getClickCount() == 2) {
+                    ImageView clickedCard = (ImageView) event.getSource();
+                    Integer cardID = (Integer) clickedCard.getUserData();
+
+                    if (cardID != null) {
+                        // Remove border from previously selected card
+                        if (selectedCard != null)
+                            selectedCard.setStyle("");
+
+                        // Set blue border for the selected card
+                        clickedCard.setStyle("-fx-border-color: #0000ff; -fx-border-width: 2;");
+                        selectedCard = clickedCard;
+
+                        // Set the selected card ID
+                        selectedCardID = cardID;
+                    }
+                }
+            }
+        }
+    }
+
+    //TODO: Implement the method
+    //NON HA MOLTO SENSO, MA PER ORA LO LASCIAMO COSI
+    @FXML
+    public void place(MouseEvent event) {
+        if(message instanceof currentStateMessage) {
+            if(((currentStateMessage) message).getStateName().equals("PlaceTurnState") && !Objects.equals(myself.getNickname(), current.getNickname())) {
+                if (selectedCard != null) {
+                    selectedCard.setStyle(""); // Remove the blue border from the selected card
+                    GUIMessages.writeToClient(selectedCardID); // Send the selected card ID to the server
+                }
+            }
+        }
     }
 
     @FXML
-    public void selectDraw(MouseEvent event){}
-
-
-    public int[] getPlaced(){
-        return new int[0];
+    public void selectDraw(MouseEvent event){
+        if(message instanceof currentStateMessage) {
+            if (((currentStateMessage) message).getStateName().equals("PickTurnState") && !Objects.equals(myself.getNickname(), current.getNickname())) {
+                ImageView clickedCard = (ImageView) event.getSource();
+                int cardID = (Integer) clickedCard.getUserData();
+                if (selectedDrawCard == clickedCard) {
+                    GUIMessages.writeToClient(selectedDrawCardID);
+                } else if (selectedDrawCard != null) {
+                    selectedDrawCard.setStyle("");
+                    clickedCard.setStyle("-fx-border-color: #0000ff; -fx-border-width: 2;");
+                    selectedDrawCard = clickedCard;
+                    selectedDrawCardID = cardID;
+                } else {
+                    clickedCard.setStyle("-fx-border-color: #0000ff; -fx-border-width: 2;");
+                    selectedDrawCard = clickedCard;
+                    selectedDrawCardID = cardID;
+                }
+            }
+        }
     }
 
-    public int getDraw(){
-        return 0;
+    public void setPions(){
+        String imagePath;
+        String color = myself.getColor();
+        //PIONS SETTING (BUT IT SHOULD BE BASED ON POINTS)
+
+        switch (color) {
+             case "red" -> {
+                imagePath = "CodexNaturalis/src/main/Resource/img/Pions/CODEX_pion_rouge.png";
+                myPion = new ImageView(String.valueOf(Objects.requireNonNull(getClass().getResourceAsStream(imagePath))));
+            }
+            case "blue" -> {
+                imagePath = "CodexNaturalis/src/main/Resource/img/Pions/CODEX_pion_bleu.png";
+                myPion = new ImageView(String.valueOf(Objects.requireNonNull(getClass().getResourceAsStream(imagePath))));
+            }
+            case "green" -> {
+                imagePath = "CodexNaturalis/src/main/Resource/img/Pions/CODEX_pion_vert.png";
+                myPion = new ImageView(String.valueOf(Objects.requireNonNull(getClass().getResourceAsStream(imagePath))));
+            }
+            case "yellow" -> {
+                imagePath = "CodexNaturalis/src/main/Resource/img/Pions/CODEX_pion_jaune.png";
+                myPion = new ImageView(String.valueOf(Objects.requireNonNull(getClass().getResourceAsStream(imagePath))));
+            }
+            default -> {
+            }
+        }
+
+        //Non ha molto senso, ma per ora lo lascio così
+        if(firstPion.isVisible()){
+            if(secondPion.isVisible()) {
+                if (thirdPion.isVisible()) {
+                    fourthPion.setImage(myPion.getImage());
+                    fourthPion.setVisible(true);
+                } else {
+                    thirdPion.setImage(myPion.getImage());
+                    thirdPion.setVisible(true);
+                }
+            }
+            secondPion.setImage(myPion.getImage());
+            secondPion.setVisible(true);
+        } else {
+            firstPion.setImage(myPion.getImage());
+            firstPion.setVisible(true);
+        }
+
     }
 
     public void addPoints(){

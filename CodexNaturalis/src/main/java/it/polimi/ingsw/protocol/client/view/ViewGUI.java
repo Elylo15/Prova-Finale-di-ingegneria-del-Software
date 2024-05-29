@@ -195,118 +195,52 @@ public class ViewGUI extends View {
 
     @Override
     public void updatePlayer(currentStateMessage message) {
-        //to avoid reading unexpected messages
         GUIMessages.clearQueue();
-        try {
-            FXMLLoader loader;
-            Parent root;
-
-            if (Objects.equals(message.getStateName(), "StarterCardState")) {
-                loader = new FXMLLoader(getClass().getResource("/starterPage.fxml"));
-            } else if (Objects.equals(message.getStateName(), "ObjectiveState")) {
-                loader = new FXMLLoader(getClass().getResource("/objectivePage.fxml"));
-            } else {
-                loader = new FXMLLoader(getClass().getResource("/myselfGamePage.fxml"));
-            }
-
-            root = loader.load();
-            Object controller = loader.getController();
-
-            if (controller instanceof StarterController) {
-                ((StarterController) controller).set(message);
-            } else if (controller instanceof ObjectiveController) {
-                ((ObjectiveController) controller).set(message);
-            } else if (controller instanceof MyselfPageController) {
-                ((MyselfPageController) controller).set(message);
-            }
-
-            Scene scene = new Scene(root);
-            //mainstage.setScene(scene);
-            //mainstage.show();
-
-        } catch (Exception e) {
-            System.out.println("Error: " + e.getMessage());
+        if (Objects.equals(message.getStateName(), "StarterCardState")) {
+            Platform.runLater(SceneManager::starterPage);
+        } else if (Objects.equals(message.getStateName(), "ObjectiveState")) {
+            Platform.runLater(SceneManager::objectivePage);
+        } else {
+            Platform.runLater(SceneManager::myselfGamePage);
         }
+        GUIMessages.writeToGUI(message);
     }
 
     @Override
     public int placeStarter() {
-        //to avoid reading unexpected messages
         GUIMessages.clearQueue();
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/starterPage.fxml"));
-            Parent root = loader.load();
-            StarterController controller = loader.getController();
+        Platform.runLater(SceneManager::starterPage);
+        return (int) GUIMessages.readToClient();
 
-            return controller.getChoice();
-        } catch (Exception e) {
-            System.out.println("Error: " + e.getMessage());
-            return 1000;
-        }
     }
 
     @Override
     public int chooseObjective(ArrayList<ObjectiveCard> objectives) {
-        //to avoid reading unexpected messages
         GUIMessages.clearQueue();
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/objectivePage.fxml"));
-            Parent root = loader.load();
-            ObjectiveController controller = loader.getController();
+        Platform.runLater(SceneManager::objectivePage);
+        return (int) GUIMessages.readToClient();
 
-            controller.setObjectives(objectives);
-            return controller.getChoice();
-        } catch (Exception e) {
-            System.out.println("Error: " + e.getMessage());
-            return 1000;
-        }
     }
 
     @Override
     public int[] placeCard() {
-        //to avoid reading unexpected messages
         GUIMessages.clearQueue();
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/myselfGamePage.fxml"));
-            Parent root = loader.load();
-            MyselfPageController controller = loader.getController();
-
-            return controller.getPlaced();
-        } catch (Exception e) {
-            System.out.println("Error: " + e.getMessage());
-            return new int[]{1000, 1000, 1000, 1000};
-        }
+        Platform.runLater(SceneManager::myselfGamePage);
+        return (int[]) GUIMessages.readToClient();
     }
 
     @Override
     public int pickCard() {
-        //to avoid reading unexpected messages
         GUIMessages.clearQueue();
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/myselfGamePage.fxml"));
-            Parent root = loader.load();
-            MyselfPageController controller = loader.getController();
-
-            return controller.getDraw();
-        } catch (Exception e) {
-            System.out.println("Error: " + e.getMessage());
-            return 1000;
-        }
+        Platform.runLater(SceneManager::myselfGamePage);
+        return (int) GUIMessages.readToClient();
     }
 
     @Override
     public void update(updatePlayerMessage update) {
-        //to avoid reading unexpected messages
         GUIMessages.clearQueue();
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/currentGamePage.fxml"));
-            Parent root = loader.load();
-            CurrentPageController controller = loader.getController();
-
-            controller.update(update);
-        } catch (Exception e) {
-            System.out.println("Error: " + e.getMessage());
-        }
+        Platform.runLater(SceneManager::myselfGamePage);
+        GUIMessages.writeToGUI(update);
     }
 
 

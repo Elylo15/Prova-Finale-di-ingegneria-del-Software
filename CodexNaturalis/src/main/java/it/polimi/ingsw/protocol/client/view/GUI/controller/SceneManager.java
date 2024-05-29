@@ -7,6 +7,7 @@ import javafx.scene.input.KeyCombination;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.Objects;
 
 public class SceneManager {
     private static Stage primaryStage;
@@ -163,7 +164,7 @@ public class SceneManager {
 
     public static void myselfGamePage(){
         try {
-            Parent root = FXMLLoader.load(SceneManager.class.getResource("/myselfGamePage.fxml"));
+            Parent root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/myselfGamePage.fxml")));
             primaryStage.setScene(new Scene(root));
             primaryStage.setFullScreen(true);
             primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
@@ -175,7 +176,7 @@ public class SceneManager {
 
     public static void objectivePage(){
         try {
-            Parent root = FXMLLoader.load(SceneManager.class.getResource("/objectivePage.fxml"));
+            Parent root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/objectivePage.fxml")));
             primaryStage.setScene(new Scene(root));
             primaryStage.setFullScreen(true);
             primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
@@ -187,7 +188,7 @@ public class SceneManager {
 
     public static void starterPage(){
         try {
-            Parent root = FXMLLoader.load(SceneManager.class.getResource("/starterPage.fxml"));
+            Parent root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/starterPage.fxml")));
             primaryStage.setScene(new Scene(root));
             primaryStage.setFullScreen(true);
             primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);

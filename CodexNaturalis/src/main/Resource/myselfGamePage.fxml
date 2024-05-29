@@ -29,7 +29,7 @@
             <Image url="@img/Scoreboard/plateau.png" />
          </image>
       </ImageView>
-      <ImageView id="res1" fx:id="res1" fitHeight="163.0" fitWidth="240.0" layoutX="577.0" layoutY="886.0" onMouseClicked="#select" preserveRatio="true" AnchorPane.bottomAnchor="200.0" AnchorPane.leftAnchor="545.0" AnchorPane.rightAnchor="865.0">
+      <ImageView id="res1" fx:id="res1" fitHeight="163.0" fitWidth="240.0" layoutX="577.0" layoutY="886.0" onMouseClicked="#selectDraw" preserveRatio="true" AnchorPane.bottomAnchor="200.0" AnchorPane.leftAnchor="545.0" AnchorPane.rightAnchor="865.0">
          <image>
             <Image url="@img/Cards/Front/027.png" />
          </image>
