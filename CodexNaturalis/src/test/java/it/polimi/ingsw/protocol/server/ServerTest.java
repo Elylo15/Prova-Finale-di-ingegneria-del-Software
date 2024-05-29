@@ -52,14 +52,14 @@ class ServerTest {
 
     @Test
     @DisplayName("Simulation normal server run")
-    void run() throws ExecutionException, InterruptedException {
-//        Future<Boolean> socketResult = executor.submit(this::client_1);
-//        Future<Boolean> rmiResult =  executor.submit(this::client_2);
+    void runTest() throws ExecutionException, InterruptedException {
+        Future<Boolean> socketResult = executor.submit(this::client_1);
+        Future<Boolean> rmiResult =  executor.submit(this::client_2);
         Future<Boolean> socketResult2 = executor.submit(this::client_4);
         Future<Boolean> rmiResult2 =  executor.submit(this::client_3);
 
-//        assertTrue(socketResult.get());
-//        assertTrue(rmiResult.get());
+        assertTrue(socketResult.get());
+        assertTrue(rmiResult.get());
         assertTrue(socketResult2.get());
         assertTrue(rmiResult2.get());
 
@@ -147,7 +147,7 @@ class ServerTest {
         System.out.println(RED_TEXT + "client_1" + RESET + ": Rejoining...");
         assertTrue(clientSimulator(8, controller, RED_TEXT + "client_1" + RESET));
         System.out.println(RED_TEXT + "client_1" + RESET + ": Disconnected");
-        System.out.println(RED_TEXT + "Please wait the timeout to end the match..." + RESET);
+        System.out.println(RED_TEXT + "Please wait for the timeout to end the match..." + RESET);
         return true;
     }
 
@@ -326,7 +326,7 @@ class ServerTest {
 
         assertTrue(clientSimulator(10, controller, BLUE_TEXT + "client_3" + RESET));
         System.out.println(BLUE_TEXT + "client_3" + RESET + ": Disconnected");
-        System.out.println(BLUE_TEXT + "Please wait the timeout to end the match..." + RESET);
+        System.out.println(BLUE_TEXT + "Please wait for the timeout to end the match..." + RESET);
 
         return true;
     }
@@ -447,7 +447,7 @@ class ServerTest {
 
                 // REMOVE THIS
                 if(!Objects.equals(state, "AnswerCheckConnection") && (current.getCurrentPlayer() == null || Objects.equals(current.getCurrentPlayer().getNickname(), current.getPlayer().getNickname())))
-                    System.out.println( counter + " - " + name + " State: " + state);
+                    System.out.println( String.format("%2d",counter) + " - " + name + " State: " + state);
 
                 switch (state) {
                     case "StarterCardState": {
@@ -538,7 +538,7 @@ class ServerTest {
 
                 // REMOVE THIS
                 if(!Objects.equals(state, "AnswerCheckConnection") && (current.getCurrentPlayer() == null || Objects.equals(current.getCurrentPlayer().getNickname(), current.getPlayer().getNickname())))
-                    System.out.println( counter + " - " + name + " State: " + state);
+                    System.out.println( String.format("%2d", counter) + " - " + name + " State: " + state);
 
                 switch (state) {
                     case "StarterCardState": {
