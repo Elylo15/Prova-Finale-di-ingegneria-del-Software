@@ -16,7 +16,7 @@ import java.util.List;
 
 public class JoinMatchController {
     @FXML
-    private ListView<String> runningMatchList;
+    private ListView<String> JoinMatchList;
 
     private serverOptionMessage serverOptionMessage;
     private ArrayList<Integer> MatchList;
@@ -34,14 +34,14 @@ public class JoinMatchController {
         for (Integer match : MatchList) {
             items.add(match.toString());
         }
-        runningMatchList.setItems(items);
+        JoinMatchList.setItems(items);
 
 
         // Imposta gli elementi nella ListView
-        runningMatchList.getItems().addAll(items);
+        JoinMatchList.getItems().addAll(items);
 
         // Imposta la cell factory per usare bottoni come celle
-        runningMatchList.setCellFactory(new Callback<ListView<String>, ListCell<String>>() {
+        JoinMatchList.setCellFactory(new Callback<ListView<String>, ListCell<String>>() {
             @Override
             public ListCell<String> call(ListView<String> listView) {
                 return new ButtonListCell();
