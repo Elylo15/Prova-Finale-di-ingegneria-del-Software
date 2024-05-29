@@ -58,7 +58,6 @@ public abstract  class Client {
      * method {@code connection}: sets socket or rmi. Enables GUI or CLI.
      * Connects to a socket server or rmi server.
      */
-
     public void connection(boolean isSocket) {
 
         if (isSocket) {
