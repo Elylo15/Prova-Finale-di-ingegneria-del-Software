@@ -12,7 +12,7 @@ public class SceneManager {
     private static Stage primaryStage;
 
 
-    //metti metodi che servono per far vedere le pagine GUI
+    //viewGUI will use the methods of the class to visualize the scene needed
     public static void setPrimaryStage(Stage stage) {
         primaryStage = stage;
     }
@@ -81,8 +81,8 @@ public class SceneManager {
         try {
             Parent root = FXMLLoader.load(SceneManager.class.getResource("/expectedPlayers.fxml"));
             primaryStage.setScene(new Scene(root));
-            primaryStage.setFullScreen(true);
-            primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
+            //primaryStage.setFullScreen(true);
+            //primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
             primaryStage.show();
         } catch (IOException e) {
             e.printStackTrace();
@@ -213,8 +213,8 @@ public class SceneManager {
         try {
             Parent root = FXMLLoader.load(SceneManager.class.getResource("/waiting.fxml"));
             primaryStage.setScene(new Scene(root));
-            primaryStage.setFullScreen(true);
-            primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
+           //primaryStage.setFullScreen(true);
+           // primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
             primaryStage.show();
         } catch (IOException e) {
             e.printStackTrace();

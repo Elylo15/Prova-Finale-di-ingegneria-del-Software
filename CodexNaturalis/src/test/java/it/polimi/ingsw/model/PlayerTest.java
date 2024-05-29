@@ -37,11 +37,22 @@ class PlayerTest {
     }
 
     @Test
-    void PlaceStarterTest() {
-
+    void PlaceStarterFrontTest() {
         player.drawStarter();
+        StarterCard starter = (StarterCard) deck.getPlaceableCards().get(0);
         player.placeStarter(1);
         assertEquals(0, deck.getPlaceableCards().size());
+        assertTrue(player.getPlayerArea().contains(0,0));
+
+        // assertEquals(starter, player.getPlayerArea().getCard(0,0));
+    }
+    @Test
+    void PlaceStarterBackTest() {
+        player.drawStarter();
+        player.placeStarter(0);
+        assertEquals(0, deck.getPlaceableCards().size());
+        assertTrue(player.getPlayerArea().contains(0,0));
+
     }
 
 
