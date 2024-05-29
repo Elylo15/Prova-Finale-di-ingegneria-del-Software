@@ -108,7 +108,7 @@ class CommonAreaTest {
     }
 
     @Test
-    void drawFromToPlayerReturnsNullWhenReourceDeckIsEmpty() {
+    void drawFromToPlayerReturnsNullWhenResourceDeckIsEmpty() {
         assertNull(commonArea.drawFromToPlayer(1));
     }
 
@@ -149,6 +149,30 @@ class CommonAreaTest {
     @Test
     void getCorrectTableCards() {
         //controlla che le prime due carte siano Resource e le altre due Gold
+        commonArea.getD1().addCard(resourceCard);
+        commonArea.getD1().addCard(resourceCard2);
+        commonArea.getD2().addCard(goldCard);
+        commonArea.getD2().addCard(goldCard2);
+        commonArea.drawFromDeck(1);
+        commonArea.drawFromDeck(1);
+        commonArea.drawFromDeck(2);
+        commonArea.drawFromDeck(2);
+        assertTrue(commonArea.getTableCards().get(0).isResource());
+        assertTrue(commonArea.getTableCards().get(1).isResource());
+        assertTrue(commonArea.getTableCards().get(2).isGold());
+        assertTrue(commonArea.getTableCards().get(3).isGold());
+
+    }
+    @Test
+    void DecksNotContainsCardsPicked() {
+        commonArea.getD1().addCard(resourceCard);
+        commonArea.getD2().addCard(goldCard);
+        commonArea.drawFromToPlayer(1);
+        commonArea.drawFromDeck(2);
+        assertFalse(commonArea.getD1().getList().contains(resourceCard));
+        assertFalse(commonArea.getD2().getList().contains(goldCard));
+
+
     }
 
     @Test

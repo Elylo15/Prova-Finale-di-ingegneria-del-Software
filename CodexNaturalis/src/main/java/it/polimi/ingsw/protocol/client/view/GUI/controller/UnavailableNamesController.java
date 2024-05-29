@@ -28,8 +28,7 @@ public class UnavailableNamesController {
     public void initialize() {
         //deserialize the unavailableNamesMessage
         this.message = (unavailableNamesMessage) GUIMessages.readToGUI();
-        // Converti la lista di nomi non disponibili in una string
-        String names=null;
+        // set the label to the anavailable names
         if(message.toString().equals("[]")){
             unavailableNames.setText("All nicknames are available");
         }

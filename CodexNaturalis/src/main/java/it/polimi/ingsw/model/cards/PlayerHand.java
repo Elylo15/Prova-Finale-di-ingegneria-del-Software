@@ -28,7 +28,7 @@ public class PlayerHand implements Serializable {
         for (int i = 0; i < placeableCards.size() ; i++) {
             if (numCard == placeableCards.get(i).getID()){
                 c= placeableCards.get(i);
-                placeableCards.remove(c);
+                placeableCards.remove(c);  //remove the card from the arraylist of placeablecards passing as a parameter the card to remove
             }
         }
         return c;

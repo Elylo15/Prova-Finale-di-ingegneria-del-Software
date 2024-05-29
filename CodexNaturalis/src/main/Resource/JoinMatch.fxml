@@ -22,6 +22,6 @@
         <Pane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
     </right>
     <center>
-        <ListView fx:id="runningMatchList" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+        <ListView fx:id="JoinMatchList" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
     </center>
 </BorderPane>
