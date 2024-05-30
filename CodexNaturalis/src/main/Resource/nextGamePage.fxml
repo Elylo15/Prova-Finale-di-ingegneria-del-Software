@@ -40,7 +40,7 @@
                         <Image url="@img/Cards/Front/048.png" />
                      </image>
                   </ImageView>
-                  <Button id="NextPlayer" layoutX="42.0" layoutY="34.0" mnemonicParsing="false" onMouseClicked="#switchToMyselfGamePage" prefHeight="72.0" prefWidth="210.0" text="Next Player">
+                  <Button id="NextPlayer" layoutX="42.0" layoutY="34.0" mnemonicParsing="false" onMouseClicked="#switchToNextGamePage" prefHeight="72.0" prefWidth="210.0" text="Next Player">
                      <font>
                         <Font name="System Bold" size="24.0" />
                      </font>

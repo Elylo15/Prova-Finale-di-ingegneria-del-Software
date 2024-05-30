@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public class NextPageController {
-    private static Player myself;
     private static Player current;
     private static ArrayList<ObjectiveCard> commonObjective;
     private static PlayerArea playerArea;
@@ -68,7 +67,7 @@ public class NextPageController {
     public ImageView scoreBoard;
 
     @FXML
-    public void switchToNextGamePage(MouseEvent event) {
+    private void switchToNextGamePage(MouseEvent event) {
         Scene scene;
         Stage stage;
 
@@ -105,7 +104,7 @@ public class NextPageController {
         }
     }
 
-    public static void setAll() {
+    protected static void setAll() {
         NextPageController.current = MyselfPageController.players[MyselfPageController.clickedCounter];
         NextPageController.commonObjective = MyselfPageController.commonObjective;
         NextPageController.playerArea = current.getPlayerArea();
@@ -117,12 +116,12 @@ public class NextPageController {
         setPions();
     }
 
-    public static void setPions(){
+    private static void setPions(){
         String imagePath;
-        Image cardImage = null;
+        Image cardImage;
 
         //PIONS SETTING (BUT IT SHOULD BE BASED ON POINTS)
-        String color = myself.getColor();
+        String color = current.getColor();
         cardImage = switch (color) {
             case "red" -> {
                 imagePath = "CodexNaturalis/src/main/Resource/img/Pions/CODEX_pion_rouge.png";
@@ -190,12 +189,12 @@ public class NextPageController {
         obj1.setVisible(true);
 
         // Objective
-        setupCard(myObj, myObjective.getID(), true, myself.getObjective());
+        setupCard(myObj, myObjective.getID(), true, myObjective);
 
         // Cards
-        setupCard(card0, playerHand.getPlaceableCards().getFirst().getID(), true, current.getPlayerHand().getPlaceableCards().getFirst());
+        setupCard(card0, playerHand.getPlaceableCards().getFirst().getID(), true, playerHand.getPlaceableCards().getFirst());
 
-        setupCard(card1, playerHand.getPlaceableCards().get(1).getID(), true, current.getPlayerHand().getPlaceableCards().get(1));
+        setupCard(card1, playerHand.getPlaceableCards().get(1).getID(), true,  playerHand.getPlaceableCards().get(1));
 
         setupCard(card2, playerHand.getPlaceableCards().get(2).getID(), true, current.getPlayerHand().getPlaceableCards().get(2));
     }
@@ -208,7 +207,7 @@ public class NextPageController {
     }
 
     @FXML
-    public void turnAround(MouseEvent event) {
+    private void turnAround(MouseEvent event) {
 
         ImageView clickedCard = (ImageView) event.getSource();
         Card card = (Card) clickedCard.getUserData();

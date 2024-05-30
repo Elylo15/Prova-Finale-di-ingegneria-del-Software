@@ -81,7 +81,7 @@ public class MyselfPageController implements Initializable {
 
 
     @FXML
-    public void switchToNextGamePage(MouseEvent event) {
+    private void switchToNextGamePage(MouseEvent event) {
 
         if(clickedCounter<players.length){
             clickedCounter++;
@@ -104,7 +104,7 @@ public class MyselfPageController implements Initializable {
 
     }
 
-    public int find(String player){
+    private int find(String player){
         for (int i=0; i<4; i++){
             if(player.equals(players[i].getNickname())){
                 return i;
@@ -113,7 +113,7 @@ public class MyselfPageController implements Initializable {
         return -1;
     }
 
-    public void add(Player player) {
+    private void add(Player player) {
         for(int i=0; i<4; i++){
             if(players[i] == null ){
                 players[i] = player;
@@ -121,7 +121,7 @@ public class MyselfPageController implements Initializable {
         }
     }
 
-    public void set(currentStateMessage message) {
+    private void set(currentStateMessage message) {
         commonObjective = message.getCommonObjectiveCards();
         commonArea = myself.getCommonArea();
         this.myself = message.getPlayer();
@@ -141,7 +141,7 @@ public class MyselfPageController implements Initializable {
         }
     }
 
-    public void update(updatePlayerMessage message) {
+    private void update(updatePlayerMessage message) {
         if (!Objects.equals(message.getPlayer().getNickname(), myself.getNickname())) {
             int find_i = find(message.getPlayer().getNickname());
             if (find_i == -1)
@@ -210,7 +210,7 @@ public class MyselfPageController implements Initializable {
     }
 
     @FXML
-    public void turnAround(MouseEvent event) {
+    private void turnAround(MouseEvent event) {
         ImageView clickedCard = (ImageView) event.getSource();
         Card card = (Card) clickedCard.getUserData();
 
@@ -225,7 +225,7 @@ public class MyselfPageController implements Initializable {
     }
 
     @FXML
-    public void select(MouseEvent event) {
+    private void select(MouseEvent event) {
         if(message instanceof currentStateMessage) {
             if(((currentStateMessage) message).getStateName().equals("PlaceTurnState")
                     && !Objects.equals(myself.getNickname(), ((currentStateMessage) message).getCurrentPlayer().getNickname())) {
@@ -265,7 +265,7 @@ public class MyselfPageController implements Initializable {
     //TODO: Implement the method
     //NON HA MOLTO SENSO, MA PER ORA LO LASCIAMO COSI
     @FXML
-    public void place(MouseEvent event) {
+    private void place(MouseEvent event) {
         if(message instanceof currentStateMessage) {
             if(((currentStateMessage) message).getStateName().equals("PlaceTurnState")
                     && !Objects.equals(myself.getNickname(), ((currentStateMessage) message).getCurrentPlayer().getNickname())) {
@@ -278,7 +278,7 @@ public class MyselfPageController implements Initializable {
     }
 
     @FXML
-    public void selectDraw(MouseEvent event){
+    private void selectDraw(MouseEvent event){
         if(message instanceof currentStateMessage) {
             if (((currentStateMessage) message).getStateName().equals("PickTurnState")
                     && !Objects.equals(myself.getNickname(), ((currentStateMessage) message).getCurrentPlayer().getNickname())) {
@@ -301,7 +301,7 @@ public class MyselfPageController implements Initializable {
     }
 
     //TODO: Implement the method
-    public void setPions(){
+    private void setPions(){
         String imagePath;
         String color = myself.getColor();
         //PIONS SETTING (BUT IT SHOULD BE BASED ON POINTS)
@@ -348,7 +348,7 @@ public class MyselfPageController implements Initializable {
     }
 
     //TODO: Implement the method
-    public void addPoints(){
+    private void addPoints(){
         TranslateTransition transition = new TranslateTransition();
         transition.setNode(myPion);
         //Dovrei prendere punto di partenza e fare movimenti in base a quello per non tagliare la scoreboard

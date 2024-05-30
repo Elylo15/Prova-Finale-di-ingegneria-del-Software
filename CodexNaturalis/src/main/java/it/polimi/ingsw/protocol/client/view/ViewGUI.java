@@ -1,7 +1,7 @@
 package it.polimi.ingsw.protocol.client.view;
 
 import it.polimi.ingsw.model.cards.ObjectiveCard;
-import it.polimi.ingsw.protocol.client.ClientGUI;
+
 import it.polimi.ingsw.protocol.client.view.GUI.controller.*;
 import it.polimi.ingsw.protocol.client.view.GUI.message.GUIMessages;
 import it.polimi.ingsw.protocol.messages.ConnectionState.availableColorsMessage;
@@ -14,17 +14,10 @@ import it.polimi.ingsw.protocol.messages.ServerOptionState.serverOptionResponseM
 import it.polimi.ingsw.protocol.messages.currentStateMessage;
 import it.polimi.ingsw.protocol.messages.responseMessage;
 import javafx.application.Platform;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 
-import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.Future;
-
 
 public class ViewGUI extends View {
-    private GUIMessages guiMessages;
 
     public ViewGUI() {
         new GUIMessages();
@@ -193,6 +186,10 @@ public class ViewGUI extends View {
     //if notYourTurn button -> onClick back to your page
     //if notYourTurn back of currentPlayer hand and of objective cards
 
+    /**
+     * Method {@code updatePlayer} Visualize the current state of the game
+     * @param message: currentStateMessage
+     */
     @Override
     public void updatePlayer(currentStateMessage message) {
         GUIMessages.clearQueue();
@@ -206,6 +203,9 @@ public class ViewGUI extends View {
         GUIMessages.writeToGUI(message);
     }
 
+    /**
+     * Method {@code placeStarter}: Places the starter card
+     */
     @Override
     public int placeStarter() {
         GUIMessages.clearQueue();
@@ -214,6 +214,11 @@ public class ViewGUI extends View {
 
     }
 
+    /**
+     * Method {@code chooseObjective}: Allows the player to choose an objective card
+     * @param objectives: the list of objective cards
+     * @return the index of the chosen objective card
+     */
     @Override
     public int chooseObjective(ArrayList<ObjectiveCard> objectives) {
         GUIMessages.clearQueue();
@@ -222,6 +227,10 @@ public class ViewGUI extends View {
 
     }
 
+    /**
+     * Method {@code placeCard}: Allows the player to place a card
+     * @return the index of the chosen card, and coordinates of the chosen cell
+     */
     @Override
     public int[] placeCard() {
         GUIMessages.clearQueue();
@@ -229,6 +238,10 @@ public class ViewGUI extends View {
         return (int[]) GUIMessages.readToClient();
     }
 
+    /**
+     * Method {@code pickCard}: Allows the player to pick a card to draw
+     * @return the index of the chosen card
+     */
     @Override
     public int pickCard() {
         GUIMessages.clearQueue();
@@ -236,6 +249,10 @@ public class ViewGUI extends View {
         return (int) GUIMessages.readToClient();
     }
 
+    /**
+     * Method {@code update}: Updates the parameters of the player that concluded his turn
+     * @param update: updatePlayerMessage
+     */
     @Override
     public void update(updatePlayerMessage update) {
         GUIMessages.clearQueue();
