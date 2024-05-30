@@ -5,6 +5,7 @@ import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.PlayerArea;
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.cards.ObjectiveCard;
+import it.polimi.ingsw.model.cards.PlayerHand;
 import it.polimi.ingsw.protocol.client.view.GUI.ImageBinder;
 import it.polimi.ingsw.protocol.client.view.GUI.message.GUIMessages;
 import it.polimi.ingsw.protocol.messages.PlayerTurnState.updatePlayerMessage;
@@ -30,10 +31,12 @@ import java.util.ResourceBundle;
 
 public class MyselfPageController implements Initializable {
     private Player myself;
+    private Player[] players;
     private Player current;
     private ArrayList<ObjectiveCard> commonObjective;
     private PlayerArea playerArea;
     private CommonArea commonArea;
+    private PlayerHand playerHand;
     private Object message;
 
     private int selectedCardID;
@@ -85,6 +88,7 @@ public class MyselfPageController implements Initializable {
     @FXML
     public ImageView fourthPion;
 
+
     @FXML
     public void switchToCurrentGamePage(MouseEvent event) {
         if(!Objects.equals(myself.getNickname(), current.getNickname())) {
@@ -102,12 +106,36 @@ public class MyselfPageController implements Initializable {
         }
     }
 
+    public int find(String player){
+        for (int i=0; i<4; i++){
+            if(player.equals(players[i].getNickname())){
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public void add(Player player) {
+        for(int i=0; i<4; i++){
+            if(players[i] == null ){
+                this.players[i] = player;
+            }
+        }
+    }
+
     public void set(currentStateMessage message) {
-        this.myself = message.getPlayer();
-        this.current  = message.getCurrentPlayer();
         this.commonObjective = message.getCommonObjectiveCards();
-        this.playerArea = message.getPlayer().getPlayerArea();
-        this.commonArea = message.getPlayer().getCommonArea();
+        this.myself = message.getPlayer();
+        this.playerArea = myself.getPlayerArea();
+        this.commonArea = myself.getCommonArea();
+        this.playerHand = myself.getPlayerHand();
+        int find_i = find(message.getCurrentPlayer().getNickname());
+        if(find_i == -1)
+            add(message.getCurrentPlayer());
+        else {
+            this.players[find_i] = message.getCurrentPlayer();
+        }
+
         playerName.setText(myself.getNickname());
         setMyself();
         setPions();
@@ -156,11 +184,11 @@ public class MyselfPageController implements Initializable {
         setupCard(myObj, myself.getObjective().getID(), true, myself.getObjective());
 
         // Cards
-        setupCard(card0, current.getPlayerHand().getPlaceableCards().getFirst().getID(), true, current.getPlayerHand().getPlaceableCards().getFirst());
+        setupCard(card0, playerHand.getPlaceableCards().getFirst().getID(), true, playerHand.getPlaceableCards().getFirst());
 
-        setupCard(card1, current.getPlayerHand().getPlaceableCards().get(1).getID(), true, current.getPlayerHand().getPlaceableCards().get(1));
+        setupCard(card1, playerHand.getPlaceableCards().get(1).getID(), true, playerHand.getPlaceableCards().get(1));
 
-        setupCard(card2, current.getPlayerHand().getPlaceableCards().get(2).getID(), true, current.getPlayerHand().getPlaceableCards().get(2));
+        setupCard(card2, playerHand.getPlaceableCards().get(2).getID(), true, playerHand.getPlaceableCards().get(2));
     }
 
 
