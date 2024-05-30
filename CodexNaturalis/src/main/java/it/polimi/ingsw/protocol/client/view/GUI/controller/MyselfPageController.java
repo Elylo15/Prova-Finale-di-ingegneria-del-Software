@@ -33,6 +33,7 @@ public class MyselfPageController implements Initializable {
     protected static Player[] players;
     protected static ArrayList<ObjectiveCard> commonObjective;
     protected static CommonArea commonArea;
+    protected static int clickedCounter = -1;
     private Player myself;
     private PlayerArea playerArea;
     private PlayerHand playerHand;
@@ -41,7 +42,6 @@ public class MyselfPageController implements Initializable {
     private ImageView selectedCard;
     private int selectedDrawCardID;
     private ImageView selectedDrawCard;
-    protected static int clickedCounter = -1;
 
     private ImageView myPion;
     @FXML
@@ -71,13 +71,15 @@ public class MyselfPageController implements Initializable {
     @FXML
     private ImageView resourceBack;
     @FXML
-    public ImageView firstPion;
+    private ImageView firstPion;
     @FXML
-    public ImageView secondPion;
+    private ImageView secondPion;
     @FXML
-    public ImageView thirdPion;
+    private ImageView thirdPion;
     @FXML
-    public ImageView fourthPion;
+    private ImageView fourthPion;
+    @FXML
+    private ImageView layout;
 
 
     @FXML
@@ -101,7 +103,6 @@ public class MyselfPageController implements Initializable {
         } else {
             clickedCounter = 0;
         }
-
     }
 
     private int find(String player){
@@ -154,6 +155,7 @@ public class MyselfPageController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        layout.setMouseTransparent(true);
         this.message = GUIMessages.readToGUI();
         if( this.message instanceof currentStateMessage){
             set(Objects.requireNonNull((currentStateMessage) message));

@@ -30,6 +30,8 @@ public class NextPageController {
     private static ObjectiveCard myObjective;
 
     @FXML
+    private static ImageView layout;
+    @FXML
     private static ImageView card0;
     @FXML
     private static ImageView card1;
@@ -56,15 +58,15 @@ public class NextPageController {
     @FXML
     private static ImageView resourceBack;
     @FXML
-    public static ImageView firstPion;
+    private static ImageView firstPion;
     @FXML
-    public static ImageView secondPion;
+    private static ImageView secondPion;
     @FXML
-    public static ImageView thirdPion;
+    private static ImageView thirdPion;
     @FXML
-    public static ImageView fourthPion;
+    private static ImageView fourthPion;
     @FXML
-    public ImageView scoreBoard;
+    private ImageView scoreBoard;
 
     @FXML
     private void switchToNextGamePage(MouseEvent event) {
@@ -105,6 +107,8 @@ public class NextPageController {
     }
 
     protected static void setAll() {
+        layout.setMouseTransparent(true);
+
         NextPageController.current = MyselfPageController.players[MyselfPageController.clickedCounter];
         NextPageController.commonObjective = MyselfPageController.commonObjective;
         NextPageController.playerArea = current.getPlayerArea();

@@ -54,16 +54,16 @@ public class StarterController implements Initializable {
     @FXML
     private ImageView scoreBoard;
     @FXML
-    public ImageView firstPion;
+    private ImageView firstPion;
     @FXML
-    public ImageView secondPion;
+    private ImageView secondPion;
     @FXML
-    public ImageView thirdPion;
+    private ImageView thirdPion;
     @FXML
-    public ImageView fourthPion;
+    private ImageView fourthPion;
 
 
-    public void set(currentStateMessage message) {
+    private void set(currentStateMessage message) {
         this.myself = message.getPlayer();
         this.commonObjective = message.getCommonObjectiveCards();
         this.playerArea = message.getPlayer().getPlayerArea();
@@ -73,7 +73,7 @@ public class StarterController implements Initializable {
         firstSetPions();
     }
 
-    public void firstSetPions(){
+    private void firstSetPions(){
         String imagePath;
         Image cardImage;
 
@@ -118,7 +118,7 @@ public class StarterController implements Initializable {
 
     }
 
-    public void firstSetUp() {
+    private void firstSetUp() {
 
         setupCard(resourceBack, commonArea.getD1().getList().getFirst().getID(), false, commonArea.getD1().getList().getFirst());
         setupCard(goldBack, commonArea.getD2().getList().getFirst().getID(), false, commonArea.getD2().getList().getFirst());
@@ -142,7 +142,7 @@ public class StarterController implements Initializable {
     }
 
     @FXML
-    public void turnAround(MouseEvent event) {
+    private void turnAround(MouseEvent event) {
         ImageView clickedCard = (ImageView) event.getSource();
         Card card = (Card) clickedCard.getUserData();
 
@@ -157,7 +157,7 @@ public class StarterController implements Initializable {
     }
 
     @FXML
-    public void select(MouseEvent event) {
+    private void select(MouseEvent event) {
         if (event.getClickCount() == 1) {
             ImageView clickedCard = (ImageView) event.getSource();
             Card card = (Card) clickedCard.getUserData();
@@ -190,7 +190,7 @@ public class StarterController implements Initializable {
     }
 
     @FXML
-    public void place(MouseEvent event) {
+    private void place(MouseEvent event) {
         if (selectedCard != null) {
             selectedCard.setStyle(""); // Remove the blue border from the selected card
             GUIMessages.writeToClient(selectedCardID); // Send the selected card ID to the server
