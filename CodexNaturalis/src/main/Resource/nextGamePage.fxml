@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+
+<fx:root maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" type="AnchorPane" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.protocol.client.view.GUI.controller.NextPageController">
+   <children>
+      <BorderPane prefHeight="1080.0" prefWidth="1920.0">
+         <center>
+            <Pane prefHeight="1080.0" prefWidth="1920.0" BorderPane.alignment="CENTER">
+               <children>
+                  <ImageView id="background" fitHeight="1080.0" fitWidth="1920.0" preserveRatio="true">
+                     <image>
+                        <Image url="@img/Background/Background.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView id="res1" fx:id="res1" fitHeight="141.0" fitWidth="208.0" layoutX="587.0" layoutY="746.0" preserveRatio="true">
+                     <image>
+                        <Image url="@img/Cards/Front/027.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView id="card2" fx:id="card2" fitHeight="157.0" fitWidth="234.0" layoutX="1352.0" layoutY="814.0" preserveRatio="true">
+                     <image>
+                        <Image url="@img/Cards/Front/012.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView id="card1" fx:id="card1" fitHeight="157.0" fitWidth="234.0" layoutX="1110.0" layoutY="814.0" preserveRatio="true">
+                     <image>
+                        <Image url="@img/Cards/Front/016.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView id="card0" fx:id="card0" fitHeight="157.0" fitWidth="234.0" layoutX="864.0" layoutY="814.0" preserveRatio="true">
+                     <image>
+                        <Image url="@img/Cards/Front/048.png" />
+                     </image>
+                  </ImageView>
+                  <Button id="NextPlayer" layoutX="42.0" layoutY="34.0" mnemonicParsing="false" onMouseClicked="#switchToMyselfGamePage" prefHeight="72.0" prefWidth="210.0" text="Next Player">
+                     <font>
+                        <Font name="System Bold" size="24.0" />
+                     </font>
+                  </Button>
+                  <Label id="playerName" fx:id="playerName" alignment="CENTER" contentDisplay="CENTER" layoutX="808.0" layoutY="29.0" prefHeight="35.0" prefWidth="228.0" text="PlayerName" textAlignment="CENTER">
+                     <font>
+                        <Font name="System Bold" size="36.0" />
+                     </font>
+                  </Label>
+                  <ImageView id="res0" fx:id="res0" fitHeight="141.0" fitWidth="208.0" layoutX="364.0" layoutY="746.0" preserveRatio="true">
+                     <image>
+                        <Image url="@img/Cards/Front/036.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView id="gold1" fx:id="gold1" fitHeight="141.0" fitWidth="208.0" layoutX="587.0" layoutY="895.0" preserveRatio="true">
+                     <image>
+                        <Image url="@img/Cards/Front/060.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView id="gold0" fx:id="gold0" fitHeight="141.0" fitWidth="208.0" layoutX="364.0" layoutY="895.0" preserveRatio="true">
+                     <image>
+                        <Image url="@img/Cards/Front/063.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView id="resourceBack" fx:id="resourceBack" fitHeight="141.0" fitWidth="208.0" layoutX="56.0" layoutY="746.0" preserveRatio="true">
+                     <image>
+                        <Image url="@img/Cards/Back/011.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView id="goldBack" fx:id="goldBack" fitHeight="141.0" fitWidth="208.0" layoutX="58.0" layoutY="895.0" preserveRatio="true">
+                     <image>
+                        <Image url="@img/Cards/Back/057.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView id="obj1" fx:id="obj1" fitHeight="141.0" fitWidth="208.0" layoutX="1659.0" layoutY="606.0" onMouseClicked="#turnAround" preserveRatio="true">
+                     <image>
+                        <Image url="@img/Cards/Front/102.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView id="obj0" fx:id="obj0" fitHeight="141.0" fitWidth="208.0" layoutX="1659.0" layoutY="750.0" onMouseClicked="#turnAround" preserveRatio="true">
+                     <image>
+                        <Image url="@img/Cards/Front/096.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView id="myObj" fx:id="myObj" fitHeight="141.0" fitWidth="208.0" layoutX="1659.0" layoutY="895.0" preserveRatio="true">
+                     <image>
+                        <Image url="@img/Cards/Front/100.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView id="scoreBoard" fx:id="scoreBoard" fitHeight="491.0" fitWidth="246.0" layoutX="1627.0" layoutY="38.0" preserveRatio="true">
+                     <image>
+                        <Image url="@img/Scoreboard/plateau.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView id="layout" fitHeight="1080.0" fitWidth="1920.0" focusTraversable="true" preserveRatio="true">
+                     <image>
+                        <Image url="@img/Background/GamePage.png" />
+                     </image>
+                  </ImageView>
+               </children>
+            </Pane>
+         </center>
+      </BorderPane>
+      <ImageView id="firstPion" fx:id="firstPion" fitHeight="52.0" fitWidth="48.0" layoutX="1666.0" layoutY="499.0" preserveRatio="true">
+         <image>
+            <Image url="@img/Pions/CODEX_pion_bleu.png" />
+         </image>
+      </ImageView>
+      <ImageView id="secondPion" fx:id="secondPion" fitHeight="52.0" fitWidth="48.0" layoutX="1666.0" layoutY="494.0" preserveRatio="true">
+         <image>
+            <Image url="@img/Pions/CODEX_pion_bleu.png" />
+         </image>
+      </ImageView>
+      <ImageView id="thirdPion" fx:id="thirdPion" fitHeight="52.0" fitWidth="48.0" layoutX="1666.0" layoutY="489.0" preserveRatio="true">
+         <image>
+            <Image url="@img/Pions/CODEX_pion_bleu.png" />
+         </image>
+      </ImageView>
+      <ImageView id="fourthPion" fx:id="fourthPion" fitHeight="52.0" fitWidth="48.0" layoutX="1666.0" layoutY="485.0" preserveRatio="true">
+         <image>
+            <Image url="@img/Pions/CODEX_pion_bleu.png" />
+         </image>
+      </ImageView>
+   </children>
+</fx:root>

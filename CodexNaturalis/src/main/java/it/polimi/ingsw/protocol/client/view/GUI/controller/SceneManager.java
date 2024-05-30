@@ -44,7 +44,7 @@ public class SceneManager {
 
     public static void currentGamePage(){
         try {
-            Parent root = FXMLLoader.load(SceneManager.class.getResource("/currentGamePage.fxml"));
+            Parent root = FXMLLoader.load(SceneManager.class.getResource("/nextGamePage.fxml"));
             primaryStage.setScene(new Scene(root));
             primaryStage.setFullScreen(true);
             primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);

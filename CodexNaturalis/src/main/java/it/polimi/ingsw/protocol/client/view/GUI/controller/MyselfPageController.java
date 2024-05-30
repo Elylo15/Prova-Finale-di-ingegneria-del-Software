@@ -30,27 +30,20 @@ import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class MyselfPageController implements Initializable {
+    protected static Player[] players;
+    protected static ArrayList<ObjectiveCard> commonObjective;
+    protected static CommonArea commonArea;
     private Player myself;
-    private Player[] players;
-    private Player current;
-    private ArrayList<ObjectiveCard> commonObjective;
     private PlayerArea playerArea;
-    private CommonArea commonArea;
     private PlayerHand playerHand;
     private Object message;
-
     private int selectedCardID;
     private ImageView selectedCard;
     private int selectedDrawCardID;
     private ImageView selectedDrawCard;
-
-    private Stage stage;
-    private Scene scene;
-    private Parent root;
+    protected static int clickedCounter = -1;
 
     private ImageView myPion;
-    @FXML
-    private ImageView background;
     @FXML
     private ImageView card0;
     @FXML
@@ -78,8 +71,6 @@ public class MyselfPageController implements Initializable {
     @FXML
     private ImageView resourceBack;
     @FXML
-    private ImageView scoreBoard;
-    @FXML
     public ImageView firstPion;
     @FXML
     public ImageView secondPion;
@@ -90,20 +81,27 @@ public class MyselfPageController implements Initializable {
 
 
     @FXML
-    public void switchToCurrentGamePage(MouseEvent event) {
-        if(!Objects.equals(myself.getNickname(), current.getNickname())) {
+    public void switchToNextGamePage(MouseEvent event) {
+
+        if(clickedCounter<players.length){
+            clickedCounter++;
+            NextPageController.setAll();
+
             try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("currentGamePage.fxml"));
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("nextGamePage.fxml"));
                 Parent root = loader.load();
 
-                stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-                scene = new Scene(root);
+                Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                Scene scene = new Scene(root);
                 stage.setScene(scene);
                 stage.show();
             } catch (Exception e) {
                 System.out.println("Error: " + e.getMessage());
             }
+        } else {
+            clickedCounter = 0;
         }
+
     }
 
     public int find(String player){
@@ -118,27 +116,40 @@ public class MyselfPageController implements Initializable {
     public void add(Player player) {
         for(int i=0; i<4; i++){
             if(players[i] == null ){
-                this.players[i] = player;
+                players[i] = player;
             }
         }
     }
 
     public void set(currentStateMessage message) {
-        this.commonObjective = message.getCommonObjectiveCards();
+        commonObjective = message.getCommonObjectiveCards();
+        commonArea = myself.getCommonArea();
         this.myself = message.getPlayer();
         this.playerArea = myself.getPlayerArea();
-        this.commonArea = myself.getCommonArea();
         this.playerHand = myself.getPlayerHand();
-        int find_i = find(message.getCurrentPlayer().getNickname());
-        if(find_i == -1)
-            add(message.getCurrentPlayer());
-        else {
-            this.players[find_i] = message.getCurrentPlayer();
-        }
-
         playerName.setText(myself.getNickname());
         setMyself();
         setPions();
+
+        if (!Objects.equals(message.getCurrentPlayer().getNickname(), myself.getNickname())) {
+            int find_i = find(message.getCurrentPlayer().getNickname());
+            if (find_i == -1)
+                add(message.getCurrentPlayer());
+            else {
+                players[find_i] = message.getCurrentPlayer();
+            }
+        }
+    }
+
+    public void update(updatePlayerMessage message) {
+        if (!Objects.equals(message.getPlayer().getNickname(), myself.getNickname())) {
+            int find_i = find(message.getPlayer().getNickname());
+            if (find_i == -1)
+                add(message.getPlayer());
+            else {
+                players[find_i] = message.getPlayer();
+            }
+        }
     }
 
     @Override
@@ -146,9 +157,8 @@ public class MyselfPageController implements Initializable {
         this.message = GUIMessages.readToGUI();
         if( this.message instanceof currentStateMessage){
             set(Objects.requireNonNull((currentStateMessage) message));
-            CurrentPageController.setAll(Objects.requireNonNull((currentStateMessage)message));
         } else if (this.message instanceof updatePlayerMessage){
-           CurrentPageController.update(Objects.requireNonNull((updatePlayerMessage) message));
+           update(Objects.requireNonNull((updatePlayerMessage) message));
         }
     }
 
@@ -217,7 +227,8 @@ public class MyselfPageController implements Initializable {
     @FXML
     public void select(MouseEvent event) {
         if(message instanceof currentStateMessage) {
-            if(((currentStateMessage) message).getStateName().equals("PlaceTurnState") && !Objects.equals(myself.getNickname(), current.getNickname())) {
+            if(((currentStateMessage) message).getStateName().equals("PlaceTurnState")
+                    && !Objects.equals(myself.getNickname(), ((currentStateMessage) message).getCurrentPlayer().getNickname())) {
                 if (event.getClickCount() == 1) {
                     ImageView clickedCard = (ImageView) event.getSource();
                     Card card = (Card) clickedCard.getUserData();
@@ -256,7 +267,8 @@ public class MyselfPageController implements Initializable {
     @FXML
     public void place(MouseEvent event) {
         if(message instanceof currentStateMessage) {
-            if(((currentStateMessage) message).getStateName().equals("PlaceTurnState") && !Objects.equals(myself.getNickname(), current.getNickname())) {
+            if(((currentStateMessage) message).getStateName().equals("PlaceTurnState")
+                    && !Objects.equals(myself.getNickname(), ((currentStateMessage) message).getCurrentPlayer().getNickname())) {
                 if (selectedCard != null) {
                     selectedCard.setStyle(""); // Remove the blue border from the selected card
                     GUIMessages.writeToClient(selectedCardID); // Send the selected card ID to the server
@@ -268,7 +280,8 @@ public class MyselfPageController implements Initializable {
     @FXML
     public void selectDraw(MouseEvent event){
         if(message instanceof currentStateMessage) {
-            if (((currentStateMessage) message).getStateName().equals("PickTurnState") && !Objects.equals(myself.getNickname(), current.getNickname())) {
+            if (((currentStateMessage) message).getStateName().equals("PickTurnState")
+                    && !Objects.equals(myself.getNickname(), ((currentStateMessage) message).getCurrentPlayer().getNickname())) {
                 ImageView clickedCard = (ImageView) event.getSource();
                 int cardID = (Integer) clickedCard.getUserData();
                 if (selectedDrawCard == clickedCard) {
@@ -287,6 +300,7 @@ public class MyselfPageController implements Initializable {
         }
     }
 
+    //TODO: Implement the method
     public void setPions(){
         String imagePath;
         String color = myself.getColor();
@@ -333,6 +347,7 @@ public class MyselfPageController implements Initializable {
 
     }
 
+    //TODO: Implement the method
     public void addPoints(){
         TranslateTransition transition = new TranslateTransition();
         transition.setNode(myPion);
@@ -513,5 +528,81 @@ public class MyselfPageController implements Initializable {
         transition.setDuration(javafx.util.Duration.seconds(1));
         transition.play();
     }
+
+    //TODO: Implement the method
+     /*
+    public void showPlayerArea(PlayerArea area) {
+        // Clear previous content
+        playerAreaGrid.getChildren().clear();
+
+        ArrayList<Cell> cells = area.getAllCards().stream()
+                .map(PlaceableCard::getCells)
+                .flatMap(Collection::stream)
+                .distinct()
+                .collect(Collectors.toCollection(ArrayList::new));
+
+        ArrayList<Integer[]> availablePositions = area.getAvailablePosition();
+
+        // Calculate grid dimensions
+        int rows = calculateGridRows(cells, availablePositions);
+        int columns = calculateGridColumns(cells, availablePositions);
+
+        // Initialize grid layout
+        GridPane gridPane = new GridPane();
+        gridPane.setHgap(5);
+        gridPane.setVgap(5);
+
+        // Add column numbers
+        for (int i = 0; i < columns; i++) {
+            Text columnNumber = new Text(String.valueOf(i));
+            gridPane.add(columnNumber, i + 1, 0);
+        }
+
+        // Add row numbers
+        for (int i = 0; i < rows; i++) {
+            Text rowNumber = new Text(String.valueOf(i));
+            gridPane.add(rowNumber, 0, i + 1);
+        }
+
+        // Add cards and available positions to the grid
+        for (int row = 0; row < rows; row++) {
+            for (int col = 0; col < columns; col++) {
+                Cell cell = findCell(row, col, cells);
+                if (cell != null) {
+                    // Placeable card exists in this cell
+                    PlaceableCard card = cell.getTopCard();
+                    if (card != null) {
+                        ImageView imageView = new ImageView(new Image(card.getImagePath()));
+                        imageView.setFitWidth(100); // Set image width
+                        imageView.setFitHeight(150); // Set image height
+
+                        // Create a stack pane to allow overlaying multiple cards
+                        StackPane stackPane = new StackPane();
+
+                        // Add card image to the stack pane
+                        stackPane.getChildren().add(imageView);
+
+                        // Position the card image within the cell (adjust as needed)
+                        stackPane.setAlignment(Pos.TOP_LEFT);
+
+                        // Add the stack pane to the grid
+                        gridPane.add(stackPane, col + 1, row + 1);
+                    }
+                } else if (isAvailablePosition(row, col, availablePositions)) {
+                    // No card in this cell, but it's an available position
+                    Rectangle rectangle = new Rectangle(100, 150); // Placeholder for available position
+                    rectangle.setFill(Color.BLACK);
+
+                    // Add rectangle to the grid
+                    gridPane.add(rectangle, col + 1, row + 1);
+                }
+            }
+        }
+
+        // Add the grid to the JavaFX scene
+        playerAreaGrid.getChildren().add(gridPane);
+    }
+    */
+
 
 }
