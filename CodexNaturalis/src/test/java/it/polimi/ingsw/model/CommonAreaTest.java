@@ -1,6 +1,9 @@
-package it.polimi.ingsw.model.cards;
+package it.polimi.ingsw.model;
 
-import it.polimi.ingsw.model.CommonArea;
+import it.polimi.ingsw.model.cards.GoldCard;
+import it.polimi.ingsw.model.cards.ObjectiveCard;
+import it.polimi.ingsw.model.cards.ResourceCard;
+import it.polimi.ingsw.model.cards.StarterCard;
 import it.polimi.ingsw.model.cards.exceptions.InvalidIdException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -148,7 +151,7 @@ class CommonAreaTest {
 
     @Test
     void getCorrectTableCards() {
-        //controlla che le prime due carte siano Resource e le altre due Gold
+        //checks that the first two cards are Resource and the other two are Gold
         commonArea.getD1().addCard(resourceCard);
         commonArea.getD1().addCard(resourceCard2);
         commonArea.getD2().addCard(goldCard);
@@ -163,6 +166,7 @@ class CommonAreaTest {
         assertTrue(commonArea.getTableCards().get(3).isGold());
 
     }
+
     @Test
     void DecksNotContainsCardsPicked() {
         commonArea.getD1().addCard(resourceCard);
@@ -171,8 +175,6 @@ class CommonAreaTest {
         commonArea.drawFromDeck(2);
         assertFalse(commonArea.getD1().getList().contains(resourceCard));
         assertFalse(commonArea.getD2().getList().contains(goldCard));
-
-
     }
 
     @Test

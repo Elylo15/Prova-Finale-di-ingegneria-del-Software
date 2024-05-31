@@ -25,10 +25,10 @@ class DeckTest {
 
     @BeforeEach
     void setUp() throws InvalidIdException {
-        deckStarterCard = new Deck<StarterCard>();
-        deckGoldCard = new Deck<GoldCard>();
-        deckResourceCard = new Deck<ResourceCard>();
-        deckObjectiveCard = new Deck<ObjectiveCard>();
+        deckStarterCard = new Deck<>();
+        deckGoldCard = new Deck<>();
+        deckResourceCard = new Deck<>();
+        deckObjectiveCard = new Deck<>();
 
 
         starterCard1 = new StarterCard(81);
@@ -42,6 +42,7 @@ class DeckTest {
         objectiveCard2 = new ObjectiveCard(88);
 
     }
+
     // Test for the first addCard method
     @Test
     void addFirstStarterCard() {
@@ -168,6 +169,7 @@ class DeckTest {
         assertEquals(objectiveCard1, deckObjectiveCard.removeCard());
         assertEquals(0, deckObjectiveCard.getSize());
     }
+
     // Test for top card with removeCard method
     @Test
     void removeTopStarterCard() {

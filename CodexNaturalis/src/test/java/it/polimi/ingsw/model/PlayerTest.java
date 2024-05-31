@@ -1,10 +1,14 @@
 package it.polimi.ingsw.model;
 
 import it.polimi.ingsw.model.cards.*;
+import it.polimi.ingsw.model.cards.enumeration.Resource;
 import it.polimi.ingsw.model.cards.exceptions.InvalidIdException;
 import it.polimi.ingsw.model.cards.exceptions.noPlaceCardException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.ArrayList;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class PlayerTest {
@@ -145,6 +149,11 @@ class PlayerTest {
     }
 
     @Test
+    void pickNewCard7_ShouldThrowException() {
+        assertThrows(InvalidIdException.class, () -> player.pickNewCard(7));
+    }
+
+    @Test
     void pickNewCard_ShouldBeResourceFromDeck() throws InvalidIdException {
         int pick = 1;
 
@@ -249,8 +258,20 @@ class PlayerTest {
 
     @Test
     void getScore_AfterPlayTurn_ShouldReturnUpdatedScore() throws noPlaceCardException, InvalidIdException {
-        player.drawStarter();
-        player.placeStarter(1);
+        ArrayList<Resource> resources = new ArrayList<>();
+        resources.add(Resource.Empty);
+        resources.add(Resource.Plant);
+        resources.add(Resource.Insect);
+        resources.add(Resource.Empty);
+        ArrayList<Resource> permanentResources = new ArrayList<>();
+        permanentResources.add(Resource.Insect);
+        ArrayList<Resource> bottomResources = new ArrayList<>();
+        bottomResources.add(Resource.Fungus);
+        bottomResources.add(Resource.Plant);
+        bottomResources.add(Resource.Insect);
+        bottomResources.add(Resource.Animal);
+        PlaceableCard starterCard = new StarterCard(81, 0, null, true, resources, permanentResources, bottomResources);
+        playerArea.placeStarterCard(starterCard, true);
 
         player.getPlayerHand().addNewPlaceableCard(new GoldCard(44));
         player.getPlayerHand().addNewPlaceableCard(new GoldCard(43));

@@ -1,6 +1,5 @@
 package it.polimi.ingsw.model.cards;
 
-import it.polimi.ingsw.model.cards.enumeration.Reign;
 import it.polimi.ingsw.model.cards.enumeration.Resource;
 import it.polimi.ingsw.model.cards.exceptions.InvalidIdException;
 import org.junit.jupiter.api.Assertions;
@@ -12,19 +11,16 @@ import java.util.ArrayList;
 import static org.junit.jupiter.api.Assertions.*;
 
 class StarterCardTest {
-    private ArrayList<Resource> resources = new ArrayList<>();
-    private ArrayList<Resource> permanentResources = new ArrayList<>();
-    private ArrayList<Resource> bottomResources = new ArrayList<>();
+    private final ArrayList<Resource> resources = new ArrayList<>();
+    private final ArrayList<Resource> permanentResources = new ArrayList<>();
+    private final ArrayList<Resource> bottomResources = new ArrayList<>();
     private  int id;
 
-    private boolean front;
-    private Reign reign;
     private  int points;
 
     @Test
     void cardIsEqual81_true() throws InvalidIdException{
         points = 0;
-        reign = null;
         id = 81;
         permanentResources.add(Resource.Insect);
         bottomResources.add(Resource.Fungus);
@@ -38,16 +34,14 @@ class StarterCardTest {
         testBottomResources.add(Resource.Plant);
         testBottomResources.add(Resource.Insect);
         testBottomResources.add(Resource.Animal);
-        StarterCard card81 = new StarterCard(id,points,reign,front,resources,permanentResources,bottomResources);
-        StarterCard test = new StarterCard(id,points,null,front,resources,testPermanentResources,testBottomResources);
-        Assertions.assertEquals(true, card81.equals(test));
-
-
+        StarterCard card81 = new StarterCard(id,points, null,false,resources,permanentResources,bottomResources);
+        StarterCard test = new StarterCard(id,points,null,false,resources,testPermanentResources,testBottomResources);
+        assertEquals(card81, test);
     }
+
     @Test
     void cardIsEqual81_false() throws InvalidIdException{
         points = 0;
-        reign = null;
         id = 81;
         permanentResources.add(Resource.Insect);
         bottomResources.add(Resource.Fungus);
@@ -61,11 +55,9 @@ class StarterCardTest {
         testBottomResources.add(Resource.Animal);
         testBottomResources.add(Resource.Insect);
         testBottomResources.add(Resource.Empty);
-        StarterCard card81 = new StarterCard(id,points,reign,front,resources,permanentResources,bottomResources);
-        StarterCard test = new StarterCard(id,points,null,front,resources,testPermanentResources,testBottomResources);
+        StarterCard card81 = new StarterCard(id,points, null,false,resources,permanentResources,bottomResources);
+        StarterCard test = new StarterCard(id,points,null,false,resources,testPermanentResources,testBottomResources);
         Assertions.assertNotEquals(true, card81.equals(test));
-
-
     }
 
     @Test
@@ -75,8 +67,8 @@ class StarterCardTest {
         ArrayList<Resource> test = new ArrayList<>();
         test.add(Resource.Insect);
         Assertions.assertEquals(test, card81.getPermanentResource());
-
     }
+
     @Test
     void checkPermanentResourcesCard81_false() throws InvalidIdException{
         permanentResources.add(Resource.Insect);
@@ -84,8 +76,8 @@ class StarterCardTest {
         ArrayList<Resource> test = new ArrayList<>();
         test.add(Resource.Fungus);
         Assertions.assertNotEquals(test, card81.getPermanentResource());
-
     }
+
     @Test
     void checkPermanentResourcesCard86_true() throws InvalidIdException{
         permanentResources.add(Resource.Plant);
@@ -97,8 +89,8 @@ class StarterCardTest {
         test.add(Resource.Animal);
         test.add(Resource.Fungus);
         Assertions.assertEquals(test, card86.getPermanentResource());
-
     }
+
     @Test
     void checkPermanentResourcesCard86_false() throws InvalidIdException{
         permanentResources.add(Resource.Plant);
@@ -109,8 +101,8 @@ class StarterCardTest {
         test.add(Resource.Fungus);
         test.add(Resource.Insect);
         Assertions.assertNotEquals(test, card86.getPermanentResource());
-
     }
+
     @Test
     void checkResourcesCard81_true() throws InvalidIdException{
         resources.add(Resource.Empty);
@@ -125,6 +117,7 @@ class StarterCardTest {
         test.add(Resource.Empty);
         Assertions.assertEquals(test, card81.getResource());
     }
+
     @Test
     void checkResourcesCard81_false() throws InvalidIdException{
         resources.add(Resource.Empty);
@@ -139,6 +132,7 @@ class StarterCardTest {
         test.add(Resource.Empty);
         Assertions.assertNotEquals(test, card81.getResource());
     }
+
     @Test
     void checkBottomResources81_true() throws InvalidIdException{
         bottomResources.add(Resource.Fungus);
@@ -153,6 +147,7 @@ class StarterCardTest {
         test.add(Resource.Animal);
         Assertions.assertEquals(test, card81.getResource());
     }
+
     @Test
     void checkBottomResources81_false() throws InvalidIdException{
         bottomResources.add(Resource.Fungus);
@@ -168,9 +163,6 @@ class StarterCardTest {
         Assertions.assertNotEquals(test, card81.getResource());
     }
 
-
-
-
     @Test
     void checkResourcesCard86_true() throws InvalidIdException{
         resources.add(Resource.Empty);
@@ -185,6 +177,7 @@ class StarterCardTest {
         test.add(Resource.Blocked);
         Assertions.assertEquals(test, card86.getResource());
     }
+
     @Test
     void checkResourcesCard86_false() throws InvalidIdException{
         resources.add(Resource.Empty);
@@ -200,7 +193,6 @@ class StarterCardTest {
         Assertions.assertNotEquals(test, card86.getResource());
     }
 
-
     @Test
     void checkBottomResourcesCard86_true() throws InvalidIdException{
         bottomResources.add(Resource.Fungus);
@@ -215,6 +207,7 @@ class StarterCardTest {
         test.add(Resource.Insect);
         Assertions.assertEquals(test, card86.getResource());
     }
+
     @Test
     void checkBottomResourcesCard86_false() throws InvalidIdException{
         bottomResources.add(Resource.Fungus);
@@ -239,9 +232,10 @@ class StarterCardTest {
             requirementTest.add(0);
             requirementTest.add(0);
             StarterCard starterCard = new StarterCard(i,0,null,true,resources,permanentResources,bottomResources);
-            Assertions.assertEquals(true, starterCard.checkRequirement(requirementTest));
+            assertTrue(starterCard.checkRequirement(requirementTest));
         }
     }
+
     @Test
     void checkRequirement_false() throws InvalidIdException{
         for(int i=81; i<87;i++){
@@ -255,35 +249,40 @@ class StarterCardTest {
         }
     }
 
-
-
     @Test
     void checkIsStarter_true() throws InvalidIdException {
         for(int i=81; i<87;i++){
-            StarterCard starterCard = new StarterCard(i,0,null,front,resources,permanentResources,bottomResources);
-             Assertions.assertEquals(true, starterCard.isStarter());
+            StarterCard starterCard = new StarterCard(i,0,null,false,resources,permanentResources,bottomResources);
+            assertTrue(starterCard.isStarter());
         }
-
-
     }
+
     @Test
     void checkIsStarter_false() throws InvalidIdException {
         for(int i=81; i<87;i++){
-            StarterCard starterCard = new StarterCard(i,0,null,front,resources,permanentResources,bottomResources);
+            StarterCard starterCard = new StarterCard(i,0,null,false,resources,permanentResources,bottomResources);
             Assertions.assertNotEquals(false, starterCard.isStarter());
         }
-
-
     }
+
     @Test
-    void checkclass() throws InvalidIdException {
+    void checkClass() throws InvalidIdException {
         for(int i=81; i<87;i++){
-            StarterCard starterCard = new StarterCard(i,0,null,front,resources,permanentResources,bottomResources);
+            StarterCard starterCard = new StarterCard(i,0,null,false,resources,permanentResources,bottomResources);
             assertInstanceOf(StarterCard.class, starterCard);
         }
-
-
     }
 
+    @Test
+    void shouldThrowExceptionWhenIdIsTooSmallOrTooBig() {
+        assertThrows(InvalidIdException.class, () -> new StarterCard(39));
+        assertThrows(InvalidIdException.class, () -> new StarterCard(98));
+    }
+
+    @Test
+    void shouldNotThrowExceptionWhenIdIsAtLimit() {
+        assertDoesNotThrow(() -> new StarterCard(81));
+        assertDoesNotThrow(() -> new StarterCard(86));
+    }
 
 }

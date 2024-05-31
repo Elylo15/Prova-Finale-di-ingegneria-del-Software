@@ -362,7 +362,7 @@ class PlayerAreaTest {
 
         //playerArea.placeCard(fungusCard.get(0), 1, 1, false);
         playerArea.placeCard(fungusCard.get(1), -1, 1, false);
-        playerArea.placeCard(plantCard.get(0), 2, 2, false);
+        playerArea.placeCard(plantCard.getFirst(), 2, 2, false);
 
         playerArea.placeCard(fungusCard.get(2), -2, 2, false);
         playerArea.placeCard(fungusCard.get(3), 0, 2, false);
@@ -374,7 +374,7 @@ class PlayerAreaTest {
 
         Assertions.assertEquals(2, playerArea.placeCard(goldCard1,-2,4,true));
         Assertions.assertEquals(6, playerArea.placeCard(goldCard2,-3,3,true));
-        Assertions.assertEquals(0,playerArea.placeCard(fungusCard.get(0), -4, 4, true));
+        Assertions.assertEquals(0,playerArea.placeCard(fungusCard.getFirst(), -4, 4, true));
     }
 
     @Test
@@ -458,7 +458,7 @@ class PlayerAreaTest {
 
         playerArea.placeCard(fungusCard.get(0), 1, 1, false);
         playerArea.placeCard(fungusCard.get(1), -1, 1, false);
-        playerArea.placeCard(plantCard.get(0), 2, 2, false);
+        playerArea.placeCard(plantCard.getFirst(), 2, 2, false);
 
         playerArea.placeCard(fungusCard.get(2), -2, 2, false);
         playerArea.placeCard(fungusCard.get(3), 0, 2, false);
@@ -555,7 +555,7 @@ class PlayerAreaTest {
 
         playerArea.placeCard(fungusCard.get(0), 1, 1, false);
         playerArea.placeCard(fungusCard.get(1), -1, 1, false);
-        playerArea.placeCard(plantCard.get(0), 2, 2, false);
+        playerArea.placeCard(plantCard.getFirst(), 2, 2, false);
 
         playerArea.placeCard(fungusCard.get(2), -2, 2, false);
         playerArea.placeCard(fungusCard.get(3), 0, 2, false);

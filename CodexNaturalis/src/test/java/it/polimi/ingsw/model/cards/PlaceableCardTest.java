@@ -1,26 +1,18 @@
 package it.polimi.ingsw.model.cards;
 
-import it.polimi.ingsw.model.PlayerArea;
 import it.polimi.ingsw.model.cards.enumeration.Resource;
 import it.polimi.ingsw.model.cards.enumeration.Reign;
 import it.polimi.ingsw.model.cards.exceptions.InvalidIdException;
-import it.polimi.ingsw.model.cards.exceptions.noPlaceCardException;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 
-import static org.junit.jupiter.api.Assertions.*;
 
 class PlaceableCardTest {
 
-    @BeforeEach
-    void setUp() throws InvalidIdException {
-    }
-
     @Test
-    void checkRequirement_true() throws noPlaceCardException, InvalidIdException {
+    void checkRequirement_true() throws InvalidIdException {
         PlaceableCard goldCard;
         ArrayList<Resource> resources = new ArrayList<>();
         resources.add(Resource.Empty);
@@ -46,8 +38,6 @@ class PlaceableCardTest {
         req.add(0);
 
         Assertions.assertTrue(goldCard.checkRequirement(req));
-
-
     }
 
     @Test

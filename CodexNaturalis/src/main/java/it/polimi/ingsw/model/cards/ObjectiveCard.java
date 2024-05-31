@@ -23,7 +23,7 @@ public class ObjectiveCard extends Card implements Serializable {
      */
     public ObjectiveCard(int ID) throws InvalidIdException
     {
-        if(ID > 86 && ID < 102) {
+        if(ID >= 87 && ID <= 102) {
             this.ID = ID;
             if(ID <= 90) {this.points = 2;}
             if(ID >= 91 && ID <= 94) {this.points = 3;}

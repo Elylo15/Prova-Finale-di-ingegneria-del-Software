@@ -43,8 +43,6 @@ class LoadDecksTest {
         commonArea.getD2().getList().forEach(System.out::println);
     }
 
-
-
     @Test
     void CheckStarterCardNumber() {
         commonArea = loadDecks.load();
@@ -70,7 +68,6 @@ class LoadDecksTest {
         commonArea = loadDecks.load();
         commonArea.getD4().getList().forEach(System.out::println);
     }
-
 
     @Test
     void CheckResourceCardDeck() {

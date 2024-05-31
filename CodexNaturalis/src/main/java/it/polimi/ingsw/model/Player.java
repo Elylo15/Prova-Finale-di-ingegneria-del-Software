@@ -105,7 +105,7 @@ public class  Player implements Serializable {
         Card card;
 
         card = pickPlaceableCard(cardPick);
-        // Impossible, just to be sure
+        // Just to be sure
         if (card == null)
             throw new noPlaceCardException();
 

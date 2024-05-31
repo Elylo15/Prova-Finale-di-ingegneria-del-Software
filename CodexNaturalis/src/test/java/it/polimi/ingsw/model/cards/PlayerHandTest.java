@@ -19,27 +19,76 @@ class PlayerHandTest {
         playerHand.addNewPlaceableCard(card1);
         playerHand.addNewPlaceableCard(card2);
     }
-    //Test for the method removeplaceableCard
+
+    //Test for the method removePlaceableCard
 
     @Test
-    void removeCorrectplaceableCard() {
+    void removeCorrectPlaceableCard() {
         PlaceableCard removedCard = playerHand.removeplaceableCard(card1.getID());
         assertEquals(card1, removedCard);
         assertFalse(playerHand.getPlaceableCards().contains(card1));
     }
 
     @Test
-    void removeplaceableCardReturnsNullWhenCardNotFound() {
+    void removePlaceableCardReturnsNullWhenCardNotFound() {
         PlaceableCard removedCard = playerHand.removeplaceableCard(999);
         assertNull(removedCard);
     }
 
-    //Test for the method addNewplaceableCard
+    //Test for the method addNewPlaceableCard
 
     @Test
-    void addNewPlaceableCardAddsCardToHand() throws InvalidIdException {
+    void addNewPlaceableCardAddsCardToHand() {
         playerHand.addNewPlaceableCard(card1);
         assertTrue(playerHand.getPlaceableCards().contains(card1));
+    }
+
+    @Test
+    void toStringShouldReturnCorrectFormat() {
+        String expected = "PlayerHand{placeableCards=[1, 41]}";
+        System.out.println(playerHand.toString());
+        assertEquals(expected, playerHand.toString());
+    }
+
+    @Test
+    void toStringShouldReturnEmptyWhenNoCards() {
+        String expected = "PlayerHand{placeableCards=[]}";
+        playerHand = new PlayerHand();
+        assertEquals(expected, playerHand.toString());
+    }
+
+    @Test
+    void hashCodeShouldBeDifferentForDifferentCards() {
+        PlayerHand playerHand2 = new PlayerHand();
+        playerHand2.addNewPlaceableCard(card1);
+        assertNotEquals(playerHand.hashCode(), playerHand2.hashCode());
+    }
+
+    @Test
+    void equalsShouldReturnTrue() {
+        PlayerHand playerHand2 = new PlayerHand();
+        playerHand2.addNewPlaceableCard(card1);
+        playerHand2.addNewPlaceableCard(card2);
+        assertTrue(playerHand.equals(playerHand2));
+    }
+
+    @Test
+    void equalsShouldReturnFalse() throws InvalidIdException {
+        PlayerHand playerHand2 = new PlayerHand();
+        playerHand2.addNewPlaceableCard(new GoldCard(42));
+        playerHand2.addNewPlaceableCard(card1);
+        assertFalse(playerHand.equals(playerHand2));
+    }
+
+    @Test
+    void equalsShouldReturnTrueSameObject() {
+        assertTrue(playerHand.equals(playerHand));
+    }
+
+    @Test
+    void equalsShouldReturnFalseNullAndDifferentClass() {
+        assertFalse(playerHand.equals(null));
+        assertFalse(playerHand.equals(new Object()));
     }
 
 }
