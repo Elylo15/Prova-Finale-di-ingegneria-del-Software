@@ -15,6 +15,7 @@ public class CommonArea implements Serializable {
     private final Deck<StarterCard> d3;
     private final Deck<ObjectiveCard> d4;
     private final ArrayList<PlaceableCard> tableCards;
+
     /**
      * Class constructor
      */
@@ -26,6 +27,7 @@ public class CommonArea implements Serializable {
         d4 = new Deck<>(); //objective cards
         tableCards = new ArrayList<>();
     }
+
     /**
      * method pickTableCard: remove a face-up card
      * @param cardNumber: card you want to take from the exposed cards
@@ -50,6 +52,7 @@ public class CommonArea implements Serializable {
 
         return null;
     }
+
     /**
      * method drawFromDeck: remove the top GoldCard/ResourceCard of the deck and places it as a face-up card
      * @param d: number of the deck from which you want to remove a card to put in among the face up cards
@@ -62,6 +65,7 @@ public class CommonArea implements Serializable {
         }
         tableCards.add(c); //add the card to the table cards
     }
+
     /**
      * method drawFromPlayer: the player draws from the GoldCardDeck/ResourceCardDeck/StarterCardDeck and keeps the card
      * @param d: number of the deck from which the player wants to draw
@@ -77,6 +81,7 @@ public class CommonArea implements Serializable {
         }
         return c;  //return the card picked
     }
+
     /**
      * method getTableCards:show the player the cards face-up
      * @return ArrayList<PlaceableCard>: array list of face-up cards
@@ -93,6 +98,7 @@ public class CommonArea implements Serializable {
         return  d4.removeCard();
 
     }
+
     /**
      * method  getD1: Resource deck
      * @return Deck<ResourceCard>: return all ResourceCardDeck
@@ -124,4 +130,5 @@ public class CommonArea implements Serializable {
     public Deck<ObjectiveCard> getD4() {
         return d4;
     }
+
 }

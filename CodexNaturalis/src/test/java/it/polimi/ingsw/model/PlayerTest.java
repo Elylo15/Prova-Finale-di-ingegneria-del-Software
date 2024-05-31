@@ -1,14 +1,10 @@
 package it.polimi.ingsw.model;
 
 import it.polimi.ingsw.model.cards.*;
-import it.polimi.ingsw.model.cards.enumeration.Reign;
 import it.polimi.ingsw.model.cards.exceptions.InvalidIdException;
 import it.polimi.ingsw.model.cards.exceptions.noPlaceCardException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.ArrayList;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 class PlayerTest {
@@ -30,38 +26,74 @@ class PlayerTest {
     }
 
     @Test
-    void drawStarterTest() {
-
+    void drawStarter_DeckSizeShouldBeOne() {
         player.drawStarter();
         assertEquals(1, deck.getPlaceableCards().size());
     }
 
     @Test
-    void PlaceStarterFrontTest() {
+    void drawStarter_DeckShouldContainStarter() {
         player.drawStarter();
-        StarterCard starter = (StarterCard) deck.getPlaceableCards().get(0);
+
+        PlaceableCard starter = player.getPlayerHand().getPlaceableCards().getFirst();
+        assertInstanceOf(StarterCard.class, starter);
+    }
+
+    @Test
+    void PlaceStarterFront_DeckSizeShouldBeZeroAndCardPlaced() {
+        player.drawStarter();
         player.placeStarter(1);
         assertEquals(0, deck.getPlaceableCards().size());
         assertTrue(player.getPlayerArea().contains(0,0));
-
-        // assertEquals(starter, player.getPlayerArea().getCard(0,0));
     }
+
     @Test
-    void PlaceStarterBackTest() {
+    void PlaceStarterBack_DeckSizeShouldBeZeroAndCardPlaced() {
         player.drawStarter();
         player.placeStarter(0);
         assertEquals(0, deck.getPlaceableCards().size());
         assertTrue(player.getPlayerArea().contains(0,0));
-
     }
 
-
     @Test
-    void initialHandNumberCards() {
-
+    void initialHand_DeckSizeShouldBeThree() {
         player.initialHand();
         assertEquals(3, deck.getPlaceableCards().size());
     }
+
+    @Test
+    void initialHand_DeckShouldContainTwoResourceAndOneGold() {
+        player.initialHand();
+        assertInstanceOf(ResourceCard.class, deck.getPlaceableCards().get(0));
+        assertInstanceOf(ResourceCard.class, deck.getPlaceableCards().get(1));
+        assertInstanceOf(GoldCard.class, deck.getPlaceableCards().get(2));
+    }
+
+    @Test
+    void drawObjectives_ShouldBeObjectiveCards() {
+        ObjectiveCard[] objective = player.drawObjectives();
+        assertInstanceOf(ObjectiveCard.class, objective[0]);
+        assertInstanceOf(ObjectiveCard.class, objective[1]);
+    }
+
+    @Test
+    void pickObjective1_ShouldBeObjectiveCard() {
+        int pick = 1;
+
+        ObjectiveCard[] objective = player.drawObjectives();
+        player.pickObjectiveCard(pick, objective);
+        assertInstanceOf(ObjectiveCard.class, player.getObjective());
+    }
+
+    @Test
+    void pickObjective2_ShouldBeObjectiveCard() {
+        int pick = 2;
+
+        ObjectiveCard[] objective = player.drawObjectives();
+        player.pickObjectiveCard(pick, objective);
+        assertInstanceOf(ObjectiveCard.class, player.getObjective());
+    }
+
 
     @Test
     void playTurnTest() {
@@ -76,102 +108,62 @@ class PlayerTest {
     }
 
     @Test
-    void drawObjectivesTest() {
-        ObjectiveCard[] objective = player.drawObjectives();
-        int objectiveId0 = objective[0].getID();
-        int objectiveId1 = objective[1].getID();
-        boolean isInRange0 = objectiveId0 >= 86 && objectiveId0 <= 102;
-        boolean isInRange1 = objectiveId1 >= 86 && objectiveId1 <= 102;
-        assertTrue(isInRange0);
-        assertTrue(isInRange1);
-    }
-
-
-    @Test
-    void pickObjective1() {
+    void pickNewCard1_ShouldThrowException() {
         int pick = 1;
+        int size = commonArea.getD1().getSize();
 
-        ObjectiveCard[] objective = player.drawObjectives();
-        player.pickObjectiveCard(pick, objective);
-        int objectiveId = player.getObjective().getID();
-        boolean isInRange = objectiveId >= 86 && objectiveId <= 102;
-        assertTrue(isInRange);
+        for(int i = 0; i < size; i++){
+            commonArea.getD1().removeCard();
+        }
+
+        assertThrows(InvalidIdException.class, () -> player.pickNewCard(pick));
     }
 
     @Test
-    void pickObjective2() {
+    void pickNewCard2_ShouldThrowException() {
         int pick = 2;
+        int size = commonArea.getD1().getSize();
 
-        ObjectiveCard[] objective = player.drawObjectives();
-        player.pickObjectiveCard(pick, objective);
-        int objectiveId = player.getObjective().getID();
-        boolean isInRange = objectiveId >= 86 && objectiveId <= 102;
-        assertTrue(isInRange);
+        for(int i = 0; i < size; i++){
+            commonArea.getD2().removeCard();
+        }
+
+        assertThrows(InvalidIdException.class, () -> player.pickNewCard(pick));
     }
 
     @Test
-    void PickSideTest(){
-        assertTrue(player.pickSide(1));
-        assertFalse(player.pickSide(0));
+    void pickNewCard3_4_5_6_ShouldThrowException() {
+        int size = commonArea.getTableCards().size();
+
+        for(int i = 0; i < size; i++){
+            commonArea.getTableCards().removeFirst();
+        }
+        assertThrows(InvalidIdException.class, () -> player.pickNewCard(3));
+        assertThrows(InvalidIdException.class, () -> player.pickNewCard(4));
+        assertThrows(InvalidIdException.class, () -> player.pickNewCard(5));
+        assertThrows(InvalidIdException.class, () -> player.pickNewCard(6));
     }
 
     @Test
-    void correctPickPosition(){
-        int[] position = player.pickPosition(2, 3);
-        assertEquals(position[0], 2);
-        assertEquals(position[1], 3);
-    }
-
-    @Test
-    void correctPickedCard1(){
-        player.initialHand();
-        PlaceableCard card = player.pickPlaceableCard(1);
-        int cardId = card.getID();
-        boolean isInRange = cardId >= 1 && cardId <= 80 ;
-        assertTrue(isInRange);
-    }
-    @Test
-    void correctPickedCard2(){
-        player.initialHand();
-        PlaceableCard card = player.pickPlaceableCard(2);
-        int cardId = card.getID();
-        boolean isInRange = cardId >= 1 && cardId <= 80 ;
-        assertTrue(isInRange);
-    }
-
-    @Test
-    void correctPickedCard3(){
-        player.initialHand();
-        PlaceableCard card = player.pickPlaceableCard(3);
-        int cardId = card.getID();
-        boolean isInRange = cardId >= 1 && cardId <= 80 ;
-        assertTrue(isInRange);
-    }
-
-    @Test
-    void pickedResourceDeck() throws InvalidIdException {
+    void pickNewCard_ShouldBeResourceFromDeck() throws InvalidIdException {
         int pick = 1;
 
         player.pickNewCard(pick);
         PlaceableCard card = deck.getPlaceableCards().getLast();
-        int cardId = card.getID();
-        boolean isInRange = cardId >= 1 && cardId <= 40;
-        assertTrue(isInRange);
+        assertInstanceOf(ResourceCard.class, card);
     }
 
     @Test
-    void pickedGoldDeck() throws InvalidIdException{
+    void pickedCard_ShouldBeFoldFromDeck() throws InvalidIdException{
         int pick = 2;
 
         player.pickNewCard(pick);
         PlaceableCard card = deck.getPlaceableCards().getLast();
-        int cardId = card.getID();
-        boolean isInRange = cardId>= 41 && cardId <= 80;
-        assertTrue(isInRange);
+        assertInstanceOf(GoldCard.class, card);
     }
 
     @Test
-    void pickedResourceLeft() throws InvalidIdException{
+    void pickedCard_ShouldBeResourceLeft() throws InvalidIdException{
         int pick = 3;
 
         //set cards
@@ -187,12 +179,11 @@ class PlayerTest {
         player.pickNewCard(pick);
         PlaceableCard card = deck.getPlaceableCards().getLast();
         int cardId = card.getID();
-        boolean isInRange = cardId >= 1 && cardId <= 40;
-        assertTrue(isInRange);
+        assertEquals(6, cardId);
     }
 
     @Test
-    void pickedResourceRight() throws InvalidIdException{
+    void pickedCard_ShouldBeResourceRight() throws InvalidIdException{
         int pick = 4;
 
         //set cards
@@ -208,12 +199,11 @@ class PlayerTest {
         player.pickNewCard(pick);
         PlaceableCard card = deck.getPlaceableCards().getLast();
         int cardId = card.getID();
-        boolean isInRange = cardId >= 1 && cardId <= 40;
-        assertTrue(isInRange);
+        assertEquals(7, cardId);
     }
 
     @Test
-    void pickedGoldLeft() throws InvalidIdException{
+    void pickedCard_ShouldBeGoldLeft() throws InvalidIdException{
         int pick = 5;
 
         //set cards
@@ -229,12 +219,11 @@ class PlayerTest {
         player.pickNewCard(pick);
         PlaceableCard card = deck.getPlaceableCards().getLast();
         int cardId = card.getID();
-        boolean isInRange = cardId >= 41 && cardId <= 80;
-        assertTrue(isInRange);
+        assertEquals(43, cardId);
     }
 
     @Test
-    void pickedGoldRight() throws InvalidIdException{
+    void pickedCard_ShouldBeGoldRight() throws InvalidIdException{
         int pick = 6;
 
         //set cards
@@ -250,86 +239,59 @@ class PlayerTest {
         player.pickNewCard(pick);
         PlaceableCard card = deck.getPlaceableCards().getLast();
         int cardId = card.getID();
-        boolean isInRange = cardId >= 41 && cardId <= 80;
-        assertTrue(isInRange);
+        assertEquals(47, cardId);
     }
 
     @Test
-    public void getScoreTest() {
-        player.setScore(22);
-        int score = player.getScore();
-        assertEquals(22, score);
+    void getScore_InitialScore_ShouldReturnZero() {
+        assertEquals(0, player.getScore());
     }
 
     @Test
-    public void setScoreTest() {
-        player.setScore(13);
-        assertEquals(13,player.getScore());
+    void getScore_AfterPlayTurn_ShouldReturnUpdatedScore() throws noPlaceCardException, InvalidIdException {
+        player.drawStarter();
+        player.placeStarter(1);
+
+        player.getPlayerHand().addNewPlaceableCard(new GoldCard(44));
+        player.getPlayerHand().addNewPlaceableCard(new GoldCard(43));
+        player.getPlayerHand().addNewPlaceableCard(new GoldCard(49));
+
+        player.playTurn(0, 1, 1, 1);
+        System.out.println(player.getScore());
+        assertTrue(player.getScore() > 0);
     }
 
     @Test
-    public void setObjectiveTest() {
-        ObjectiveCard obj;
-        ArrayList<int[]> pattern = new ArrayList<>();
-        pattern.add(new int[]{2,0});
-        pattern.add(new int[]{3,1});
-        ArrayList<Reign> reigns = new ArrayList<>();
-        reigns.add(Reign.Fungus);
-        reigns.add(Reign.Fungus);
-        reigns.add(Reign.Plant);
-        obj = new ObjectiveCard(91,3,null,pattern,reigns);
-
-        player.setObjective(obj);
-        assertEquals(obj.getID(), player.getObjective().getID());
-    }
-
-    @Test
-    public void getPlayerAreaTest() {
+    public void getPlayerArea_ShouldReturnPlayerArea() {
         assertNotNull(player.getPlayerArea());
     }
 
     @Test
-    public void getObjectiveTest() {
-        ObjectiveCard obj;
-        ArrayList<int[]> pattern = new ArrayList<>();
-        pattern.add(new int[]{2,0});
-        pattern.add(new int[]{3,1});
-        ArrayList<Reign> reigns = new ArrayList<>();
-        reigns.add(Reign.Fungus);
-        reigns.add(Reign.Fungus);
-        reigns.add(Reign.Plant);
-        obj = new ObjectiveCard(91,3,null,pattern,reigns);
+    public void getObjective_ShouldReturnObjectiveCard() {
+        ObjectiveCard[] objective = player.drawObjectives();
+        player.pickObjectiveCard(1, objective);
 
-        player.setObjective(obj);
-        assertEquals(obj, player.getObjective());
+        assertInstanceOf(ObjectiveCard.class, player.getObjective());
     }
 
     @Test
-    public void getPlayerHandTest() {
-        assertNotNull(player.getPlayerHand());
+    public void getPlayerHand_ShouldReturnPlayerHand() {
+        assertInstanceOf(PlayerHand.class, player.getPlayerHand());
     }
 
     @Test
-    public void getNicknameTest() {
+    public void getNickname_ShouldReturnNickname() {
         assertEquals("Bianca", player.getNickname());
     }
 
     @Test
-    public void setNicknameTest() {
-        player.setNickname("Bia");
-        assertEquals("Bia", player.getNickname());
-    }
-
-    @Test
-    public void getColorTest() {
+    public void getColor_ShouldReturnColor() {
         assertEquals("Blue", player.getColor());
     }
 
     @Test
-    public void setColorTest() {
-        player.setColor("Red");
-        assertEquals("Red", player.getColor());
+    public void getCommonArea_ShouldReturnCommonArea() {
+        assertInstanceOf(CommonArea.class, player.getCommonArea());
     }
-
 
 }

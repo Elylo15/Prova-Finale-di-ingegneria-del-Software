@@ -7,8 +7,8 @@ import it.polimi.ingsw.model.cards.exceptions.noPlaceCardException;
 import java.io.Serializable;
 
 public class  Player implements Serializable {
-    private String nickname;
-    private String color;
+    private final String nickname;
+    private final String color;
     private int score;
     private final PlayerHand deck;
     private final PlayerArea playerArea;
@@ -16,7 +16,7 @@ public class  Player implements Serializable {
     private ObjectiveCard objective;
 
     /**
-     * Constructs a new {@code Player} object with the specified {@param nickname} and {@param color}.
+     * Constructs a new {@code Player} object with the specified {@param nickname}, {@param color} and {@param commonArea}.
      */
     public Player(String nickname, String color, CommonArea commonArea){
         this.nickname = nickname;
@@ -42,7 +42,7 @@ public class  Player implements Serializable {
      * @param side integer that indicates the side chosen.
      */
     public void placeStarter(int side){
-        //call the method removeplaceableCard of PlayerHand and pass as a parameter the id of the starter card
+        //call the method removePlaceableCard of PlayerHand and pass as a parameter the id of the starter card
         playerArea.placeStarterCard(deck.removeplaceableCard(deck.getPlaceableCards().getFirst().getID()), pickSide(side));
     }
 
@@ -85,7 +85,7 @@ public class  Player implements Serializable {
      * @param side integer that indicates the side chosen.
      * @return boolean.
      */
-    public boolean pickSide(int side){
+    private boolean pickSide(int side){
         return side == 1;
     }
 
@@ -105,6 +105,7 @@ public class  Player implements Serializable {
         Card card;
 
         card = pickPlaceableCard(cardPick);
+        // Impossible, just to be sure
         if (card == null)
             throw new noPlaceCardException();
 
@@ -133,7 +134,7 @@ public class  Player implements Serializable {
      * @param y position.
      * @return array of two integers.
      */
-    public int[] pickPosition(int x, int y){
+    private int[] pickPosition(int x, int y){
         int[] position = new int[2];
         position[0] = x;
         position[1] = y;
@@ -144,9 +145,9 @@ public class  Player implements Serializable {
     /**
      *  method {@code pickPlaceableCard}: the player has chooses one of his cards.
      * @param cardPick integer that indicates the card chosen.
-     * @return PlaceableCard.
+     * @return PlaceableCard chosen.
      */
-    public PlaceableCard pickPlaceableCard(int cardPick){
+    private PlaceableCard pickPlaceableCard(int cardPick){
 
         if(cardPick==1)
             return deck.getPlaceableCards().get(1);
@@ -214,16 +215,9 @@ public class  Player implements Serializable {
     }
 
     /**
-     * @param newScore updated score.
-     */
-    public void setScore(int newScore){
-        this.score = newScore;
-    }
-
-    /**
      * @param newObjective score.
      */
-    public void setObjective(ObjectiveCard newObjective){
+    private void setObjective(ObjectiveCard newObjective){
         this.objective = newObjective;
     }
 
@@ -260,20 +254,6 @@ public class  Player implements Serializable {
      */
     public String getColor(){
         return color;
-    }
-
-    /**
-     * @param newNickname related to the player.
-     */
-    public void setNickname(String newNickname){
-        this.nickname = newNickname;
-    }
-
-    /**
-     * @param newColor related to the player.
-     */
-    public void setColor(String newColor){
-        this.color = newColor;
     }
 
     /**

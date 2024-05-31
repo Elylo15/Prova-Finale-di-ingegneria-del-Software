@@ -11,23 +11,34 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public abstract class PlaceableCard extends Card implements Serializable {
-
     private final ArrayList<Resource> requirement;
     private int points;
     private Reign reign;
     private ArrayList<Cell> cells;
-
     private ArrayList<Resource> resources;
 
-    public PlaceableCard(int ID) throws InvalidIdException
-    {
+    /**
+     * Creates a new PlaceableCard based on ID
+     * @param ID  must be 1 <= ID <= 86
+     * @throws InvalidIdException if the condition on ID is not met
+     */
+    public PlaceableCard(int ID) throws InvalidIdException {
         super(ID, true);
 
         this.requirement = new ArrayList<>();
         this.cells = new ArrayList<>();
-
     }
 
+    /**
+     * Creates a new PlaceableCard. It used to load the cards from the JSON.
+     * @param ID must be 1 <= ID <= 86
+     * @param front true if the card is front, false if the card is back
+     * @param requirement resources required to place the card
+     * @param points points given by the card
+     * @param reign reign of the card
+     * @param cells cells of the card
+     * @param resources resources of the card
+     */
     @JsonCreator
     public PlaceableCard(@JsonProperty("ID") int ID,
                          @JsonProperty("front") boolean front,
@@ -44,8 +55,17 @@ public abstract class PlaceableCard extends Card implements Serializable {
         this.resources = resources;
     }
 
-    public PlaceableCard(int ID, int points, Reign reign, boolean front, ArrayList<Resource> resources, ArrayList<Resource> requirement) throws InvalidIdException
-    {
+    /**
+     * Creates a new PlaceableCard based on ID
+     * @param ID  must be 1 <= ID <= 86
+     * @param points points given by the card
+     * @param reign reign of the card
+     * @param front true if the card is front, false if the card is back
+     * @param resources resources of the card
+     * @param requirement resources required to place the card
+     * @throws InvalidIdException if the condition on ID is not met
+     */
+    public PlaceableCard(int ID, int points, Reign reign, boolean front, ArrayList<Resource> resources, ArrayList<Resource> requirement) throws InvalidIdException {
         super(ID, front);
         this.points = points;
         this.reign = reign;
@@ -53,6 +73,12 @@ public abstract class PlaceableCard extends Card implements Serializable {
         this.requirement = requirement;
     }
 
+    /**
+     * Overrides the equals method from the Object class.
+     * Compares two PlaceableCard objects to check for equality.
+     * @param o the object to be compared
+     * @return true if the specified object is equal to this PlaceableCard, false otherwise.
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -61,6 +87,10 @@ public abstract class PlaceableCard extends Card implements Serializable {
         return points == that.points && this.isFront() == that.isFront() && Objects.equals(requirement, that.requirement) && reign == that.reign && Objects.equals(cells, that.cells) && Objects.equals(resources, that.resources);
     }
 
+    /**
+     * Overrides the hashCode method from the Object class.
+     * @return the hash code of the PlaceableCard object.
+     */
     @Override
     public int hashCode() {
         return Objects.hash(requirement, points, reign, cells, resources);
@@ -122,24 +152,30 @@ public abstract class PlaceableCard extends Card implements Serializable {
         this.cells = cells;
     }
 
-
+    /**
+     * @return the reign of the card
+     */
     public Reign getReign() {
         return reign;
     }
 
-
+    /**
+     * @return the cells of the card
+     */
     public ArrayList<Cell> getCells() {
         return new ArrayList<>(cells);
     }
 
     /**
-     *
      * @return the point associated with the card
      */
     public int getPoints() {
         return points;
     }
 
+    /**
+     * @return the resources of the card
+     */
     public ArrayList<Resource> getResource() {
         if(this.isFront()) {
             return new ArrayList<>(this.resources);
@@ -152,6 +188,7 @@ public abstract class PlaceableCard extends Card implements Serializable {
             return backResources;
         }
     }
+
     /**
      * Gold and Resource cards contain only one permanent resources in their back
      * Starter cards contain from one to three permanent resources in their front
@@ -177,19 +214,32 @@ public abstract class PlaceableCard extends Card implements Serializable {
         return resources;
     }
 
+    /**
+     * @return true if the card is a resource card
+     */
     public boolean isResource() {
         return this.ID >= 1 && this.ID <= 40;
     }
 
+    /**
+     * @return true if the card is a gold card
+     */
     public boolean isGold() {
         return this.ID >= 41 && this.ID <= 80;
 
     }
 
+    /**
+     * @return true if the card is a starter card
+     */
     public boolean isStarter() {
         return this.ID >= 81 && this.ID <= 86;
     }
 
+    /**
+     * Overrides the toString method from the Object class.
+     * @return a string representation of the PlaceableCard object.
+     */
     @Override
     public String toString() {
         return "PlaceableCard{" +
@@ -201,4 +251,5 @@ public abstract class PlaceableCard extends Card implements Serializable {
                 ", resources=" + resources +
                 '}';
     }
+
 }

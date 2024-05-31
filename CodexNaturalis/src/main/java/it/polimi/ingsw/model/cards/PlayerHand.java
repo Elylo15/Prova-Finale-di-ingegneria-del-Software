@@ -18,6 +18,7 @@ public class PlayerHand implements Serializable {
     public PlayerHand(){
         placeableCards = new ArrayList<>();
     }
+
     /**
      * method removePlaceableCard: removes placeableCard from PlayerHand. Returns the placeableCard
      * @param numCard: id of the card the player wants to play
@@ -28,11 +29,12 @@ public class PlayerHand implements Serializable {
         for (int i = 0; i < placeableCards.size() ; i++) {
             if (numCard == placeableCards.get(i).getID()){
                 c= placeableCards.get(i);
-                placeableCards.remove(c);  //remove the card from the arraylist of placeablecards passing as a parameter the card to remove
+                placeableCards.remove(c);  //remove the card from the arraylist of placeableCards passing as a parameter the card to remove
             }
         }
         return c;
     }
+
     /**
      * method getPlaceableCard: returns the placeableCards
      * @return ArrayList<PlaceableCard>: array list of player cards
@@ -49,6 +51,11 @@ public class PlayerHand implements Serializable {
         placeableCards.add(card);
     }
 
+    /**
+     * Overrides the equals method from the Object class.
+     * @param o the object to be compared
+     * @return true if the specified object is equal to this PlayerHand, false otherwise.
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -57,15 +64,24 @@ public class PlayerHand implements Serializable {
         return Objects.equals(placeableCards, that.placeableCards);
     }
 
+    /**
+     * Overrides the hashCode method from the Object class.
+     * @return the hash code of the PlaceableCard
+     */
     @Override
     public int hashCode() {
         return Objects.hashCode(placeableCards);
     }
 
+    /**
+     * Overrides the toString method from the Object class.
+     * @return a string containing the placeableCards
+     */
     @Override
     public String toString() {
         return "PlayerHand{" +
                 "placeableCards=" + placeableCards.stream().map(Card::getID).collect(Collectors.toCollection(ArrayList::new)) +
                 '}';
     }
+
 }

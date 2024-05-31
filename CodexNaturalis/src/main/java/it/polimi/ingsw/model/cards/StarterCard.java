@@ -30,6 +30,19 @@ public class StarterCard extends PlaceableCard implements Serializable {
         }
     }
 
+    /**
+     * Constructor used to import from JSON
+     * @param ID, it must be >=1  and =<40
+     * @param front, true if the card is front, false if the card is back
+     * @param requirement, resources required to place the card
+     * @param points, points given by the card
+     * @param reign, reign of the card
+     * @param cells, cells of the card
+     * @param resources, resources given by the card
+     * @param permanentResource, resources given by the card
+     * @param bottomResource, resources given by the card
+     * @throws InvalidIdException if the condition on ID is not met
+     */
     @JsonCreator
     public StarterCard(@JsonProperty("ID") int ID,
                        @JsonProperty("front") boolean front,
@@ -45,12 +58,29 @@ public class StarterCard extends PlaceableCard implements Serializable {
         this.bottomResource = bottomResource;
     }
 
+    /**
+     * Constructor
+     * @param ID, it must be >=1  and =<40
+     * @param front, true if the card is front, false if the card is back
+     * @param points, points given by the card
+     * @param reign, reign of the card
+     * @param resources, resources given by the card
+     * @param permanentResource, resources given by the card
+     * @param bottomResource, resources given by the card
+     * @throws InvalidIdException if the condition on ID is not met
+     */
     public StarterCard(int ID, int points, Reign reign, boolean front, ArrayList<Resource> resources, ArrayList<Resource> permanentResource, ArrayList<Resource> bottomResource) throws InvalidIdException {
         super(ID,points,reign,front,resources,null);
         this.permanentResource = permanentResource;
         this.bottomResource = bottomResource;
     }
 
+    /**
+     * Overrides the equals method from the Object class.
+     * Compares two PlaceableCard objects to check for equality.
+     * @param o the object to be compared
+     * @return true if the specified objects are equal
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -60,6 +90,10 @@ public class StarterCard extends PlaceableCard implements Serializable {
         return Objects.equals(permanentResource, that.permanentResource) && Objects.equals(bottomResource, that.bottomResource);
     }
 
+    /**
+     * Overrides the hashCode method from the Object class.
+     * @return the hash of the object
+     */
     @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), permanentResource, bottomResource);
@@ -79,6 +113,9 @@ public class StarterCard extends PlaceableCard implements Serializable {
         }
     }
 
+    /**
+     * @return the permanent resources
+     */
     @Override
     public ArrayList<Resource> getPermanentResource() {
         if(this.isFront()) {
@@ -88,10 +125,13 @@ public class StarterCard extends PlaceableCard implements Serializable {
         }
     }
 
+    /**
+     * @param req ArrayList containing the number of resources
+     * @return true
+     */
     @Override
     public boolean checkRequirement(ArrayList<Integer> req) {
         return true;
     }
-
 
 }

@@ -11,13 +11,9 @@ import java.util.ArrayList;
 
 
 public class ObjectiveCard extends Card implements Serializable {
-
     private int points;
-
     private ArrayList<Resource> requirements;
-
     private ArrayList<int[]> pattern;
-
     private ArrayList<Reign> reignCards;
 
     /**
@@ -42,6 +38,15 @@ public class ObjectiveCard extends Card implements Serializable {
         }
     }
 
+    /**
+     * Creates a new objective card. It used to load the cards from the JSON.
+     * @param ID identifier of the card, must be 87 <= ID <= 102
+     * @param front true if the card is front, false if the card is back
+     * @param points points given by the card
+     * @param requirements resources required  to place the card
+     * @param pattern pattern of the card
+     * @param reignCards reign of the cards involved in the pattern
+     */
     @JsonCreator
     public ObjectiveCard(@JsonProperty("ID") int ID,
                          @JsonProperty("front") boolean front,
@@ -56,6 +61,14 @@ public class ObjectiveCard extends Card implements Serializable {
         this.reignCards = reignCards;
     }
 
+    /**
+     * Creates a new objective card.
+     * @param ID identifier of the card, must be 87 <= ID <= 102
+     * @param points points given by the card
+     * @param requirements resources required to get points
+     * @param pattern pattern of the card
+     * @param reignCards reign of the cards involved in the pattern
+     */
     public ObjectiveCard(int ID, int points, ArrayList<Resource> requirements, ArrayList<int[]> pattern, ArrayList<Reign> reignCards) {
         super();
         this.ID = ID;
@@ -97,4 +110,5 @@ public class ObjectiveCard extends Card implements Serializable {
     public ArrayList<Reign> getReignCards() {
         return reignCards;
     }
+
 }

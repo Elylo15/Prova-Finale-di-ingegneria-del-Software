@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -202,13 +203,9 @@ class GoldCardTest {
             requirement.add(Resource.Fungus);
             requirement.add(Resource.Fungus);
             requirement.add(Resource.Plant);
-            ArrayList<Integer> requirementTest = new ArrayList<>();
-            requirementTest.add(3);
-            requirementTest.add(1);
-            requirementTest.add(0);
-            requirementTest.add(0);
+            ArrayList<Integer> requirementTest = new ArrayList<>(Arrays.asList(3, 1, 0, 0));
             GoldCard goldCard = new GoldCard(45,2,Reign.Fungus,true,resources,requirement);
-            Assertions.assertEquals(true, goldCard.checkRequirement(requirementTest));
+            assertTrue(goldCard.checkRequirement(requirementTest));
 
     }
     @Test

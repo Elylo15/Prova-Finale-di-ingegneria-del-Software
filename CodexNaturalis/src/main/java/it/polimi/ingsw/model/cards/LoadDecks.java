@@ -10,10 +10,6 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-/**
- * LoadDeck class
- * @author elylo
- */
 public class LoadDecks implements Serializable {
     /**
      * method load: takes the cards that are collected in the Cards.json file
@@ -50,4 +46,5 @@ public class LoadDecks implements Serializable {
 
         return c;
     }
+
 }

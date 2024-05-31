@@ -9,10 +9,8 @@ import java.util.Objects;
  * Class Cell: represents a cell of the matrix of cells of the player area
  */
 public class Cell implements Serializable {
-
     private final int row;
     private final int column;
-
 
     private final PlaceableCard bottomCard;
     private PlaceableCard topCard;
@@ -23,14 +21,19 @@ public class Cell implements Serializable {
      * @param column column coordinate of the matrix of cells
      * @param bottomCard pointer to the card on the bottom
      */
-    public Cell(int row, int column, PlaceableCard bottomCard)
-    {
+    public Cell(int row, int column, PlaceableCard bottomCard) {
         this.row = row;
         this.column = column;
         this.bottomCard = bottomCard;
         this.topCard = null;
     }
 
+    /**
+     * Overrides the equals method from the Object class.
+     * Compares two Cell objects to check for equality.
+     * @param o the object to be compared
+     * @return true if the specified object is equal to this Cell, false otherwise.
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -95,7 +98,6 @@ public class Cell implements Serializable {
         return bottomCard;
     }
 
-
     /**
      * Return the reference to the card on top
      * @return pointer to the card on top
@@ -103,4 +105,5 @@ public class Cell implements Serializable {
     public PlaceableCard getTopCard() {
         return topCard;
     }
+
 }

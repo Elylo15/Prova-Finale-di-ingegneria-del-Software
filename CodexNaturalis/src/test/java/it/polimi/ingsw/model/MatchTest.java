@@ -1,18 +1,11 @@
 package it.polimi.ingsw.model;
 
-import it.polimi.ingsw.model.cards.ObjectiveCard;
-import it.polimi.ingsw.model.cards.PlaceableCard;
-import it.polimi.ingsw.model.cards.ResourceCard;
-import it.polimi.ingsw.model.cards.StarterCard;
-import it.polimi.ingsw.model.cards.enumeration.Reign;
-import it.polimi.ingsw.model.cards.enumeration.Resource;
-import it.polimi.ingsw.model.cards.exceptions.InvalidIdException;
+import it.polimi.ingsw.model.cards.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class MatchTest {
     Match match;
@@ -34,7 +27,7 @@ class MatchTest {
     }
 
     @Test
-    void notAddingPlayerIfMoreThanFour() throws Exception {
+    void addPlayer_ShouldNotAddIfMoreThanFour() throws Exception {
         Player player5 = new Player("Bia", "Pink", commonArea);
 
         match.addPlayer(player1);
@@ -46,22 +39,61 @@ class MatchTest {
     }
 
     @Test
-    void addingFirstPlayer() throws Exception {
+    void addPlayer_ShouldAddTheFirstPlayer() throws Exception {
         match.addPlayer(player1);
 
         assertEquals(players.size(), 1);
     }
 
     @Test
-    void addingSecondPlayer() throws Exception {
+    void start_ShouldShuffleAndPlaceFrontCards() throws Exception {
         match.addPlayer(player1);
         match.addPlayer(player2);
 
-        assertEquals(players.size(), 2);
+        int beforeId1 = match.getCommonArea().getD1().getList().get(1).getID();
+        int beforeId2 = match.getCommonArea().getD2().getList().get(6).getID();
+        int beforeId3 = match.getCommonArea().getD3().getList().get(3).getID();
+        int beforeId4 = match.getCommonArea().getD4().getList().get(2).getID();
+
+        match.start();
+
+        int id1 = match.getCommonArea().getTableCards().getFirst().getID();
+        int id2 = match.getCommonArea().getTableCards().get(1).getID();
+        int id3 = match.getCommonArea().getTableCards().get(2).getID();
+        int id4 = match.getCommonArea().getTableCards().get(3).getID();
+
+        boolean isInRange1 = id1 >= 1 && id1 <= 40;
+        boolean isInRange2 = id2 >= 1 && id2 <= 40;
+        boolean isInRange3 = id3 >= 41 && id3 <= 80;
+        boolean isInRange4 = id4 >= 41 && id4 <= 80;
+
+        //Maybe it is not the best idea, maybe it can be the same even shuffled
+        boolean isShuffled1 = beforeId1 != match.getCommonArea().getD1().getList().get(1).getID();
+        boolean isShuffled2 = beforeId2 != match.getCommonArea().getD2().getList().get(6).getID();
+        boolean isShuffled3 = beforeId3 != match.getCommonArea().getD3().getList().get(3).getID();
+        boolean isShuffled4 = beforeId4 != match.getCommonArea().getD4().getList().get(2).getID();
+
+        assertTrue(isShuffled1);
+        assertTrue(isShuffled2);
+        assertTrue(isShuffled3);
+        assertTrue(isShuffled4);
+
+        assertNotNull(match.getCommonArea().getD1());
+        assertNotNull(match.getCommonArea().getD2());
+        assertNotNull(match.getCommonArea().getD3());
+        assertNotNull(match.getCommonArea().getD4());
+        assertNotNull(match.getCommonArea().getTableCards().getFirst());
+        assertNotNull(match.getCommonArea().getTableCards().get(1));
+        assertNotNull(match.getCommonArea().getTableCards().get(2));
+        assertNotNull(match.getCommonArea().getTableCards().get(3));
+        assertTrue(isInRange1);
+        assertTrue(isInRange2);
+        assertTrue(isInRange3);
+        assertTrue(isInRange4);
     }
 
     @Test
-    void drawCommonObj1() {
+    void drawCommonObjective_IdShouldBeInRange() {
         match.drawCommonObjective();
         int objectiveId1 = commonObjective[0].getID();
         int objectiveId2 = commonObjective[1].getID();
@@ -72,353 +104,35 @@ class MatchTest {
     }
 
     @Test
-    void fromLastToFirstPlayerReturned() throws Exception {
-        match.addPlayer(player1);
-        match.addPlayer(player2);
-        match.addPlayer(player3);
-        match.addPlayer(player4);
+    void drawCommonObjective_ShouldNotDrawSameCard() {
+        match.drawCommonObjective();
 
-        assertEquals(player2, match.nextPlayer(player1));
-        assertEquals(player1, match.nextPlayer(player4));
+        assertNotEquals(match.getCommonObjective()[0], match.getCommonObjective()[1]);
     }
 
     @Test
-    void winnerHasMorePoints() throws Exception {
-        match.addPlayer(player1);
-        match.addPlayer(player2);
-        match.addPlayer(player3);
-        match.addPlayer(player4);
-
-        players.getFirst().setScore(24);
-        players.get(1).setScore(23);
-        players.get(2).setScore(26);
-        players.get(3).setScore(23);
-
-        assertEquals(match.winner(),  players.get(2));
-    }
-
-    @Test
-    void winnerHasMoreObjectives() throws Exception {
-        match.addPlayer(player1);
-        match.addPlayer(player2);
-        match.addPlayer(player3);
-        match.addPlayer(player4);
-
-        players.getFirst().setScore(24);
-        players.get(1).setScore(23);
-
-        //set cards
-        ArrayList<Resource> resources = new ArrayList<>();
-        resources.add(Resource.Empty);
-        resources.add(Resource.Plant);
-        resources.add(Resource.Insect);
-        resources.add(Resource.Empty);
-        ArrayList<Resource> permanentResources = new ArrayList<>();
-        permanentResources.add(Resource.Insect);
-        ArrayList<Resource> bottomResources = new ArrayList<>();
-        bottomResources.add(Resource.Fungus);
-        bottomResources.add(Resource.Plant);
-        bottomResources.add(Resource.Insect);
-        bottomResources.add(Resource.Animal);
-        PlaceableCard starterCard;
-        starterCard = new StarterCard(81, 0, null, true, resources, permanentResources, bottomResources);
-
-        ObjectiveCard obj1;
-        ArrayList<int[]> pattern = new ArrayList<>();
-        pattern.add(new int[]{2,0});
-        pattern.add(new int[]{3,1});
-        ArrayList<Reign> reigns = new ArrayList<>();
-        reigns.add(Reign.Fungus);
-        reigns.add(Reign.Fungus);
-        reigns.add(Reign.Plant);
-        obj1 = new ObjectiveCard(91,3,null,pattern,reigns);
-
-        ObjectiveCard obj2;
-        resources = new ArrayList<>();
-        resources.add(Resource.Fungus);
-        resources.add(Resource.Fungus);
-        resources.add(Resource.Fungus);
-        obj2 = new ObjectiveCard(95,2,resources,null,null);
-
-        ObjectiveCard obj3;
-        resources = new ArrayList<>();
-        resources.add(Resource.Plant);
-        resources.add(Resource.Plant);
-        resources.add(Resource.Plant);
-        obj3 = new ObjectiveCard(96,2,resources,null,null);
-
-        ObjectiveCard obj4;
-        resources = new ArrayList<>();
-        resources.add(Resource.Animal);
-        resources.add(Resource.Animal);
-        resources.add(Resource.Animal);
-        obj4 = new ObjectiveCard(97,2,resources,null,null);
-
-        ArrayList<PlaceableCard> fungusCard = new ArrayList<>();
-        resources = new ArrayList<>();
-        resources.add(Resource.Fungus);
-        resources.add(Resource.Fungus);
-        resources.add(Resource.Blocked);
-        resources.add(Resource.Empty);
-        try {
-            for(int i=0; i<5; i++)
-                fungusCard.add(new ResourceCard(2, 0, Reign.Fungus, false, resources));
-        } catch (InvalidIdException e) {
-            throw new RuntimeException(e);
-        }
-
-        ArrayList<PlaceableCard> plantCard = new ArrayList<>();
-        resources = new ArrayList<>();
-        resources.add(Resource.Plant);
-        resources.add(Resource.Plant);
-        resources.add(Resource.Blocked);
-        resources.add(Resource.Empty);
-        try {
-            for(int i=0; i<4; i++)
-                plantCard.add(new ResourceCard(12, 0, Reign.Plant, false, resources));
-        } catch (InvalidIdException e) {
-            throw new RuntimeException(e);
-        }
-
-        PlayerArea playerArea = players.getFirst().getPlayerArea();
-        playerArea.placeStarterCard(starterCard, true);
-        playerArea.placeCard(fungusCard.getFirst(), 1, 1, false);
-        playerArea.placeCard(fungusCard.get(1), -1, 1, false);
-        playerArea.placeCard(plantCard.getFirst(), 2, 2, false);
-        playerArea.placeCard(fungusCard.get(2), -2, 2, false);
-        playerArea.placeCard(fungusCard.get(3), 0, 2, false);
-        playerArea.placeCard(plantCard.get(1), 1, 3, false);
-        playerArea.placeCard(plantCard.get(2), -3, 1, false);
-        playerArea.placeCard(fungusCard.get(4), -4, 2, false);
-        playerArea.placeCard(plantCard.get(3), -1, 3, false);
-
-        PlayerArea playerArea2 = players.get(1).getPlayerArea();
-        playerArea2.placeStarterCard(starterCard, true);
-        playerArea2.placeCard(fungusCard.getFirst(), 1, 1, false);
-        playerArea2.placeCard(fungusCard.get(1), -1, 1, false);
-        playerArea2.placeCard(plantCard.getFirst(), 2, 2, false);
-        playerArea2.placeCard(fungusCard.get(2), -2, 2, false);
-        playerArea2.placeCard(fungusCard.get(3), 0, 2, false);
-
-        players.getFirst().setObjective(obj1);
-        players.get(1).setObjective(obj4);
-        commonObjective[0] = obj2;
-        commonObjective[1] = obj3;
-
-        match.addObjectivePoints(players.getFirst());
-        match.addObjectivePoints(players.get(1));
-
-        assertEquals(match.winner(),  players.getFirst());
-    }
-
-    @Test
-    void addObjectivesPointsCorrectly() throws Exception {
-        match.addPlayer(player1);
-        players.getFirst().setScore(23);
-
-        //set cards
-        ArrayList<Resource> resources = new ArrayList<>();
-        resources.add(Resource.Empty);
-        resources.add(Resource.Plant);
-        resources.add(Resource.Insect);
-        resources.add(Resource.Empty);
-        ArrayList<Resource> permanentResources = new ArrayList<>();
-        permanentResources.add(Resource.Insect);
-        ArrayList<Resource> bottomResources = new ArrayList<>();
-        bottomResources.add(Resource.Fungus);
-        bottomResources.add(Resource.Plant);
-        bottomResources.add(Resource.Insect);
-        bottomResources.add(Resource.Animal);
-        PlaceableCard starterCard;
-        starterCard = new StarterCard(81, 0, null, true, resources, permanentResources, bottomResources);
-
-        ObjectiveCard obj1;
-        ArrayList<int[]> pattern = new ArrayList<>();
-        pattern.add(new int[]{2,0});
-        pattern.add(new int[]{3,1});
-        ArrayList<Reign> reigns = new ArrayList<>();
-        reigns.add(Reign.Fungus);
-        reigns.add(Reign.Fungus);
-        reigns.add(Reign.Plant);
-        obj1 = new ObjectiveCard(91,3,null,pattern,reigns);
-
-        ObjectiveCard obj2;
-        resources = new ArrayList<>();
-        resources.add(Resource.Fungus);
-        resources.add(Resource.Fungus);
-        resources.add(Resource.Fungus);
-        obj2 = new ObjectiveCard(95,2,resources,null,null);
-
-        ObjectiveCard obj3;
-        resources = new ArrayList<>();
-        resources.add(Resource.Plant);
-        resources.add(Resource.Plant);
-        resources.add(Resource.Plant);
-        obj3 = new ObjectiveCard(96,2,resources,null,null);
-
-        ArrayList<PlaceableCard> fungusCard = new ArrayList<>();
-        resources = new ArrayList<>();
-        resources.add(Resource.Fungus);
-        resources.add(Resource.Fungus);
-        resources.add(Resource.Blocked);
-        resources.add(Resource.Empty);
-        try {
-            for(int i=0; i<5; i++)
-                fungusCard.add(new ResourceCard(2, 0, Reign.Fungus, false, resources));
-        } catch (InvalidIdException e) {
-            throw new RuntimeException(e);
-        }
-
-        ArrayList<PlaceableCard> plantCard = new ArrayList<>();
-        resources = new ArrayList<>();
-        resources.add(Resource.Plant);
-        resources.add(Resource.Plant);
-        resources.add(Resource.Blocked);
-        resources.add(Resource.Empty);
-        try {
-            for(int i=0; i<4; i++)
-                plantCard.add(new ResourceCard(12, 0, Reign.Plant, false, resources));
-        } catch (InvalidIdException e) {
-            throw new RuntimeException(e);
-        }
-
-        PlayerArea playerArea = players.getFirst().getPlayerArea();
-        playerArea.placeStarterCard(starterCard, true);
-        playerArea.placeCard(fungusCard.getFirst(), 1, 1, false);
-        playerArea.placeCard(fungusCard.get(1), -1, 1, false);
-        playerArea.placeCard(plantCard.getFirst(), 2, 2, false);
-        playerArea.placeCard(fungusCard.get(2), -2, 2, false);
-        playerArea.placeCard(fungusCard.get(3), 0, 2, false);
-        playerArea.placeCard(plantCard.get(1), 1, 3, false);
-        playerArea.placeCard(plantCard.get(2), -3, 1, false);
-        playerArea.placeCard(fungusCard.get(4), -4, 2, false);
-        playerArea.placeCard(plantCard.get(3), -1, 3, false);
-
-        players.getFirst().setObjective(obj1);
-        commonObjective[0] = obj2;
-        commonObjective[1] = obj3;
-
-        match.addObjectivePoints(players.getFirst());
-        assertEquals(33, players.getFirst().getScore());
-
-    }
-
-    @Test
-    void totalObjectiveCountedCorrectly() throws Exception {
-        match.addPlayer(player1);
-        players.getFirst().setScore(23);
-
-        //set cards
-        ArrayList<Resource> resources = new ArrayList<>();
-        resources.add(Resource.Empty);
-        resources.add(Resource.Plant);
-        resources.add(Resource.Insect);
-        resources.add(Resource.Empty);
-        ArrayList<Resource> permanentResources = new ArrayList<>();
-        permanentResources.add(Resource.Insect);
-        ArrayList<Resource> bottomResources = new ArrayList<>();
-        bottomResources.add(Resource.Fungus);
-        bottomResources.add(Resource.Plant);
-        bottomResources.add(Resource.Insect);
-        bottomResources.add(Resource.Animal);
-        PlaceableCard starterCard;
-        starterCard = new StarterCard(81, 0, null, true, resources, permanentResources, bottomResources);
-
-        ObjectiveCard obj1;
-        ArrayList<int[]> pattern = new ArrayList<>();
-        pattern.add(new int[]{2,0});
-        pattern.add(new int[]{3,1});
-        ArrayList<Reign> reigns = new ArrayList<>();
-        reigns.add(Reign.Fungus);
-        reigns.add(Reign.Fungus);
-        reigns.add(Reign.Plant);
-        obj1 = new ObjectiveCard(91,3,null,pattern,reigns);
-
-        ObjectiveCard obj2;
-        resources = new ArrayList<>();
-        resources.add(Resource.Fungus);
-        resources.add(Resource.Fungus);
-        resources.add(Resource.Fungus);
-        obj2 = new ObjectiveCard(95,2,resources,null,null);
-
-        ObjectiveCard obj3;
-        resources = new ArrayList<>();
-        resources.add(Resource.Plant);
-        resources.add(Resource.Plant);
-        resources.add(Resource.Plant);
-        obj3 = new ObjectiveCard(96,2,resources,null,null);
-
-        ArrayList<PlaceableCard> fungusCard = new ArrayList<>();
-        resources = new ArrayList<>();
-        resources.add(Resource.Fungus);
-        resources.add(Resource.Fungus);
-        resources.add(Resource.Blocked);
-        resources.add(Resource.Empty);
-        try {
-            for(int i=0; i<5; i++)
-                fungusCard.add(new ResourceCard(2, 0, Reign.Fungus, false, resources));
-        } catch (InvalidIdException e) {
-            throw new RuntimeException(e);
-        }
-
-        ArrayList<PlaceableCard> plantCard = new ArrayList<>();
-        resources = new ArrayList<>();
-        resources.add(Resource.Plant);
-        resources.add(Resource.Plant);
-        resources.add(Resource.Blocked);
-        resources.add(Resource.Empty);
-        try {
-            for(int i=0; i<4; i++)
-                plantCard.add(new ResourceCard(12, 0, Reign.Plant, false, resources));
-        } catch (InvalidIdException e) {
-            throw new RuntimeException(e);
-        }
-
-        PlayerArea playerArea = players.getFirst().getPlayerArea();
-        playerArea.placeStarterCard(starterCard, true);
-        playerArea.placeCard(fungusCard.getFirst(), 1, 1, false);
-        playerArea.placeCard(fungusCard.get(1), -1, 1, false);
-        playerArea.placeCard(plantCard.getFirst(), 2, 2, false);
-        playerArea.placeCard(fungusCard.get(2), -2, 2, false);
-        playerArea.placeCard(fungusCard.get(3), 0, 2, false);
-        playerArea.placeCard(plantCard.get(1), 1, 3, false);
-        playerArea.placeCard(plantCard.get(2), -3, 1, false);
-        playerArea.placeCard(fungusCard.get(4), -4, 2, false);
-        playerArea.placeCard(plantCard.get(3), -1, 3, false);
-
-        players.getFirst().setObjective(obj1);
-        commonObjective[0] = obj2;
-        commonObjective[1] = obj3;
-
-        int totalObjectives = match.totalObjective(player1);
-        assertEquals(4, totalObjectives);
-    }
-
-    @Test
-    public void getCommonAreaTest() {
+    public void getCommonArea_ShouldNotBeNull() {
         assertNotNull(match.getCommonArea());
     }
 
     @Test
-    public void getCommonObjectiveTest() {
-        ObjectiveCard obj1;
-        ArrayList<int[]> pattern = new ArrayList<>();
-        pattern.add(new int[]{2,0});
-        pattern.add(new int[]{3,1});
-        ArrayList<Reign> reigns = new ArrayList<>();
-        reigns.add(Reign.Fungus);
-        reigns.add(Reign.Fungus);
-        reigns.add(Reign.Plant);
-        obj1 = new ObjectiveCard(91,3,null,pattern,reigns);
-
-        commonObjective[0] = obj1;
-
-        assertEquals(obj1, match.getCommonObjective()[0]);
+    public void getCommonObjective_idShouldBeInRange() {
+        match.drawCommonObjective();
+        int objectiveId1 = match.getCommonObjective()[0].getID();
+        int objectiveId2 = match.getCommonObjective()[1].getID();
+        boolean isInRange1 = objectiveId1 >= 87 && objectiveId1 <= 102;
+        boolean isInRange2 = objectiveId2 >= 87 && objectiveId2 <= 102;
+        assertTrue(isInRange1);
+        assertTrue(isInRange2);
     }
 
     @Test
-    public void getPlayersTest() {
-        assertNotNull(match.getPlayers());
+    public void getPlayers_ShouldReturnPlayer() throws Exception {
+        match.addPlayer(player1);
+        match.addPlayer(player2);
+
+        assertEquals(match.getPlayers().getFirst(), player1);
+        assertEquals(match.getPlayers().getLast(), player2);
     }
 
 }

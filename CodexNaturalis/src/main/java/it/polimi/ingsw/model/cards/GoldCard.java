@@ -29,6 +29,18 @@ public class GoldCard extends PlaceableCard implements Serializable {
         }
     }
 
+    /**
+     * Constructor used to load the cards from JSON
+     *
+     * @param ID, it must be >=41  and =<80
+     * @param front, true if the card is front, false if the card is back
+     * @param requirement, the requirements to place the card
+     * @param points, the points of the card
+     * @param reign, the reign of the card
+     * @param cells, the cells of the card
+     * @param resources, the resources of the card
+     * @throws InvalidIdException if the condition on ID is not met
+     */
     @JsonCreator
     public GoldCard(@JsonProperty("ID") int ID,
                     @JsonProperty("front") boolean front,
@@ -40,9 +52,19 @@ public class GoldCard extends PlaceableCard implements Serializable {
         super(ID, front, requirement, points, reign, cells, resources);
     }
 
+    /**
+     * Constructor
+     *
+     * @param ID, it must be >=41  and =<80
+     * @param points, the points of the card
+     * @param reign, the reign of the card
+     * @param front, true if the card is front, false if the card is back
+     * @param resources, the resources of the card
+     * @param requirements, the requirements to place the card
+     * @throws InvalidIdException if the condition on ID is not met
+     */
     public GoldCard(int ID, int points, Reign reign, boolean front, ArrayList<Resource> resources, ArrayList<Resource> requirements) throws InvalidIdException {
         super(ID,points,reign,front,resources, requirements);
     }
-
 
 }

@@ -73,19 +73,21 @@ public class PlayerArea implements Serializable {
     }
 
     /**
-     * Returns a list of all existing cells
-     * @return List of all cell
-     */
-    private ArrayList<Cell> cellList() {
-        return new ArrayList<>(CellMatrix.values());
-    }
-
-    /**
      * Increase of 1 the stored counter of the given resource
      * @param resource Resource to increase
      */
     private void addPermanentResource(Resource resource) {
-        int selector = switch (resource) {
+        int selector = resourceSelector(resource);
+        this.permanentResource.set(selector, this.permanentResource.get(selector) + 1);
+    }
+
+    /**
+     * Selects the resource
+     * @param resource Resource to be selected
+     * @return int that represents the resource
+     */
+    private int resourceSelector(Resource resource) {
+        return switch (resource) {
             case Resource.Fungus -> 0;
             case Resource.Insect -> 1;
             case Resource.Animal -> 2;
@@ -96,7 +98,6 @@ public class PlayerArea implements Serializable {
             case Resource.Empty -> 7;
             case Resource.Blocked -> 8;
         };
-        this.permanentResource.set(selector, this.permanentResource.get(selector) + 1);
     }
 
     /**
@@ -126,17 +127,7 @@ public class PlayerArea implements Serializable {
     private void addResourceToList(ArrayList<Integer> list, Resource resource)
     {
 
-        int selector = switch (resource) {
-            case Resource.Fungus -> 0;
-            case Resource.Insect -> 1;
-            case Resource.Animal -> 2;
-            case Resource.Plant -> 3;
-            case Resource.Manuscript -> 4;
-            case Resource.Quill -> 5;
-            case Resource.Inkwell -> 6;
-            case Resource.Empty -> 7;
-            case Resource.Blocked -> 8;
-        };
+        int selector = resourceSelector(resource);
         list.set(selector, list.get(selector) + 1);
     }
 
@@ -542,9 +533,4 @@ public class PlayerArea implements Serializable {
         return this.checkPattern(card) / card.getPoints();
     }
 
-
 }
-
-
-
-

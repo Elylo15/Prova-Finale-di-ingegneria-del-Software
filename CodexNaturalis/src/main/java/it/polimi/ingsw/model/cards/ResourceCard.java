@@ -28,6 +28,18 @@ public class ResourceCard extends PlaceableCard implements Serializable {
         }
     }
 
+    /**
+     * Constructor used to import from JSON
+     *
+     * @param ID, it must be >=1  and =<40
+     * @param front, true if the card is front, false if the card is back
+     * @param requirement, resources required to place the card
+     * @param points, points given by the card
+     * @param reign, reign of the card
+     * @param cells, cells of the card
+     * @param resources, resources given by the card
+     * @throws InvalidIdException if the condition on ID is not met
+     */
     @JsonCreator
     public ResourceCard(@JsonProperty("ID") int ID,
                         @JsonProperty("front") boolean front,
@@ -39,11 +51,19 @@ public class ResourceCard extends PlaceableCard implements Serializable {
         super(ID, front, requirement, points, reign, cells, resources);
     }
 
-
+    /**
+     * Constructor
+     *
+     * @param ID, it must be >=1  and =<40
+     * @param points points given by the card
+     * @param reign reign of the card
+     * @param front true if the card is front, false if the card is back
+     * @param resources resources given by the card
+     * @throws InvalidIdException if the condition on ID is not met
+     */
     public ResourceCard(int ID, int points, Reign reign, boolean front, ArrayList<Resource> resources) throws InvalidIdException {
         super(ID,points,reign,front,resources, null);
     }
-
 
     /**
      * check if the requirement to place the card is met, it always returns true as resource cards have no requirement
@@ -54,8 +74,5 @@ public class ResourceCard extends PlaceableCard implements Serializable {
     public boolean checkRequirement(ArrayList<Integer> req) {
         return true;
     }
-
-
-
 
 }

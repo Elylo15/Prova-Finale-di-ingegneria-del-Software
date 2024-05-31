@@ -45,4 +45,5 @@ public abstract class Card implements Serializable {
     public void setFront(boolean front) {
         this.front = front;
     }
+
 }

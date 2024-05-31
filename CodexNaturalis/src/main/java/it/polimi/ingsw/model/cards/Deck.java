@@ -10,6 +10,7 @@ import java.util.Collections;
  */
 public class Deck<E extends Card> implements Serializable {
     private final ArrayList<E> list;
+
     /**
      * Class constructor
      */
@@ -24,12 +25,14 @@ public class Deck<E extends Card> implements Serializable {
     public void addCard(E c){
         list.add(c);
     }
+
     /**
      * method shuffle: shuffle the deck cards
      */
     public void shuffle(){
         Collections.shuffle(list);
     }
+
     /**
      * method removeCard:  remove the top card from deck and return it
      * @return E: returns the removed card which is a subtype of card
@@ -40,6 +43,7 @@ public class Deck<E extends Card> implements Serializable {
         else
             return list.removeFirst();
     }
+
     /**
      * method getCardNumber: return the number of cards in the decks
      * @return int: number of cards in the decks
@@ -69,4 +73,5 @@ public class Deck<E extends Card> implements Serializable {
 
         return (ArrayList<E>) list.clone();
     }
+
 }
