@@ -41,7 +41,7 @@ class CellTest {
         } catch (InvalidIdException e) {
             throw new RuntimeException(e);
         }
-        cell = new Cell(1,2,card1);
+        cell = new Cell(1, 2, card1);
         ArrayList<Cell> cells = new ArrayList<>();
         cells.add(cell);
         cells.add(null);
@@ -59,8 +59,8 @@ class CellTest {
     @Test
     void linkCard() {
         cell.linkCard(card2);
-        Assertions.assertEquals(cell.getTopCard(),card2);
-        Assertions.assertEquals(cell.getBottomCard(),card1);
+        Assertions.assertEquals(cell.getTopCard(), card2);
+        Assertions.assertEquals(cell.getBottomCard(), card1);
     }
 
     @Test

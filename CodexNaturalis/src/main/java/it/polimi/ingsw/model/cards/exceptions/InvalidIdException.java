@@ -9,5 +9,8 @@ public class InvalidIdException extends Exception implements Serializable {
     public InvalidIdException(String message) {
         super(message);
     }
-    public InvalidIdException(){super();}
+
+    public InvalidIdException() {
+        super();
+    }
 }

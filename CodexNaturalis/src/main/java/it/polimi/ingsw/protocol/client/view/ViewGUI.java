@@ -1,8 +1,7 @@
 package it.polimi.ingsw.protocol.client.view;
 
 import it.polimi.ingsw.model.cards.ObjectiveCard;
-
-import it.polimi.ingsw.protocol.client.view.GUI.controller.*;
+import it.polimi.ingsw.protocol.client.view.GUI.controller.SceneManager;
 import it.polimi.ingsw.protocol.client.view.GUI.message.GUIMessages;
 import it.polimi.ingsw.protocol.messages.ConnectionState.availableColorsMessage;
 import it.polimi.ingsw.protocol.messages.ConnectionState.connectionResponseMessage;
@@ -10,12 +9,12 @@ import it.polimi.ingsw.protocol.messages.ConnectionState.unavailableNamesMessage
 import it.polimi.ingsw.protocol.messages.EndGameState.declareWinnerMessage;
 import it.polimi.ingsw.protocol.messages.PlayerTurnState.updatePlayerMessage;
 import it.polimi.ingsw.protocol.messages.ServerOptionState.serverOptionMessage;
-import it.polimi.ingsw.protocol.messages.ServerOptionState.serverOptionResponseMessage;
 import it.polimi.ingsw.protocol.messages.currentStateMessage;
 import it.polimi.ingsw.protocol.messages.responseMessage;
 import javafx.application.Platform;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Objects;
 
 public class ViewGUI extends View {
 
@@ -75,20 +74,13 @@ public class ViewGUI extends View {
     }
 
     @Override
-    public void answerToOption(serverOptionResponseMessage message) {
-        //to avoid reading unexpected messages
-        GUIMessages.clearQueue();
-        //da vedere poi
-    }
-
-    @Override
     public void playerDisconnected() {
         //to avoid reading unexpected messages
         GUIMessages.clearQueue();
         Platform.runLater(SceneManager::Disconnect);
         try {
             Thread.sleep(2000);
-        }catch (InterruptedException e){
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
@@ -188,6 +180,7 @@ public class ViewGUI extends View {
 
     /**
      * Method {@code updatePlayer} Visualize the current state of the game
+     *
      * @param message: currentStateMessage
      */
     @Override
@@ -216,6 +209,7 @@ public class ViewGUI extends View {
 
     /**
      * Method {@code chooseObjective}: Allows the player to choose an objective card
+     *
      * @param objectives: the list of objective cards
      * @return the index of the chosen objective card
      */
@@ -229,6 +223,7 @@ public class ViewGUI extends View {
 
     /**
      * Method {@code placeCard}: Allows the player to place a card
+     *
      * @return the index of the chosen card, and coordinates of the chosen cell
      */
     @Override
@@ -240,6 +235,7 @@ public class ViewGUI extends View {
 
     /**
      * Method {@code pickCard}: Allows the player to pick a card to draw
+     *
      * @return the index of the chosen card
      */
     @Override
@@ -251,6 +247,7 @@ public class ViewGUI extends View {
 
     /**
      * Method {@code update}: Updates the parameters of the player that concluded his turn
+     *
      * @param update: updatePlayerMessage
      */
     @Override

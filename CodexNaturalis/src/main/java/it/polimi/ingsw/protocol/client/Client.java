@@ -8,6 +8,8 @@ import it.polimi.ingsw.protocol.client.view.View;
 import it.polimi.ingsw.protocol.messages.ConnectionState.availableColorsMessage;
 import it.polimi.ingsw.protocol.messages.ConnectionState.connectionResponseMessage;
 import it.polimi.ingsw.protocol.messages.ConnectionState.unavailableNamesMessage;
+import it.polimi.ingsw.protocol.messages.EndGameState.declareWinnerMessage;
+import it.polimi.ingsw.protocol.messages.PlayerTurnState.updatePlayerMessage;
 import it.polimi.ingsw.protocol.messages.ServerOptionState.serverOptionMessage;
 import it.polimi.ingsw.protocol.messages.WaitingforPlayerState.newHostMessage;
 import it.polimi.ingsw.protocol.messages.currentStateMessage;
@@ -19,38 +21,56 @@ import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicIntegerArray;
+import java.util.concurrent.Callable;
 
-public abstract  class Client {
-    private String serverIP;
-    private String serverPort;
-    private Controller controller;
+public abstract class Client {
     private final View view;
-    private ThreadPoolExecutor executor;
+    private final ThreadPoolExecutor executor;
+    private String serverIP;
+    private Controller controller;
+    private final Integer defaultValue = 1000;
 
-
-    public Client(View view){
+    /**
+     * method {@code Client}: Constructor for the Client class
+     *
+     * @param view view of the client
+     */
+    public Client(View view) {
         this.view = view;
         int corePoolSize = 5;
         int maximumPoolSize = 200;
         long keepAliveTime = 300;
         TimeUnit unit = TimeUnit.SECONDS;
-        executor = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, unit, new LinkedBlockingQueue<Runnable>());
+        executor = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, unit, new LinkedBlockingQueue<>());
 
     }
+
+    /**
+     * method {@code getServerIP}:Getter for the serverIP
+     *
+     * @return the serverIP
+     */
     public String getServerIP() {
         return serverIP;
     }
 
-    public String serverPort() {
-        return serverPort;
-    }
-
+    /**
+     * method {@code getController}: Getter for the controller
+     *
+     * @return the controller
+     */
     public Controller getController() {
         return controller;
     }
 
-    public View getView(){
+    /**
+     * method {@code getView}: Getter for the view
+     *
+     * @return the view
+     */
+    public View getView() {
         return view;
     }
 
@@ -82,6 +102,7 @@ public abstract  class Client {
             }
         }
     }
+
     public abstract void run();
 
     /**
@@ -145,22 +166,14 @@ public abstract  class Client {
      */
     public void waitingPlayer(currentStateMessage current) {
         Integer expected;
-        boolean noResponse = false;
+        AtomicBoolean noResponse = new AtomicBoolean(false);
 
         newHostMessage newHost = controller.newHost();
 
         while (Objects.equals(newHost.getNewHostNickname(), current.getPlayer().getNickname())) {
-            Future<Integer> future = executor.submit(view::expectedPlayers);
+            expected = getFutureResult(view::expectedPlayers, noResponse);
 
-            try {
-                expected = future.get(120, TimeUnit.SECONDS);
-            } catch (Exception e) {
-                future.cancel(true);
-                expected = 1000;
-                noResponse = true;
-            }
-
-            controller.expectedPlayers(expected, noResponse);
+            controller.expectedPlayers(expected, noResponse.get());
             responseMessage answer = controller.correctAnswer();
             view.answer(answer);
             if (answer.getCorrect())
@@ -168,7 +181,6 @@ public abstract  class Client {
         }
 
     }
-
 
     /**
      * method {@code starter}: invocations of controller methods to receive and send messages.
@@ -178,20 +190,12 @@ public abstract  class Client {
      */
     public void starter() {
         Integer side;
-        boolean noResponse = false;
+        AtomicBoolean noResponse = new AtomicBoolean(false);
 
         while (true) {
-            Future<Integer> future = executor.submit(view::placeStarter);
+            side = getFutureResult(view::placeStarter, noResponse);
 
-            try {
-                side = future.get(120, TimeUnit.SECONDS);
-            } catch (Exception e) {
-                future.cancel(true);
-                side = 1000;
-                noResponse = true;
-            }
-
-            controller.placeStarter(side, noResponse);
+            controller.placeStarter(side, noResponse.get());
             responseMessage answer = controller.correctAnswer();
 
             view.answer(answer);
@@ -221,7 +225,7 @@ public abstract  class Client {
                 pick = future.get(120, TimeUnit.SECONDS);
             } catch (Exception e) {
                 future.cancel(true);
-                pick = 1000;
+                pick = defaultValue;
                 noResponse = true;
             }
 
@@ -243,24 +247,36 @@ public abstract  class Client {
      */
     public void pickCard() {
         Integer card;
-        boolean noResponse = false;
+        AtomicBoolean noResponse = new AtomicBoolean(false);
 
         while (true) {
-            Future<Integer> future = executor.submit(view::pickCard);
+            card = getFutureResult(view::pickCard, noResponse);
 
-            try {
-                card = future.get(120, TimeUnit.SECONDS);
-            } catch (Exception e) {
-                future.cancel(true);
-                card = 1000;
-                noResponse = true;
-            }
 
-            controller.pickCard(card, noResponse);
+            controller.pickCard(card, noResponse.get());
             responseMessage answer = controller.correctAnswer();
             view.answer(answer);
             if (answer.getCorrect())
                 break;
+        }
+    }
+
+    /**
+     * method {@code getFutureResult}: gets the result of a future task.
+     *
+     * @param task: Callable<T>
+     * @param noResponse: AtomicBoolean
+     * @return the result of the future task or the default value
+     */
+    private <T> T getFutureResult(Callable<T> task, AtomicBoolean noResponse) {
+        Future<T> future = executor.submit(task);
+
+        try {
+            return future.get(120, TimeUnit.SECONDS);
+        } catch (Exception e) {
+            future.cancel(true);
+            noResponse.set(true); // Update the noResponse flag
+            return (T) defaultValue;
         }
     }
 
@@ -285,10 +301,10 @@ public abstract  class Client {
                 card.set(3, cardArray[3]);
             } catch (Exception e) {
                 future.cancel(true);
-                card.set(0, 1000);
-                card.set(1, 1000);
-                card.set(2, 1000);
-                card.set(3, 1000);
+                card.set(0, defaultValue);
+                card.set(1, defaultValue);
+                card.set(2, defaultValue);
+                card.set(3, defaultValue);
                 noResponse = true;
             }
 
@@ -348,7 +364,7 @@ public abstract  class Client {
                 name = future.get(120, TimeUnit.SECONDS);
             } catch (Exception e) {
                 future.cancel(true);
-                name = "1000";
+                name = "defaultName";
             }
 
             controller.chooseName(name);
@@ -356,6 +372,100 @@ public abstract  class Client {
             view.answer(answer);
             if (answer.getCorrect())
                 break;
+        }
+    }
+
+    /**
+     * method {@code whileRun}: main loop of the client
+     */
+    public void whileRun() {
+        while (true) {
+            try {
+                String server = getView().askIP();
+                setIP(server);
+
+                boolean isSocket = getView().askSocket();
+                setController(server, isSocket);
+                connection(isSocket);
+            } catch (Exception e) {
+                System.out.println("\033[31mConnection failed.\033[0m");
+                continue;
+            }
+
+            try {
+                while (true) {
+
+                    currentStateMessage current = getController().getCurrent();
+                    String state = current.getStateName();
+
+                    switch (state) {
+                        case "ServerOptionState": {
+                            serverOptions();
+                            break;
+                        }
+                        case "ConnectionState": {
+                            name();
+                            color();
+                            break;
+                        }
+                        case "WaitingForPlayerState": {
+                            waitingPlayer(current);
+                            break;
+                        }
+                        case "StarterCardState": {
+                            getView().updatePlayer(current);
+                            if (Objects.equals(current.getCurrentPlayer().getNickname(), current.getPlayer().getNickname()))
+                                starter();
+                            updatePlayerMessage update = getController().updatePlayer();
+                            getView().update(update);
+                            break;
+                        }
+                        case "ObjectiveState": {
+
+                            getView().updatePlayer(current);
+                            if (Objects.equals(current.getCurrentPlayer().getNickname(), current.getPlayer().getNickname()))
+                                pickObjective();
+                            updatePlayerMessage update = getController().updatePlayer();
+                            getView().update(update);
+                            break;
+                        }
+                        case "PlaceTurnState": {
+                            getView().updatePlayer(current);
+                            if (Objects.equals(current.getCurrentPlayer().getNickname(), current.getPlayer().getNickname()))
+                                placeCard();
+                            updatePlayerMessage update = getController().updatePlayer();
+                            getView().update(update);
+                            break;
+                        }
+                        case "PickTurnState": {
+                            getView().updatePlayer(current);
+                            if (Objects.equals(current.getCurrentPlayer().getNickname(), current.getPlayer().getNickname()))
+                                pickCard();
+                            updatePlayerMessage update = getController().updatePlayer();
+                            getView().update(update);
+                            break;
+                        }
+                        case "EndGameState": {
+                            declareWinnerMessage end = getController().endGame();
+                            getView().endGame(end);
+                            throw new Exception("Game ended.");
+                        }
+
+                        case "ConnectionFAState": {
+                            pickNameFA();
+                            break;
+                        }
+
+                        case "AnswerCheckConnection": {
+                            getController().sendAnswerToPing();
+                            break;
+                        }
+
+                    }
+                }
+            } catch (Exception e) {
+                getView().playerDisconnected();
+            }
         }
     }
 

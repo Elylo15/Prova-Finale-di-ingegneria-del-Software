@@ -1,7 +1,7 @@
 package it.polimi.ingsw.model.cards;
 
-import it.polimi.ingsw.model.cards.enumeration.Resource;
 import it.polimi.ingsw.model.cards.enumeration.Reign;
+import it.polimi.ingsw.model.cards.enumeration.Resource;
 import it.polimi.ingsw.model.cards.exceptions.InvalidIdException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

@@ -1,5 +1,7 @@
 package it.polimi.ingsw.model;
-import it.polimi.ingsw.model.cards.*;
+
+import it.polimi.ingsw.model.cards.LoadDecks;
+import it.polimi.ingsw.model.cards.ObjectiveCard;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -21,6 +23,7 @@ public class Match implements Serializable {
 
     /**
      * method {@code addPlayer}: adds a new player. Can't add more than 4 players.
+     *
      * @param player: player to be added.
      * @throws Exception if players are more than 4.
      */
@@ -60,21 +63,21 @@ public class Match implements Serializable {
     /**
      * @return commonArea.
      */
-    public CommonArea getCommonArea(){
+    public CommonArea getCommonArea() {
         return commonArea;
     }
 
     /**
      * @return commonObjective.
      */
-    public ObjectiveCard[] getCommonObjective(){
+    public ObjectiveCard[] getCommonObjective() {
         return commonObjective;
     }
 
     /**
      * @return player.
      */
-    public ArrayList<Player> getPlayers(){
+    public ArrayList<Player> getPlayers() {
         return players;
     }
 

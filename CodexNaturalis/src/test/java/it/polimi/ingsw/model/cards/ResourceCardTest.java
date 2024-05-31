@@ -18,7 +18,7 @@ class ResourceCardTest {
     private int points;
 
     @Test
-    void checkIsEqual() throws InvalidIdException{
+    void checkIsEqual() throws InvalidIdException {
         reign = Reign.Fungus;
         points = 0;
         int id = 1;
@@ -31,29 +31,29 @@ class ResourceCardTest {
         test.add(Resource.Empty);
         test.add(Resource.Fungus);
         test.add(Resource.Blocked);
-        ResourceCard resourceCard = new ResourceCard(id,points,reign,true,resources);
-        ResourceCard testCard = new ResourceCard(1,0,Reign.Fungus,true,test);
+        ResourceCard resourceCard = new ResourceCard(id, points, reign, true, resources);
+        ResourceCard testCard = new ResourceCard(1, 0, Reign.Fungus, true, test);
         assertEquals(resourceCard, testCard);
     }
 
     @Test
-    void checkGetPoints_true() throws InvalidIdException{
+    void checkGetPoints_true() throws InvalidIdException {
         int test = 1;
         points = 1;
-        ResourceCard resourceCard = new ResourceCard(40,points,reign,true,resources);
+        ResourceCard resourceCard = new ResourceCard(40, points, reign, true, resources);
         Assertions.assertEquals(test, resourceCard.getPoints());
     }
 
     @Test
-    void checkGetPoints_false() throws InvalidIdException{
+    void checkGetPoints_false() throws InvalidIdException {
         int test = 0;
         points = 1;
-        ResourceCard resourceCard = new ResourceCard(40,points,reign,true,resources);
+        ResourceCard resourceCard = new ResourceCard(40, points, reign, true, resources);
         Assertions.assertNotEquals(test, resourceCard.getPoints());
     }
 
     @Test
-    void checkGetResourceFRONT_true() throws InvalidIdException{
+    void checkGetResourceFRONT_true() throws InvalidIdException {
         ArrayList<Resource> test = new ArrayList<>();
         test.add(Resource.Fungus);
         test.add(Resource.Empty);
@@ -63,13 +63,13 @@ class ResourceCardTest {
         resources.add(Resource.Empty);
         resources.add(Resource.Fungus);
         resources.add(Resource.Blocked);
-        ResourceCard resourceCard = new ResourceCard(1,0,reign,true,resources);
+        ResourceCard resourceCard = new ResourceCard(1, 0, reign, true, resources);
         Assertions.assertEquals(test, resourceCard.getResource());
 
     }
 
     @Test
-    void checkGetResourceFRONT_false() throws InvalidIdException{
+    void checkGetResourceFRONT_false() throws InvalidIdException {
         ArrayList<Resource> test = new ArrayList<>();
         test.add(Resource.Animal);
         test.add(Resource.Empty);
@@ -79,13 +79,13 @@ class ResourceCardTest {
         resources.add(Resource.Empty);
         resources.add(Resource.Fungus);
         resources.add(Resource.Blocked);
-        ResourceCard resourceCard = new ResourceCard(1,0,reign,true,resources);
+        ResourceCard resourceCard = new ResourceCard(1, 0, reign, true, resources);
         Assertions.assertNotEquals(test, resourceCard.getResource());
 
     }
 
     @Test
-    void checkGetResourceBACK_true() throws InvalidIdException{
+    void checkGetResourceBACK_true() throws InvalidIdException {
         ArrayList<Resource> test = new ArrayList<>();
         test.add(Resource.Empty);
         test.add(Resource.Empty);
@@ -98,7 +98,7 @@ class ResourceCardTest {
     }
 
     @Test
-    void checkGetResourceBACK_false() throws InvalidIdException{
+    void checkGetResourceBACK_false() throws InvalidIdException {
         ArrayList<Resource> test = new ArrayList<>();
         test.add(Resource.Plant);
         test.add(Resource.Insect);
@@ -111,7 +111,7 @@ class ResourceCardTest {
     }
 
     @Test
-    void checkGetPermanentResourceFungus() throws InvalidIdException{
+    void checkGetPermanentResourceFungus() throws InvalidIdException {
         reign = Reign.Fungus;
         ArrayList<Resource> test = new ArrayList<>();
         test.add(Resource.Fungus);
@@ -122,7 +122,7 @@ class ResourceCardTest {
     }
 
     @Test
-    void checkGetPermanentResourcePlant() throws InvalidIdException{
+    void checkGetPermanentResourcePlant() throws InvalidIdException {
         reign = Reign.Plant;
         ArrayList<Resource> test = new ArrayList<>();
         test.add(Resource.Plant);
@@ -133,7 +133,7 @@ class ResourceCardTest {
     }
 
     @Test
-    void checkGetPermanentResourceAnimal() throws InvalidIdException{
+    void checkGetPermanentResourceAnimal() throws InvalidIdException {
         reign = Reign.Animal;
         ArrayList<Resource> test = new ArrayList<>();
         test.add(Resource.Animal);
@@ -144,7 +144,7 @@ class ResourceCardTest {
     }
 
     @Test
-    void checkGetPermanentResourceInsect() throws InvalidIdException{
+    void checkGetPermanentResourceInsect() throws InvalidIdException {
         reign = Reign.Insect;
         ArrayList<Resource> test = new ArrayList<>();
         test.add(Resource.Insect);
@@ -155,7 +155,7 @@ class ResourceCardTest {
     }
 
     @Test
-    void checkGetRequirement() throws InvalidIdException{
+    void checkGetRequirement() throws InvalidIdException {
         for (int i = 1; i < 41; i++) {
             ResourceCard resourceCard = new ResourceCard(i, points, reign, true, resources);
             Assertions.assertNull(resourceCard.getRequirement());
@@ -163,8 +163,8 @@ class ResourceCardTest {
     }
 
     @Test
-    void checkRequirement_true() throws InvalidIdException{
-        for(int i=1; i<41;i++){
+    void checkRequirement_true() throws InvalidIdException {
+        for (int i = 1; i < 41; i++) {
             ArrayList<Integer> requirementTest = new ArrayList<>();
             requirementTest.add(2);
             requirementTest.add(1);
@@ -176,8 +176,8 @@ class ResourceCardTest {
     }
 
     @Test
-    void checkRequirement_false() throws InvalidIdException{
-        for(int i=1; i<41;i++){
+    void checkRequirement_false() throws InvalidIdException {
+        for (int i = 1; i < 41; i++) {
             ArrayList<Integer> requirementTest = new ArrayList<>();
             requirementTest.add(3);
             requirementTest.add(1);

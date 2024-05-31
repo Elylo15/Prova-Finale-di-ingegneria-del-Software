@@ -5,14 +5,18 @@ import it.polimi.ingsw.protocol.messages.Message;
 
 import java.io.Serializable;
 
+/**
+ * Message used to update the player's information
+ */
 public class updatePlayerMessage implements Message, Serializable {
     private final Player player;
-    private String nicknameViewer;
+    private final String nicknameViewer;
 
 
     /**
      * Constructor for the updatePlayerMessage class, which is used to update the player's information.
-     * @param player The player whose information is to be updated.
+     *
+     * @param player         The player whose information is to be updated.
      * @param nicknameViewer The nickname of the player who is viewing the updated information.
      */
     public updatePlayerMessage(Player player, String nicknameViewer) {
@@ -23,6 +27,7 @@ public class updatePlayerMessage implements Message, Serializable {
 
     /**
      * Getter for the player attribute.
+     *
      * @return The player whose information is to be updated.
      */
     public Player getPlayer() {
@@ -31,6 +36,7 @@ public class updatePlayerMessage implements Message, Serializable {
 
     /**
      * Getter for the nicknameViewer attribute.
+     *
      * @return The nickname of the player who is viewing the updated information.
      */
     public String getNicknameViewer() {

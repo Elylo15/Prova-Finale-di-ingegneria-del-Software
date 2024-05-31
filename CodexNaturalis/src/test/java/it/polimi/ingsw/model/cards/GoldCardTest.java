@@ -20,7 +20,7 @@ class GoldCardTest {
     private int points;
 
     @Test
-    void checkIsEqual() throws InvalidIdException{
+    void checkIsEqual() throws InvalidIdException {
         reign = Reign.Fungus;
         points = 1;
         front = true;
@@ -42,30 +42,30 @@ class GoldCardTest {
         testRequirement.add(Resource.Fungus);
         testRequirement.add(Resource.Animal);
         GoldCard goldCard = new GoldCard(id, points, reign, true, resources, requirement);
-        GoldCard test = new GoldCard(id,1,Reign.Fungus, true, testResource,testRequirement);
+        GoldCard test = new GoldCard(id, 1, Reign.Fungus, true, testResource, testRequirement);
         assertEquals(goldCard, test);
     }
 
     @Test
-    void checkGetPoints_true() throws InvalidIdException{
+    void checkGetPoints_true() throws InvalidIdException {
         points = 1;
         int test = 1;
-        GoldCard goldCard = new GoldCard(41,points,Reign.Fungus,front,resources,requirement);
+        GoldCard goldCard = new GoldCard(41, points, Reign.Fungus, front, resources, requirement);
         Assertions.assertEquals(test, goldCard.getPoints());
 
     }
 
     @Test
-    void checkGetPoints_false() throws InvalidIdException{
+    void checkGetPoints_false() throws InvalidIdException {
         points = 1;
         int test = 3;
-        GoldCard goldCard = new GoldCard(41,points,Reign.Fungus,front,resources,requirement);
+        GoldCard goldCard = new GoldCard(41, points, Reign.Fungus, front, resources, requirement);
         Assertions.assertNotEquals(test, goldCard.getPoints());
 
     }
 
     @Test
-    void checkGetResourceFRONT_true() throws InvalidIdException{
+    void checkGetResourceFRONT_true() throws InvalidIdException {
         resources.add(Resource.Blocked);
         resources.add(Resource.Empty);
         resources.add(Resource.Empty);
@@ -75,13 +75,13 @@ class GoldCardTest {
         test.add(Resource.Empty);
         test.add(Resource.Empty);
         test.add(Resource.Quill);
-        GoldCard goldCard = new GoldCard(41,1,Reign.Fungus,true,resources,requirement);
-        Assertions.assertEquals(test,goldCard.getResource());
+        GoldCard goldCard = new GoldCard(41, 1, Reign.Fungus, true, resources, requirement);
+        Assertions.assertEquals(test, goldCard.getResource());
 
     }
 
     @Test
-    void checkGetResourceFRONT_false() throws InvalidIdException{
+    void checkGetResourceFRONT_false() throws InvalidIdException {
         resources.add(Resource.Blocked);
         resources.add(Resource.Empty);
         resources.add(Resource.Empty);
@@ -91,85 +91,85 @@ class GoldCardTest {
         test.add(Resource.Plant);
         test.add(Resource.Insect);
         test.add(Resource.Quill);
-        GoldCard goldCard = new GoldCard(41,1,Reign.Fungus,true,resources,requirement);
-        Assertions.assertNotEquals(test,goldCard.getResource());
+        GoldCard goldCard = new GoldCard(41, 1, Reign.Fungus, true, resources, requirement);
+        Assertions.assertNotEquals(test, goldCard.getResource());
 
     }
 
     @Test
-    void checkGetResourceBACK_true() throws InvalidIdException{
+    void checkGetResourceBACK_true() throws InvalidIdException {
         ArrayList<Resource> test = new ArrayList<>();
         test.add(Resource.Empty);
         test.add(Resource.Empty);
         test.add(Resource.Empty);
         test.add(Resource.Empty);
-        GoldCard goldCard = new GoldCard(41,1,Reign.Fungus,false,resources,requirement);
+        GoldCard goldCard = new GoldCard(41, 1, Reign.Fungus, false, resources, requirement);
         Assertions.assertEquals(test, goldCard.getResource());
 
     }
 
     @Test
-    void checkGetResourceBACK_false() throws InvalidIdException{
+    void checkGetResourceBACK_false() throws InvalidIdException {
         ArrayList<Resource> test = new ArrayList<>();
         test.add(Resource.Animal);
         test.add(Resource.Plant);
         test.add(Resource.Empty);
         test.add(Resource.Empty);
-        GoldCard goldCard = new GoldCard(41,1,Reign.Fungus,false,resources,requirement);
+        GoldCard goldCard = new GoldCard(41, 1, Reign.Fungus, false, resources, requirement);
         Assertions.assertNotEquals(test, goldCard.getResource());
 
     }
 
-        @Test
-    void checkGetPermanentResourceFungus() throws InvalidIdException{
+    @Test
+    void checkGetPermanentResourceFungus() throws InvalidIdException {
         reign = Reign.Fungus;
         ArrayList<Resource> test = new ArrayList<>();
         test.add(Resource.Fungus);
         for (int i = 41; i < 51; i++) {
-            GoldCard goldCard = new GoldCard(i,points,reign,false,resources,requirement);
+            GoldCard goldCard = new GoldCard(i, points, reign, false, resources, requirement);
             Assertions.assertEquals(test, goldCard.getPermanentResource());
         }
 
     }
 
     @Test
-    void checkGetPermanentResourcePlant() throws InvalidIdException{
+    void checkGetPermanentResourcePlant() throws InvalidIdException {
         reign = Reign.Plant;
         ArrayList<Resource> test = new ArrayList<>();
         test.add(Resource.Plant);
         for (int i = 51; i < 61; i++) {
-            GoldCard goldCard = new GoldCard(i,points,reign,false,resources,requirement);
+            GoldCard goldCard = new GoldCard(i, points, reign, false, resources, requirement);
             Assertions.assertEquals(test, goldCard.getPermanentResource());
         }
 
     }
 
     @Test
-    void checkGetPermanentResourceAnimal() throws InvalidIdException{
+    void checkGetPermanentResourceAnimal() throws InvalidIdException {
         reign = Reign.Animal;
         ArrayList<Resource> test = new ArrayList<>();
         test.add(Resource.Animal);
         for (int i = 61; i < 71; i++) {
-            GoldCard goldCard = new GoldCard(i,points,reign,false,resources,requirement);
+            GoldCard goldCard = new GoldCard(i, points, reign, false, resources, requirement);
             Assertions.assertEquals(test, goldCard.getPermanentResource());
         }
 
     }
 
     @Test
-    void checkGetPermanentResourceInsect() throws InvalidIdException{
+    void checkGetPermanentResourceInsect() throws InvalidIdException {
         reign = Reign.Insect;
         ArrayList<Resource> test = new ArrayList<>();
         test.add(Resource.Insect);
         for (int i = 71; i < 81; i++) {
-            GoldCard goldCard = new GoldCard(i,points,reign,false,resources,requirement);
+            GoldCard goldCard = new GoldCard(i, points, reign, false, resources, requirement);
             Assertions.assertEquals(test, goldCard.getPermanentResource());
         }
 
     }
 
     @Test
-    void checkGetRequirement_true() throws InvalidIdException{
+    void checkGetRequirement_true() throws InvalidIdException {
         requirement.add(Resource.Plant);
         requirement.add(Resource.Plant);
         requirement.add(Resource.Animal);
@@ -177,13 +177,13 @@ class GoldCardTest {
         test.add(Resource.Plant);
         test.add(Resource.Plant);
         test.add(Resource.Animal);
-        GoldCard goldCard = new GoldCard(53,1,Reign.Plant,true,resources,requirement);
+        GoldCard goldCard = new GoldCard(53, 1, Reign.Plant, true, resources, requirement);
         Assertions.assertEquals(test, goldCard.getRequirement());
 
     }
 
     @Test
-    void checkGetRequirement_false() throws InvalidIdException{
+    void checkGetRequirement_false() throws InvalidIdException {
         requirement.add(Resource.Plant);
         requirement.add(Resource.Plant);
         requirement.add(Resource.Animal);
@@ -191,53 +191,53 @@ class GoldCardTest {
         test.add(Resource.Insect);
         test.add(Resource.Fungus);
         test.add(Resource.Animal);
-        GoldCard goldCard = new GoldCard(53,1,Reign.Plant,true,resources,requirement);
+        GoldCard goldCard = new GoldCard(53, 1, Reign.Plant, true, resources, requirement);
         Assertions.assertNotEquals(test, goldCard.getRequirement());
 
     }
 
     @Test
-    void checkRequirement_true() throws InvalidIdException{
-            requirement.add(Resource.Fungus);
-            requirement.add(Resource.Fungus);
-            requirement.add(Resource.Fungus);
-            requirement.add(Resource.Plant);
-            ArrayList<Integer> requirementTest = new ArrayList<>(Arrays.asList(3, 0, 0, 1));
-            GoldCard goldCard = new GoldCard(45,2,Reign.Fungus,true,resources,requirement);
-            assertTrue(goldCard.checkRequirement(requirementTest));
+    void checkRequirement_true() throws InvalidIdException {
+        requirement.add(Resource.Fungus);
+        requirement.add(Resource.Fungus);
+        requirement.add(Resource.Fungus);
+        requirement.add(Resource.Plant);
+        ArrayList<Integer> requirementTest = new ArrayList<>(Arrays.asList(3, 0, 0, 1));
+        GoldCard goldCard = new GoldCard(45, 2, Reign.Fungus, true, resources, requirement);
+        assertTrue(goldCard.checkRequirement(requirementTest));
     }
 
     @Test
-    void checkRequirement_false() throws InvalidIdException{
-            requirement.add(Resource.Fungus);
-            requirement.add(Resource.Fungus);
-            requirement.add(Resource.Fungus);
-            requirement.add(Resource.Plant);
-            ArrayList<Integer> requirementTest = new ArrayList<>();
-            requirementTest.add(1);
-            requirementTest.add(1);
-            requirementTest.add(1);
-            requirementTest.add(0);
-            GoldCard goldCard = new GoldCard(45,2,Reign.Fungus,true,resources,requirement);
-            assertFalse( goldCard.checkRequirement(requirementTest));
+    void checkRequirement_false() throws InvalidIdException {
+        requirement.add(Resource.Fungus);
+        requirement.add(Resource.Fungus);
+        requirement.add(Resource.Fungus);
+        requirement.add(Resource.Plant);
+        ArrayList<Integer> requirementTest = new ArrayList<>();
+        requirementTest.add(1);
+        requirementTest.add(1);
+        requirementTest.add(1);
+        requirementTest.add(0);
+        GoldCard goldCard = new GoldCard(45, 2, Reign.Fungus, true, resources, requirement);
+        assertFalse(goldCard.checkRequirement(requirementTest));
     }
 
     @Test
-    void checkRequirementBack() throws InvalidIdException{
+    void checkRequirementBack() throws InvalidIdException {
 
         ArrayList<Integer> requirementTest = new ArrayList<>();
         requirementTest.add(3);
         requirementTest.add(1);
         requirementTest.add(0);
         requirementTest.add(0);
-        GoldCard goldCard = new GoldCard(45, 2, Reign.Fungus,false, resources, requirement);
+        GoldCard goldCard = new GoldCard(45, 2, Reign.Fungus, false, resources, requirement);
         assertTrue(goldCard.checkRequirement(requirementTest));
     }
 
     @Test
     void checkIsGold_true() throws InvalidIdException {
         for (int i = 41; i < 81; i++) {
-            GoldCard goldCard = new GoldCard(i,points,reign,front,resources,requirement);
+            GoldCard goldCard = new GoldCard(i, points, reign, front, resources, requirement);
             assertTrue(goldCard.isGold());
         }
     }
@@ -245,15 +245,15 @@ class GoldCardTest {
     @Test
     void checkIsGold_false() throws InvalidIdException {
         for (int i = 41; i < 81; i++) {
-            GoldCard goldCard = new GoldCard(i,points,reign,front,resources,requirement);
+            GoldCard goldCard = new GoldCard(i, points, reign, front, resources, requirement);
             Assertions.assertNotEquals(false, goldCard.isGold());
         }
     }
 
     @Test
-    void checkClass () throws InvalidIdException {
+    void checkClass() throws InvalidIdException {
         for (int i = 41; i < 81; i++) {
-            GoldCard goldCard = new GoldCard(i,points,reign,front,resources,requirement);
+            GoldCard goldCard = new GoldCard(i, points, reign, front, resources, requirement);
             assertInstanceOf(GoldCard.class, goldCard);
         }
     }

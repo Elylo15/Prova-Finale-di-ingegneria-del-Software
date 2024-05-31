@@ -48,7 +48,7 @@ class PlayerTest {
         player.drawStarter();
         player.placeStarter(1);
         assertEquals(0, deck.getPlaceableCards().size());
-        assertTrue(player.getPlayerArea().contains(0,0));
+        assertTrue(player.getPlayerArea().contains(0, 0));
     }
 
     @Test
@@ -56,7 +56,7 @@ class PlayerTest {
         player.drawStarter();
         player.placeStarter(0);
         assertEquals(0, deck.getPlaceableCards().size());
-        assertTrue(player.getPlayerArea().contains(0,0));
+        assertTrue(player.getPlayerArea().contains(0, 0));
     }
 
     @Test
@@ -116,7 +116,7 @@ class PlayerTest {
         int pick = 1;
         int size = commonArea.getD1().getSize();
 
-        for(int i = 0; i < size; i++){
+        for (int i = 0; i < size; i++) {
             commonArea.getD1().removeCard();
         }
 
@@ -128,7 +128,7 @@ class PlayerTest {
         int pick = 2;
         int size = commonArea.getD1().getSize();
 
-        for(int i = 0; i < size; i++){
+        for (int i = 0; i < size; i++) {
             commonArea.getD2().removeCard();
         }
 
@@ -139,7 +139,7 @@ class PlayerTest {
     void pickNewCard3_4_5_6_ShouldThrowException() {
         int size = commonArea.getTableCards().size();
 
-        for(int i = 0; i < size; i++){
+        for (int i = 0; i < size; i++) {
             commonArea.getTableCards().removeFirst();
         }
         assertThrows(InvalidIdException.class, () -> player.pickNewCard(3));
@@ -163,7 +163,7 @@ class PlayerTest {
     }
 
     @Test
-    void pickedCard_ShouldBeFoldFromDeck() throws InvalidIdException{
+    void pickedCard_ShouldBeFoldFromDeck() throws InvalidIdException {
         int pick = 2;
 
         player.pickNewCard(pick);
@@ -172,7 +172,7 @@ class PlayerTest {
     }
 
     @Test
-    void pickedCard_ShouldBeResourceLeft() throws InvalidIdException{
+    void pickedCard_ShouldBeResourceLeft() throws InvalidIdException {
         int pick = 3;
 
         //set cards
@@ -192,7 +192,7 @@ class PlayerTest {
     }
 
     @Test
-    void pickedCard_ShouldBeResourceRight() throws InvalidIdException{
+    void pickedCard_ShouldBeResourceRight() throws InvalidIdException {
         int pick = 4;
 
         //set cards
@@ -212,7 +212,7 @@ class PlayerTest {
     }
 
     @Test
-    void pickedCard_ShouldBeGoldLeft() throws InvalidIdException{
+    void pickedCard_ShouldBeGoldLeft() throws InvalidIdException {
         int pick = 5;
 
         //set cards
@@ -232,7 +232,7 @@ class PlayerTest {
     }
 
     @Test
-    void pickedCard_ShouldBeGoldRight() throws InvalidIdException{
+    void pickedCard_ShouldBeGoldRight() throws InvalidIdException {
         int pick = 6;
 
         //set cards

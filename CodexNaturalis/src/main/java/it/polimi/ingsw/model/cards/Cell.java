@@ -17,8 +17,9 @@ public class Cell implements Serializable {
 
     /**
      * Creates a new cell
-     * @param row row coordinate of the matrix of cells
-     * @param column column coordinate of the matrix of cells
+     *
+     * @param row        row coordinate of the matrix of cells
+     * @param column     column coordinate of the matrix of cells
      * @param bottomCard pointer to the card on the bottom
      */
     public Cell(int row, int column, PlaceableCard bottomCard) {
@@ -31,6 +32,7 @@ public class Cell implements Serializable {
     /**
      * Overrides the equals method from the Object class.
      * Compares two Cell objects to check for equality.
+     *
      * @param o the object to be compared
      * @return true if the specified object is equal to this Cell, false otherwise.
      */
@@ -44,27 +46,28 @@ public class Cell implements Serializable {
 
     /**
      * Initialize the pointer to the card on top and update the stored resource
+     *
      * @param topCard pointer to the card on top
      */
-    public void linkCard(PlaceableCard topCard)
-    {
+    public void linkCard(PlaceableCard topCard) {
         this.topCard = topCard;
     }
 
     /**
      * Returns the resource of the existing card on top
+     *
      * @return resource
      */
     public Resource getResource() {
 
         PlaceableCard referenceCard;
-        if(this.topCard == null)
+        if (this.topCard == null)
             referenceCard = this.bottomCard;
         else
             referenceCard = this.topCard;
 
-        for(int i = 0; i<referenceCard.getCells().size(); i++) {
-            if(referenceCard.getCells().get(i) != null && referenceCard.getCells().get(i).equals(this))
+        for (int i = 0; i < referenceCard.getCells().size(); i++) {
+            if (referenceCard.getCells().get(i) != null && referenceCard.getCells().get(i).equals(this))
                 return referenceCard.getResource().get(i);
         }
         return null;
@@ -72,6 +75,7 @@ public class Cell implements Serializable {
 
     /**
      * Determines if a cell is available to get a card on top
+     *
      * @return true if the pointer to the top card is null and if the stored resource is not "Blocked"
      */
     public boolean isAvailable() {
@@ -80,18 +84,25 @@ public class Cell implements Serializable {
 
     /**
      * Returns the row coordinate of the cell
+     *
      * @return row
      */
-    public int getRow() { return row; }
+    public int getRow() {
+        return row;
+    }
 
     /**
      * Returns the column coordinate of the cell
+     *
      * @return column
      */
-    public int getColumn() { return column; }
+    public int getColumn() {
+        return column;
+    }
 
     /**
      * Return the reference to the card on bottom
+     *
      * @return pointer to the card on bottom
      */
     public PlaceableCard getBottomCard() {
@@ -100,6 +111,7 @@ public class Cell implements Serializable {
 
     /**
      * Return the reference to the card on top
+     *
      * @return pointer to the card on top
      */
     public PlaceableCard getTopCard() {

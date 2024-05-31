@@ -1,8 +1,8 @@
 package it.polimi.ingsw.model.cards;
 
-import it.polimi.ingsw.model.CommonArea;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import it.polimi.ingsw.model.CommonArea;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,6 +15,7 @@ public class LoadDecks implements Serializable {
      * method load: takes the cards that are collected in the Cards.json file
      * and converts them into PlaceableCard/ObjectiveCard and places them in the various decks.
      * Once inserted into the deck it puts them inside the CommonArea which is returned
+     *
      * @return CommonArea: common area of all players who will be placed in the match
      */
     public CommonArea load() {

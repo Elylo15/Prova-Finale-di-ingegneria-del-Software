@@ -7,6 +7,7 @@ import it.polimi.ingsw.model.cards.StarterCard;
 import it.polimi.ingsw.model.cards.exceptions.InvalidIdException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class CommonAreaTest {
@@ -27,10 +28,11 @@ class CommonAreaTest {
         starterCard = new StarterCard(81);
         objectiveCard = new ObjectiveCard(87);
 
-         resourceCard2= new ResourceCard(2);
-         goldCard2 = new GoldCard(42);
+        resourceCard2 = new ResourceCard(2);
+        goldCard2 = new GoldCard(42);
 
     }
+
     //Test for the method pickTableCard
     @Test
     void pickTableResourceCardReturnsCorrectCard() {

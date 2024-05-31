@@ -16,15 +16,13 @@ public class GoldCard extends PlaceableCard implements Serializable {
      * @param ID, it must be >=41  and =<80
      * @throws InvalidIdException if the condition on ID is not met
      */
-    public GoldCard(int ID) throws InvalidIdException
-    {
+    public GoldCard(int ID) throws InvalidIdException {
         super(ID);
-        if(ID>=41 && ID <=80) {
+        if (ID >= 41 && ID <= 80) {
             this.ID = ID;
-        } else if (ID <40) {
+        } else if (ID < 40) {
             throw new InvalidIdException("ID is too small");
-        }
-        else if(ID >80){
+        } else if (ID > 80) {
             throw new InvalidIdException("ID is too big");
         }
     }
@@ -32,13 +30,13 @@ public class GoldCard extends PlaceableCard implements Serializable {
     /**
      * Constructor used to load the cards from JSON
      *
-     * @param ID, it must be >=41  and =<80
-     * @param front, true if the card is front, false if the card is back
+     * @param ID,          it must be >=41  and =<80
+     * @param front,       true if the card is front, false if the card is back
      * @param requirement, the requirements to place the card
-     * @param points, the points of the card
-     * @param reign, the reign of the card
-     * @param cells, the cells of the card
-     * @param resources, the resources of the card
+     * @param points,      the points of the card
+     * @param reign,       the reign of the card
+     * @param cells,       the cells of the card
+     * @param resources,   the resources of the card
      * @throws InvalidIdException if the condition on ID is not met
      */
     @JsonCreator
@@ -55,16 +53,16 @@ public class GoldCard extends PlaceableCard implements Serializable {
     /**
      * Constructor
      *
-     * @param ID, it must be >=41  and =<80
-     * @param points, the points of the card
-     * @param reign, the reign of the card
-     * @param front, true if the card is front, false if the card is back
-     * @param resources, the resources of the card
+     * @param ID,           it must be >=41  and =<80
+     * @param points,       the points of the card
+     * @param reign,        the reign of the card
+     * @param front,        true if the card is front, false if the card is back
+     * @param resources,    the resources of the card
      * @param requirements, the requirements to place the card
      * @throws InvalidIdException if the condition on ID is not met
      */
     public GoldCard(int ID, int points, Reign reign, boolean front, ArrayList<Resource> resources, ArrayList<Resource> requirements) throws InvalidIdException {
-        super(ID,points,reign,front,resources, requirements);
+        super(ID, points, reign, front, resources, requirements);
     }
 
 }

@@ -1,17 +1,22 @@
 package it.polimi.ingsw.protocol.client.controller;
 
-import it.polimi.ingsw.protocol.messages.*;
 import it.polimi.ingsw.protocol.messages.ConnectionState.*;
-import it.polimi.ingsw.protocol.messages.EndGameState.*;
-import it.polimi.ingsw.protocol.messages.ObjectiveState.*;
-import it.polimi.ingsw.protocol.messages.PlayerTurnState.*;
-import it.polimi.ingsw.protocol.messages.ServerOptionState.*;
-import it.polimi.ingsw.protocol.messages.StaterCardState.*;
-import it.polimi.ingsw.protocol.messages.WaitingforPlayerState.*;
+import it.polimi.ingsw.protocol.messages.EndGameState.declareWinnerMessage;
+import it.polimi.ingsw.protocol.messages.ObjectiveState.objectiveCardMessage;
+import it.polimi.ingsw.protocol.messages.PlayerTurnState.pickCardMessage;
+import it.polimi.ingsw.protocol.messages.PlayerTurnState.placeCardMessage;
+import it.polimi.ingsw.protocol.messages.PlayerTurnState.updatePlayerMessage;
+import it.polimi.ingsw.protocol.messages.ServerOptionState.serverOptionMessage;
+import it.polimi.ingsw.protocol.messages.StaterCardState.starterCardMessage;
+import it.polimi.ingsw.protocol.messages.WaitingforPlayerState.expectedPlayersMessage;
+import it.polimi.ingsw.protocol.messages.WaitingforPlayerState.newHostMessage;
+import it.polimi.ingsw.protocol.messages.currentStateMessage;
+import it.polimi.ingsw.protocol.messages.responseMessage;
 import it.polimi.ingsw.protocol.server.RMI.MainRemoteServerInterface;
 import it.polimi.ingsw.protocol.server.RMI.MessageExchangerInterface;
 
-import java.rmi.*;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
@@ -21,7 +26,8 @@ public class ControllerRMI extends Controller {
 
     /**
      * method {@code ControllerRMI}: constructs a new ControllerRMI
-     * @param serverIP: String
+     *
+     * @param serverIP:   String
      * @param serverPort: String
      */
     public ControllerRMI(String serverIP, String serverPort) {
@@ -30,7 +36,8 @@ public class ControllerRMI extends Controller {
 
     /**
      * method {@code connectToServer}: connects to an existing server
-     * @param serverIP: String
+     *
+     * @param serverIP:   String
      * @param serverPort: String
      */
     public void connectToServer(String serverIP, String serverPort) {
@@ -50,6 +57,7 @@ public class ControllerRMI extends Controller {
 
     /**
      * method {@code answerConnection}: receives a connectionResponseMessage
+     *
      * @return connectionResponseMessage
      */
     @Override
@@ -64,6 +72,7 @@ public class ControllerRMI extends Controller {
 
     /**
      * method {@code getCurrent}: receives a currentStateMessage
+     *
      * @return currentStateMessage
      */
     @Override
@@ -72,13 +81,13 @@ public class ControllerRMI extends Controller {
             return (currentStateMessage) toClient.read();
         } catch (RemoteException e) {
             System.out.println("Error in getCurrent: " + e.getMessage());
-            e.printStackTrace();
             throw new RuntimeException(e);
         }
     }
 
     /**
      * method {@code serverOptions}: receives an empty serverOptionMessage
+     *
      * @return serverOptionMessage
      */
     @Override
@@ -93,6 +102,7 @@ public class ControllerRMI extends Controller {
 
     /**
      * method {@code correctAnswer}: receives a responseMessage
+     *
      * @return responseMessage
      */
     @Override
@@ -106,7 +116,8 @@ public class ControllerRMI extends Controller {
     }
 
     /**
-     *  method {@code sendOptions}: sends a serverOptionMessage
+     * method {@code sendOptions}: sends a serverOptionMessage
+     *
      * @param options: serverOptionMessage
      */
     @Override
@@ -121,6 +132,7 @@ public class ControllerRMI extends Controller {
 
     /**
      * method {@code getUnavailableName}: receives a unavailableNamesMessage
+     *
      * @return unavailableNamesMessage
      */
     @Override
@@ -134,7 +146,8 @@ public class ControllerRMI extends Controller {
     }
 
     /**
-     *  method {@code chooseName}: sends a chosenNameMessage
+     * method {@code chooseName}: sends a chosenNameMessage
+     *
      * @param name: String
      */
     @Override
@@ -149,6 +162,7 @@ public class ControllerRMI extends Controller {
 
     /**
      * method {@code getAvailableColor}: receives a availableColorsMessage
+     *
      * @return availableColorsMessage
      */
     @Override
@@ -162,7 +176,8 @@ public class ControllerRMI extends Controller {
     }
 
     /**
-     *  method {@code chooseColor}: sends a chosenColorMessage
+     * method {@code chooseColor}: sends a chosenColorMessage
+     *
      * @param color: String
      */
     @Override
@@ -177,6 +192,7 @@ public class ControllerRMI extends Controller {
 
     /**
      * method {@code newHost}: receives a newHostMessage
+     *
      * @return newHostMessage
      */
     @Override
@@ -190,8 +206,9 @@ public class ControllerRMI extends Controller {
     }
 
     /**
-     *  method {@code expectedPlayers}: sends a expectedPlayersMessage
-     * @param expected: int
+     * method {@code expectedPlayers}: sends a expectedPlayersMessage
+     *
+     * @param expected:   int
      * @param noResponse: boolean
      */
     @Override
@@ -205,8 +222,9 @@ public class ControllerRMI extends Controller {
     }
 
     /**
-     *  method {@code placeStarter}: sends a starterCardMessage
-     * @param side: int
+     * method {@code placeStarter}: sends a starterCardMessage
+     *
+     * @param side:       int
      * @param noResponse: boolean
      */
     @Override
@@ -221,6 +239,7 @@ public class ControllerRMI extends Controller {
 
     /**
      * method {@code getObjectiveCards}: receives a objectiveCardMessage
+     *
      * @return objectiveCardMessage
      */
     @Override
@@ -234,8 +253,9 @@ public class ControllerRMI extends Controller {
     }
 
     /**
-     *  method {@code chooseObjective}: sends a objectiveCardMessage
-     * @param pick: int
+     * method {@code chooseObjective}: sends a objectiveCardMessage
+     *
+     * @param pick:       int
      * @param noResponse: boolean
      */
     @Override
@@ -249,11 +269,12 @@ public class ControllerRMI extends Controller {
     }
 
     /**
-     *  method {@code placeCard}: sends a PlaceCardMessage
-     * @param card: int
-     * @param side: int
-     * @param x: int
-     * @param y: int
+     * method {@code placeCard}: sends a PlaceCardMessage
+     *
+     * @param card:       int
+     * @param side:       int
+     * @param x:          int
+     * @param y:          int
      * @param noResponse: boolean
      */
     @Override
@@ -267,8 +288,9 @@ public class ControllerRMI extends Controller {
     }
 
     /**
-     *  method {@code pickCard}: sends a pickCardMessage
-     * @param card: int
+     * method {@code pickCard}: sends a pickCardMessage
+     *
+     * @param card:       int
      * @param noResponse: boolean
      */
     @Override
@@ -283,9 +305,10 @@ public class ControllerRMI extends Controller {
 
     /**
      * method {@code updatePlayer}: receives a updatePlayerMessage
+     *
      * @return updatePlayerMessage
      */
-    public updatePlayerMessage updatePlayer(){
+    public updatePlayerMessage updatePlayer() {
         try {
             return (updatePlayerMessage) toClient.read();
         } catch (RemoteException e) {
@@ -296,6 +319,7 @@ public class ControllerRMI extends Controller {
 
     /**
      * method {@code endGame}: receives a declareWinnerMessage
+     *
      * @return declareWinnerMessage
      */
     @Override
@@ -308,14 +332,15 @@ public class ControllerRMI extends Controller {
         }
     }
 
-
+    /**
+     * method {@code sendAnswerToPing}: sends an ACK message
+     */
     @Override
     public void sendAnswerToPing() {
         try {
             toServer.write("ACK");
         } catch (RemoteException e) {
             System.out.println("Error in sendAnswerToPing");
-            e.printStackTrace();
             throw new RuntimeException(e);
         }
     }

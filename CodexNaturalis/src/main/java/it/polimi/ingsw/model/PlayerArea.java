@@ -7,7 +7,6 @@ import it.polimi.ingsw.model.cards.enumeration.Reign;
 import it.polimi.ingsw.model.cards.enumeration.Resource;
 import it.polimi.ingsw.model.cards.exceptions.noPlaceCardException;
 
-
 import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -24,56 +23,55 @@ public class PlayerArea implements Serializable {
     public PlayerArea() {
         this.CellMatrix = new HashMap<>();
         this.permanentResource = new ArrayList<>();
-        this.permanentResource.add(0); // Counter for FUNGUS
-        this.permanentResource.add(0); // Counter for INSECT
-        this.permanentResource.add(0); // Counter for ANIMAL
-        this.permanentResource.add(0); // Counter for PLANT
-        this.permanentResource.add(0); // Counter for MANUSCRIPT
-        this.permanentResource.add(0); // Counter for QUILL
-        this.permanentResource.add(0); // Counter for INKWELL
-        this.permanentResource.add(0); // Counter for EMPTY
-        this.permanentResource.add(0); // Counter for BLOCKED
+        for (int i = 0; i < 9; i++) {
+            this.permanentResource.add(0);
+        }
+    }
+
+    private static ArrayList<Integer> getCoordinates(int x, int y) {
+        ArrayList<Integer> coordinates = new ArrayList<>();
+        coordinates.add(x);
+        coordinates.add(y);
+        return coordinates;
     }
 
     /**
      * Return if a cell exists at the given coordinates
+     *
      * @param x Row coordinate
      * @param y Column coordinate
      * @return True if exists a cell with the given coordinates.
      */
     public boolean contains(int x, int y) {
-        ArrayList<Integer> coordinates = new ArrayList<>();
-        coordinates.add(x);
-        coordinates.add(y);
+        ArrayList<Integer> coordinates = getCoordinates(x, y);
         return CellMatrix.containsKey(coordinates);
     }
 
     /**
      * Return a cell given its coordinates
+     *
      * @param x Row coordinate
      * @param y Column coordinate
      * @return A reference to the Cell, if the cell exists; null otherwise
      */
     private Cell getCell(int x, int y) {
-        ArrayList<Integer> coordinates = new ArrayList<>();
-        coordinates.add(x);
-        coordinates.add(y);
+        ArrayList<Integer> coordinates = getCoordinates(x, y);
         return CellMatrix.get(coordinates);
     }
 
     /**
      * Add a cell to the PlayerArea
+     *
      * @param cell Reference to the cell to add
      */
     public void addCell(Cell cell) {
-        ArrayList<Integer> coordinates = new ArrayList<>();
-        coordinates.add(cell.getRow());
-        coordinates.add(cell.getColumn());
+        ArrayList<Integer> coordinates = getCoordinates(cell.getRow(), cell.getColumn());
         CellMatrix.put(coordinates, cell);
     }
 
     /**
      * Increase of 1 the stored counter of the given resource
+     *
      * @param resource Resource to increase
      */
     private void addPermanentResource(Resource resource) {
@@ -83,6 +81,7 @@ public class PlayerArea implements Serializable {
 
     /**
      * Selects the resource
+     *
      * @param resource Resource to be selected
      * @return int that represents the resource
      */
@@ -102,6 +101,7 @@ public class PlayerArea implements Serializable {
 
     /**
      * Counts all resources, permanent and not
+     *
      * @return A list of 8 counters:
      * 0. Counter for FUNGUS
      * 1. Counter for INSECT
@@ -115,17 +115,17 @@ public class PlayerArea implements Serializable {
      */
     public ArrayList<Integer> getResources() {
         ArrayList<Integer> resourceList = new ArrayList<>(permanentResource);
-        CellMatrix.values().forEach((x)-> addResourceToList(resourceList, x.getResource()));
+        CellMatrix.values().forEach((x) -> addResourceToList(resourceList, x.getResource()));
         return resourceList;
     }
 
     /**
      * Used to count resources given the list of counters
-     * @param list ArrayList of counters
+     *
+     * @param list     ArrayList of counters
      * @param resource Resource of which increase counter
      */
-    private void addResourceToList(ArrayList<Integer> list, Resource resource)
-    {
+    private void addResourceToList(ArrayList<Integer> list, Resource resource) {
 
         int selector = resourceSelector(resource);
         list.set(selector, list.get(selector) + 1);
@@ -134,6 +134,7 @@ public class PlayerArea implements Serializable {
     /**
      * Returns a list of coordinates of available position.
      * A position is made of a square of four cells, and it is represented by the coordinates of its top-left cell
+     *
      * @return A list of positions where a card could be placed
      */
     public ArrayList<Integer[]> getAvailablePosition() {
@@ -147,22 +148,22 @@ public class PlayerArea implements Serializable {
         ArrayList<Integer[]> positions = new ArrayList<>();
         CellMatrix.values().stream()
                 .filter(Cell::isAvailable)
-                .forEach( cell -> {
-                    Integer [] pos0 = {cell.getRow() - 1, cell.getColumn() -1};
-                    Integer [] pos1 = {cell.getRow() - 1, cell.getColumn()};
-                    Integer [] pos2 = {cell.getRow() , cell.getColumn() -1};
-                    Integer [] pos3 = {cell.getRow(), cell.getColumn()};
+                .forEach(cell -> {
+                    Integer[] pos0 = {cell.getRow() - 1, cell.getColumn() - 1};
+                    Integer[] pos1 = {cell.getRow() - 1, cell.getColumn()};
+                    Integer[] pos2 = {cell.getRow(), cell.getColumn() - 1};
+                    Integer[] pos3 = {cell.getRow(), cell.getColumn()};
 
-                    if(this.checkPosition(pos0[0], pos0[1]))
+                    if (this.checkPosition(pos0[0], pos0[1]))
                         positions.add(pos0);
 
-                    if(this.checkPosition(pos1[0], pos1[1]))
+                    if (this.checkPosition(pos1[0], pos1[1]))
                         positions.add(pos1);
 
-                    if(this.checkPosition(pos2[0], pos2[1]))
+                    if (this.checkPosition(pos2[0], pos2[1]))
                         positions.add(pos2);
 
-                    if(this.checkPosition(pos3[0], pos3[1]))
+                    if (this.checkPosition(pos3[0], pos3[1]))
                         positions.add(pos3);
                 });
 
@@ -173,13 +174,14 @@ public class PlayerArea implements Serializable {
 
     /**
      * Checks if a position is available to place a card
+     *
      * @param x Row coordinate
      * @param y Column coordinate
      * @return True if at the given position a card can be placed
      */
     public boolean checkPosition(int x, int y) {
         //Basic check: if a position is already taken
-        if(this.getCard(x,y) != null)
+        if (this.getCard(x, y) != null)
             return false;
 
         /*
@@ -192,20 +194,20 @@ public class PlayerArea implements Serializable {
         //Obtains the existing cells
         ArrayList<Cell> position = new ArrayList<>();
 
-        if(this.contains(x, y))
-            position.add(getCell(x,y));
+        if (this.contains(x, y))
+            position.add(getCell(x, y));
 
-        if(this.contains(x, y+1))
-            position.add(getCell(x,y+1));
+        if (this.contains(x, y + 1))
+            position.add(getCell(x, y + 1));
 
-        if(this.contains(x+1, y))
-            position.add(getCell(x+1,y));
+        if (this.contains(x + 1, y))
+            position.add(getCell(x + 1, y));
 
-        if(this.contains(x+1, y+1))
-            position.add(getCell(x+1,y+1));
+        if (this.contains(x + 1, y + 1))
+            position.add(getCell(x + 1, y + 1));
 
         //check if there are existing cells
-        if(position.isEmpty())
+        if (position.isEmpty())
             return false;
 
         //checks if all cells are available
@@ -213,7 +215,7 @@ public class PlayerArea implements Serializable {
             return false;
 
         //checks if some cells share the same bottom card
-        if(position.stream().map(Cell::getBottomCard).distinct().count() < position.size())
+        if (position.stream().map(Cell::getBottomCard).distinct().count() < position.size())
             return false;
 
 
@@ -224,6 +226,7 @@ public class PlayerArea implements Serializable {
 
     /**
      * Returns the card given the coordinates of its position
+     *
      * @param x Row coordinate
      * @param y Column coordinate
      * @return Reference to the placed card or null if there is no card at the given position
@@ -233,20 +236,20 @@ public class PlayerArea implements Serializable {
           There are two candidates for the return: the topCard and the bottomCard
           in the cell at coordinates (x,y)
          */
-        Cell cell = getCell(x,y);
+        Cell cell = getCell(x, y);
         if (cell == null)
             return null;
 
         PlaceableCard topCard = cell.getTopCard();
         PlaceableCard bottomCard = cell.getBottomCard();
 
-        if(topCard != null
+        if (topCard != null
                 && topCard.getCells().getFirst().getRow() == cell.getRow()
                 && topCard.getCells().getFirst().getColumn() == cell.getColumn())
             return topCard;
 
 
-        if(bottomCard != null
+        if (bottomCard != null
                 && bottomCard.getCells().getFirst().getRow() == cell.getRow()
                 && bottomCard.getCells().getFirst().getColumn() == cell.getColumn())
             return bottomCard;
@@ -256,32 +259,32 @@ public class PlayerArea implements Serializable {
 
     /**
      * Places the starter card
-     * @param card StarterCard
+     *
+     * @param card  StarterCard
      * @param front Side of the starter card
      */
-    public void placeStarterCard(PlaceableCard card, boolean front)
-    {
+    public void placeStarterCard(PlaceableCard card, boolean front) {
         card.setFront(front);
         card.getPermanentResource().forEach(this::addPermanentResource);
         ArrayList<Cell> cells = new ArrayList<>();
-        cells.add(new Cell(0,0,card));
-        cells.add(new Cell(0,1,card));
-        cells.add(new Cell(1,0,card));
-        cells.add(new Cell(1,1,card));
+        cells.add(new Cell(0, 0, card));
+        cells.add(new Cell(0, 1, card));
+        cells.add(new Cell(1, 0, card));
+        cells.add(new Cell(1, 1, card));
         card.setCells(cells);
         cells.forEach(this::addCell);
     }
 
     /**
      * Places a card at the given position
+     *
      * @param card Reference to the card to place
-     * @param x Row coordinate
-     * @param y Column coordinate
+     * @param x    Row coordinate
+     * @param y    Column coordinate
      * @return Points given by the placement of the card
      * @throws noPlaceCardException If in the given position a card cannot be placed
      */
-    public int placeCard(PlaceableCard card, int x, int y, boolean front) throws noPlaceCardException
-    {
+    public int placeCard(PlaceableCard card, int x, int y, boolean front) throws noPlaceCardException {
         // checks if the position is available
         if (!checkPosition(x, y))
             throw new noPlaceCardException();
@@ -298,17 +301,17 @@ public class PlayerArea implements Serializable {
          */
         //Obtain the existing cells
         ArrayList<Cell> position = new ArrayList<>();
-        position.add(getCell(x,y));
-        position.add(getCell(x,y+1));
-        position.add(getCell(x+1,y));
-        position.add(getCell(x+1,y+1));
+        position.add(getCell(x, y));
+        position.add(getCell(x, y + 1));
+        position.add(getCell(x + 1, y));
+        position.add(getCell(x + 1, y + 1));
 
         //setting front or back
         card.setFront(front);
 
         // obtaining points
-        if(front) {
-            if(!card.checkRequirement(this.getResources()))
+        if (front) {
+            if (!card.checkRequirement(this.getResources()))
                 throw new noPlaceCardException();
             else {
                 ArrayList<Integer> pointsOnResource = new ArrayList<>();
@@ -346,7 +349,7 @@ public class PlayerArea implements Serializable {
                 pointsOnCorner.add(76);
 
 
-                if(pointsOnResource.contains(card.getID())) {
+                if (pointsOnResource.contains(card.getID())) {
                     //ArrayList<Integer> resource = this.getResources();
 
                     // Quill
@@ -358,7 +361,7 @@ public class PlayerArea implements Serializable {
                     }
 
                     // Inkwell
-                    if(card.getID() == 42 || card.getID() == 53 || card.getID() == 61 || card.getID() == 73) {
+                    if (card.getID() == 42 || card.getID() == 53 || card.getID() == 61 || card.getID() == 73) {
                         points = (int) (1 + CellMatrix.values().stream()
                                 .filter(cell -> !position.contains(cell))
                                 .filter(cell -> cell.getResource() == Resource.Inkwell)
@@ -366,7 +369,7 @@ public class PlayerArea implements Serializable {
                     }
 
                     // Manuscript
-                    if(card.getID() == 41 || card.getID() == 52 || card.getID() == 62 || card.getID() == 72) {
+                    if (card.getID() == 41 || card.getID() == 52 || card.getID() == 62 || card.getID() == 72) {
                         points = (int) (1 + CellMatrix.values().stream()
                                 .filter(cell -> !position.contains(cell))
                                 .filter(cell -> cell.getResource() == Resource.Manuscript)
@@ -375,9 +378,9 @@ public class PlayerArea implements Serializable {
 
 
                 } else if (pointsOnCorner.contains(card.getID())) {
-                        points = (int) (2 * position.stream()
-                                .filter(Objects::nonNull)
-                                .count());
+                    points = (int) (2 * position.stream()
+                            .filter(Objects::nonNull)
+                            .count());
                 } else {
                     points = card.getPoints();
                 }
@@ -385,11 +388,9 @@ public class PlayerArea implements Serializable {
         }
 
 
-
         //Setting up the new positions
-        for (int i=0; i < position.size(); i++) {
-            if(position.get(i) != null)
-            {
+        for (int i = 0; i < position.size(); i++) {
+            if (position.get(i) != null) {
                 position.get(i).linkCard(card);
 
             } else {
@@ -428,6 +429,7 @@ public class PlayerArea implements Serializable {
 
     /**
      * Returns a sorted list of all cards: first the card on top and on the left
+     *
      * @return Ordered list of all cards
      */
     public ArrayList<PlaceableCard> getAllCards() {
@@ -435,13 +437,14 @@ public class PlayerArea implements Serializable {
                 .flatMap(cell -> Stream.of(cell.getBottomCard(), cell.getTopCard()))
                 .filter(Objects::nonNull)
                 .distinct()
-                .sorted(Comparator.comparing((PlaceableCard card) ->  card.getCells().getFirst().getRow())
+                .sorted(Comparator.comparing((PlaceableCard card) -> card.getCells().getFirst().getRow())
                         .thenComparing(card -> card.getCells().getFirst().getColumn()))
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 
     /**
      * Check if there are pattern of the given ID
+     *
      * @param card Reference to the objective to identify
      * @return Number of points generated by the patterns
      */
@@ -450,21 +453,21 @@ public class PlayerArea implements Serializable {
         ArrayList<PlaceableCard> allCards;
         int points = 0;
 
-        if(card == null)
+        if (card == null)
             return 0;
 
-        if(card.getPattern() != null && !card.getPattern().isEmpty()) {
+        if (card.getPattern() != null && !card.getPattern().isEmpty()) {
             allCards = getAllCards();
             ArrayList<int[]> pattern = card.getPattern();
             ArrayList<Reign> reigns = card.getReignCards();
-            for(PlaceableCard card0 : allCards) {
-                if(!checkedCards.contains(card0) && card0.getReign() != null && card0.getReign().equals(reigns.getFirst())) {
+            for (PlaceableCard card0 : allCards) {
+                if (!checkedCards.contains(card0) && card0.getReign() != null && card0.getReign().equals(reigns.getFirst())) {
                     int row = card0.getCells().getFirst().getRow();
                     int column = card0.getCells().getFirst().getColumn();
                     PlaceableCard card1 = this.getCard(row + pattern.get(0)[0], column + pattern.get(0)[1]);
                     PlaceableCard card2 = this.getCard(row + pattern.get(1)[0], column + pattern.get(1)[1]);
 
-                    if( card1 != null && card2 != null
+                    if (card1 != null && card2 != null
                             && card1.getReign() != null && card2.getReign() != null
                             && card1.getReign() == reigns.get(1) && card2.getReign() == reigns.get(2)
                             && !checkedCards.contains(card1) && !checkedCards.contains(card2)) {
@@ -479,12 +482,11 @@ public class PlayerArea implements Serializable {
             return points;
         }
 
-        if(card.getRequirements() != null && !card.getRequirements().isEmpty()) {
+        if (card.getRequirements() != null && !card.getRequirements().isEmpty()) {
             ArrayList<Resource> requirements = card.getRequirements();
             ArrayList<Integer> resources = this.getResources();
 
-            if(requirements.stream().distinct().count() == 1)
-            {
+            if (requirements.stream().distinct().count() == 1) {
                 int index = switch (requirements.getFirst()) {
                     case Fungus -> 0;
                     case Insect -> 1;
@@ -497,22 +499,21 @@ public class PlayerArea implements Serializable {
                     case Blocked -> 8;
                 };
 
-                if(index < 4)
+                if (index < 4)
                     points = card.getPoints() * (resources.get(index) / 3);
                 else
                     points = card.getPoints() * (resources.get(index) / 2);
                 return points;
             }
 
-            if(card.getID() == 99) {
-                if(resources.get(4) < resources.get(5)) {
-                    if(resources.get(4) < resources.get(6))
+            if (card.getID() == 99) {
+                if (resources.get(4) < resources.get(5)) {
+                    if (resources.get(4) < resources.get(6))
                         return 3 * resources.get(4);
                     else
                         return 3 * resources.get(6);
-                }
-                else {
-                    if(resources.get(5) < resources.get(6))
+                } else {
+                    if (resources.get(5) < resources.get(6))
                         return 3 * resources.get(5);
                     else
                         return 3 * resources.get(6);
@@ -526,6 +527,7 @@ public class PlayerArea implements Serializable {
 
     /**
      * Counts the number of times a pattern is achieved
+     *
      * @param card Identifies the pattern to search for
      * @return number of times a pattern is encountered
      */

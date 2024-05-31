@@ -1,16 +1,22 @@
 package it.polimi.ingsw.protocol.client.controller;
 
-import it.polimi.ingsw.protocol.messages.*;
 import it.polimi.ingsw.protocol.messages.ConnectionState.*;
-import it.polimi.ingsw.protocol.messages.EndGameState.*;
-import it.polimi.ingsw.protocol.messages.PlayerTurnState.*;
-import it.polimi.ingsw.protocol.messages.ServerOptionState.*;
-import it.polimi.ingsw.protocol.messages.StaterCardState.*;
-import it.polimi.ingsw.protocol.messages.WaitingforPlayerState.*;
-import it.polimi.ingsw.protocol.messages.ObjectiveState.*;
+import it.polimi.ingsw.protocol.messages.EndGameState.declareWinnerMessage;
+import it.polimi.ingsw.protocol.messages.ObjectiveState.objectiveCardMessage;
+import it.polimi.ingsw.protocol.messages.PlayerTurnState.pickCardMessage;
+import it.polimi.ingsw.protocol.messages.PlayerTurnState.placeCardMessage;
+import it.polimi.ingsw.protocol.messages.PlayerTurnState.updatePlayerMessage;
+import it.polimi.ingsw.protocol.messages.ServerOptionState.serverOptionMessage;
+import it.polimi.ingsw.protocol.messages.StaterCardState.starterCardMessage;
+import it.polimi.ingsw.protocol.messages.WaitingforPlayerState.expectedPlayersMessage;
+import it.polimi.ingsw.protocol.messages.WaitingforPlayerState.newHostMessage;
+import it.polimi.ingsw.protocol.messages.currentStateMessage;
+import it.polimi.ingsw.protocol.messages.responseMessage;
 
-import java.io.*;
-import java.net.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
 
 public class ControllerSocket extends Controller {
     private Socket socket;
@@ -19,16 +25,18 @@ public class ControllerSocket extends Controller {
 
     /**
      * method {@code ControllerSocket}: creates a new ControllerSocket
-     * @param serverIP: String
+     *
+     * @param serverIP:   String
      * @param serverPort: String
      */
-    public ControllerSocket (String serverIP, String serverPort) {
+    public ControllerSocket(String serverIP, String serverPort) {
         super(serverIP, serverPort);
     }
 
     /**
      * method {@code connectToServer}: connects to an existing server
-     * @param serverIP: String
+     *
+     * @param serverIP:   String
      * @param serverPort: String
      */
     @Override
@@ -44,6 +52,7 @@ public class ControllerSocket extends Controller {
 
     /**
      * method {@code answerConnection}: receives a connectionResponseMessage
+     *
      * @return connectionResponseMessage
      */
     @Override
@@ -57,6 +66,7 @@ public class ControllerSocket extends Controller {
 
     /**
      * method {@code getCurrent}: receives a currentStateMessage
+     *
      * @return currentStateMessage
      */
     @Override
@@ -70,6 +80,7 @@ public class ControllerSocket extends Controller {
 
     /**
      * method {@code serverOptions}: receives an empty serverOptionMessage
+     *
      * @return serverOptionMessage
      */
     @Override
@@ -82,7 +93,8 @@ public class ControllerSocket extends Controller {
     }
 
     /**
-     *  method {@code sendOptions}: sends a serverOptionMessage
+     * method {@code sendOptions}: sends a serverOptionMessage
+     *
      * @param options: serverOptionMessage
      */
     @Override
@@ -98,6 +110,7 @@ public class ControllerSocket extends Controller {
 
     /**
      * method {@code correctAnswer}: receives a responseMessage
+     *
      * @return responseMessage
      */
     @Override
@@ -111,19 +124,21 @@ public class ControllerSocket extends Controller {
 
     /**
      * method {@code getUnavailableName}: receives a unavailableNamesMessage
+     *
      * @return unavailableNamesMessage
      */
     @Override
     public unavailableNamesMessage getUnavailableName() {
         try {
             return (unavailableNamesMessage) inputStream.readObject();
-        } catch (IOException | ClassNotFoundException e){
+        } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
 
     /**
-     *  method {@code chooseName}: sends a chosenNameMessage
+     * method {@code chooseName}: sends a chosenNameMessage
+     *
      * @param name: String
      */
     @Override
@@ -139,19 +154,21 @@ public class ControllerSocket extends Controller {
 
     /**
      * method {@code getAvailableColor}: receives a availableColorsMessage
+     *
      * @return availableColorsMessage
      */
     @Override
     public availableColorsMessage getAvailableColor() {
         try {
             return (availableColorsMessage) inputStream.readObject();
-        } catch (IOException | ClassNotFoundException e){
+        } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
 
     /**
-     *  method {@code chooseColor}: sends a chosenNameMessage
+     * method {@code chooseColor}: sends a chosenNameMessage
+     *
      * @param color: String
      */
     @Override
@@ -167,27 +184,29 @@ public class ControllerSocket extends Controller {
 
     /**
      * method {@code newHost}: receives a newHostMessage
+     *
      * @return newHostMessage
      */
     @Override
     public newHostMessage newHost() {
         try {
             return (newHostMessage) inputStream.readObject();
-        } catch (IOException | ClassNotFoundException e){
+        } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
 
     /**
-     *  method {@code expectedPlayers}: sends a expectedPlayersMessage
-     * @param expected: int
+     * method {@code expectedPlayers}: sends a expectedPlayersMessage
+     *
+     * @param expected:   int
      * @param noResponse: boolean
      */
     @Override
     public void expectedPlayers(int expected, boolean noResponse) {
         try {
             outputStream.reset();
-            outputStream.writeObject(new expectedPlayersMessage (expected, noResponse));
+            outputStream.writeObject(new expectedPlayersMessage(expected, noResponse));
             outputStream.flush();
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -195,8 +214,9 @@ public class ControllerSocket extends Controller {
     }
 
     /**
-     *  method {@code placeStarter}: sends a starterCardMessage
-     * @param side: int
+     * method {@code placeStarter}: sends a starterCardMessage
+     *
+     * @param side:       int
      * @param noResponse: boolean
      */
     @Override
@@ -212,20 +232,22 @@ public class ControllerSocket extends Controller {
 
     /**
      * method {@code getObjectiveCards}: receives a objectiveCardMessage
+     *
      * @return objectiveCardMessage
      */
     @Override
     public objectiveCardMessage getObjectiveCards() {
         try {
             return (objectiveCardMessage) inputStream.readObject();
-        } catch (IOException | ClassNotFoundException e){
+        } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
 
     /**
-     *  method {@code chooseObjective}: sends a objectiveCardMessage
-     * @param pick: int
+     * method {@code chooseObjective}: sends a objectiveCardMessage
+     *
+     * @param pick:       int
      * @param noResponse: boolean
      */
     @Override
@@ -240,11 +262,12 @@ public class ControllerSocket extends Controller {
     }
 
     /**
-     *  method {@code placeCard}: sends a PlaceCardMessage
-     * @param card: int
-     * @param side: int
-     * @param x: int
-     * @param y: int
+     * method {@code placeCard}: sends a PlaceCardMessage
+     *
+     * @param card:       int
+     * @param side:       int
+     * @param x:          int
+     * @param y:          int
      * @param noResponse: boolean
      */
     @Override
@@ -259,8 +282,9 @@ public class ControllerSocket extends Controller {
     }
 
     /**
-     *  method {@code pickCard}: sends a pickCardMessage
-     * @param card: int
+     * method {@code pickCard}: sends a pickCardMessage
+     *
+     * @param card:       int
      * @param noResponse: boolean
      */
     @Override
@@ -276,10 +300,11 @@ public class ControllerSocket extends Controller {
 
     /**
      * method {@code updatePlayer}: receives a updatePlayerMessage
+     *
      * @return updatePlayerMessage
      */
     @Override
-    public updatePlayerMessage updatePlayer(){
+    public updatePlayerMessage updatePlayer() {
         try {
             return (updatePlayerMessage) inputStream.readObject();
         } catch (IOException | ClassNotFoundException e) {
@@ -289,18 +314,21 @@ public class ControllerSocket extends Controller {
 
     /**
      * method {@code endGame}: receives a declareWinnerMessage
+     *
      * @return declareWinnerMessage
      */
     @Override
     public declareWinnerMessage endGame() {
         try {
             return (declareWinnerMessage) inputStream.readObject();
-        } catch (IOException | ClassNotFoundException e){
+        } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
 
-
+    /**
+     * method {@code sendAnswerToPing}: sends an ACK message
+     */
     @Override
     public void sendAnswerToPing() {
         try {
@@ -310,8 +338,6 @@ public class ControllerSocket extends Controller {
         } catch (IOException e) {
 
             System.out.println("Error in sendAnswerToPing");
-            e.printStackTrace();
-
             throw new RuntimeException(e);
         }
     }

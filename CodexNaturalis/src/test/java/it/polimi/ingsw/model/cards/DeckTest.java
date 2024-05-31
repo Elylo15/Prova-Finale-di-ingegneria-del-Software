@@ -3,6 +3,7 @@ package it.polimi.ingsw.model.cards;
 import it.polimi.ingsw.model.cards.exceptions.InvalidIdException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class DeckTest {
@@ -104,6 +105,7 @@ class DeckTest {
         assertEquals(2, deckObjectiveCard.getSize());
         assertEquals(objectiveCard2, deckObjectiveCard.getList().getLast());
     }
+
     // Test for the shuffle method
     @Test
     void shuffleStarterCardDeck() {
@@ -223,6 +225,7 @@ class DeckTest {
         assertEquals(objectiveCard1, deckObjectiveCard.removeCard());
         assertEquals(1, deckObjectiveCard.getSize());
     }
+
     // Test for the getCard method
     @Test
     void getStarterCard() {

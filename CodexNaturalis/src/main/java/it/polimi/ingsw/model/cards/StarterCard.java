@@ -13,17 +13,18 @@ import java.util.Objects;
 public class StarterCard extends PlaceableCard implements Serializable {
     private ArrayList<Resource> permanentResource;
     private ArrayList<Resource> bottomResource;
+
     /**
      * Constructor
+     *
      * @param ID, it must be >=81 and <=86
      * @throws InvalidIdException if the condition on ID is not met
      */
     public StarterCard(int ID) throws InvalidIdException {
         super(ID);
-        if(ID>=81 && ID <=86){
+        if (ID >= 81 && ID <= 86) {
             this.ID = ID;
-        }
-        else if(ID<81){
+        } else if (ID < 81) {
             throw new InvalidIdException("ID is too small");
         } else {
             throw new InvalidIdException("ID is too big");
@@ -32,15 +33,16 @@ public class StarterCard extends PlaceableCard implements Serializable {
 
     /**
      * Constructor used to import from JSON
-     * @param ID, it must be >=1  and =<40
-     * @param front, true if the card is front, false if the card is back
-     * @param requirement, resources required to place the card
-     * @param points, points given by the card
-     * @param reign, reign of the card
-     * @param cells, cells of the card
-     * @param resources, resources given by the card
+     *
+     * @param ID,                it must be >=1  and =<40
+     * @param front,             true if the card is front, false if the card is back
+     * @param requirement,       resources required to place the card
+     * @param points,            points given by the card
+     * @param reign,             reign of the card
+     * @param cells,             cells of the card
+     * @param resources,         resources given by the card
      * @param permanentResource, resources given by the card
-     * @param bottomResource, resources given by the card
+     * @param bottomResource,    resources given by the card
      * @throws InvalidIdException if the condition on ID is not met
      */
     @JsonCreator
@@ -60,17 +62,18 @@ public class StarterCard extends PlaceableCard implements Serializable {
 
     /**
      * Constructor
-     * @param ID, it must be >=1  and =<40
-     * @param front, true if the card is front, false if the card is back
-     * @param points, points given by the card
-     * @param reign, reign of the card
-     * @param resources, resources given by the card
+     *
+     * @param ID,                it must be >=1  and =<40
+     * @param front,             true if the card is front, false if the card is back
+     * @param points,            points given by the card
+     * @param reign,             reign of the card
+     * @param resources,         resources given by the card
      * @param permanentResource, resources given by the card
-     * @param bottomResource, resources given by the card
+     * @param bottomResource,    resources given by the card
      * @throws InvalidIdException if the condition on ID is not met
      */
     public StarterCard(int ID, int points, Reign reign, boolean front, ArrayList<Resource> resources, ArrayList<Resource> permanentResource, ArrayList<Resource> bottomResource) throws InvalidIdException {
-        super(ID,points,reign,front,resources,null);
+        super(ID, points, reign, front, resources, null);
         this.permanentResource = permanentResource;
         this.bottomResource = bottomResource;
     }
@@ -78,6 +81,7 @@ public class StarterCard extends PlaceableCard implements Serializable {
     /**
      * Overrides the equals method from the Object class.
      * Compares two PlaceableCard objects to check for equality.
+     *
      * @param o the object to be compared
      * @return true if the specified objects are equal
      */
@@ -92,6 +96,7 @@ public class StarterCard extends PlaceableCard implements Serializable {
 
     /**
      * Overrides the hashCode method from the Object class.
+     *
      * @return the hash of the object
      */
     @Override
@@ -100,13 +105,12 @@ public class StarterCard extends PlaceableCard implements Serializable {
     }
 
     /**
-     *
      * @return the resources in the front of the card if front is true, the resources in the back of the card
      * if front is false
      */
     @Override
     public ArrayList<Resource> getResource() {
-        if(this.isFront()) {
+        if (this.isFront()) {
             return super.getResource();
         } else {
             return new ArrayList<>(this.bottomResource);
@@ -118,7 +122,7 @@ public class StarterCard extends PlaceableCard implements Serializable {
      */
     @Override
     public ArrayList<Resource> getPermanentResource() {
-        if(this.isFront()) {
+        if (this.isFront()) {
             return permanentResource;
         } else {
             return new ArrayList<>();

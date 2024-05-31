@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.Objects;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 class PlayerAreaTest {
 
@@ -25,7 +25,7 @@ class PlayerAreaTest {
 
     @Test
     void contains_notExistingCell() {
-        assertFalse(playerArea.contains(1,1));
+        assertFalse(playerArea.contains(1, 1));
     }
 
     @Test
@@ -59,13 +59,13 @@ class PlayerAreaTest {
         playerArea.placeStarterCard(starterCard, true);
         playerArea.placeCard(testCard, 1, 1, true);
 
-        Assertions.assertTrue(playerArea.contains(0,0));
-        Assertions.assertTrue(playerArea.contains(0,1));
-        Assertions.assertTrue(playerArea.contains(1,0));
-        Assertions.assertTrue(playerArea.contains(1,1));
-        Assertions.assertTrue(playerArea.contains(1,2));
-        Assertions.assertTrue(playerArea.contains(2,1));
-        Assertions.assertTrue(playerArea.contains(2,2));
+        Assertions.assertTrue(playerArea.contains(0, 0));
+        Assertions.assertTrue(playerArea.contains(0, 1));
+        Assertions.assertTrue(playerArea.contains(1, 0));
+        Assertions.assertTrue(playerArea.contains(1, 1));
+        Assertions.assertTrue(playerArea.contains(1, 2));
+        Assertions.assertTrue(playerArea.contains(2, 1));
+        Assertions.assertTrue(playerArea.contains(2, 2));
     }
 
     @Test
@@ -167,8 +167,8 @@ class PlayerAreaTest {
         checks.add(new Integer[]{1, -1});
 
         boolean found = true;
-        for(Integer[] position : counts) {
-            if(checks.stream()
+        for (Integer[] position : counts) {
+            if (checks.stream()
                     .noneMatch(check -> Objects.equals(check[0], position[0]) && Objects.equals(check[1], position[1]))) {
                 found = false;
             }
@@ -213,18 +213,17 @@ class PlayerAreaTest {
         playerArea.placeStarterCard(starterCard, true);
         playerArea.placeCard(testCard, 1, 1, true);
 
-        Assertions.assertFalse(playerArea.checkPosition(0,0));
-        Assertions.assertFalse(playerArea.checkPosition(1,1));
+        Assertions.assertFalse(playerArea.checkPosition(0, 0));
+        Assertions.assertFalse(playerArea.checkPosition(1, 1));
 
-        Assertions.assertFalse(playerArea.checkPosition(2,0));
-        Assertions.assertTrue(playerArea.checkPosition(-1,-1));
-        Assertions.assertTrue(playerArea.checkPosition(-1,1));
-        Assertions.assertTrue(playerArea.checkPosition(0,2));
-        Assertions.assertTrue(playerArea.checkPosition(2,2));
-        Assertions.assertTrue(playerArea.checkPosition(1,-1));
+        Assertions.assertFalse(playerArea.checkPosition(2, 0));
+        Assertions.assertTrue(playerArea.checkPosition(-1, -1));
+        Assertions.assertTrue(playerArea.checkPosition(-1, 1));
+        Assertions.assertTrue(playerArea.checkPosition(0, 2));
+        Assertions.assertTrue(playerArea.checkPosition(2, 2));
+        Assertions.assertTrue(playerArea.checkPosition(1, -1));
 
     }
-
 
 
     @Test
@@ -250,22 +249,22 @@ class PlayerAreaTest {
 
         playerArea.placeStarterCard(starterCard, true);
 
-        Assertions.assertFalse(playerArea.checkPosition(0,0));
+        Assertions.assertFalse(playerArea.checkPosition(0, 0));
 
-        Assertions.assertTrue(playerArea.contains(0,0));
-        Assertions.assertTrue(playerArea.contains(0,1));
-        Assertions.assertTrue(playerArea.contains(1,0));
-        Assertions.assertTrue(playerArea.contains(1,1));
+        Assertions.assertTrue(playerArea.contains(0, 0));
+        Assertions.assertTrue(playerArea.contains(0, 1));
+        Assertions.assertTrue(playerArea.contains(1, 0));
+        Assertions.assertTrue(playerArea.contains(1, 1));
 
-        Assertions.assertTrue(playerArea.checkPosition(-1,-1));
-        Assertions.assertTrue(playerArea.checkPosition(1,-1));
-        Assertions.assertTrue(playerArea.checkPosition(-1,1));
-        Assertions.assertTrue(playerArea.checkPosition(1,1));
+        Assertions.assertTrue(playerArea.checkPosition(-1, -1));
+        Assertions.assertTrue(playerArea.checkPosition(1, -1));
+        Assertions.assertTrue(playerArea.checkPosition(-1, 1));
+        Assertions.assertTrue(playerArea.checkPosition(1, 1));
 
-        Assertions.assertFalse(playerArea.checkPosition(0,-1));
-        Assertions.assertFalse(playerArea.checkPosition(-1,0));
-        Assertions.assertFalse(playerArea.checkPosition(0,1));
-        Assertions.assertFalse(playerArea.checkPosition(1,0));
+        Assertions.assertFalse(playerArea.checkPosition(0, -1));
+        Assertions.assertFalse(playerArea.checkPosition(-1, 0));
+        Assertions.assertFalse(playerArea.checkPosition(0, 1));
+        Assertions.assertFalse(playerArea.checkPosition(1, 0));
     }
 
     @Test
@@ -299,18 +298,18 @@ class PlayerAreaTest {
         playerArea.placeStarterCard(starterCard, true);
         playerArea.placeCard(testCard, 1, 1, true);
 
-        Assertions.assertFalse(playerArea.checkPosition(0,0));
-        Assertions.assertFalse(playerArea.checkPosition(1,1));
+        Assertions.assertFalse(playerArea.checkPosition(0, 0));
+        Assertions.assertFalse(playerArea.checkPosition(1, 1));
 
-        Assertions.assertTrue(playerArea.contains(0,0));
-        Assertions.assertTrue(playerArea.contains(0,1));
-        Assertions.assertTrue(playerArea.contains(1,0));
-        Assertions.assertTrue(playerArea.contains(1,1));
-        Assertions.assertTrue(playerArea.contains(1,2));
-        Assertions.assertTrue(playerArea.contains(2,1));
-        Assertions.assertTrue(playerArea.contains(2,2));
+        Assertions.assertTrue(playerArea.contains(0, 0));
+        Assertions.assertTrue(playerArea.contains(0, 1));
+        Assertions.assertTrue(playerArea.contains(1, 0));
+        Assertions.assertTrue(playerArea.contains(1, 1));
+        Assertions.assertTrue(playerArea.contains(1, 2));
+        Assertions.assertTrue(playerArea.contains(2, 1));
+        Assertions.assertTrue(playerArea.contains(2, 2));
 
-        Assertions.assertFalse(playerArea.contains(2,0));
+        Assertions.assertFalse(playerArea.contains(2, 0));
 
 
         PlaceableCard goldCard1, goldCard2;
@@ -325,8 +324,8 @@ class PlayerAreaTest {
         requirements.add(Resource.Fungus);
         requirements.add(Resource.Plant);
         try {
-            goldCard1 = new GoldCard(45, 2,Reign.Fungus,true,resources,requirements);
-            goldCard2 = new GoldCard(45, 2,Reign.Fungus,true,resources,requirements);
+            goldCard1 = new GoldCard(45, 2, Reign.Fungus, true, resources, requirements);
+            goldCard2 = new GoldCard(45, 2, Reign.Fungus, true, resources, requirements);
         } catch (InvalidIdException e) {
             throw new RuntimeException(e);
         }
@@ -339,7 +338,7 @@ class PlayerAreaTest {
         resources.add(Resource.Blocked);
         resources.add(Resource.Empty);
         try {
-            for(int i=0; i<5; i++)
+            for (int i = 0; i < 5; i++)
                 fungusCard.add(new ResourceCard(2, 0, Reign.Fungus, false, resources));
         } catch (InvalidIdException e) {
             throw new RuntimeException(e);
@@ -353,7 +352,7 @@ class PlayerAreaTest {
         resources.add(Resource.Blocked);
         resources.add(Resource.Empty);
         try {
-            for(int i=0; i<4; i++)
+            for (int i = 0; i < 4; i++)
                 plantCard.add(new ResourceCard(12, 0, Reign.Plant, false, resources));
         } catch (InvalidIdException e) {
             throw new RuntimeException(e);
@@ -372,9 +371,9 @@ class PlayerAreaTest {
         playerArea.placeCard(fungusCard.get(4), -4, 2, false);
         playerArea.placeCard(plantCard.get(3), -1, 3, false);
 
-        Assertions.assertEquals(2, playerArea.placeCard(goldCard1,-2,4,true));
-        Assertions.assertEquals(6, playerArea.placeCard(goldCard2,-3,3,true));
-        Assertions.assertEquals(0,playerArea.placeCard(fungusCard.getFirst(), -4, 4, true));
+        Assertions.assertEquals(2, playerArea.placeCard(goldCard1, -2, 4, true));
+        Assertions.assertEquals(6, playerArea.placeCard(goldCard2, -3, 3, true));
+        Assertions.assertEquals(0, playerArea.placeCard(fungusCard.getFirst(), -4, 4, true));
     }
 
     @Test
@@ -402,13 +401,13 @@ class PlayerAreaTest {
         //Objective card pattern 91
         ObjectiveCard obj1;
         ArrayList<int[]> pattern = new ArrayList<>();
-        pattern.add(new int[]{2,0});
-        pattern.add(new int[]{3,1});
+        pattern.add(new int[]{2, 0});
+        pattern.add(new int[]{3, 1});
         ArrayList<Reign> reigns = new ArrayList<>();
         reigns.add(Reign.Fungus);
         reigns.add(Reign.Fungus);
         reigns.add(Reign.Plant);
-        obj1 = new ObjectiveCard(91,3,null,pattern,reigns);
+        obj1 = new ObjectiveCard(91, 3, null, pattern, reigns);
 
         //Objective card pattern 95
         ObjectiveCard obj2;
@@ -416,7 +415,7 @@ class PlayerAreaTest {
         resources.add(Resource.Fungus);
         resources.add(Resource.Fungus);
         resources.add(Resource.Fungus);
-        obj2 = new ObjectiveCard(95,2,resources,null,null);
+        obj2 = new ObjectiveCard(95, 2, resources, null, null);
 
         //objective card pattern 96
         ObjectiveCard obj3;
@@ -424,7 +423,7 @@ class PlayerAreaTest {
         resources.add(Resource.Plant);
         resources.add(Resource.Plant);
         resources.add(Resource.Plant);
-        obj3 = new ObjectiveCard(96,2,resources,null,null);
+        obj3 = new ObjectiveCard(96, 2, resources, null, null);
 
         // Fungus card
         ArrayList<PlaceableCard> fungusCard = new ArrayList<>();
@@ -434,7 +433,7 @@ class PlayerAreaTest {
         resources.add(Resource.Blocked);
         resources.add(Resource.Empty);
         try {
-            for(int i=0; i<5; i++)
+            for (int i = 0; i < 5; i++)
                 fungusCard.add(new ResourceCard(2, 0, Reign.Fungus, false, resources));
         } catch (InvalidIdException e) {
             throw new RuntimeException(e);
@@ -448,7 +447,7 @@ class PlayerAreaTest {
         resources.add(Resource.Blocked);
         resources.add(Resource.Empty);
         try {
-            for(int i=0; i<4; i++)
+            for (int i = 0; i < 4; i++)
                 plantCard.add(new ResourceCard(12, 0, Reign.Plant, false, resources));
         } catch (InvalidIdException e) {
             throw new RuntimeException(e);
@@ -469,9 +468,9 @@ class PlayerAreaTest {
         playerArea.placeCard(plantCard.get(3), -1, 3, false);
 
 
-        Assertions.assertEquals(6,playerArea.checkPattern(obj1));
-        Assertions.assertEquals(2,playerArea.checkPattern(obj2));
-        Assertions.assertEquals(2,playerArea.checkPattern(obj3));
+        Assertions.assertEquals(6, playerArea.checkPattern(obj1));
+        Assertions.assertEquals(2, playerArea.checkPattern(obj2));
+        Assertions.assertEquals(2, playerArea.checkPattern(obj3));
     }
 
     @Test
@@ -499,13 +498,13 @@ class PlayerAreaTest {
         //Objective card pattern 91
         ObjectiveCard obj1;
         ArrayList<int[]> pattern = new ArrayList<>();
-        pattern.add(new int[]{2,0});
-        pattern.add(new int[]{3,1});
+        pattern.add(new int[]{2, 0});
+        pattern.add(new int[]{3, 1});
         ArrayList<Reign> reigns = new ArrayList<>();
         reigns.add(Reign.Fungus);
         reigns.add(Reign.Fungus);
         reigns.add(Reign.Plant);
-        obj1 = new ObjectiveCard(91,3,null,pattern,reigns);
+        obj1 = new ObjectiveCard(91, 3, null, pattern, reigns);
 
         //Objective card pattern 95
         ObjectiveCard obj2;
@@ -513,7 +512,7 @@ class PlayerAreaTest {
         resources.add(Resource.Fungus);
         resources.add(Resource.Fungus);
         resources.add(Resource.Fungus);
-        obj2 = new ObjectiveCard(95,2,resources,null,null);
+        obj2 = new ObjectiveCard(95, 2, resources, null, null);
 
         //objective card pattern 96
         ObjectiveCard obj3;
@@ -521,7 +520,7 @@ class PlayerAreaTest {
         resources.add(Resource.Plant);
         resources.add(Resource.Plant);
         resources.add(Resource.Plant);
-        obj3 = new ObjectiveCard(96,2,resources,null,null);
+        obj3 = new ObjectiveCard(96, 2, resources, null, null);
 
         // Fungus card
         ArrayList<PlaceableCard> fungusCard = new ArrayList<>();
@@ -531,7 +530,7 @@ class PlayerAreaTest {
         resources.add(Resource.Blocked);
         resources.add(Resource.Empty);
         try {
-            for(int i=0; i<5; i++)
+            for (int i = 0; i < 5; i++)
                 fungusCard.add(new ResourceCard(2, 0, Reign.Fungus, false, resources));
         } catch (InvalidIdException e) {
             throw new RuntimeException(e);
@@ -545,7 +544,7 @@ class PlayerAreaTest {
         resources.add(Resource.Blocked);
         resources.add(Resource.Empty);
         try {
-            for(int i=0; i<4; i++)
+            for (int i = 0; i < 4; i++)
                 plantCard.add(new ResourceCard(12, 0, Reign.Plant, false, resources));
         } catch (InvalidIdException e) {
             throw new RuntimeException(e);
@@ -565,8 +564,8 @@ class PlayerAreaTest {
         playerArea.placeCard(fungusCard.get(4), -4, 2, false);
         playerArea.placeCard(plantCard.get(3), -1, 3, false);
 
-        Assertions.assertEquals(2,playerArea.countPattern(obj1));
-        Assertions.assertEquals(1,playerArea.countPattern(obj2));
-        Assertions.assertEquals(1,playerArea.countPattern(obj3));
+        Assertions.assertEquals(2, playerArea.countPattern(obj1));
+        Assertions.assertEquals(1, playerArea.countPattern(obj2));
+        Assertions.assertEquals(1, playerArea.countPattern(obj3));
     }
 }

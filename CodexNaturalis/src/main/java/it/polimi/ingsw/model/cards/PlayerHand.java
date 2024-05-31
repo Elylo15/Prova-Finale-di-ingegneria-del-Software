@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 /**
  * PlayerHand class
+ *
  * @author elylo
  */
 public class PlayerHand implements Serializable {
@@ -15,20 +16,21 @@ public class PlayerHand implements Serializable {
     /**
      * Class constructor
      */
-    public PlayerHand(){
+    public PlayerHand() {
         placeableCards = new ArrayList<>();
     }
 
     /**
      * method removePlaceableCard: removes placeableCard from PlayerHand. Returns the placeableCard
+     *
      * @param numCard: id of the card the player wants to play
      * @return PlaceableCard: card played by the player
      */
-    public PlaceableCard removeplaceableCard(int numCard){
+    public PlaceableCard removeplaceableCard(int numCard) {
         PlaceableCard c = null;
-        for (int i = 0; i < placeableCards.size() ; i++) {
-            if (numCard == placeableCards.get(i).getID()){
-                c= placeableCards.get(i);
+        for (int i = 0; i < placeableCards.size(); i++) {
+            if (numCard == placeableCards.get(i).getID()) {
+                c = placeableCards.get(i);
                 placeableCards.remove(c);  //remove the card from the arraylist of placeableCards passing as a parameter the card to remove
             }
         }
@@ -37,22 +39,25 @@ public class PlayerHand implements Serializable {
 
     /**
      * method getPlaceableCard: returns the placeableCards
+     *
      * @return ArrayList<PlaceableCard>: array list of player cards
      */
-    public ArrayList<PlaceableCard> getPlaceableCards(){
+    public ArrayList<PlaceableCard> getPlaceableCards() {
         return placeableCards;
     }
 
     /**
      * method addNewPlaceableCard: adds a new placeableCard (drawn by the player) to PlayerHand
+     *
      * @param card: card drawn by the player to add to the PlayerHand
      */
-    public void addNewPlaceableCard(PlaceableCard card){
+    public void addNewPlaceableCard(PlaceableCard card) {
         placeableCards.add(card);
     }
 
     /**
      * Overrides the equals method from the Object class.
+     *
      * @param o the object to be compared
      * @return true if the specified object is equal to this PlayerHand, false otherwise.
      */
@@ -66,6 +71,7 @@ public class PlayerHand implements Serializable {
 
     /**
      * Overrides the hashCode method from the Object class.
+     *
      * @return the hash code of the PlaceableCard
      */
     @Override
@@ -75,6 +81,7 @@ public class PlayerHand implements Serializable {
 
     /**
      * Overrides the toString method from the Object class.
+     *
      * @return a string containing the placeableCards
      */
     @Override

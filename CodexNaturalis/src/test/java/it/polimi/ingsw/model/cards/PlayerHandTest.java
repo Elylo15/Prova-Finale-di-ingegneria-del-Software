@@ -69,7 +69,7 @@ class PlayerHandTest {
         PlayerHand playerHand2 = new PlayerHand();
         playerHand2.addNewPlaceableCard(card1);
         playerHand2.addNewPlaceableCard(card2);
-        assertTrue(playerHand.equals(playerHand2));
+        assertEquals(playerHand, playerHand2);
     }
 
     @Test
@@ -77,18 +77,18 @@ class PlayerHandTest {
         PlayerHand playerHand2 = new PlayerHand();
         playerHand2.addNewPlaceableCard(new GoldCard(42));
         playerHand2.addNewPlaceableCard(card1);
-        assertFalse(playerHand.equals(playerHand2));
+        assertNotEquals(playerHand, playerHand2);
     }
 
     @Test
     void equalsShouldReturnTrueSameObject() {
-        assertTrue(playerHand.equals(playerHand));
+        assertEquals(playerHand, playerHand);
     }
 
     @Test
     void equalsShouldReturnFalseNullAndDifferentClass() {
-        assertFalse(playerHand.equals(null));
-        assertFalse(playerHand.equals(new Object()));
+        assertNotEquals(null, playerHand);
+        assertNotEquals(playerHand, new Object());
     }
 
 }
