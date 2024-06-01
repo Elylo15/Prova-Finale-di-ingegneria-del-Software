@@ -63,7 +63,7 @@ public abstract class ClientConnection implements Runnable, Serializable {
     public abstract pickCardMessage getChosenPick();
     public abstract void sendEndGame(HashMap<String, Integer> score, HashMap<String, Integer> numberOfObjectives);
     public abstract void sendUpdatePlayer(updatePlayerMessage updateMessage);
-    protected abstract void closeConnection();
+    public abstract void closeConnection();
     public abstract boolean isConnected();
 
 

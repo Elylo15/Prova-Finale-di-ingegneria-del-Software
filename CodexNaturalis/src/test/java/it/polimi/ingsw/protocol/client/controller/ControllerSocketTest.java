@@ -1,23 +1,32 @@
 package it.polimi.ingsw.protocol.client.controller;
 
-import it.polimi.ingsw.protocol.messages.ConnectionState.availableColorsMessage;
-import it.polimi.ingsw.protocol.messages.ConnectionState.chosenColorMessage;
+import it.polimi.ingsw.model.CommonArea;
+import it.polimi.ingsw.model.Player;
+import it.polimi.ingsw.model.cards.LoadDecks;
+import it.polimi.ingsw.model.cards.ObjectiveCard;
 import it.polimi.ingsw.protocol.messages.ConnectionState.connectionResponseMessage;
-import it.polimi.ingsw.protocol.messages.currentStateMessage;
-import it.polimi.ingsw.protocol.messages.responseMessage;
+import it.polimi.ingsw.protocol.messages.EndGameState.declareWinnerMessage;
+import it.polimi.ingsw.protocol.messages.ObjectiveState.objectiveCardMessage;
+import it.polimi.ingsw.protocol.messages.PlayerTurnState.placeCardMessage;
+import it.polimi.ingsw.protocol.messages.PlayerTurnState.updatePlayerMessage;
+import it.polimi.ingsw.protocol.messages.ServerOptionState.serverOptionMessage;
+import it.polimi.ingsw.protocol.messages.StaterCardState.starterCardMessage;
+import it.polimi.ingsw.protocol.messages.WaitingforPlayerState.expectedPlayersMessage;
+import it.polimi.ingsw.protocol.server.ClientConnection;
+import it.polimi.ingsw.protocol.messages.*;
+import org.junit.jupiter.api.*;
+
+import it.polimi.ingsw.protocol.server.ClientConnection;
 import it.polimi.ingsw.protocol.server.ClientSocket;
 import it.polimi.ingsw.protocol.server.Server;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.HashMap;
+import java.util.concurrent.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -26,11 +35,9 @@ class ControllerSocketTest {
 
      //in order to see if the controller can correctly send and receive messages we create a server to exchange them
     private ServerSocket serverSocket;
-    private Socket Ssocket;
-    ObjectOutputStream serveroutput;
-    ObjectInputStream serverinput;
+    private Socket socket;
+    ClientConnection connection;
     private ThreadPoolExecutor executor;
-    ControllerSocket mycontroller;
 
 
 
@@ -40,177 +47,198 @@ class ControllerSocketTest {
         int maximumPoolSize = 200;
         long keepAliveTime = 300;
         TimeUnit unit = TimeUnit.SECONDS;
-        serverSocket = new ServerSocket(1024);
         executor = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, unit, new LinkedBlockingQueue<Runnable>());
 
+        serverSocket = new ServerSocket(1024);
         executor.submit(() -> {
             try {
-                Ssocket = serverSocket.accept();
-                serverinput = new ObjectInputStream(Ssocket.getInputStream());
-                serveroutput = new ObjectOutputStream(Ssocket.getOutputStream());
+                socket = serverSocket.accept();
+                connection = new ClientSocket(socket.getInetAddress().toString(), Integer.toString(socket.getPort()), socket);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         });
 
-        mycontroller = new ControllerSocket("localhost", "1024");
-        mycontroller.connectToServer("localhost", "1024");
+        controller = new ControllerSocket("localhost", "1024");
+        controller.connectToServer("localhost", "1024");
     }
     @AfterEach
     void tearDown() throws IOException {
+        connection.closeConnection();
+        if (socket != null)
+            socket.close();
+        if (serverSocket != null)
+            serverSocket.close();
          executor.shutdown();
     }
 
     @Test
-    void connectToServer() {
+    @DisplayName("Connection to server and receiving an answer")
+    void connectToServerTest() throws InterruptedException {
+        connection.sendAnswerToConnection(new connectionResponseMessage(true));
+        assertTrue(controller.answerConnection().getCorrect());
+    }
+
+
+    @Test
+    @DisplayName("Getting the current state")
+    void getCurrentTest() {
+        currentStateMessage current = new currentStateMessage(null, null, "State", false, null, null, 0);
+        connection.sendCurrentState(current);
+        currentStateMessage controllerCurrent = controller.getCurrent();
+        Assertions.assertEquals("State", controllerCurrent.getStateName());
+        Assertions.assertFalse(controllerCurrent.isLastTurn());
+        Assertions.assertEquals(0, (int) controllerCurrent.getMatchID());
     }
 
     @Test
-    void answerConnection() {
-        //controller should receive a connectionResponseMessage
-        connectionResponseMessage message = new connectionResponseMessage(true);
-        executor.submit(() -> {
-            try {
-                serveroutput.reset();
-                serveroutput.writeObject(message);
-                serveroutput.flush();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
-
-        connectionResponseMessage messageToController = mycontroller.answerConnection();
-        assertEquals(message, messageToController);
-
+    @DisplayName("Getting the server options")
+    void serverOptionsTest() {
+        Future<serverOptionMessage> futureMessage = executor.submit(() -> connection.getServerOption(null, null, null));
+        serverOptionMessage options = controller.serverOptions();
+        Assertions.assertFalse(options.isNewMatch());
+        Assertions.assertFalse(options.isLoadMatch());
     }
 
     @Test
-    void getCurrent() {
-        //controller should receive a currentStateMessage
-
+    @DisplayName("Sending a correct answer")
+    void correctAnswerTest() {
+        connection.sendAnswer(true);
+        responseMessage response = controller.correctAnswer();
+        Assertions.assertTrue(response.getCorrect());
     }
 
     @Test
-    void serverOptions() {
-        //controller should receive an empty serverOptionMessage
+    @DisplayName("Sending options to the server")
+    void sendOptionsTest() {
+        serverOptionMessage options = new serverOptionMessage(true, 0, 1, false, 0);
+        controller.sendOptions(options);
+        serverOptionMessage receivedOptions = connection.getServerOption(null, null, null);
+        Assertions.assertTrue(receivedOptions.isNewMatch());
+        Assertions.assertEquals(0, receivedOptions.getMatchID());
+        Assertions.assertEquals(1, receivedOptions.getStartedMatchID());
+        Assertions.assertFalse(receivedOptions.isLoadMatch());
+        Assertions.assertEquals(0, receivedOptions.getSavedMatchID());
     }
 
     @Test
-    void sendOptions() {
-        //controller should send a serverOptionMessage
+    @DisplayName("Getting unavailable names and choosing a name")
+    void NamesTest() throws InterruptedException, ExecutionException {
+        ArrayList<String> unavailableNames = new ArrayList<>();
+        unavailableNames.add("Alfa");
+        unavailableNames.add("Beta");
+        Future<String> name = executor.submit(() -> connection.getName(unavailableNames).getName());
+        ArrayList<String> names = controller.getUnavailableName().getNames();
+        Assertions.assertEquals("Alfa", names.get(0));
+        Assertions.assertEquals("Beta", names.get(1));
+        controller.chooseName("Alfa");
+        Assertions.assertEquals("Alfa", name.get());
     }
 
     @Test
-    void correctAnswer() throws IOException {
-        //the controller should correctly receive a responseMessage
-        responseMessage message = new responseMessage(true);
-        executor.submit(() -> {
-            try {
-                serveroutput.reset();
-                serveroutput.writeObject(message);
-                serveroutput.flush();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
-
-        responseMessage messageToController = mycontroller.correctAnswer();
-        System.out.println(message.getCorrect());
-        System.out.println(messageToController.getCorrect());
-        assertEquals(message.getCorrect(),messageToController.getCorrect());
-
+    @DisplayName("Getting available colors and choosing a color")
+    void ColorsTest() throws ExecutionException, InterruptedException {
+        ArrayList<String> availableColors = new ArrayList<>();
+        availableColors.add("Red");
+        availableColors.add("Blue");
+        Future<String> color = executor.submit(() -> connection.getColor(availableColors).getColor());
+        ArrayList<String> colors = controller.getAvailableColor().getColors();
+        Assertions.assertEquals("Red", colors.get(0));
+        Assertions.assertEquals("Blue", colors.get(1));
+        controller.chooseColor("Red");
+        Assertions.assertEquals("Red", color.get());
     }
 
     @Test
-    void getUnavailableName() {
+    @DisplayName("Getting the new host")
+    void newHostTest() {
+        connection.sendNewHostMessage("Alfa");
+        Assertions.assertEquals("Alfa", controller.newHost().getNewHostNickname());
     }
 
     @Test
-    void chooseName() {
+    @DisplayName("Sending the expected players")
+    void expectedPlayersTest() {
+        controller.expectedPlayers(3, false);
+        expectedPlayersMessage expected = connection.getExpectedPlayer();
+        Assertions.assertEquals(3, expected.getExpectedPlayers());
     }
 
     @Test
-    void getAvailableColor() {
-        //controller should receive an availableColorsMessage
-        ArrayList<String> color = new ArrayList<>();
-        color.add("red");
-        color.add("blue");
-        availableColorsMessage message = new availableColorsMessage(color);
-        executor.submit(() -> {
-            try {
-                serveroutput.reset();
-                serveroutput.writeObject(message);
-                serveroutput.flush();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
-        availableColorsMessage messageReceived = mycontroller.getAvailableColor();
-        System.out.println(message.toString());
-        System.out.println(messageReceived.toString());
-        assertEquals(message.getColors(),messageReceived.getColors());
-
+    @DisplayName("Placing the starter card")
+    void placeStarterTest() {
+        controller.placeStarter(0, false);
+        starterCardMessage starter = connection.getStaterCard();
+        Assertions.assertEquals(0, starter.getSide());
     }
 
     @Test
-    void chooseColor() {
-        //controller should send a chosenColorMessage
-        String color = "red";
-        mycontroller.chooseColor(color);
-        String colorReceived = null;
-            try {
-                chosenColorMessage messageToServer = (chosenColorMessage) serverinput.readObject();
-                colorReceived=  messageToServer.getColor();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            } catch (ClassNotFoundException e) {
-                throw new RuntimeException(e);
-            }
-        System.out.println(colorReceived);
-        System.out.println(color);
-
-        assertEquals(color, colorReceived);
-
-
+    @DisplayName("Getting the objective cards and choosing one")
+    void ObjectiveCardsTest() throws ExecutionException, InterruptedException {
+        ArrayList<ObjectiveCard> cards = new ArrayList<>();
+        CommonArea area = (new LoadDecks()).load();
+        cards.add(area.drawObjectiveCard());
+        cards.add(area.drawObjectiveCard());
+        Future<objectiveCardMessage> messageFuture = executor.submit(() -> connection.getChosenObjective(cards));
+        ArrayList<ObjectiveCard> receivedCards = controller.getObjectiveCards().getObjectiveCard();
+        Assertions.assertEquals(cards.get(0).getID(), receivedCards.get(0).getID());
+        Assertions.assertEquals(cards.get(1).getID(), receivedCards.get(1).getID());
+        controller.chooseObjective(0, false);
+        Assertions.assertEquals(0, messageFuture.get().getChoice());
     }
 
     @Test
-    void newHost() {
+    @DisplayName("Placing a card")
+    void placeCardTest() {
+        controller.placeCard(0, 0, 0, 0, false);
+        placeCardMessage message = connection.getPlaceCard();
+        Assertions.assertEquals(0, message.getCard());
+        Assertions.assertEquals(0, message.getFront());
+        Assertions.assertEquals(0, message.getRow());
+        Assertions.assertEquals(0, message.getColumn());
     }
 
     @Test
-    void expectedPlayers() {
+    @DisplayName("Picking a card")
+    void pickCardTest() {
+        controller.pickCard(0, false);
+        Assertions.assertEquals(0, connection.getChosenPick().getCard());
     }
 
     @Test
-    void placeStarter() {
+    @DisplayName("Updating the player")
+    void updatePlayerTest() {
+        Player player = new Player("Alfa", "Red", null);
+        updatePlayerMessage message = new updatePlayerMessage(player, "Alfa");
+        connection.sendUpdatePlayer(message);
+        updatePlayerMessage received = controller.updatePlayer();
+        Assertions.assertEquals("Alfa", received.getPlayer().getNickname());
+        Assertions.assertEquals("Red", received.getPlayer().getColor());
+        Assertions.assertNotNull(received.getPlayer().getCommonArea());
     }
 
     @Test
-    void getObjectiveCards() {
+    @DisplayName("Ending the game")
+    void endGameTest() {
+        HashMap<String, Integer> score = new HashMap<>();
+        score.put("Alfa", 10);
+        score.put("Beta", 20);
+        HashMap<String, Integer> objectives = new HashMap<>();
+        objectives.put("Alfa", 2);
+        objectives.put("Beta", 3);
+        connection.sendEndGame(score, objectives);
+        declareWinnerMessage message = controller.endGame();
+        Assertions.assertEquals(10, message.getPlayersPoints().get("Alfa"));
+        Assertions.assertEquals(20, message.getPlayersPoints().get("Beta"));
+        Assertions.assertEquals(2, message.getNumberOfObjects().get("Alfa"));
+        Assertions.assertEquals(3, message.getNumberOfObjects().get("Beta"));
     }
 
     @Test
-    void chooseObjective() {
+    @DisplayName("Sending an answer to a ping test")
+    void sendAnswerToPingTest() {
+        controller.sendAnswerToPing();
+        Assertions.assertTrue(connection.isConnected());
     }
 
-    @Test
-    void placeCard() {
-    }
-
-    @Test
-    void pickCard() {
-    }
-
-    @Test
-    void updatePlayer() {
-    }
-
-    @Test
-    void endGame() {
-    }
-
-    @Test
-    void sendAnswerToPing() {
-    }
 }

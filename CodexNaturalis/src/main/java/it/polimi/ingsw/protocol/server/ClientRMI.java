@@ -263,7 +263,7 @@ public class ClientRMI extends ClientConnection implements Runnable, Serializabl
      * method {@code closeConnection}: closes the connection
      */
     @Override
-    protected void closeConnection() {
+    public void closeConnection() {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Future<Void> future = executor.submit(new Callable<Void>() {
             @Override
