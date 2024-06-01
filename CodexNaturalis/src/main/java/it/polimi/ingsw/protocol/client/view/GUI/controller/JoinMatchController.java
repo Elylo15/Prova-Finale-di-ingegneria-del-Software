@@ -3,8 +3,10 @@ package it.polimi.ingsw.protocol.client.view.GUI.controller;
 
 import it.polimi.ingsw.protocol.client.view.GUI.message.GUIMessages;
 import it.polimi.ingsw.protocol.messages.ServerOptionState.serverOptionMessage;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListCell;
@@ -35,6 +37,8 @@ public class JoinMatchController {
      * It reads the serverOptionMessage from the GUI and gets the list of matches.
      * Then, it populates the ListView with the matches and sets the cell factory to use buttons as cells.
      */
+
+    //le pagine le devo caricare nella pagina di waiting
     private void initialize() {
         // Read the serverOptionMessage from the GUI and get the list of matches
         serverOptionMessage = (serverOptionMessage) GUIMessages.readToGUI();
@@ -57,8 +61,9 @@ public class JoinMatchController {
                 return new ButtonListCell();
             }
         });
-
-
+    }
+    public void goBack(ActionEvent actionEvent) {
+        Platform.runLater(SceneManager::InsertServerOption);
     }
     /**
      * This class is a custom cell for the ListView that uses buttons.
@@ -76,6 +81,7 @@ public class JoinMatchController {
                     // Send a message to the client with the match ID and disable all other buttons
                     GUIMessages.writeToClient(new serverOptionMessage(true, Integer.parseInt(item), null, false, null));
                     disableOtherButtons(button);
+                    Platform.runLater(SceneManager::waiting);
                 }
             });
             buttons.add(button);
