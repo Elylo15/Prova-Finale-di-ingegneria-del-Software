@@ -2,8 +2,10 @@ package it.polimi.ingsw.protocol.client.view.GUI.controller;
 
 import it.polimi.ingsw.protocol.client.view.GUI.message.GUIMessages;
 import it.polimi.ingsw.protocol.messages.ServerOptionState.serverOptionMessage;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListCell;
@@ -59,6 +61,10 @@ public class JoinRunningMatchController {
 
     }
 
+    public void goBack(ActionEvent actionEvent) {
+        Platform.runLater(SceneManager::InsertServerOption);
+    }
+
     /**
      * This class is a custom cell for the ListView that uses buttons.
      * Each button represents a match.
@@ -75,10 +81,13 @@ public class JoinRunningMatchController {
                     // Send a message to the client with the match ID and disable all other buttons
                     GUIMessages.writeToClient(new serverOptionMessage(false,null,  Integer.parseInt(item), false, null));
                     disableOtherButtons(button);
+                    Platform.runLater(SceneManager::waiting);
                 }
             });
             buttons.add(button);
         }
+
+
 
         @Override
         protected void updateItem(String item, boolean empty) {
