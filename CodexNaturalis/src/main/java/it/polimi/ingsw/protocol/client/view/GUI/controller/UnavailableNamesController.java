@@ -1,17 +1,11 @@
 package it.polimi.ingsw.protocol.client.view.GUI.controller;
 
-import it.polimi.ingsw.protocol.client.ClientCLI;
 import it.polimi.ingsw.protocol.client.view.GUI.message.GUIMessages;
 import it.polimi.ingsw.protocol.messages.ConnectionState.unavailableNamesMessage;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.stage.Stage;
-
-import java.io.IOException;
 
 public class UnavailableNamesController {
     @FXML

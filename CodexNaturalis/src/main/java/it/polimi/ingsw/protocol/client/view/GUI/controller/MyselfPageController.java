@@ -156,7 +156,6 @@ public class MyselfPageController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        layout.setMouseTransparent(true);
         this.message = GUIMessages.readToGUI();
         if( this.message instanceof currentStateMessage){
             set(Objects.requireNonNull((currentStateMessage) message));
@@ -273,7 +272,7 @@ public class MyselfPageController implements Initializable {
             if(((currentStateMessage) message).getStateName().equals("PlaceTurnState")
                     && !Objects.equals(myself.getNickname(), ((currentStateMessage) message).getCurrentPlayer().getNickname())) {
                 if (selectedCard != null) {
-                    selectedCard.setStyle(""); // Remove the blue border from the selected card
+                    this.selectedCard.setStyle(""); // Remove the blue border from the selected card
                     GUIMessages.writeToClient(selectedCardID); // Send the selected card ID to the server
                 }
             }
@@ -290,14 +289,14 @@ public class MyselfPageController implements Initializable {
                 if (selectedDrawCard == clickedCard) {
                     GUIMessages.writeToClient(selectedDrawCardID);
                 } else if (selectedDrawCard != null) {
-                    selectedDrawCard.setStyle("");
+                    this.selectedDrawCard.setStyle("");
                     clickedCard.setStyle("-fx-border-color: #0000ff; -fx-border-width: 2;");
-                    selectedDrawCard = clickedCard;
-                    selectedDrawCardID = cardID;
+                    this.selectedDrawCard = clickedCard;
+                    this.selectedDrawCardID = cardID;
                 } else {
                     clickedCard.setStyle("-fx-border-color: #0000ff; -fx-border-width: 2;");
-                    selectedDrawCard = clickedCard;
-                    selectedDrawCardID = cardID;
+                    this.selectedDrawCard = clickedCard;
+                    this.selectedDrawCardID = cardID;
                 }
             }
         }

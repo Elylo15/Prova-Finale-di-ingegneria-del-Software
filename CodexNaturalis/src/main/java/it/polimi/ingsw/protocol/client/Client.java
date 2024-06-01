@@ -5,6 +5,7 @@ import it.polimi.ingsw.protocol.client.controller.Controller;
 import it.polimi.ingsw.protocol.client.controller.ControllerRMI;
 import it.polimi.ingsw.protocol.client.controller.ControllerSocket;
 import it.polimi.ingsw.protocol.client.view.View;
+import it.polimi.ingsw.protocol.client.view.ViewGUI;
 import it.polimi.ingsw.protocol.messages.ConnectionState.availableColorsMessage;
 import it.polimi.ingsw.protocol.messages.ConnectionState.connectionResponseMessage;
 import it.polimi.ingsw.protocol.messages.ConnectionState.unavailableNamesMessage;
@@ -25,7 +26,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicIntegerArray;
 import java.util.concurrent.Callable;
 
-public abstract class Client {
+public class Client implements Runnable {
     private final View view;
     private final ThreadPoolExecutor executor;
     private String serverIP;
@@ -102,8 +103,6 @@ public abstract class Client {
             }
         }
     }
-
-    public abstract void run();
 
     /**
      * method {@code serverOptions}: invocations of controller methods to send and receive serverOptionMessage.
@@ -378,7 +377,17 @@ public abstract class Client {
     /**
      * method {@code whileRun}: main loop of the client
      */
-    public void whileRun() {
+    @Override
+    public void run() {
+        if (getView() instanceof ViewGUI) {
+            ((ViewGUI) getView()).startMain();
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException ignore) {
+
+            }
+        }
+
         while (true) {
             try {
                 String server = getView().askIP();

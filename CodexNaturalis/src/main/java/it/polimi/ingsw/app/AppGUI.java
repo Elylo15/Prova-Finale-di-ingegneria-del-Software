@@ -1,6 +1,6 @@
 package it.polimi.ingsw.app;
 
-import it.polimi.ingsw.protocol.client.ClientGUI;
+import it.polimi.ingsw.protocol.client.Client;
 import it.polimi.ingsw.protocol.client.view.GUI.controller.SceneManager;
 import it.polimi.ingsw.protocol.client.view.ViewGUI;
 import javafx.application.Application;
@@ -18,8 +18,8 @@ public class AppGUI extends Application {
     public void start(Stage primaryStage) {
         SceneManager.setPrimaryStage(primaryStage);
         ViewGUI view = new ViewGUI();
-        ClientGUI clientGUI = new ClientGUI(view);
+        Client client = new Client(view);
 
-        new Thread(clientGUI).start();
+        new Thread(client).start();
     }
 }

@@ -51,10 +51,6 @@ class MatchTest {
         match.addPlayer(player1);
         match.addPlayer(player2);
 
-        int beforeId1 = match.getCommonArea().getD1().getList().get(1).getID();
-        int beforeId2 = match.getCommonArea().getD2().getList().get(6).getID();
-        int beforeId3 = match.getCommonArea().getD3().getList().get(3).getID();
-        int beforeId4 = match.getCommonArea().getD4().getList().get(2).getID();
 
         match.start();
 
@@ -67,17 +63,6 @@ class MatchTest {
         boolean isInRange2 = id2 >= 1 && id2 <= 40;
         boolean isInRange3 = id3 >= 41 && id3 <= 80;
         boolean isInRange4 = id4 >= 41 && id4 <= 80;
-
-        //Maybe it is not the best idea, maybe it can be the same even shuffled
-        boolean isShuffled1 = beforeId1 != match.getCommonArea().getD1().getList().get(1).getID();
-        boolean isShuffled2 = beforeId2 != match.getCommonArea().getD2().getList().get(6).getID();
-        boolean isShuffled3 = beforeId3 != match.getCommonArea().getD3().getList().get(3).getID();
-        boolean isShuffled4 = beforeId4 != match.getCommonArea().getD4().getList().get(2).getID();
-
-        assertTrue(isShuffled1);
-        assertTrue(isShuffled2);
-        assertTrue(isShuffled3);
-        assertTrue(isShuffled4);
 
         assertNotNull(match.getCommonArea().getD1());
         assertNotNull(match.getCommonArea().getD2());

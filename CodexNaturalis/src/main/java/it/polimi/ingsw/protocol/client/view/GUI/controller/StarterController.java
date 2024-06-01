@@ -21,6 +21,7 @@ import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class StarterController implements Initializable {
+
     private Player myself;
     private ArrayList<ObjectiveCard> commonObjective;
     private PlayerArea playerArea;
@@ -28,7 +29,7 @@ public class StarterController implements Initializable {
 
     private currentStateMessage message;
 
-    private int selectedCardID;
+    private int selectedCardFront;
     private ImageView selectedCard;
 
     @FXML
@@ -39,10 +40,6 @@ public class StarterController implements Initializable {
     private ImageView gold1;
     @FXML
     private ImageView goldBack;
-    @FXML
-    private ImageView obj0;
-    @FXML
-    private ImageView obj1;
     @FXML
     private Label playerName;
     @FXML
@@ -128,6 +125,7 @@ public class StarterController implements Initializable {
         setupCard(gold0, commonArea.getTableCards().get(2).getID(), true, commonArea.getTableCards().get(2));
         setupCard(gold1, commonArea.getTableCards().get(3).getID(), true, commonArea.getTableCards().get(3));
 
+        //No objective cards
         //setupCard(obj0, commonObjective.getFirst().getID(), true, commonObjective.getFirst());
         //setupCard(obj1, commonObjective.get(1).getID(), true, commonObjective.get(1));
 
@@ -142,23 +140,29 @@ public class StarterController implements Initializable {
     }
 
     @FXML
-    private void turnAround(MouseEvent event) {
-        ImageView clickedCard = (ImageView) event.getSource();
-        Card card = (Card) clickedCard.getUserData();
-
-        if (card != null) {
-            ImageBinder imageBinder = new ImageBinder();
-            Image newImage = imageBinder.getOppositeImage(card.getID(), card.isFront());
-            clickedCard.setImage(newImage);
-
-            // Update the card state
-            card.setFront(!card.isFront());
-        }
-    }
-
-    @FXML
     private void select(MouseEvent event) {
-        if (event.getClickCount() == 1) {
+        if(event.getClickCount() == 1){
+            ImageView clickedCard = (ImageView) event.getSource();
+            Card card = (Card) clickedCard.getUserData();
+            int front;
+
+            if(card.isFront())
+                front = 1;
+            else
+                front = 0;
+
+            // Remove border from previously selected card
+            if (selectedCard != null)
+                selectedCard.setStyle("");
+
+            // Set blue border for the selected card
+            clickedCard.setStyle("-fx-border-color: #0000ff; -fx-border-width: 20;");
+            this.selectedCard = clickedCard;
+
+            // Set the selected card ID
+            this.selectedCardFront = front;
+
+        } else if (event.getClickCount() == 2) {
             ImageView clickedCard = (ImageView) event.getSource();
             Card card = (Card) clickedCard.getUserData();
 
@@ -170,22 +174,6 @@ public class StarterController implements Initializable {
                 // Update the card state
                 card.setFront(!card.isFront());
             }
-        } else if (event.getClickCount() == 2) {
-            ImageView clickedCard = (ImageView) event.getSource();
-            Integer cardID = (Integer) clickedCard.getUserData();
-
-            if (cardID != null) {
-                // Remove border from previously selected card
-                if (selectedCard != null)
-                    selectedCard.setStyle("");
-
-                // Set blue border for the selected card
-                clickedCard.setStyle("-fx-border-color: #0000ff; -fx-border-width: 2;");
-                selectedCard = clickedCard;
-
-                // Set the selected card ID
-                selectedCardID = cardID;
-            }
         }
     }
 
@@ -193,7 +181,7 @@ public class StarterController implements Initializable {
     private void place(MouseEvent event) {
         if (selectedCard != null) {
             selectedCard.setStyle(""); // Remove the blue border from the selected card
-            GUIMessages.writeToClient(selectedCardID); // Send the selected card ID to the server
+            GUIMessages.writeToClient(selectedCardFront); // Send the selected card ID to the server
         }
     }
 
@@ -201,6 +189,11 @@ public class StarterController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         this.message = (currentStateMessage) GUIMessages.readToGUI();
         set(Objects.requireNonNull(message));
+    }
+
+    @FXML
+    public void switchToNextGamePage(MouseEvent event) {
+
     }
 
     //TODO: IF UPDATE THE STARTER

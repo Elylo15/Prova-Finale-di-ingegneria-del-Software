@@ -29,7 +29,7 @@ class ClientCLITest {
     @BeforeEach
     public void setUp() {
         viewCLI = new ViewCLI();
-        client = new ClientCLI(viewCLI);
+        client = new Client(viewCLI);
         int corePoolSize = 15;
         int maximumPoolSize = 100;
         long keepAliveTime = 300;

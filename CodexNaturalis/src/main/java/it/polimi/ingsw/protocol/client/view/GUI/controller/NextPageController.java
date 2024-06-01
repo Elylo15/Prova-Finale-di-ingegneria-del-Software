@@ -107,7 +107,6 @@ public class NextPageController {
     }
 
     protected static void setAll() {
-        layout.setMouseTransparent(true);
 
         NextPageController.current = MyselfPageController.players[MyselfPageController.clickedCounter];
         NextPageController.commonObjective = MyselfPageController.commonObjective;

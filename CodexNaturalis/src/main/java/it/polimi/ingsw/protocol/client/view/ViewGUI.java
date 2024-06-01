@@ -149,7 +149,8 @@ public class ViewGUI extends View {
     public void answer(responseMessage message) {
         //to avoid reading unexpected messages
         GUIMessages.clearQueue();
-        Platform.runLater(SceneManager::answer);
+        if(!message.getCorrect())
+            Platform.runLater(SceneManager::answer);
 
     }
 
@@ -238,8 +239,9 @@ public class ViewGUI extends View {
      */
     @Override
     public int placeStarter() {
-        //GUIMessages.clearQueue();
+
         Platform.runLater(SceneManager::starterPage);
+
         return (int) GUIMessages.readToClient();
 
     }
@@ -254,6 +256,8 @@ public class ViewGUI extends View {
     public int chooseObjective(ArrayList<ObjectiveCard> objectives) {
         //GUIMessages.clearQueue();
         Platform.runLater(SceneManager::objectivePage);
+
+
         return (int) GUIMessages.readToClient();
 
     }
@@ -267,6 +271,7 @@ public class ViewGUI extends View {
     public int[] placeCard() {
         //GUIMessages.clearQueue();
         Platform.runLater(SceneManager::myselfGamePage);
+
         return (int[]) GUIMessages.readToClient();
     }
 
@@ -279,6 +284,7 @@ public class ViewGUI extends View {
     public int pickCard() {
         //GUIMessages.clearQueue();
         Platform.runLater(SceneManager::myselfGamePage);
+        GUIMessages.clearQueue();
         return (int) GUIMessages.readToClient();
     }
 
@@ -291,6 +297,7 @@ public class ViewGUI extends View {
     public void update(updatePlayerMessage update) {
         //GUIMessages.clearQueue();
         Platform.runLater(SceneManager::myselfGamePage);
+        GUIMessages.clearQueue();
         GUIMessages.writeToGUI(update);
     }
 

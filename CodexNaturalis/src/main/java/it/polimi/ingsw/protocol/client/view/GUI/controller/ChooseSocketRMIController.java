@@ -1,13 +1,8 @@
 package it.polimi.ingsw.protocol.client.view.GUI.controller;
 
-import it.polimi.ingsw.protocol.client.ClientCLI;
-import it.polimi.ingsw.protocol.client.controller.Controller;
 import it.polimi.ingsw.protocol.client.view.GUI.message.GUIMessages;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.control.Button;
-import javafx.stage.Stage;
 
 /**
  * This class is a controller for the GUI scene where the user chooses between Socket and RMI for communication.

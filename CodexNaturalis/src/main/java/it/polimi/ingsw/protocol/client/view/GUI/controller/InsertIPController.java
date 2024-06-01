@@ -2,7 +2,6 @@ package it.polimi.ingsw.protocol.client.view.GUI.controller;
 import it.polimi.ingsw.protocol.client.view.GUI.message.GUIMessages;
 
 
-import it.polimi.ingsw.protocol.client.ClientGUI;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
