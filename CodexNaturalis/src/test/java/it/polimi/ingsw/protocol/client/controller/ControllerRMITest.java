@@ -91,6 +91,7 @@ class ControllerRMITest {
         try {
             registry.unbind("MainServer");
             UnicastRemoteObject.unexportObject(server, true);
+            UnicastRemoteObject.unexportObject(registry, true);
         } catch (RemoteException | NotBoundException e) {
             System.err.println("Error unbinding the server: " + e.getMessage());
         }

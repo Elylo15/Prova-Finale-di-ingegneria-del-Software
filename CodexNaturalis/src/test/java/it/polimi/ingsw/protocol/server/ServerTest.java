@@ -8,10 +8,16 @@ import it.polimi.ingsw.protocol.messages.ServerOptionState.*;
 import it.polimi.ingsw.protocol.client.controller.ControllerRMI;
 import it.polimi.ingsw.protocol.client.controller.ControllerSocket;
 import it.polimi.ingsw.protocol.messages.currentStateMessage;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.rmi.AccessException;
+import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Random;
@@ -38,6 +44,13 @@ class ServerTest {
 
     @BeforeEach
     void setUp() {
+        // Clean up eventual previous registry
+        try {
+            Registry registry = LocateRegistry.getRegistry(1099);
+            registry.list();
+            UnicastRemoteObject.unexportObject(registry, true);
+        } catch (Exception ignore) {}
+
         setup_Match_1 = true;
         setup_Match_2 = true;
         timeToDisconnect = false;
@@ -48,6 +61,12 @@ class ServerTest {
         TimeUnit unit = TimeUnit.SECONDS;
         executor = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, unit, new LinkedBlockingQueue<Runnable>());
         executor.submit(server);
+    }
+
+    @AfterEach
+    void tearDown() {
+        server.closeServer();
+        executor.shutdown();
     }
 
     @Test
@@ -62,8 +81,6 @@ class ServerTest {
         assertTrue(rmiResult.get());
         assertTrue(socketResult2.get());
         assertTrue(rmiResult2.get());
-
-        executor.shutdown();
     }
 
     /**

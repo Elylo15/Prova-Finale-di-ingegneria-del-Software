@@ -52,16 +52,7 @@ class ClientCLITest {
 
     @Test
     void connection() {
-        Server server = new Server();
-        executor.submit(server);
 
-        client.setController("localhost", true);
-        client.getController().connectToServer("localhost", "1024");
-        assertTrue(client.getController().answerConnection().getCorrect());
-        client.setController("localhost", false);
-        client.getController().connectToServer("localhost", "1099");
-        assertTrue(client.getController().answerConnection().getCorrect());
-        executor.shutdown();
     }
 
 

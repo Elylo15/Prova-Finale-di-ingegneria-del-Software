@@ -6,15 +6,14 @@ import it.polimi.ingsw.protocol.messages.ConnectionState.connectionResponseMessa
 import it.polimi.ingsw.protocol.server.ClientConnection;
 import it.polimi.ingsw.protocol.server.ClientRMI;
 import it.polimi.ingsw.protocol.server.Server;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.rmi.AlreadyBoundException;
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -47,6 +46,13 @@ class MainRemoteServerTest {
                 throw new RuntimeException(e);
             }
         });
+    }
+
+    @AfterEach
+    void tearDown() throws RemoteException, NotBoundException {
+        registry.unbind("MainServer");
+        UnicastRemoteObject.unexportObject(mainRemoteServer, true);
+        UnicastRemoteObject.unexportObject(registry, true);
     }
 
     @Test

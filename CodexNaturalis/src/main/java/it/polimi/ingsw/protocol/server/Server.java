@@ -19,6 +19,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
@@ -34,6 +35,8 @@ public class Server implements Runnable {
     private int timeoutSeconds;
 
     private ServerSocket serverSocket;
+    private MainRemoteServer server;
+    private Registry registry;
 
     private ThreadPoolExecutor executor;
 
@@ -63,29 +66,6 @@ public class Server implements Runnable {
         executor = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, unit, new LinkedBlockingQueue<Runnable>());
     }
 
-    /**
-     * Constructor of the class.
-     *
-     * @param portSocket port of the socket connection.
-     * @param portRMI port of the RMI connection.
-     * @param maximumPoolSize maximum number of threads in the pool.
-     */
-    public Server(int portSocket, int portRMI, int maximumPoolSize) {
-        this.portSocket = portSocket;
-        this.portRMI = portRMI;
-        this.games = new CopyOnWriteArrayList<>();
-        logCreator = new LogCreator();
-        this.serverRunning = false;
-        this.timeoutSeconds = 2*60;
-
-        if(maximumPoolSize < 2)
-            maximumPoolSize = 2;
-
-        int corePoolSize = 2;
-        long keepAliveTime = 300;
-        TimeUnit unit = TimeUnit.SECONDS;
-        executor = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, unit, new LinkedBlockingQueue<Runnable>());
-    }
 
     /**
      * Accepts a connection via socket from a client and creates a new ClientConnection.
@@ -123,8 +103,8 @@ public class Server implements Runnable {
     protected void acceptConnectionRMI() {
         try {
             logCreator.log("Opening RMI service");
-            Registry registry = LocateRegistry.createRegistry(portRMI);
-            MainRemoteServer server = new MainRemoteServer();
+            registry = LocateRegistry.createRegistry(portRMI);
+            server = new MainRemoteServer();
             registry.bind("MainServer", server);
 
             while(this.serverRunning) {
@@ -140,7 +120,7 @@ public class Server implements Runnable {
             }
 
         } catch (Exception e) {
-            logCreator.log("Server RMI service crashed");
+            logCreator.log("Server RMI service crashed: " + e.getMessage());
         }
 
     }
@@ -678,6 +658,22 @@ public class Server implements Runnable {
         }
     }
 
+    /**
+     * Closes the server.
+     */
+    protected void closeServer() {
+        this.serverRunning = false;
+        try {
+            this.serverSocket.close();
+            this.registry.unbind("MainServer");
+            UnicastRemoteObject.unexportObject(this.server, true);
+            UnicastRemoteObject.unexportObject(this.registry, true);
+            this.server = null;
+            this.registry = null;
+        } catch (Exception e) {
+            logCreator.log("Error closing server: " + e.getMessage());
+        }
+    }
 
     /**
      * Runs the server.
@@ -689,5 +685,18 @@ public class Server implements Runnable {
         executor.submit(this::acceptConnectionRMI);
         executor.submit(this::closeMatch);
         logCreator.log("Server started");
+
+        Scanner scanner = new Scanner(System.in);
+        while (this.serverRunning) {
+            System.out.println("\n Stop the server? (yes/no)");
+            String input = scanner.nextLine();
+            if (input.equals("yes") || input.equals("y")) {
+                this.serverRunning = false;
+            }
+        }
+        executor.shutdown();
+        this.closeServer();
+        logCreator.log("Server stopped");
+        logCreator.close();
     }
 }

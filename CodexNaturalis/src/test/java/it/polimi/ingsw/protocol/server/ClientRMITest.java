@@ -84,13 +84,10 @@ class ClientRMITest {
     }
 
     @AfterEach
-    public void tearDown() {
-        try {
-            registry.unbind("MainServer");
-            UnicastRemoteObject.unexportObject(server, true);
-        } catch (RemoteException | NotBoundException e) {
-            System.err.println("Error unbinding the server: " + e.getMessage());
-        }
+    public void tearDown() throws NotBoundException, RemoteException {
+        registry.unbind("MainServer");
+        UnicastRemoteObject.unexportObject(server, true);
+        UnicastRemoteObject.unexportObject(registry, true);
         executor.shutdown();
     }
 
