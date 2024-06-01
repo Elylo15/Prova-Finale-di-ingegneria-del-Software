@@ -81,7 +81,7 @@ public class StarterController implements Initializable {
         String color = myself.getColor();
         cardImage = switch (color) {
             case "red" -> {
-                imagePath = "CodexNaturalis/src/main/Resource/img/Pions/CODEX_pion_rouge.png";
+                imagePath = "/img/Pions/CODEX_pion_rouge.png";
                 yield new Image(Objects.requireNonNull(getClass().getResourceAsStream(imagePath)));
             }
             case "blue" -> {
@@ -89,11 +89,11 @@ public class StarterController implements Initializable {
                 yield new Image(Objects.requireNonNull(getClass().getResourceAsStream(imagePath)));
             }
             case "green" -> {
-                imagePath = "CodexNaturalis/src/main/Resource/img/Pions/CODEX_pion_vert.png";
+                imagePath = "/img/Pions/CODEX_pion_vert.png";
                 yield new Image(Objects.requireNonNull(getClass().getResourceAsStream(imagePath)));
             }
             case "yellow" -> {
-                imagePath = "CodexNaturalis/src/main/Resource/img/Pions/CODEX_pion_jaune.png";
+                imagePath = "/img/Pions/CODEX_pion_jaune.png";
                 yield new Image(Objects.requireNonNull(getClass().getResourceAsStream(imagePath)));
             }
             default -> null;
@@ -128,8 +128,8 @@ public class StarterController implements Initializable {
         setupCard(gold0, commonArea.getTableCards().get(2).getID(), true, commonArea.getTableCards().get(2));
         setupCard(gold1, commonArea.getTableCards().get(3).getID(), true, commonArea.getTableCards().get(3));
 
-        setupCard(obj0, commonObjective.getFirst().getID(), true, commonObjective.getFirst());
-        setupCard(obj1, commonObjective.get(1).getID(), true, commonObjective.get(1));
+        //setupCard(obj0, commonObjective.getFirst().getID(), true, commonObjective.getFirst());
+        //setupCard(obj1, commonObjective.get(1).getID(), true, commonObjective.get(1));
 
         setupCard(card1, myself.getPlayerHand().getPlaceableCards().getFirst().getID(), true, myself.getPlayerHand().getPlaceableCards().getFirst());
     }
