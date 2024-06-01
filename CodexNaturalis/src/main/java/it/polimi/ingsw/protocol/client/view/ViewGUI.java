@@ -114,7 +114,8 @@ public class ViewGUI extends View {
     public void answer(responseMessage message) {
         //to avoid reading unexpected messages
         GUIMessages.clearQueue();
-        //da vedere successivamente
+        Platform.runLater(SceneManager::answer);
+
     }
 
     /**

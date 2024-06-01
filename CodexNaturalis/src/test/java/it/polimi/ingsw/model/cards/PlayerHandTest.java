@@ -28,6 +28,20 @@ class PlayerHandTest {
         assertEquals(card1, removedCard);
         assertFalse(playerHand.getPlaceableCards().contains(card1));
     }
+    @Test
+    void removeCards() throws InvalidIdException {
+        int id1 = card1.getID();
+        int id41 = card2.getID();
+        ResourceCard card10 = new ResourceCard(10);
+        playerHand.addNewPlaceableCard(card10);
+        PlaceableCard card1 = playerHand.removeplaceableCard(id1);
+        PlaceableCard card41 = playerHand.removeplaceableCard(id41);
+        playerHand.removeplaceableCard(card10.getID());
+        assertFalse(playerHand.getPlaceableCards().contains(card1));
+        assertFalse(playerHand.getPlaceableCards().contains(card41));
+        assertFalse(playerHand.getPlaceableCards().contains(card41));
+
+    }
 
     @Test
     void removePlaceableCardReturnsNullWhenCardNotFound() {

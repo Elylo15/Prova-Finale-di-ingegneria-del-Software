@@ -215,6 +215,7 @@ class ResourceCardTest {
     @Test
     void shouldThrowExceptionWhenIdIsTooSmallOrTooBig() {
         assertThrows(InvalidIdException.class, () -> new ResourceCard(0));
+        assertThrows(InvalidIdException.class, () -> new ResourceCard(41));
         assertThrows(InvalidIdException.class, () -> new ResourceCard(77));
     }
 

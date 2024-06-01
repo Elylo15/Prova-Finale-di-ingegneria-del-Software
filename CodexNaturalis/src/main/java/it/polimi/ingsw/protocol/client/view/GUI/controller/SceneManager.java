@@ -22,8 +22,19 @@ public class SceneManager {
         try {
             Parent root = FXMLLoader.load(SceneManager.class.getResource("/availableColors.fxml"));
             primaryStage.setScene(new Scene(root));
-           // primaryStage.setFullScreen(true);
-           // primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
+            primaryStage.setFullScreen(true);
+            primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
+            primaryStage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    public static void answer(){
+        try {
+            Parent root = FXMLLoader.load(SceneManager.class.getResource("/answer.fxml"));
+            primaryStage.setScene(new Scene(root));
+            primaryStage.setFullScreen(true);
+            primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
             primaryStage.show();
         } catch (IOException e) {
             e.printStackTrace();
@@ -202,8 +213,8 @@ public class SceneManager {
         try {
             Parent root = FXMLLoader.load(SceneManager.class.getResource("/unavailableNames.fxml"));
             primaryStage.setScene(new Scene(root));
-            //primaryStage.setFullScreen(true);
-            //primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
+            primaryStage.setFullScreen(true);
+            primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
             primaryStage.show();
         } catch (IOException e) {
             e.printStackTrace();
@@ -214,8 +225,8 @@ public class SceneManager {
         try {
             Parent root = FXMLLoader.load(SceneManager.class.getResource("/waiting.fxml"));
             primaryStage.setScene(new Scene(root));
-           //primaryStage.setFullScreen(true);
-           // primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
+            primaryStage.setFullScreen(true);
+            primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
             primaryStage.show();
         } catch (IOException e) {
             e.printStackTrace();

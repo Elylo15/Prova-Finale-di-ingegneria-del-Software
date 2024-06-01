@@ -30,13 +30,13 @@
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Button fx:id="submitButton" mnemonicParsing="false" prefHeight="32.0" prefWidth="64.0" text="Submit" GridPane.columnIndex="3" GridPane.rowIndex="5" />
-            <Label text="Please choose a name " GridPane.columnIndex="3" GridPane.rowIndex="2">
+            <Button fx:id="submitButton" mnemonicParsing="false" prefHeight="31.0" prefWidth="122.0" text="Submit" GridPane.columnIndex="3" GridPane.rowIndex="5" />
+            <Label text="Please choose a name to join the game" GridPane.columnIndex="3" GridPane.columnSpan="2" GridPane.rowIndex="2">
                <font>
                   <Font name="System Bold" size="13.0" />
                </font>
             </Label>
-            <TextField fx:id="nameToChoose" prefHeight="26.0" prefWidth="63.0" promptText="enter name" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+            <TextField fx:id="nameToChoose" prefHeight="26.0" prefWidth="67.0" promptText="enter name" GridPane.columnIndex="3" GridPane.rowIndex="3" />
             <Label fx:id="unavailableNames" GridPane.columnIndex="3" GridPane.columnSpan="2" GridPane.rowIndex="1" />
          </children>
       </GridPane>

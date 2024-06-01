@@ -30,23 +30,23 @@
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Button fx:id="yellow" mnemonicParsing="false" style="-fx-background-color: #fff30d;" text="YELLOW" GridPane.columnIndex="3" GridPane.rowIndex="2">
+            <Button fx:id="yellow" mnemonicParsing="false" prefHeight="33.0" prefWidth="66.0" style="-fx-background-color: #fff30d;" text="YELLOW" GridPane.columnIndex="3" GridPane.rowIndex="2">
                <font>
                   <Font name="System Bold" size="12.0" />
                </font></Button>
-            <Button fx:id="red" mnemonicParsing="false" style="-fx-background-color: #ff0000;" text="RED" GridPane.columnIndex="1" GridPane.rowIndex="2">
+            <Button fx:id="red" mnemonicParsing="false" prefHeight="34.0" prefWidth="66.0" style="-fx-background-color: #ff0000;" text="RED" GridPane.columnIndex="1" GridPane.rowIndex="2">
                <font>
                   <Font name="System Bold" size="12.0" />
                </font></Button>
-            <Button fx:id="green" mnemonicParsing="false" style="-fx-background-color: #03ff50;" text="GREEN" GridPane.columnIndex="5" GridPane.rowIndex="2">
+            <Button fx:id="green" mnemonicParsing="false" prefHeight="33.0" prefWidth="66.0" style="-fx-background-color: #03ff50;" text="GREEN" GridPane.columnIndex="5" GridPane.rowIndex="2">
                <font>
                   <Font name="System Bold" size="12.0" />
                </font></Button>
-            <Button fx:id="blue" mnemonicParsing="false" style="-fx-background-color: #000dff;" text="BLUE" textFill="#d8ff0a" GridPane.columnIndex="7" GridPane.rowIndex="2">
+            <Button fx:id="blue" mnemonicParsing="false" prefHeight="33.0" prefWidth="66.0" style="-fx-background-color: #000dff;" text="BLUE" textFill="#d8ff0a" GridPane.columnIndex="7" GridPane.rowIndex="2">
                <font>
                   <Font name="System Bold" size="12.0" />
                </font></Button>
-            <Label text="Please, choose a color " GridPane.columnIndex="4" GridPane.rowIndex="1">
+            <Label text="Please, choose a color to join the game" GridPane.columnIndex="4" GridPane.columnSpan="2" GridPane.rowIndex="1">
                <font>
                   <Font name="System Bold" size="13.0" />
                </font>

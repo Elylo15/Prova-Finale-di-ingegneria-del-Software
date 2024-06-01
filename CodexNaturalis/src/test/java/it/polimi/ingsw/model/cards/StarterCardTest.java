@@ -274,6 +274,7 @@ class StarterCardTest {
 
     @Test
     void shouldThrowExceptionWhenIdIsTooSmallOrTooBig() {
+        assertThrows(InvalidIdException.class, () -> new StarterCard(1));
         assertThrows(InvalidIdException.class, () -> new StarterCard(39));
         assertThrows(InvalidIdException.class, () -> new StarterCard(98));
     }
