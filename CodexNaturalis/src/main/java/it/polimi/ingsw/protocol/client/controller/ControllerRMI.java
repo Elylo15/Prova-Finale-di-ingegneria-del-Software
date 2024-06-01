@@ -65,7 +65,6 @@ public class ControllerRMI extends Controller {
         try {
             return (connectionResponseMessage) toClient.read();
         } catch (RemoteException e) {
-            System.out.println("Error in answerConnection");
             throw new RuntimeException(e);
         }
     }
@@ -80,7 +79,6 @@ public class ControllerRMI extends Controller {
         try {
             return (currentStateMessage) toClient.read();
         } catch (RemoteException e) {
-            System.out.println("Error in getCurrent: " + e.getMessage());
             throw new RuntimeException(e);
         }
     }
@@ -95,7 +93,6 @@ public class ControllerRMI extends Controller {
         try {
             return (serverOptionMessage) toClient.read();
         } catch (RemoteException e) {
-            System.out.println("Error in serverOptions");
             throw new RuntimeException(e);
         }
     }
@@ -110,7 +107,6 @@ public class ControllerRMI extends Controller {
         try {
             return (responseMessage) toClient.read();
         } catch (RemoteException e) {
-            System.out.println("Error in correctAnswer");
             throw new RuntimeException(e);
         }
     }
@@ -125,7 +121,6 @@ public class ControllerRMI extends Controller {
         try {
             toServer.write(options);
         } catch (RemoteException e) {
-            System.out.println("Error in sendOptions");
             throw new RuntimeException(e);
         }
     }
@@ -140,7 +135,6 @@ public class ControllerRMI extends Controller {
         try {
             return (unavailableNamesMessage) toClient.read();
         } catch (RemoteException e) {
-            System.out.println("Error in getUnavailableName");
             throw new RuntimeException(e);
         }
     }
@@ -155,7 +149,6 @@ public class ControllerRMI extends Controller {
         try {
             toServer.write(new chosenNameMessage(name));
         } catch (RemoteException e) {
-            System.out.println("Error in chooseName");
             throw new RuntimeException(e);
         }
     }
@@ -170,7 +163,6 @@ public class ControllerRMI extends Controller {
         try {
             return (availableColorsMessage) toClient.read();
         } catch (RemoteException e) {
-            System.out.println("Error in getAvailableColor");
             throw new RuntimeException(e);
         }
     }
@@ -185,7 +177,6 @@ public class ControllerRMI extends Controller {
         try {
             toServer.write(new chosenColorMessage(color));
         } catch (RemoteException e) {
-            System.out.println("Error in chooseColor");
             throw new RuntimeException(e);
         }
     }
@@ -200,7 +191,6 @@ public class ControllerRMI extends Controller {
         try {
             return (newHostMessage) toClient.read();
         } catch (RemoteException e) {
-            System.out.println("Error in newHost");
             throw new RuntimeException(e);
         }
     }
@@ -216,7 +206,6 @@ public class ControllerRMI extends Controller {
         try {
             toServer.write(new expectedPlayersMessage(expected, noResponse));
         } catch (RemoteException e) {
-            System.out.println("Error in expectedPlayers");
             throw new RuntimeException(e);
         }
     }
@@ -232,7 +221,6 @@ public class ControllerRMI extends Controller {
         try {
             toServer.write(new starterCardMessage(side, noResponse));
         } catch (RemoteException e) {
-            System.out.println("Error in placeStarter");
             throw new RuntimeException(e);
         }
     }
@@ -247,7 +235,6 @@ public class ControllerRMI extends Controller {
         try {
             return (objectiveCardMessage) toClient.read();
         } catch (RemoteException e) {
-            System.out.println("Error in getObjectiveCards");
             throw new RuntimeException(e);
         }
     }
@@ -263,7 +250,6 @@ public class ControllerRMI extends Controller {
         try {
             toServer.write(new objectiveCardMessage(pick, noResponse));
         } catch (RemoteException e) {
-            System.out.println("Error in chooseObjective");
             throw new RuntimeException(e);
         }
     }
@@ -282,7 +268,6 @@ public class ControllerRMI extends Controller {
         try {
             toServer.write(new placeCardMessage(card, side, x, y, noResponse));
         } catch (RemoteException e) {
-            System.out.println("Error in placeCard");
             throw new RuntimeException(e);
         }
     }
@@ -298,7 +283,6 @@ public class ControllerRMI extends Controller {
         try {
             toServer.write(new pickCardMessage(card, noResponse));
         } catch (RemoteException e) {
-            System.out.println("Error in pickCard");
             throw new RuntimeException(e);
         }
     }
@@ -312,7 +296,6 @@ public class ControllerRMI extends Controller {
         try {
             return (updatePlayerMessage) toClient.read();
         } catch (RemoteException e) {
-            System.out.println("Error in updatePlayer: " + e.getMessage());
             throw new RuntimeException(e);
         }
     }
@@ -327,7 +310,6 @@ public class ControllerRMI extends Controller {
         try {
             return (declareWinnerMessage) toClient.read();
         } catch (RemoteException e) {
-            System.out.println("Error in endGame");
             throw new RuntimeException(e);
         }
     }
@@ -340,7 +322,6 @@ public class ControllerRMI extends Controller {
         try {
             toServer.write("ACK");
         } catch (RemoteException e) {
-            System.out.println("Error in sendAnswerToPing");
             throw new RuntimeException(e);
         }
     }

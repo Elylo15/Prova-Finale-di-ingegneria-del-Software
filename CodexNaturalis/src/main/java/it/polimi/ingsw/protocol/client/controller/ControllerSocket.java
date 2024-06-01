@@ -336,8 +336,6 @@ public class ControllerSocket extends Controller {
             outputStream.writeObject("ACK");
             outputStream.flush();
         } catch (IOException e) {
-
-            System.out.println("Error in sendAnswerToPing");
             throw new RuntimeException(e);
         }
     }

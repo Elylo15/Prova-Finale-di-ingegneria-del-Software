@@ -265,4 +265,34 @@ class ControllerRMITest {
         controller.sendAnswerToPing();
         Assertions.assertTrue(connection.isConnected());
     }
+
+
+
+    @Test
+    @DisplayName("Closing the connection")
+    void closeConnectionTest() {
+        connection.closeConnection();
+        Assertions.assertFalse(connection.isConnected());
+
+        Assertions.assertThrows(RuntimeException.class, () -> controller.getCurrent());
+        Assertions.assertThrows(RuntimeException.class, () -> controller.serverOptions());
+        Assertions.assertThrows(RuntimeException.class, () -> controller.correctAnswer());
+        Assertions.assertThrows(RuntimeException.class, () -> controller.getUnavailableName());
+        Assertions.assertThrows(RuntimeException.class, () -> controller.getAvailableColor());
+        Assertions.assertThrows(RuntimeException.class, () -> controller.newHost());
+        Assertions.assertThrows(RuntimeException.class, () -> controller.getObjectiveCards());
+        Assertions.assertThrows(RuntimeException.class, () -> controller.updatePlayer());
+        Assertions.assertThrows(RuntimeException.class, () -> controller.endGame());
+        Assertions.assertThrows(RuntimeException.class, () -> controller.sendAnswerToPing());
+        Assertions.assertThrows(RuntimeException.class, () -> controller.expectedPlayers(0, false));
+        Assertions.assertThrows(RuntimeException.class, () -> controller.placeStarter(0, false));
+        Assertions.assertThrows(RuntimeException.class, () -> controller.chooseName("Alfa"));
+        Assertions.assertThrows(RuntimeException.class, () -> controller.chooseColor("Red"));
+        Assertions.assertThrows(RuntimeException.class, () -> controller.chooseObjective(0, false));
+        Assertions.assertThrows(RuntimeException.class, () -> controller.placeCard(0, 0, 0, 0, false));
+        Assertions.assertThrows(RuntimeException.class, () -> controller.pickCard(0, false));
+        Assertions.assertThrows(RuntimeException.class, () -> controller.sendOptions(new serverOptionMessage(false, 0, 0, false, 0)));
+
+    }
+
 }
