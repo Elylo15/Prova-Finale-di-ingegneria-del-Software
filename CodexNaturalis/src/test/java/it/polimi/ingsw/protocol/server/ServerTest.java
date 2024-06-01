@@ -195,6 +195,7 @@ class ServerTest {
                 assertTrue(controller.correctAnswer().getCorrect());
                 System.out.println("client_2: Color chosen");
                 setup_Match_1 = true;
+                lock_1.notifyAll();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -247,6 +248,20 @@ class ServerTest {
      */
     private boolean client_3() {
         Controller controller = new ControllerRMI("localhost", "1099");
+        synchronized (lock_1) {
+            while(setup_Match_1) {
+                try {
+                    lock_1.wait();
+                } catch (InterruptedException ignore) {}
+            }
+
+            while(!setup_Match_1) {
+                try {
+                    lock_1.wait();
+                } catch (InterruptedException ignore) {}
+            }
+
+        }
         synchronized (lock_2) {
             controller.connectToServer("localhost", "1099");
             controller.answerConnection();

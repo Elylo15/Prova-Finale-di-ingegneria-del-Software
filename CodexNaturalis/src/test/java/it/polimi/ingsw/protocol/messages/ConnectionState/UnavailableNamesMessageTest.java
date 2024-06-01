@@ -43,6 +43,6 @@ public class UnavailableNamesMessageTest {
     @Test
     @DisplayName("toString returns correct format")
     public void toStringReturnsCorrectFormat() {
-        Assertions.assertEquals("[John, Jane, Doe]", message.toString());
+        Assertions.assertEquals("[ALFA, BETA, GAMMA]", message.toString());
     }
 }
