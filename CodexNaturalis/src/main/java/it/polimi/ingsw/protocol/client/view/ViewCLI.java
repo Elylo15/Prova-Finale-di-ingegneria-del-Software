@@ -1005,7 +1005,7 @@ public class ViewCLI extends View {
     public serverOptionMessage serverOptions(serverOptionMessage message) {
         Scanner scanner = new Scanner(System.in);
         boolean newMatch;
-        Integer matchID;
+        Integer matchID = null;
         Integer startedMatchID = null;
         boolean loadMatch = false;
         Integer savedMatchID = null;
@@ -1026,7 +1026,7 @@ public class ViewCLI extends View {
         }
 
         // Asks the user if he wants to create a new match or join an existing one in waiting
-        while (true) {
+        while (newMatch) {
             System.out.print("Create a New Match (1) or Join a Match (2)? ");
             String choice = scanner.nextLine().toLowerCase();
             if (choice.equals("2")) {
