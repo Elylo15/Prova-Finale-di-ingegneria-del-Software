@@ -222,13 +222,14 @@ public class ViewGUI extends View {
     @Override
     public void updatePlayer(currentStateMessage message) {
         GUIMessages.clearQueue();
-        if (Objects.equals(message.getStateName(), "StarterCardState")) {
-            Platform.runLater(SceneManager::starterPage);
-        } else if (Objects.equals(message.getStateName(), "ObjectiveState")) {
-            Platform.runLater(SceneManager::objectivePage);
-        } else {
-            Platform.runLater(SceneManager::myselfGamePage);
-        }
+        System.out.println(message.getStateName());
+        //if (Objects.equals(message.getStateName(), "StarterCardState")) {
+        //    Platform.runLater(SceneManager::starterPage);
+        //} else if (Objects.equals(message.getStateName(), "ObjectiveState")) {
+        //    Platform.runLater(SceneManager::objectivePage);
+       // } else {
+        //    Platform.runLater(SceneManager::myselfGamePage);
+        //}
         GUIMessages.writeToGUI(message);
     }
 
@@ -237,7 +238,7 @@ public class ViewGUI extends View {
      */
     @Override
     public int placeStarter() {
-        GUIMessages.clearQueue();
+        //GUIMessages.clearQueue();
         Platform.runLater(SceneManager::starterPage);
         return (int) GUIMessages.readToClient();
 
@@ -251,7 +252,7 @@ public class ViewGUI extends View {
      */
     @Override
     public int chooseObjective(ArrayList<ObjectiveCard> objectives) {
-        GUIMessages.clearQueue();
+        //GUIMessages.clearQueue();
         Platform.runLater(SceneManager::objectivePage);
         return (int) GUIMessages.readToClient();
 
@@ -264,7 +265,7 @@ public class ViewGUI extends View {
      */
     @Override
     public int[] placeCard() {
-        GUIMessages.clearQueue();
+        //GUIMessages.clearQueue();
         Platform.runLater(SceneManager::myselfGamePage);
         return (int[]) GUIMessages.readToClient();
     }
@@ -276,7 +277,7 @@ public class ViewGUI extends View {
      */
     @Override
     public int pickCard() {
-        GUIMessages.clearQueue();
+        //GUIMessages.clearQueue();
         Platform.runLater(SceneManager::myselfGamePage);
         return (int) GUIMessages.readToClient();
     }
@@ -288,7 +289,7 @@ public class ViewGUI extends View {
      */
     @Override
     public void update(updatePlayerMessage update) {
-        GUIMessages.clearQueue();
+        //GUIMessages.clearQueue();
         Platform.runLater(SceneManager::myselfGamePage);
         GUIMessages.writeToGUI(update);
     }

@@ -128,19 +128,19 @@ public class NextPageController {
         String color = current.getColor();
         cardImage = switch (color) {
             case "red" -> {
-                imagePath = "CodexNaturalis/src/main/Resource/img/Pions/CODEX_pion_rouge.png";
+                imagePath = "/img/Pions/CODEX_pion_rouge.png";
                 yield new Image(Objects.requireNonNull(NextPageController.class.getResourceAsStream(imagePath)));
             }
             case "blue" -> {
-                imagePath = "CodexNaturalis/src/main/Resource/img/Pions/CODEX_pion_bleu.png";
+                imagePath = "/img/Pions/CODEX_pion_bleu.png";
                 yield new Image(Objects.requireNonNull(NextPageController.class.getResourceAsStream(imagePath)));
             }
             case "green" -> {
-                imagePath = "CodexNaturalis/src/main/Resource/img/Pions/CODEX_pion_vert.png";
+                imagePath = "/img/Pions/CODEX_pion_vert.png";
                 yield new Image(Objects.requireNonNull(NextPageController.class.getResourceAsStream(imagePath)));
             }
             case "yellow" -> {
-                imagePath = "CodexNaturalis/src/main/Resource/img/Pions/CODEX_pion_jaune.png";
+                imagePath = "/img/Pions/CODEX_pion_jaune.png";
                 yield new Image(Objects.requireNonNull(NextPageController.class.getResourceAsStream(imagePath)));
             }
             default -> null;

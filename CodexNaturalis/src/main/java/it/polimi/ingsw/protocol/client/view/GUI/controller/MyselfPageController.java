@@ -34,6 +34,7 @@ public class MyselfPageController implements Initializable {
     protected static ArrayList<ObjectiveCard> commonObjective;
     protected static CommonArea commonArea;
     protected static int clickedCounter = -1;
+    public ImageView scoreBoard1;
     private Player myself;
     private PlayerArea playerArea;
     private PlayerHand playerHand;
@@ -310,19 +311,19 @@ public class MyselfPageController implements Initializable {
 
         switch (color) {
              case "red" -> {
-                imagePath = "CodexNaturalis/src/main/Resource/img/Pions/CODEX_pion_rouge.png";
+                imagePath = "/img/Pions/CODEX_pion_rouge.png";
                 myPion = new ImageView(String.valueOf(Objects.requireNonNull(getClass().getResourceAsStream(imagePath))));
             }
             case "blue" -> {
-                imagePath = "CodexNaturalis/src/main/Resource/img/Pions/CODEX_pion_bleu.png";
+                imagePath = "/img/Pions/CODEX_pion_bleu.png";
                 myPion = new ImageView(String.valueOf(Objects.requireNonNull(getClass().getResourceAsStream(imagePath))));
             }
             case "green" -> {
-                imagePath = "CodexNaturalis/src/main/Resource/img/Pions/CODEX_pion_vert.png";
+                imagePath = "/img/Pions/CODEX_pion_vert.png";
                 myPion = new ImageView(String.valueOf(Objects.requireNonNull(getClass().getResourceAsStream(imagePath))));
             }
             case "yellow" -> {
-                imagePath = "CodexNaturalis/src/main/Resource/img/Pions/CODEX_pion_jaune.png";
+                imagePath = "/img/Pions/CODEX_pion_jaune.png";
                 myPion = new ImageView(String.valueOf(Objects.requireNonNull(getClass().getResourceAsStream(imagePath))));
             }
             default -> {
