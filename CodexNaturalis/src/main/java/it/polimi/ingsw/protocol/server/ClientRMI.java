@@ -69,7 +69,7 @@ public class ClientRMI extends ClientConnection implements Runnable, Serializabl
         try {
             this.toClient.write(new serverOptionMessage(false,null,null,false,null, waitingMatches, runningMatches, savedMatches));
             return (serverOptionMessage) this.toServer.read();
-        } catch (RemoteException e) {
+        } catch (Exception e) {
             return null;
         }
     }
@@ -82,7 +82,7 @@ public class ClientRMI extends ClientConnection implements Runnable, Serializabl
     public synchronized void sendNewHostMessage(String hostNickname){
         try {
             toClient.write(new newHostMessage(hostNickname));
-        } catch (RemoteException ignore) {}
+        } catch (Exception ignore) {}
     }
 
     /**
@@ -93,7 +93,7 @@ public class ClientRMI extends ClientConnection implements Runnable, Serializabl
     public synchronized expectedPlayersMessage getExpectedPlayer(){
         try {
             return (expectedPlayersMessage) toServer.read();
-        } catch (RemoteException e) {
+        } catch (Exception e) {
             return null;
         }
     }
@@ -106,7 +106,7 @@ public class ClientRMI extends ClientConnection implements Runnable, Serializabl
     public synchronized void sendAnswer(boolean correct){
         try {
             toClient.write(new responseMessage(correct));
-        } catch (RemoteException ignore) {}
+        } catch (Exception ignore) {}
     }
 
     /**
@@ -117,7 +117,7 @@ public class ClientRMI extends ClientConnection implements Runnable, Serializabl
     public synchronized void sendAnswerToConnection(connectionResponseMessage message){
         try {
             toClient.write(message);
-        } catch (RemoteException ignore) {}
+        } catch (Exception ignore) {}
     }
 
     /**
@@ -128,7 +128,7 @@ public class ClientRMI extends ClientConnection implements Runnable, Serializabl
     protected synchronized void sendUnavailableName(ArrayList<String> unavailableNames) {
         try {
             toClient.write(new unavailableNamesMessage(unavailableNames));
-        } catch (RemoteException ignore) {}
+        } catch (Exception ignore) {}
     }
 
 
@@ -141,7 +141,7 @@ public class ClientRMI extends ClientConnection implements Runnable, Serializabl
         try {
             this.sendUnavailableName(unavailableNames);
             return (chosenNameMessage) toServer.read();
-        } catch (RemoteException e) {
+        } catch (Exception e) {
             return null;
         }
     }
@@ -154,7 +154,7 @@ public class ClientRMI extends ClientConnection implements Runnable, Serializabl
     protected synchronized void sendAvailableColor(ArrayList<String> availableColors){
         try {
             toClient.write(new availableColorsMessage(availableColors));
-        } catch (RemoteException ignore) {}
+        } catch (Exception ignore) {}
     }
 
     /**
@@ -166,7 +166,7 @@ public class ClientRMI extends ClientConnection implements Runnable, Serializabl
         try {
             this.sendAvailableColor(availableColors);
             return (chosenColorMessage) toServer.read();
-        } catch (RemoteException e) {
+        } catch (Exception e) {
             return null;
         }
     }
@@ -179,7 +179,7 @@ public class ClientRMI extends ClientConnection implements Runnable, Serializabl
     public synchronized void sendCurrentState(currentStateMessage currentState){
         try {
             toClient.write(currentState);
-        } catch (RemoteException ignore) {}
+        } catch (Exception ignore) {}
     }
 
     /**
@@ -190,7 +190,7 @@ public class ClientRMI extends ClientConnection implements Runnable, Serializabl
     public synchronized starterCardMessage getStaterCard(){
         try {
             return (starterCardMessage) toServer.read();
-        } catch (RemoteException e) {
+        } catch (Exception e) {
             return null;
         }
     }
@@ -205,7 +205,7 @@ public class ClientRMI extends ClientConnection implements Runnable, Serializabl
         try {
             toClient.write(new objectiveCardMessage(objectiveCards));
             return (objectiveCardMessage) toServer.read();
-        } catch (RemoteException e) {
+        } catch (Exception e) {
             return null;
         }
     }
@@ -218,7 +218,7 @@ public class ClientRMI extends ClientConnection implements Runnable, Serializabl
     public synchronized placeCardMessage getPlaceCard(){
         try {
             return (placeCardMessage) toServer.read();
-        } catch (RemoteException e) {
+        } catch (Exception e) {
             return null;
         }
     }
@@ -231,7 +231,7 @@ public class ClientRMI extends ClientConnection implements Runnable, Serializabl
     public synchronized pickCardMessage getChosenPick(){
         try {
             return (pickCardMessage) toServer.read();
-        } catch (RemoteException e) {
+        } catch (Exception e) {
             return null;
         }
     }
@@ -245,7 +245,7 @@ public class ClientRMI extends ClientConnection implements Runnable, Serializabl
     public synchronized void sendEndGame(HashMap<String, Integer> score, HashMap<String, Integer> numberOfObjectives){
         try {
             toClient.write(new declareWinnerMessage(score, numberOfObjectives));
-        } catch (RemoteException ignore) {}
+        } catch (Exception ignore) {}
     }
 
     /**
@@ -256,7 +256,7 @@ public class ClientRMI extends ClientConnection implements Runnable, Serializabl
     public synchronized void sendUpdatePlayer(updatePlayerMessage updateMessage) {
         try {
             toClient.write(updateMessage);
-        } catch (RemoteException ignore) {}
+        } catch (Exception ignore) {}
     }
 
     /**
@@ -265,13 +265,17 @@ public class ClientRMI extends ClientConnection implements Runnable, Serializabl
     @Override
     public void closeConnection() {
         ExecutorService executor = Executors.newSingleThreadExecutor();
-        Future<Void> future = executor.submit(new Callable<Void>() {
-            @Override
-            public Void call() throws Exception {
+        Future<Void> future = executor.submit(() -> {
+                // Unbind the objects from the registry
                 registry.unbind(lookupString + "_toServer");
                 registry.unbind(lookupString + "_toClient");
+
+                // Unexport the objects
+                UnicastRemoteObject.unexportObject(toServer, true);
+                UnicastRemoteObject.unexportObject(toClient, true);
+
+
                 return null;
-            }
         });
         try {
             future.get(10, TimeUnit.SECONDS);
@@ -279,6 +283,8 @@ public class ClientRMI extends ClientConnection implements Runnable, Serializabl
             future.cancel(true);
         } catch (ExecutionException | InterruptedException ignore) {
         } finally {
+            this.toClient = null;
+            this.toServer = null;
             executor.shutdownNow();
         }
     }
