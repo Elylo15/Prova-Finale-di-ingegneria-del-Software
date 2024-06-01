@@ -36,7 +36,9 @@ public class LoadMatchController {
      * It reads the serverOptionMessage from the GUI and gets the list of matches.
      * Then, it populates the ListView with the matches and sets the cell factory to use buttons as cells.
      */
+    @FXML
     private void initialize() {
+
         serverOptionMessage = (serverOptionMessage) GUIMessages.readToGUI();
         MatchList  = serverOptionMessage.getWaitingMatches();
 
@@ -59,13 +61,13 @@ public class LoadMatchController {
                 return new LoadMatchController.ButtonListCell();
             }
         });
-
-
     }
 
     public void goBack(ActionEvent actionEvent) {
         Platform.runLater(SceneManager::InsertServerOption);
     }
+
+
 
     /**
      * This class is a custom cell for the ListView that uses buttons.

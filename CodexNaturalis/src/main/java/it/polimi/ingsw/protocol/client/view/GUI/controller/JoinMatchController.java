@@ -37,8 +37,7 @@ public class JoinMatchController {
      * It reads the serverOptionMessage from the GUI and gets the list of matches.
      * Then, it populates the ListView with the matches and sets the cell factory to use buttons as cells.
      */
-
-    //le pagine le devo caricare nella pagina di waiting
+    @FXML
     private void initialize() {
         // Read the serverOptionMessage from the GUI and get the list of matches
         serverOptionMessage = (serverOptionMessage) GUIMessages.readToGUI();

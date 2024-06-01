@@ -35,6 +35,7 @@ public class JoinRunningMatchController {
      * It reads the serverOptionMessage from the GUI and gets the list of running matches.
      * Then, it populates the ListView with the matches and sets the cell factory to use buttons as cells.
      */
+    @FXML
     private void initialize() {
         // Read the serverOptionMessage from the GUI and get the list of running matches
         serverOptionMessage = (serverOptionMessage) GUIMessages.readToGUI();
