@@ -15,22 +15,33 @@ import javafx.util.Callback;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class is a controller for the GUI scene where the user loads a match.
+ * It contains a ListView for the matches and a list of buttons for each match.
+ * The ListView is populated with the matches that are waiting for players.
+ * Each match in the ListView is represented by a button.
+ * When a button is clicked, it sends a message to the client with the match ID and disables all other buttons.
+ */
 public class LoadMatchController {
     @FXML
-    private ListView<String> LoadMatchList;
+    private ListView<String> LoadMatchList;// ListView for the matches
 
-    private serverOptionMessage serverOptionMessage;
-    private ArrayList<Integer> MatchList;
+    private serverOptionMessage serverOptionMessage; // Message to be sent to the client
+    private ArrayList<Integer> MatchList;// List of matches waiting for players
 
-    private List<Button> buttons = new ArrayList<>();
+    private List<Button> buttons = new ArrayList<>(); // List of buttons for each match
 
-
+    /**
+     * This method is called when the scene is loaded.
+     * It reads the serverOptionMessage from the GUI and gets the list of matches.
+     * Then, it populates the ListView with the matches and sets the cell factory to use buttons as cells.
+     */
     private void initialize() {
         serverOptionMessage = (serverOptionMessage) GUIMessages.readToGUI();
         MatchList  = serverOptionMessage.getWaitingMatches();
 
 
-        // Converti gli interi in stringhe e aggiungili a runningMatchList
+        // Convert the integers to strings and add them to the ListView
         ObservableList<String> items = FXCollections.observableArrayList();
         for (Integer match : MatchList) {
             items.add(match.toString());
@@ -38,10 +49,10 @@ public class LoadMatchController {
         LoadMatchList.setItems(items);
 
 
-        // Imposta gli elementi nella ListView
+
         LoadMatchList.getItems().addAll(items);
 
-        // Imposta la cell factory per usare bottoni come celle
+        // Set the cell factory to use buttons as cells
         LoadMatchList.setCellFactory(new Callback<ListView<String>, ListCell<String>>() {
             @Override
             public ListCell<String> call(ListView<String> listView) {
@@ -52,15 +63,20 @@ public class LoadMatchController {
 
     }
 
-    // Classe personalizzata per le celle che usa bottoni
+    /**
+     * This class is a custom cell for the ListView that uses buttons.
+     * Each button represents a match.
+     * When a button is clicked, it sends a message to the client with the match ID and disables all other buttons.
+     */
     class ButtonListCell extends ListCell<String> {
-        private final Button button;
+        private final Button button;// Button for the match
 
         public ButtonListCell() {
             button = new Button();
             button.setOnAction(event -> {
                 String item = getItem();
                 if (item != null) {
+                    // Send a message to the client with the match ID and disable all other buttons
                     GUIMessages.writeToClient(new serverOptionMessage(false, null, null, true, Integer.parseInt(item)));
                     disableOtherButtons(button);
                 }
@@ -76,12 +92,16 @@ public class LoadMatchController {
                 setText(null);
                 setGraphic(null);
             } else {
+                // Set the text of the button to the match ID and set the graphic of the cell to the button
                 button.setText(item);
                 setGraphic(button);
             }
         }
 
-        // Metodo per disabilitare tutti i bottoni tranne quello cliccato
+        /**
+         * This method disables all buttons except the one that was clicked.
+         * @param clickedButton The button that was clicked.
+         */
         private void disableOtherButtons(Button clickedButton) {
             for (Button btn : buttons) {
                 if (btn != clickedButton) {

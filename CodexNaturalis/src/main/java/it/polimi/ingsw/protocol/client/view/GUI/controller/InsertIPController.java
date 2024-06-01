@@ -7,6 +7,12 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 
+
+/**
+ * This class is a controller for the GUI scene where the user enters the IP address.
+ * It contains a TextField for the IP address and a Button to submit the IP address.
+ * When the submit button is clicked, it sends the IP address to the client.
+ */
 public class InsertIPController {
 
     @FXML
@@ -15,23 +21,17 @@ public class InsertIPController {
     @FXML
     private Button submit_ip;
 
-
+    /**
+     * This method is called when the scene is loaded.
+     * It sets the action for the submit button.
+     * When the submit button is clicked, it sends the IP address entered in the TextField to the client.
+     */
     @FXML
     private void initialize() {
         submit_ip.setOnAction(event -> {
-            System.out.println("sono nel submit");
-            GUIMessages.writeToClient(ip.getText());// Send the IP to the client
-            System.out.println("tasto premuto");
-        });
-        System.out.println("sono inizializzato");
 
-//        try{
-//            Thread.sleep(1000);
-//        } catch (InterruptedException e) {
-//            throw new RuntimeException(e);
-//        }
-//        System.out.println("dopo il sleep");
-//        GUIMessages.writeToClient("ciao");
-//        System.out.println("dopo il ciao ");
+            GUIMessages.writeToClient(ip.getText());// Send the IP to the client
+            ;
+        });
     }
 }

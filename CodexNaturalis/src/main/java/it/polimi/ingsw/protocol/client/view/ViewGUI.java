@@ -15,13 +15,25 @@ import javafx.application.Platform;
 
 import java.util.ArrayList;
 import java.util.Objects;
-
+/**
+ * This class represents the GUI view of the game.
+ * It extends the View class and overrides its methods to provide a graphical user interface for the game.
+ * It uses the SceneManager class to manage the different scenes of the game.
+ * It uses the GUIMessages class to communicate with the client.
+ */
 public class ViewGUI extends View {
-
+    /**
+     * Constructor for the ViewGUI class.
+     * It initializes a new GUIMessages object.
+     */
     public ViewGUI() {
         new GUIMessages();
     }
 
+    /**
+     * This method starts the main view of the game.
+     * It clears the message queue and updates the scene to the main view.
+     */
     public void startMain() {
         //to avoid reading unexpected messages
         GUIMessages.clearQueue();
@@ -30,24 +42,34 @@ public class ViewGUI extends View {
 
 
     /**
-     * allow the user to enter the ip of the server he wants to connect to
+     * This method is used to ask the user for the IP address of the server they want to connect to.
      *
-     * @return array with ip and port of the server
+     * @return The IP address entered by the user.
      */
     public String askIP() {
-        //to avoid reading unexpected messages
+        // Clear the message queue to avoid processing any unexpected messages
         GUIMessages.clearQueue();
+
+        // Initialize the IP address
         String ip = "";
-        Platform.runLater(SceneManager::InsertIP); //update the scene
-        ip = (String) GUIMessages.readToClient(); //read the ip entered by the user
+
+        // Update the GUI scene to allow the user to enter the IP address
+        Platform.runLater(SceneManager::InsertIP);
+
+        // Read the IP address entered by the user from the client
+        ip = (String) GUIMessages.readToClient();
+
+        // Print the IP address to the console
         System.out.println(ip);
+
+        // Return the IP address
         return ip;
     }
 
     /**
-     * allow the user to choose if he wants to use socket or rmi
+     * This method is used to ask the user whether they want to use a socket or RMI for communication.
      *
-     * @return boolean
+     * @return A boolean value representing the user's choice. True for socket, false for RMI.
      */
     @Override
     public boolean askSocket() {// true = socket, false = rmi
@@ -60,7 +82,12 @@ public class ViewGUI extends View {
         return useSocket;
     }
 
-
+    /**
+     * This method handles the server options for the user.
+     *
+     * @param message The server option message to be sent to the GUI.
+     * @return The server option message received from the client.
+     */
     @Override
     public serverOptionMessage serverOptions(serverOptionMessage message) {
         //to avoid reading unexpected messages
@@ -73,6 +100,9 @@ public class ViewGUI extends View {
         return newMessage;
     }
 
+    /**
+     * This method is called when a player disconnects from the game.
+     */
     @Override
     public void playerDisconnected() {
         //to avoid reading unexpected messages
@@ -92,7 +122,12 @@ public class ViewGUI extends View {
         //da vedere poi
     }
 
-
+    /**
+     * This method is used when a user needs to choose a name
+     *
+     * @param message An instance of unavailableNamesMessage, which contains the list of names that are already taken.
+     * @return The new name provided by the user.
+     */
     @Override
     public String unavailableNames(unavailableNamesMessage message) {
         //to avoid reading unexpected messages
