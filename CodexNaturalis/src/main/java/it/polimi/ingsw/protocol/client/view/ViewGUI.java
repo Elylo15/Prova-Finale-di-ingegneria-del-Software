@@ -2,6 +2,7 @@ package it.polimi.ingsw.protocol.client.view;
 
 import it.polimi.ingsw.model.cards.ObjectiveCard;
 import it.polimi.ingsw.protocol.client.view.GUI.controller.SceneManager;
+import it.polimi.ingsw.protocol.client.view.GUI.controller.StarterController;
 import it.polimi.ingsw.protocol.client.view.GUI.message.GUIMessages;
 import it.polimi.ingsw.protocol.messages.ConnectionState.availableColorsMessage;
 import it.polimi.ingsw.protocol.messages.ConnectionState.connectionResponseMessage;
@@ -22,6 +23,9 @@ import java.util.Objects;
  * It uses the GUIMessages class to communicate with the client.
  */
 public class ViewGUI extends View {
+    int counter = 0;
+
+
     /**
      * Constructor for the ViewGUI class.
      * It initializes a new GUIMessages object.
@@ -224,6 +228,12 @@ public class ViewGUI extends View {
     public void updatePlayer(currentStateMessage message) {
         GUIMessages.clearQueue();
         System.out.println(message.getStateName());
+        GUIMessages.writeToGUI(message);
+        if(counter == 0) {
+            counter++;
+            Platform.runLater(SceneManager::starterPage);
+        }
+
         //if (Objects.equals(message.getStateName(), "StarterCardState")) {
         //    Platform.runLater(SceneManager::starterPage);
         //} else if (Objects.equals(message.getStateName(), "ObjectiveState")) {
@@ -231,7 +241,7 @@ public class ViewGUI extends View {
        // } else {
         //    Platform.runLater(SceneManager::myselfGamePage);
         //}
-        GUIMessages.writeToGUI(message);
+
     }
 
     /**
@@ -240,8 +250,8 @@ public class ViewGUI extends View {
     @Override
     public int placeStarter() {
 
-        Platform.runLater(SceneManager::starterPage);
-
+        //Platform.runLater(SceneManager::starterPage);
+        System.out.println("placeStarter -> waiting to Place");
         return (int) GUIMessages.readToClient();
 
     }
@@ -255,8 +265,8 @@ public class ViewGUI extends View {
     @Override
     public int chooseObjective(ArrayList<ObjectiveCard> objectives) {
         //GUIMessages.clearQueue();
-        Platform.runLater(SceneManager::objectivePage);
-
+        GUIMessages.writeToGUI(objectives);
+       // Platform.runLater(SceneManager::objectivePage);
 
         return (int) GUIMessages.readToClient();
 
@@ -270,7 +280,7 @@ public class ViewGUI extends View {
     @Override
     public int[] placeCard() {
         //GUIMessages.clearQueue();
-        Platform.runLater(SceneManager::myselfGamePage);
+        //Platform.runLater(SceneManager::myselfGamePage);
 
         return (int[]) GUIMessages.readToClient();
     }
@@ -283,22 +293,21 @@ public class ViewGUI extends View {
     @Override
     public int pickCard() {
         //GUIMessages.clearQueue();
-        Platform.runLater(SceneManager::myselfGamePage);
-        GUIMessages.clearQueue();
+        //Platform.runLater(SceneManager::myselfGamePage);
+        //GUIMessages.clearQueue();
         return (int) GUIMessages.readToClient();
     }
 
     /**
      * Method {@code update}: Updates the parameters of the player that concluded his turn
      *
-     * @param update: updatePlayerMessage
+     * @param updateMsg: updatePlayerMessage
      */
     @Override
-    public void update(updatePlayerMessage update) {
-        //GUIMessages.clearQueue();
-        Platform.runLater(SceneManager::myselfGamePage);
-        GUIMessages.clearQueue();
-        GUIMessages.writeToGUI(update);
+    public void update(updatePlayerMessage updateMsg) {
+        // GUIMessages.clearQueue();
+        // Platform.runLater(SceneManager::myselfGamePage);
+        GUIMessages.writeToGUI(updateMsg);
     }
 
 

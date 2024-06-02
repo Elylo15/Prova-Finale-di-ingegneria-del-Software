@@ -7,8 +7,9 @@ import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.cards.ObjectiveCard;
 import it.polimi.ingsw.protocol.client.view.GUI.ImageBinder;
 import it.polimi.ingsw.protocol.client.view.GUI.message.GUIMessages;
-import it.polimi.ingsw.protocol.messages.ObjectiveState.objectiveCardMessage;
+import it.polimi.ingsw.protocol.messages.PlayerTurnState.updatePlayerMessage;
 import it.polimi.ingsw.protocol.messages.currentStateMessage;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -20,16 +21,20 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.ResourceBundle;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class ObjectiveController implements Initializable {
     private Player myself;
     private ArrayList<ObjectiveCard> commonObjective;
     private PlayerArea playerArea;
     private CommonArea commonArea;
+    ArrayList<ObjectiveCard> objectives = new ArrayList<>();
 
-    private Object message;
+    private final BlockingQueue<Object> messageQueue = new LinkedBlockingQueue<>();
 
-    private int selectedCardID;
+
+    private int selectedCardPick;
     private ImageView selectedCard;
 
     @FXML
@@ -65,19 +70,125 @@ public class ObjectiveController implements Initializable {
     @FXML
     private ImageView fourthPion;
 
+    private void setupCard(ImageView imageView, int cardID, boolean front, Card card) {
+        ImageBinder imageBinder = new ImageBinder();
+        ImageView cardImageView = imageBinder.bindImage(cardID, front);
+        imageView.setImage(cardImageView.getImage());
+        imageView.setUserData(card); // Store card ID and state
+    }
 
-    private void set(currentStateMessage message) {
-        this.myself = message.getPlayer();
-        this.commonObjective = message.getCommonObjectiveCards();
-        this.playerArea = message.getPlayer().getPlayerArea();
-        this.commonArea = message.getPlayer().getCommonArea();
+    private ImageView createCardImageView(int cardID, boolean front, Card card, double layoutX, double layoutY, double fitHeight, double fitWidth) {
+        ImageView imageView = new ImageView();
+        imageView.setFitWidth(fitWidth);
+        imageView.setFitHeight(fitHeight);
+        imageView.setLayoutX(layoutX);
+        imageView.setLayoutY(layoutY);
+        imageView.setPreserveRatio(true);
+        imageView.setOnMouseClicked(this::select); // Set event handler
+        setupCard(imageView, cardID, front, card);
+        return imageView;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    private void cases(currentStateMessage message) {
+        playerName.setText(myself.getNickname());
+        if (Objects.equals(message.getStateName(), "StarterCardState")) {
+            starter(message);
+        } else if (Objects.equals(message.getStateName(), "ObjectiveState")) {
+            objectives();
+        } else {
+            gaming();
+        }
         firstSetUp();
         firstSetPions();
     }
 
+    private void objectives() {
+
+
+
+    }
+
+    private void setObjectives() {
+        setupCard(card0, objectives.getFirst().getID(), true, objectives.getFirst());
+        setupCard(card1, objectives.get(1).getID(), true, objectives.get(1));
+    }
+
+    @FXML
+    public void choiceMade(MouseEvent event) {
+        if (selectedCard != null) {
+            selectedCard.setStyle(""); // Remove the blue border from the selected card
+            GUIMessages.writeToClient(selectedCardPick); // Send the selected card ID to the server
+        }
+    }
+
+    private void gaming() {
+    }
+
+    private void starter(currentStateMessage message) {
+        set(message);
+
+    }
+
+    private void set(currentStateMessage message) {
+        this.myself = message.getPlayer();
+        commonArea = message.getPlayer().getCommonArea();
+        playerName.setText(myself.getNickname());
+        firstSetUp();
+        firstSetPions();
+    }
+
+
+
+    private void firstSetUp() {
+
+        setupCard(resourceBack, commonArea.getD1().getList().getFirst().getID(), false, commonArea.getD1().getList().getFirst());
+        setupCard(goldBack, commonArea.getD2().getList().getFirst().getID(), false, commonArea.getD2().getList().getFirst());
+
+        setupCard(res0, commonArea.getTableCards().getFirst().getID(), true, commonArea.getTableCards().getFirst());
+        setupCard(res1, commonArea.getTableCards().get(1).getID(), true, commonArea.getTableCards().get(1));
+        setupCard(gold0, commonArea.getTableCards().get(2).getID(), true, commonArea.getTableCards().get(2));
+        setupCard(gold1, commonArea.getTableCards().get(3).getID(), true, commonArea.getTableCards().get(3));
+
+        setupCard(card1, myself.getPlayerHand().getPlaceableCards().getFirst().getID(), true, myself.getPlayerHand().getPlaceableCards().getFirst());
+    }
+
     private void firstSetPions(){
         String imagePath;
-        Image cardImage = null;
+        Image cardImage;
 
         //PIONS SETTING (BUT IT SHOULD BE BASED ON POINTS)
         String color = myself.getColor();
@@ -87,7 +198,7 @@ public class ObjectiveController implements Initializable {
                 yield new Image(Objects.requireNonNull(getClass().getResourceAsStream(imagePath)));
             }
             case "blue" -> {
-                imagePath = "/img/Pions/CODEX_pion_bleu.png";
+                imagePath = "CodexNaturalis/src/main/Resource/img/Pions/CODEX_pion_bleu.png";
                 yield new Image(Objects.requireNonNull(getClass().getResourceAsStream(imagePath)));
             }
             case "green" -> {
@@ -117,9 +228,10 @@ public class ObjectiveController implements Initializable {
             firstPion.setImage(cardImage);
             firstPion.setVisible(true);
         }
+
     }
 
-    private void firstSetUp(){
+    private void firstSetUp2(){
         // Set deck cards
         setupCard(resourceBack, commonArea.getD1().getList().getFirst().getID(), false, commonArea.getD1().getList().getFirst());
         setupCard(goldBack, commonArea.getD2().getList().getFirst().getID(), false, commonArea.getD2().getList().getFirst());
@@ -135,12 +247,7 @@ public class ObjectiveController implements Initializable {
         setupCard(obj1, commonObjective.get(1).getID(), true, commonObjective.get(1));
     }
 
-    private void setupCard(ImageView imageView, int cardID, boolean front, Card card) {
-        ImageBinder imageBinder = new ImageBinder();
-        ImageView cardImageView = imageBinder.bindImage(cardID, front);
-        imageView.setImage(cardImageView.getImage());
-        imageView.setUserData(card); // Store card ID and state
-    }
+
 
     @FXML
     private void turnAround(MouseEvent event) {
@@ -159,7 +266,30 @@ public class ObjectiveController implements Initializable {
 
     @FXML
     private void select(MouseEvent event) {
-        if (event.getClickCount() == 1) {
+        if(event.getClickCount() == 1){
+            ImageView clickedCard = (ImageView) event.getSource();
+            ObjectiveCard card = (ObjectiveCard) clickedCard.getUserData();
+            int cardID = card.getID();
+            int pick = 1000;
+
+            if(cardID == objectives.getFirst().getID() )
+                pick = 1;
+            else if(cardID == objectives.get(1).getID())
+                pick = 2;
+
+            // Remove border from previously selected card
+            if (selectedCard != null){
+                selectedCard.getStyleClass().remove("image-view-selected");
+            }
+
+            // TODO Set blue border for the selected card
+            clickedCard.getStyleClass().add("image-view-selected");
+            this.selectedCard = clickedCard;
+
+            // Set the selected card ID
+            this.selectedCardPick = pick;
+
+        } else if (event.getClickCount() == 2) {
             ImageView clickedCard = (ImageView) event.getSource();
             Card card = (Card) clickedCard.getUserData();
 
@@ -171,47 +301,66 @@ public class ObjectiveController implements Initializable {
                 // Update the card state
                 card.setFront(!card.isFront());
             }
-        } else if (event.getClickCount() == 2) {
-            ImageView clickedCard = (ImageView) event.getSource();
-            Integer cardID = (Integer) clickedCard.getUserData();
-
-            if (cardID != null) {
-                // Remove border from previously selected card
-                if (selectedCard != null)
-                    selectedCard.setStyle("");
-
-                // Set blue border for the selected card
-                clickedCard.setStyle("-fx-border-color: #0000ff; -fx-border-width: 2;");
-                selectedCard = clickedCard;
-
-                // Set the selected card ID
-                selectedCardID = cardID;
-            }
-        }
-    }
-
-    @FXML
-    private void place(MouseEvent event) {
-        if (selectedCard != null) {
-            selectedCard.setStyle(""); // Remove the blue border from the selected card
-            GUIMessages.writeToClient(selectedCardID); // Send the selected card ID to the server
         }
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        this.message = GUIMessages.readToGUI();
-        if( this.message instanceof currentStateMessage){
-            set(Objects.requireNonNull((currentStateMessage) message));
-        } else if (this.message instanceof objectiveCardMessage){
-            setObjectives((Objects.requireNonNull((objectiveCardMessage) message)).getObjectiveCard());
+        startMessageListener();
+        startMessageProcessor();
+    }
+
+    private void startMessageListener() {
+
+        new Thread(() -> {
+            while (true) { // You might want to add a stopping condition
+                try {
+                    Object message = GUIMessages.readToGUI();
+                    if (message != null) {
+                        messageQueue.put(message);
+
+                    } else {
+                        // Sleep briefly to avoid busy waiting
+                        Thread.sleep(100);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }).start();
+    }
+
+    private void startMessageProcessor() {
+        // Start a new thread to process messages from the queue
+        new Thread(() -> {
+            while (true) { // You might want to add a stopping condition
+                try {
+                    Object message = messageQueue.take();
+                    Platform.runLater(() -> processMessage(message));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
+    private void processMessage(Object message) {
+        switch (message) {
+            case currentStateMessage currentStateMessage -> set(currentStateMessage);
+            case ArrayList<?> list -> {
+                if (!list.isEmpty() && list.get(0) instanceof ObjectiveCard) {
+                    System.out.println("Received objective card message");
+                    objectives.add((ObjectiveCard) list.get(0));
+                    objectives.add((ObjectiveCard) list.get(1));
+                    setObjectives();
+                }
+            }
+            case updatePlayerMessage updatePlayerMessage  -> System.out.println("Received message: " + updatePlayerMessage);
+            case null, default -> System.out.println("Received message: " + message);
         }
     }
 
-    private void setObjectives(ArrayList<ObjectiveCard> objectives) {
-        setupCard(card0, objectives.getFirst().getID(), true, objectives.getFirst());
-        setupCard(card1, objectives.get(1).getID(), true, objectives.get(1));
-    }
 
-    //TODO: IF UPDATE THE OBJECTIVE
+
 }

@@ -227,7 +227,10 @@ public class SceneManager {
     public static void myselfGamePage(){
         try {
             Parent root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/myselfGamePage.fxml")));
-            primaryStage.setScene(new Scene(root));
+            Scene scene = new Scene(root);
+            primaryStage.setScene(scene);
+            scene.getStylesheets().add(Objects.requireNonNull(SceneManager.class.getResource("/styles.css")).toExternalForm());
+
             primaryStage.setFullScreen(true);
             primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
             primaryStage.show();
@@ -242,7 +245,11 @@ public class SceneManager {
     public static void objectivePage(){
         try {
             Parent root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/objectivePage.fxml")));
-            primaryStage.setScene(new Scene(root));
+            Scene scene = new Scene(root);
+
+            primaryStage.setScene(scene);
+            scene.getStylesheets().add(Objects.requireNonNull(SceneManager.class.getResource("/styles.css")).toExternalForm());
+
             primaryStage.setFullScreen(true);
             primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
             primaryStage.show();
@@ -257,7 +264,9 @@ public class SceneManager {
     public static void starterPage(){
         try {
             Parent root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/starterPage.fxml")));
-            primaryStage.setScene(new Scene(root));
+            Scene scene = new Scene(root);
+            primaryStage.setScene(scene);
+            scene.getStylesheets().add(Objects.requireNonNull(SceneManager.class.getResource("/styles.css")).toExternalForm());
             primaryStage.setFullScreen(true);
             primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
             primaryStage.show();

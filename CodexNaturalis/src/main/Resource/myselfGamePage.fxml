@@ -90,7 +90,7 @@
                         <Image url="@img/Cards/Front/100.png" />
                      </image>
                   </ImageView>
-                  <ImageView id="scoreBoard" fx:id="scoreBoard1" fitHeight="491.0" fitWidth="246.0" layoutX="1627.0" layoutY="38.0" preserveRatio="true">
+                  <ImageView id="scoreBoard" fx:id="  scoreBoard1" fitHeight="491.0" fitWidth="246.0" layoutX="1627.0" layoutY="38.0" preserveRatio="true">
                      <image>
                         <Image url="@img/Scoreboard/plateau.png" />
                      </image>

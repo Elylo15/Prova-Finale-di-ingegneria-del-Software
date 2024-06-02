@@ -13,71 +13,36 @@
    <children>
       <BorderPane prefHeight="1080.0" prefWidth="1920.0">
          <center>
-            <Pane prefHeight="1080.0" prefWidth="1920.0" BorderPane.alignment="CENTER">
+            <Pane fx:id="mainPane" prefHeight="1080.0" prefWidth="1920.0" BorderPane.alignment="CENTER">
                <children>
                   <ImageView id="background" fitHeight="1080.0" fitWidth="1920.0" preserveRatio="true">
                      <image>
                         <Image url="@img/Background/Background.png" />
                      </image>
                   </ImageView>
-                  <ImageView id="res1" fx:id="res1" fitHeight="141.0" fitWidth="208.0" layoutX="587.0" layoutY="746.0" preserveRatio="true">
-                     <image>
-                        <Image url="@img/Cards/Front/027.png" />
-                     </image>
-                  </ImageView>
-                  <ImageView id="card1" fx:id="card1" fitHeight="157.0" fitWidth="234.0" layoutX="1110.0" layoutY="814.0" onMouseClicked="#select" preserveRatio="true">
-                     <image>
-                        <Image url="@img/Cards/Front/016.png" />
-                     </image>
-                  </ImageView>
-                  <Button id="NextPlayer" layoutX="42.0" layoutY="34.0" mnemonicParsing="false" onMouseClicked="#switchToNextGamePage" prefHeight="72.0" prefWidth="210.0" text="Next Player">
-                     <font>
-                        <Font name="System Bold" size="24.0" />
-                     </font>
-                  </Button>
-                  <Label id="playerName" fx:id="playerName" alignment="CENTER" contentDisplay="CENTER" layoutX="808.0" layoutY="29.0" prefHeight="35.0" prefWidth="228.0" text="PlayerName" textAlignment="CENTER">
-                     <font>
-                        <Font name="System Bold" size="36.0" />
-                     </font>
-                  </Label>
-                  <ImageView id="res0" fx:id="res0" fitHeight="141.0" fitWidth="208.0" layoutX="364.0" layoutY="746.0" preserveRatio="true">
-                     <image>
-                        <Image url="@img/Cards/Front/036.png" />
-                     </image>
-                  </ImageView>
-                  <ImageView id="gold1" fx:id="gold1" fitHeight="141.0" fitWidth="208.0" layoutX="587.0" layoutY="895.0" preserveRatio="true">
-                     <image>
-                        <Image url="@img/Cards/Front/060.png" />
-                     </image>
-                  </ImageView>
-                  <ImageView id="gold0" fx:id="gold0" fitHeight="141.0" fitWidth="208.0" layoutX="364.0" layoutY="895.0" preserveRatio="true">
-                     <image>
-                        <Image url="@img/Cards/Front/063.png" />
-                     </image>
-                  </ImageView>
-                  <ImageView id="resourceBack" fx:id="resourceBack" fitHeight="141.0" fitWidth="208.0" layoutX="56.0" layoutY="746.0" preserveRatio="true">
-                     <image>
-                        <Image url="@img/Cards/Back/011.png" />
-                     </image>
-                  </ImageView>
-                  <ImageView id="goldBack" fx:id="goldBack" fitHeight="141.0" fitWidth="208.0" layoutX="58.0" layoutY="895.0" preserveRatio="true">
-                     <image>
-                        <Image url="@img/Cards/Back/057.png" />
-                     </image>
-                  </ImageView>
-                  <ImageView id="scoreBoard" fx:id="scoreBoard" fitHeight="491.0" fitWidth="246.0" layoutX="1627.0" layoutY="38.0" preserveRatio="true">
+                  <ImageView id="scoreBoard" fitHeight="491.0" fitWidth="246.0" layoutX="1627.0" layoutY="38.0" preserveRatio="true">
                      <image>
                         <Image url="@img/Scoreboard/plateau.png" />
                      </image>
                   </ImageView>
-                  <ImageView id="layout" fitHeight="1080.0" fitWidth="1920.0" focusTraversable="true" mouseTransparent="true" preserveRatio="true">
+                  <Button id="NextPlayer" layoutX="42.0" layoutY="34.0" mnemonicParsing="false" onMouseClicked="#switchToNextPlayer" prefHeight="72.0" prefWidth="210.0" text="Next Player">
+                     <font>
+                        <Font name="Curlz MT" size="34.0" />
+                     </font>
+                  </Button>
+                  <Label id="playerName" fx:id="playerName" alignment="CENTER" contentDisplay="CENTER" layoutX="743.0" layoutY="-35.0" prefHeight="176.0" prefWidth="388.0" text="PlayerName" textAlignment="CENTER">
+                     <font>
+                        <Font name="Curlz MT" size="70.0" />
+                     </font>
+                  </Label>
+                  <ImageView id="layout" fx:id="onTop" fitHeight="1080.0" fitWidth="1920.0" focusTraversable="true" mouseTransparent="true" preserveRatio="true">
                      <image>
                         <Image url="@img/Background/GamePage.png" />
                      </image>
                   </ImageView>
-                  <Pane id="Playground" layoutX="16.0" layoutY="152.0" onMouseClicked="#place" prefHeight="540.0" prefWidth="1556.0">
+                  <Pane id="Playground" layoutX="16.0" layoutY="152.0" prefHeight="540.0" prefWidth="1556.0">
                      <children>
-                        <Button layoutX="-10.0" mnemonicParsing="false" onMouseClicked="#place" opacity="0.0" prefHeight="545.0" prefWidth="1571.0" text="Button" />
+                        <Button layoutX="-10.0" mnemonicParsing="false" opacity="0.0" prefHeight="545.0" prefWidth="1571.0" text="Button" />
                      </children>
                   </Pane>
                </children>

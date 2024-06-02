@@ -197,7 +197,7 @@ public class Client implements Runnable {
             controller.placeStarter(side, noResponse.get());
             responseMessage answer = controller.correctAnswer();
 
-            view.answer(answer);
+            //view.answer(answer);
             if (answer.getCorrect())
                 break;
         }
@@ -430,7 +430,6 @@ public class Client implements Runnable {
                             break;
                         }
                         case "ObjectiveState": {
-
                             getView().updatePlayer(current);
                             if (Objects.equals(current.getCurrentPlayer().getNickname(), current.getPlayer().getNickname()))
                                 pickObjective();
