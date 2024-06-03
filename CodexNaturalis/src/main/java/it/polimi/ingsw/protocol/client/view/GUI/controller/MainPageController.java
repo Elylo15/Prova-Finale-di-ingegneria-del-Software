@@ -6,6 +6,9 @@ import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Pane;
+
+import java.util.Objects;
 
 public class MainPageController {
 
@@ -13,6 +16,9 @@ public class MainPageController {
     public Button playBtn;
     @FXML
     public Button rulesBtn;
+    @FXML
+    public Pane pane;
+
     private int counter = 0;
 
     /**
@@ -20,7 +26,7 @@ public class MainPageController {
      * It sends a message to start the game.
      */
     @FXML
-    public void start(MouseEvent mouseEvent) {
+    public void start() {
         GUIMessages.writeToClient(true);
     }
 
@@ -28,37 +34,49 @@ public class MainPageController {
      * This method is called when the player presses the rules button.
      * It loads the rules images, and the player can see them by pressing the button again.
      */
+    //TODO create more quality images
     @FXML
-    public void loadRules(MouseEvent mouseEvent) {
-        playBtn.removeEventHandler(MouseEvent.MOUSE_CLICKED, this::start);
-        playBtn.setVisible(false);
+    public void loadRules() {
+        Image img = null;
 
-        rulesBtn.setText("Next");
-        rulesBtn.removeEventHandler(MouseEvent.MOUSE_CLICKED, this::loadRules);
-        rulesBtn.addEventHandler(MouseEvent.MOUSE_CLICKED, this::nextImg);
-
-        new ImageView().setImage(new Image("img/rules0.png"));
-    }
-
-    /**
-     * This method is called when the player presses the next button.
-     * It loads the next rules image, and after the last one, it goes back to the main page.
-     */
-    public void nextImg(MouseEvent mouseEvent) {
-        counter++;
-        if(counter == 1)        //TODO set the correct images and positions (and btn font)
-            new ImageView().setImage(new Image("img/rules1.png"));
-        else if(counter == 2)
-            new ImageView().setImage(new Image("img/rules2.png"));
-        else if(counter == 3)
-            new ImageView().setImage(new Image("img/rules3.png"));
-        else if(counter == 4) {
-            new ImageView().setImage(new Image("img/mainPage.png"));
+        if(counter== 5)
             counter = 0;
-            playBtn.setVisible(true);
-            playBtn.addEventHandler(MouseEvent.MOUSE_CLICKED, this::start);
-            rulesBtn.removeEventHandler(MouseEvent.MOUSE_CLICKED, this::nextImg);
-            rulesBtn.addEventHandler(MouseEvent.MOUSE_CLICKED, this::loadRules);
+        else
+            counter++;
+
+        if(counter == 1 ) {
+            img = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/img/Rules/Rules1.png")));
+        }if(counter == 2) {
+
+            img = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/img/Rules/Rules2.png")));
+        }else if(counter == 3) {
+
+            img = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/img/Rules/Rules3.png")));
+        }else if(counter == 4) {
+
+            img = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/img/Rules/Rules4.png")));
+        }else if(counter == 5) {
+            img = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/img/Rules/Rules5.png")));
+        } else if (counter == 0) {
+            img = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/img/Background/Background.png")));
         }
+
+        ImageView imageView = new ImageView(img);
+        imageView.setFitHeight(1080);
+        imageView.setFitWidth(1920);
+        imageView.setPreserveRatio(true);
+
+        pane.getChildren().clear();
+        pane.getChildren().add(imageView);
+
+        pane.getChildren().add(rulesBtn);
+
+        if(counter == 0) {
+            rulesBtn.setText("Read Rules");
+            pane.getChildren().add(playBtn);
+        } else
+            rulesBtn.setText("Next");
+
     }
+
 }

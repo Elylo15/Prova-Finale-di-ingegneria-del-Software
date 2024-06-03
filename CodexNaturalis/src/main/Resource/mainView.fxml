@@ -1,30 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.text.Font?>
-<?import javafx.scene.text.Text?>
 <?import javafx.scene.control.Button?>
-<BorderPane xmlns:fx="http://javafx.com/fxml/1" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-            prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21"
-            fx:controller="it.polimi.ingsw.protocol.client.view.GUI.controller.MainPageController">
-    <center>
-        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Welcome page" BorderPane.alignment="CENTER">
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.protocol.client.view.GUI.controller.MainPageController">
+   <center>
+      <Pane fx:id="pane" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <ImageView fitHeight="1171.0" fitWidth="2000.0" layoutX="-38.0" layoutY="-30.0" preserveRatio="true">
+            <Image url="@img/Background/Background.png"/>
+         </ImageView>
+         <Button id="Play" fx:id="playBtn" layoutX="128.0" layoutY="892.0" mnemonicParsing="false"
+                 onMouseClicked="#start" prefHeight="72.0" prefWidth="210.0" text="Play">
             <font>
-                <Font size="36.0"/>
+               <Font name="Curlz MT" size="34.0"/>
             </font>
-        </Text>
-        <Button id="Play" fx:id="playBtn" layoutX="42.0" layoutY="34.0" mnemonicParsing="false"
-                onMouseClicked="#start" prefHeight="72.0" prefWidth="210.0" text="Next Player">
+         </Button>
+         <Button id="Read Rules" fx:id="rulesBtn" layoutX="1528.0" layoutY="900.0" mnemonicParsing="false"
+                 onMouseClicked="#loadRules" prefHeight="72.0" prefWidth="210.0" text="Read Rules">
             <font>
-                <Font name="Curlz MT" size="34.0"/>
+               <Font name="Curlz MT" size="34.0"/>
             </font>
-        </Button>
-        <Button id="Read Rules" fx:id="rulesBtn" layoutX="42.0" layoutY="34.0" mnemonicParsing="false"
-                onMouseClicked="#loadRules" prefHeight="72.0" prefWidth="210.0" text="Next Player">
-            <font>
-                <Font name="Curlz MT" size="34.0"/>
-            </font>
-        </Button>
-    </center>
+         </Button>
+      </Pane>
+   </center>
 </BorderPane>
