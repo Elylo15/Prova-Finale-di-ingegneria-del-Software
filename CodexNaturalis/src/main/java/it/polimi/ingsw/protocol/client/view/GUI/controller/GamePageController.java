@@ -24,6 +24,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
+import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 import java.net.URL;
@@ -38,8 +39,10 @@ public class GamePageController implements Initializable {
     public Label playerName;
     @FXML
     public Pane playground;
-    private boolean isPopupVisible = false;
-    private ImageView currentPopupImage;
+    @FXML
+    public ImageView state;
+    @FXML
+    public Text explanation;
 
     ImageView red;
     ImageView blue;
@@ -119,6 +122,8 @@ public class GamePageController implements Initializable {
     private ImageView onTop;
 
 
+    //TODO the explanation shown only the first time!
+
     /**
      * It is used to initialize the controller, it starts the message listener and processor threads.
      *
@@ -170,6 +175,7 @@ public class GamePageController implements Initializable {
         }).start();
     }
 
+    //TODO WHEN OTHER PLAYER CHOSING OBJ, MESSAGE SHOULD BE CHOSING OBJECTIVE
     /**
      * Processes the message received from the server based on its type
      *
@@ -181,13 +187,33 @@ public class GamePageController implements Initializable {
                 this.currentState = currentStateMessage.getStateName();
                 currentStateCase(currentStateMessage);
 
+                if(currentStateMessage.isLastTurn()){
+                    state.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/img/Background/LastTurnState.png"))));
+                }
+
                 if (currentStateMessage.getCurrentPlayer().getNickname().equals(myself.getNickname())) {
-                    if (Objects.equals(currentState, "StarterCardState"))
+                    if (Objects.equals(currentState, "StarterCardState")) {
                         starterCase();
-                    else if (Objects.equals(currentState, "PlaceTurnState"))
+                        state.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/img/Background/starterState.png"))));
+                        showImagePopup("/img/Background/starterState.png");
+                        explanation.setText("Click twice if you want to turn the card around, then click to place it");
+                    } else if (Objects.equals(currentState, "PlaceTurnState")) {
                         placeTurnCase(currentStateMessage.isLastTurn());
-                    else if (Objects.equals(currentState, "PickTurnState"))
+                        if(!currentStateMessage.isLastTurn()) {
+                            state.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/img/Background/youTurn.png"))));
+                            showImagePopup("/img/Background/yourTurn.png");
+                        }
+                        explanation.setText("Select a card, then click to place it");
+                    } else if (Objects.equals(currentState, "PickTurnState")) {
                         pickTurnCase();
+                        explanation.setText("Click on the card you want to draw");
+//                        I think it will be still setted from placeTurnCase
+//                        if (!currentStateMessage.isLastTurn())
+//                            state.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/img/Background/yourTurn.png"))));
+                    }
+                } else {
+                    state.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/img/Background/waitingState.png"))));
+                    explanation.setText("");
                 }
             }
             case ArrayList<?> list -> {
@@ -195,6 +221,9 @@ public class GamePageController implements Initializable {
                     objectivesToChose.add((ObjectiveCard) list.get(0));
                     objectivesToChose.add((ObjectiveCard) list.get(1));
                     objectiveCase();
+                    state.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/img/Background/objectiveState.png"))));
+                    showImagePopup("/img/Background/objectiveState.png");
+                    explanation.setText("Select your secret Objective, then click to place it");
                 }
             }
             case updatePlayerMessage update -> updatePlayerCase(update);
@@ -205,7 +234,6 @@ public class GamePageController implements Initializable {
 
 
     private void currentStateCase(currentStateMessage message) {
-        hidePopup();
         this.myself = message.getPlayer();
         this.commonArea = message.getPlayer().getCommonArea();
         this.commonObjectives = message.getCommonObjectiveCards();
@@ -235,8 +263,6 @@ public class GamePageController implements Initializable {
     }
 
     private void starterCase() {
-        hidePopup();
-        showImagePopup("/img/Background/StarterCard.png", 593, 298, 226, 655);
         if (clickCounter == -1 && Objects.equals(currentPlayerNickname, myself.getNickname())) {
             addStarterCardsToPane();
             addClickablePlaceholder(playground, 648, 215, 133, 200, this::confirmPlaceStarter);
@@ -244,8 +270,6 @@ public class GamePageController implements Initializable {
     }
 
     private void objectiveCase() {
-        hidePopup();
-        showImagePopup("/img/Background/ObjectiveCard.png", 593, 298, 226, 655);
         if (clickCounter == -1 && Objects.equals(currentPlayerNickname, myself.getNickname())) {
             setObjectives();
             addClickablePlaceholder(mainPane, layoutXObjective, layoutYObjMy, fitHeightCommon, fitWidthCommon, this::confirmPlaceObjective);
@@ -253,13 +277,7 @@ public class GamePageController implements Initializable {
     }
 
     private void placeTurnCase(boolean isLastTurn) {
-        //TODO: PLACE CARD make pop up okay in dimensions
-        hidePopup();
-        if (isLastTurn)
-            showImagePopup("/img/Background/LastTurnStarted.png", 593, 298, 226, 655);
-        else
-            showImagePopup("/img/Background/YourTurnStarted.png", 593, 298, 226, 655);
-
+        //TODO: PLACE CARD
     }
 
     private void pickTurnCase() {
@@ -267,7 +285,6 @@ public class GamePageController implements Initializable {
     }
 
     private void updatePlayerCase(updatePlayerMessage update) {
-        hidePopup();
 
         Player currentPlayer = update.getPlayer();
         if (!Objects.equals(myself.getNickname(), currentPlayer.getNickname())) {
@@ -775,29 +792,22 @@ public class GamePageController implements Initializable {
             setPage();
             onTop.toFront();
         } else if (Objects.equals(currentState, "StarterCardState")) {
-            hidePopup();
-            showImagePopup("/img/Background/StarterCard.png", 593, 298, 226, 655);
+            showImagePopup("/img/Background/starterState.png");
         } else if (Objects.equals(currentState, "ObjectiveState")) {
-            hidePopup();
-            showImagePopup("/img/Background/ObjectiveCard.png", 593, 298, 226, 655);
+            showImagePopup("/img/Background/objectiveState.png");
         }
     }
 
     //TODO make the image be in the right positions -> high near title. Big one only when its your turn
-    private void showImagePopup(String imagePath, int layoutX, int layoutY, int fitHeight, int fitWidth) {
-        if (isPopupVisible) {
-            return; // Do not show another popup if one is already visible
-        }
+    private void showImagePopup(String imagePath) {
 
         Platform.runLater(() -> {
             Image imageLoad = new Image(Objects.requireNonNull(getClass().getResourceAsStream(imagePath)));
             ImageView image = new ImageView(imageLoad);
-            currentPopupImage = image; // Store reference to the current popup image
 
-            image.setFitWidth(fitWidth);
-            image.setFitHeight(fitHeight);
-            image.setLayoutX(layoutX);
-            image.setLayoutY(layoutY);
+            image.preserveRatioProperty().setValue(true);
+            image.setLayoutX(1074);
+            image.setLayoutY(639);
             image.setOpacity(0.0); // Initially invisible
 
             mainPane.getChildren().add(image);
@@ -818,7 +828,6 @@ public class GamePageController implements Initializable {
             // After fade-out, remove the image from the pane and update the flag
             fadeTransitionOut.setOnFinished(event -> {
                 mainPane.getChildren().remove(image);
-                isPopupVisible = false; // Update the flag to indicate no popup is visible
             });
 
             // Sequential transition to combine fade-in, pause, and fade-out
@@ -828,30 +837,10 @@ public class GamePageController implements Initializable {
                     fadeTransitionOut
             );
 
-            isPopupVisible = true; // Set the flag to indicate a popup is visible
             sequentialTransition.play();
         });
     }
 
-    //TODO make this call in the right moments
-    private void hidePopup() {
-        if (isPopupVisible && currentPopupImage != null) {
-            Platform.runLater(() -> {
-                FadeTransition fadeTransitionOut = new FadeTransition(Duration.seconds(1), currentPopupImage);
-                fadeTransitionOut.setFromValue(1.0);
-                fadeTransitionOut.setToValue(0.0);
-
-                // After fade-out, remove the image from the pane and update the flag
-                fadeTransitionOut.setOnFinished(event -> {
-                    mainPane.getChildren().remove(currentPopupImage);
-                    isPopupVisible = false; // Update the flag to indicate no popup is visible
-                    currentPopupImage = null; // Clear the reference to the current popup image
-                });
-
-                fadeTransitionOut.play();
-            });
-        }
-    }
 
     //TODO try to see if it works
     private void setPions(Player player){
