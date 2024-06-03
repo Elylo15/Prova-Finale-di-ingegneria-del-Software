@@ -5,38 +5,37 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
 
 import java.net.URL;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class WaitingController implements Initializable {
 
-
+    @FXML
+    public BorderPane pane;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         String color = (String) GUIMessages.readToGUI();
-        ImageView imageView = new ImageView();
-        imageView.setLayoutX(100); //TODO set correct position
-        imageView.setLayoutY(100); //TODO
+        Image img = null;
 
         switch (color) {
-            case "RED" -> {
-                Image image = new Image("/img/Background/WaitingRed.png");
-                imageView.setImage(image);
-            }
-            case "BLUE" -> {
-                Image image = new Image("/img/Background/WaitingBlue.png");
-                imageView.setImage(image);
-            }
-            case "GREEN" -> {
-                Image image = new Image("/img/Background/WaitingGreen.png");
-                imageView.setImage(image);
-            }
-            case "PURPLE" -> {
-                Image image = new Image("/img/Background/WaitingPurple.png");
-                imageView.setImage(image);
-            }
+            case "red" ->
+                img = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/img/Waiting/WaitingRed.png")));
+            case "blue" ->
+                img = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/img/Waiting/WaitingBlue.png")));
+            case "green" ->
+                img = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/img/Waiting/WaitingGreen.png")));
+            case "purple" ->
+                img = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/img/Waiting/WaitingPurple.png")));
         }
+
+        ImageView imageView = new ImageView(img);
+        imageView.setFitHeight(1080);
+        imageView.setFitWidth(1920);
+        imageView.setPreserveRatio(true);
+        pane.getChildren().add(imageView);
     }
 }
