@@ -5,7 +5,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class GUIMessagesTest {
 
@@ -16,7 +15,7 @@ public class GUIMessagesTest {
     }
 
     @Test
-    public void testWriteToClientAndReadToClient() throws InterruptedException {
+    public void testWriteToClientAndReadToClient() {
         String message = "Test message to client";
 
         // Write the message to the client
@@ -30,7 +29,7 @@ public class GUIMessagesTest {
     }
 
     @Test
-    public void testWriteToGUIAndReadToGUI() throws InterruptedException {
+    public void testWriteToGUIAndReadToGUI() {
         String message = "Test message to GUI";
 
         // Write the message to the GUI
@@ -45,7 +44,7 @@ public class GUIMessagesTest {
 
 
     @Test
-    public void testConcurrentAccess() throws InterruptedException {
+    public void testConcurrentAccess() {
         // Define two different messages for client and GUI
         String clientMessage = "Client message";
         String guiMessage = "GUI message";

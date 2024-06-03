@@ -1,11 +1,8 @@
 package it.polimi.ingsw.protocol.server.RMI;
 
-import it.polimi.ingsw.protocol.client.controller.Controller;
 import it.polimi.ingsw.protocol.client.controller.ControllerRMI;
 import it.polimi.ingsw.protocol.messages.ConnectionState.connectionResponseMessage;
 import it.polimi.ingsw.protocol.server.ClientConnection;
-import it.polimi.ingsw.protocol.server.ClientRMI;
-import it.polimi.ingsw.protocol.server.Server;
 import org.junit.jupiter.api.*;
 
 import java.rmi.AlreadyBoundException;
@@ -34,7 +31,7 @@ class MainRemoteServerTest {
         int maximumPoolSize = 200;
         long keepAliveTime = 300;
         TimeUnit unit = TimeUnit.SECONDS;
-        executor = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, unit, new LinkedBlockingQueue<Runnable>());
+        executor = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, unit, new LinkedBlockingQueue<>());
         executor.submit(() -> {
             Registry registry = null;
             try {
@@ -57,7 +54,7 @@ class MainRemoteServerTest {
 
     @Test
     @DisplayName("New client is correctly registered")
-    void newClientConnection() throws RemoteException {
+    void newClientConnection() {
         executor.submit(() -> {
             ControllerRMI controllerRMI = new ControllerRMI("localhost", "1099");
             controllerRMI.connectToServer("localhost", "1099");

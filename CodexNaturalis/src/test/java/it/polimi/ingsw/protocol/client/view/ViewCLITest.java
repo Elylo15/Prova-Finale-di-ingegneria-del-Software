@@ -1,29 +1,26 @@
 package it.polimi.ingsw.protocol.client.view;
 
-import it.polimi.ingsw.model.CommonArea;
+import it.polimi.ingsw.model.Match;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.PlayerArea;
-import it.polimi.ingsw.model.*;
-import it.polimi.ingsw.model.cards.*;
+import it.polimi.ingsw.model.cards.PlaceableCard;
+import it.polimi.ingsw.model.cards.ResourceCard;
+import it.polimi.ingsw.model.cards.StarterCard;
 import it.polimi.ingsw.model.cards.enumeration.Reign;
 import it.polimi.ingsw.model.cards.enumeration.Resource;
 import it.polimi.ingsw.model.cards.exceptions.InvalidIdException;
 import it.polimi.ingsw.model.cards.exceptions.noPlaceCardException;
 import it.polimi.ingsw.protocol.messages.EndGameState.declareWinnerMessage;
 import it.polimi.ingsw.protocol.messages.responseMessage;
-import org.junit.Before;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class ViewCLITest {
 
-   private ViewCLI viewCLI;
+    private ViewCLI viewCLI;
     private PlayerArea playerArea;
 
     @BeforeEach
@@ -33,10 +30,8 @@ class ViewCLITest {
 
     }
 
-
     @Test
     void checkShowArea() throws noPlaceCardException {
-
 
         viewCLI = new ViewCLI();
         ArrayList<Resource> resources = new ArrayList<>();
@@ -93,9 +88,9 @@ class ViewCLITest {
         }
 
         playerArea.placeStarterCard(starterCard, true);
-        playerArea.placeCard(testCard, 1,1, true);
-        playerArea.placeCard(testCard2,2,2,false);
-        playerArea.placeCard(testCard3,-1,-1,true);
+        playerArea.placeCard(testCard, 1, 1, true);
+        playerArea.placeCard(testCard2, 2, 2, false);
+        playerArea.placeCard(testCard3, -1, -1, true);
 
         viewCLI.showPlayerArea(playerArea);
 
@@ -113,7 +108,7 @@ class ViewCLITest {
         objective.put("player1", 3);
         objective.put("player2", 4);
         objective.put("player3", 2);
-        declareWinnerMessage message = new declareWinnerMessage(scores,objective);
+        declareWinnerMessage message = new declareWinnerMessage(scores, objective);
         viewCLI.endGame(message);
     }
 
@@ -134,7 +129,7 @@ class ViewCLITest {
         output.add("");
         output.add("");
         output.add("");
-        for(int i = 102; i != 86 ; i--) {
+        for (int i = 102; i != 86; i--) {
             viewCLI.printObjective(i, output);
             output.forEach(System.out::println);
         }

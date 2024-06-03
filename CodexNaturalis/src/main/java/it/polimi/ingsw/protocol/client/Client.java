@@ -18,20 +18,16 @@ import it.polimi.ingsw.protocol.messages.responseMessage;
 
 import java.util.ArrayList;
 import java.util.Objects;
-import java.util.concurrent.Future;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicIntegerArray;
-import java.util.concurrent.Callable;
 
 public class Client implements Runnable {
     private final View view;
     private final ThreadPoolExecutor executor;
+    private final Integer defaultValue = 1000;
     private String serverIP;
     private Controller controller;
-    private final Integer defaultValue = 1000;
 
     /**
      * method {@code Client}: Constructor for the Client class
@@ -175,8 +171,10 @@ public class Client implements Runnable {
             controller.expectedPlayers(expected, noResponse.get());
             responseMessage answer = controller.correctAnswer();
             view.answer(answer);
-            if (answer.getCorrect())
+            if (answer.getCorrect()) {
+                view.waiting();
                 break;
+            }
         }
 
     }
@@ -263,7 +261,7 @@ public class Client implements Runnable {
     /**
      * method {@code getFutureResult}: gets the result of a future task.
      *
-     * @param task: Callable<T>
+     * @param task:       Callable<T>
      * @param noResponse: AtomicBoolean
      * @return the result of the future task or the default value
      */
@@ -376,6 +374,8 @@ public class Client implements Runnable {
 
     /**
      * method {@code whileRun}: main loop of the client
+     * Invocations of controller methods to receive and send messages.
+     * Invocations of view methods to display and receive player's info.
      */
     @Override
     public void run() {

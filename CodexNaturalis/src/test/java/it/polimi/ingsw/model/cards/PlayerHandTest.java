@@ -28,6 +28,7 @@ class PlayerHandTest {
         assertEquals(card1, removedCard);
         assertFalse(playerHand.getPlaceableCards().contains(card1));
     }
+
     @Test
     void removeCards() throws InvalidIdException {
         int id1 = card1.getID();

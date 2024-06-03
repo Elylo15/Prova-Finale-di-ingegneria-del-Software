@@ -12,9 +12,10 @@ import it.polimi.ingsw.protocol.messages.PlayerTurnState.updatePlayerMessage;
 import it.polimi.ingsw.protocol.messages.ServerOptionState.serverOptionMessage;
 import it.polimi.ingsw.protocol.messages.StaterCardState.starterCardMessage;
 import it.polimi.ingsw.protocol.messages.WaitingforPlayerState.expectedPlayersMessage;
+import it.polimi.ingsw.protocol.messages.currentStateMessage;
+import it.polimi.ingsw.protocol.messages.responseMessage;
 import it.polimi.ingsw.protocol.server.ClientConnection;
 import it.polimi.ingsw.protocol.server.RMI.MainRemoteServer;
-import it.polimi.ingsw.protocol.messages.*;
 import org.junit.jupiter.api.*;
 
 import java.rmi.AlreadyBoundException;
@@ -24,12 +25,9 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.concurrent.*;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 class ControllerRMITest {
 
@@ -56,7 +54,7 @@ class ControllerRMITest {
         int maximumPoolSize = 200;
         long keepAliveTime = 300;
         TimeUnit unit = TimeUnit.SECONDS;
-        executor = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, unit, new LinkedBlockingQueue<Runnable>());
+        executor = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, unit, new LinkedBlockingQueue<>());
 
         try {
             registry = LocateRegistry.getRegistry(1099);
@@ -79,7 +77,6 @@ class ControllerRMITest {
         }
 
 
-
         Future<ClientConnection> connectionFuture = executor.submit(() -> this.waitForConnectionServer(registry));
         controller = new ControllerRMI("localhost", "1099");
         controller.connectToServer("localhost", "1099");
@@ -100,9 +97,9 @@ class ControllerRMITest {
 
     @Test
     @DisplayName("Connection to server and receiving an answer")
-    void connectToServerTest() throws ExecutionException, InterruptedException {
+    void connectToServerTest() {
         connection.sendAnswerToConnection(new connectionResponseMessage(true));
-        assertTrue(controller.answerConnection().getCorrect());
+        Assertions.assertTrue(controller.answerConnection().getCorrect());
     }
 
 
@@ -266,7 +263,6 @@ class ControllerRMITest {
         controller.sendAnswerToPing();
         Assertions.assertTrue(connection.isConnected());
     }
-
 
 
     @Test

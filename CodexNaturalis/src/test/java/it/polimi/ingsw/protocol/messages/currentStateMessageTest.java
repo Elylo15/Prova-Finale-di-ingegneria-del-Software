@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 class CurrentStateMessageTest {
 
@@ -33,7 +34,7 @@ class CurrentStateMessageTest {
         stateName = "Test State";
         lastTurn = true;
         onlinePlayers = new ArrayList<>(Arrays.asList("Player1", "Player2", "Player3"));
-        commonObjectiveCards = new ArrayList<>(Arrays.asList(area.drawObjectiveCard()));
+        commonObjectiveCards = new ArrayList<>(Collections.singletonList(area.drawObjectiveCard()));
         matchID = 1;
         message = new currentStateMessage(currentPlayer, player, stateName, lastTurn, onlinePlayers, commonObjectiveCards.toArray(new ObjectiveCard[0]), matchID);
     }

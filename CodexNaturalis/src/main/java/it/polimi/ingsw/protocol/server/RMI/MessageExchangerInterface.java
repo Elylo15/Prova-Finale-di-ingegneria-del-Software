@@ -8,7 +8,7 @@ public interface MessageExchangerInterface extends Remote {
      * Sends a message to the other side.
      *
      * @param message Message to be sent.
-     * @throws RemoteException
+     * @throws RemoteException if a remote exception occurs
      */
     void write(Object message) throws RemoteException;
 
@@ -16,7 +16,7 @@ public interface MessageExchangerInterface extends Remote {
      * Returns the last message received.
      *
      * @return Message received.
-     * @throws RemoteException
+     * @throws RemoteException if a remote exception occurs
      */
     Object read() throws RemoteException;
 }

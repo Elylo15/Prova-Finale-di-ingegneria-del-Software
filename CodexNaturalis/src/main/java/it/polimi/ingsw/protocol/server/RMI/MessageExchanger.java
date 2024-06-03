@@ -7,12 +7,13 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class MessageExchanger extends UnicastRemoteObject implements MessageExchangerInterface {
-    private BlockingQueue<byte[]> storedObjects;
+    private final BlockingQueue<byte[]> storedObjects;
 
 
     /**
      * Constructor for MessageExchanger
-      * @throws RemoteException
+     *
+     * @throws RemoteException if a remote exception occurs
      */
     public MessageExchanger() throws RemoteException {
         storedObjects = new LinkedBlockingQueue<>();
@@ -23,7 +24,7 @@ public class MessageExchanger extends UnicastRemoteObject implements MessageExch
      * Sends a message to the other side.
      *
      * @param message Message to be sent.
-     * @throws RemoteException
+     * @throws RemoteException if a remote exception occurs
      */
     @Override
     public void write(Object message) throws RemoteException {
@@ -45,7 +46,7 @@ public class MessageExchanger extends UnicastRemoteObject implements MessageExch
      * Returns the last message received.
      *
      * @return Message received.
-     * @throws RemoteException
+     * @throws RemoteException if a remote exception occurs
      */
     @Override
     public Object read() throws RemoteException {

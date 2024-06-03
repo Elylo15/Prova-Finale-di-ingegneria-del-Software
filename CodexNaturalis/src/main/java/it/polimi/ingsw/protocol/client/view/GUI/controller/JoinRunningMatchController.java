@@ -14,6 +14,7 @@ import javafx.util.Callback;
 
 import java.util.ArrayList;
 import java.util.List;
+
 /**
  * This class is a controller for the GUI scene where the user joins a running match.
  * It contains a ListView for the matches and a list of buttons for each match.
@@ -22,13 +23,11 @@ import java.util.List;
  * When a button is clicked, it sends a message to the client with the match ID and disables all other buttons.
  */
 public class JoinRunningMatchController {
+    private final List<Button> buttons = new ArrayList<>();// List of buttons for each match
     @FXML
     private ListView<String> JoinRunningMatchList; // ListView for the matches
-
     private serverOptionMessage serverOptionMessage; // Message to be sent to the client
     private ArrayList<Integer> MatchList;// List of matches that are currently running
-
-    private List<Button> buttons = new ArrayList<>();// List of buttons for each match
 
     /**
      * This method is called when the scene is loaded.
@@ -39,7 +38,7 @@ public class JoinRunningMatchController {
     private void initialize() {
         // Read the serverOptionMessage from the GUI and get the list of running matches
         serverOptionMessage = (serverOptionMessage) GUIMessages.readToGUI();
-        MatchList  = serverOptionMessage.getRunningMatches();
+        MatchList = serverOptionMessage.getRunningMatches();
 
 
         // Convert the integers to strings and add them to the ListView
@@ -80,14 +79,13 @@ public class JoinRunningMatchController {
                 String item = getItem();
                 if (item != null) {
                     // Send a message to the client with the match ID and disable all other buttons
-                    GUIMessages.writeToClient(new serverOptionMessage(false,null,  Integer.parseInt(item), false, null));
+                    GUIMessages.writeToClient(new serverOptionMessage(false, null, Integer.parseInt(item), false, null));
                     disableOtherButtons(button);
                     Platform.runLater(SceneManager::waiting);
                 }
             });
             buttons.add(button);
         }
-
 
 
         @Override
@@ -106,15 +104,12 @@ public class JoinRunningMatchController {
 
         /**
          * This method disables all buttons except the one that was clicked.
+         *
          * @param clickedButton The button that was clicked.
          */
         private void disableOtherButtons(Button clickedButton) {
             for (Button btn : buttons) {
-                if (btn != clickedButton) {
-                    btn.setDisable(true);
-                } else {
-                    btn.setDisable(false);
-                }
+                btn.setDisable(btn != clickedButton);
             }
         }
     }

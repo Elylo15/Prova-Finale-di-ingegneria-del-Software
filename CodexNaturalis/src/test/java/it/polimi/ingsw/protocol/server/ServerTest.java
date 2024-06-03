@@ -1,20 +1,17 @@
 package it.polimi.ingsw.protocol.server;
 
 import it.polimi.ingsw.protocol.client.controller.Controller;
-import it.polimi.ingsw.protocol.client.view.ViewCLI;
-import it.polimi.ingsw.protocol.messages.EndGameState.declareWinnerMessage;
-import it.polimi.ingsw.protocol.messages.ServerOptionState.*;
-
 import it.polimi.ingsw.protocol.client.controller.ControllerRMI;
 import it.polimi.ingsw.protocol.client.controller.ControllerSocket;
+import it.polimi.ingsw.protocol.client.view.ViewCLI;
+import it.polimi.ingsw.protocol.messages.EndGameState.declareWinnerMessage;
+import it.polimi.ingsw.protocol.messages.ServerOptionState.serverOptionMessage;
 import it.polimi.ingsw.protocol.messages.currentStateMessage;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.rmi.AccessException;
-import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
@@ -23,7 +20,8 @@ import java.util.Objects;
 import java.util.Random;
 import java.util.concurrent.*;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ServerTest {
 
@@ -32,12 +30,12 @@ class ServerTest {
     private static final String GREEN_TEXT = "\033[0;32m";
     private static final String PURPLE_TEXT = "\033[0;35m";
     private static final String BLUE_TEXT = "\033[0;34m";
+    private final Object lock_1 = new Object();
+    private final Object lock_2 = new Object();
     private Server server;
     private ThreadPoolExecutor executor;
     private Integer matchID_1;
     private Integer matchID_2;
-    private final Object lock_1 = new Object();
-    private final Object lock_2 = new Object();
     private boolean setup_Match_1;
     private boolean setup_Match_2;
     private boolean timeToDisconnect;
@@ -49,7 +47,8 @@ class ServerTest {
             Registry registry = LocateRegistry.getRegistry(1099);
             registry.list();
             UnicastRemoteObject.unexportObject(registry, true);
-        } catch (Exception ignore) {}
+        } catch (Exception ignore) {
+        }
 
         setup_Match_1 = true;
         setup_Match_2 = true;
@@ -59,7 +58,7 @@ class ServerTest {
         int maximumPoolSize = 100;
         long keepAliveTime = 300;
         TimeUnit unit = TimeUnit.SECONDS;
-        executor = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, unit, new LinkedBlockingQueue<Runnable>());
+        executor = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, unit, new LinkedBlockingQueue<>());
         executor.submit(server);
     }
 
@@ -73,9 +72,9 @@ class ServerTest {
     @DisplayName("Simulation normal server run")
     void runTest() throws ExecutionException, InterruptedException {
         Future<Boolean> socketResult = executor.submit(this::client_1);
-        Future<Boolean> rmiResult =  executor.submit(this::client_2);
+        Future<Boolean> rmiResult = executor.submit(this::client_2);
         Future<Boolean> socketResult2 = executor.submit(this::client_4);
-        Future<Boolean> rmiResult2 =  executor.submit(this::client_3);
+        Future<Boolean> rmiResult2 = executor.submit(this::client_3);
 
         assertTrue(socketResult.get());
         assertTrue(rmiResult.get());
@@ -85,6 +84,7 @@ class ServerTest {
 
     /**
      * Method {@code client_1}: simulates a client_1 connection to the server
+     *
      * @return true if the client_1 passed all the tests
      */
     private boolean client_1() {
@@ -101,7 +101,7 @@ class ServerTest {
             assertTrue(controller.correctAnswer().getCorrect());
 
             // ConnectionState (name and color)
-            matchID_1 =  controller.getCurrent().getMatchID();
+            matchID_1 = controller.getCurrent().getMatchID();
             controller.getUnavailableName();
             controller.chooseName("ALFA");
             assertTrue(controller.correctAnswer().getCorrect());
@@ -115,7 +115,7 @@ class ServerTest {
             // WaitingState: choice of the number of players
             controller.getCurrent();
             controller.newHost();
-            controller.expectedPlayers(2,false);
+            controller.expectedPlayers(2, false);
             assertTrue(controller.correctAnswer().getCorrect());
 
             // Wait for client_2 to join
@@ -124,7 +124,7 @@ class ServerTest {
         }
         System.out.println("matchID_1: " + matchID_1);
         System.out.println("client_1: Waiting for client_2 to join...");
-        assertTrue(clientSimulator(15, controller, RED_TEXT + "client_1" + RESET ));
+        assertTrue(clientSimulator(15, controller, RED_TEXT + "client_1" + RESET));
         System.out.println("\033[0;31mclient_1\033[0m disconnected");
 
 
@@ -143,12 +143,13 @@ class ServerTest {
             while (true) {
                 serverOptionMessage serverOption = controller.serverOptions();
                 controller.sendOptions(new serverOptionMessage(false, null, matchID_1, false, null));
-                if(controller.correctAnswer().getCorrect())
+                if (controller.correctAnswer().getCorrect())
                     break;
 
                 try {
                     Thread.sleep(1000);
-                } catch (InterruptedException ignore) {}
+                } catch (InterruptedException ignore) {
+                }
             }
 
             // ConnectionState (name and color)
@@ -170,13 +171,14 @@ class ServerTest {
 
     /**
      * Method {@code client_2}: simulates a client_2 connection to the server
+     *
      * @return true if the client_2 passed all the tests
      */
     private boolean client_2() {
         // Connection 1
         Controller controller = new ControllerRMI("localhost", "1099");
         synchronized (lock_1) {
-            while(setup_Match_1) {
+            while (setup_Match_1) {
                 try {
                     lock_1.wait();
                 } catch (InterruptedException e) {
@@ -261,21 +263,24 @@ class ServerTest {
 
     /**
      * Method {@code client_3}: simulates a client_3 connection to the server
+     *
      * @return true if the client_3 passed all the tests
      */
     private boolean client_3() {
         Controller controller = new ControllerRMI("localhost", "1099");
         synchronized (lock_1) {
-            while(setup_Match_1) {
+            while (setup_Match_1) {
                 try {
                     lock_1.wait();
-                } catch (InterruptedException ignore) {}
+                } catch (InterruptedException ignore) {
+                }
             }
 
-            while(!setup_Match_1) {
+            while (!setup_Match_1) {
                 try {
                     lock_1.wait();
-                } catch (InterruptedException ignore) {}
+                } catch (InterruptedException ignore) {
+                }
             }
 
         }
@@ -301,9 +306,9 @@ class ServerTest {
             System.out.println("client_3: Color chosen");
 
             // WaitingState: choice of the number of players
-            matchID_2 =  controller.getCurrent().getMatchID();
+            matchID_2 = controller.getCurrent().getMatchID();
             controller.newHost();
-            controller.expectedPlayers(2,false);
+            controller.expectedPlayers(2, false);
             assertTrue(controller.correctAnswer().getCorrect());
 
             setup_Match_2 = false;
@@ -312,13 +317,13 @@ class ServerTest {
 
         System.out.println("matchID_2: " + matchID_2);
         System.out.println("client_3: Waiting for client_4 to join...");
-        assertTrue(clientSimulatorscheduledDisconnections(7, controller, BLUE_TEXT + "client_3" + RESET));
+        assertTrue(clientSimulatorScheduledDisconnections(7, controller, BLUE_TEXT + "client_3" + RESET));
         timeToDisconnect = true;
         System.out.println(BLUE_TEXT + "client_3" + RESET + ": Disconnected");
 
         // Waiting for client_4 to leave the match
         synchronized (lock_2) {
-            while(!timeToDisconnect) {
+            while (!timeToDisconnect) {
                 try {
                     lock_2.wait();
                 } catch (InterruptedException e) {
@@ -365,12 +370,13 @@ class ServerTest {
 
     /**
      * Method {@code client_4}: simulates a client_4 connection to the server
+     *
      * @return true if the client_4 passed all the tests
      */
     private boolean client_4() {
         Controller controller = new ControllerSocket("localhost", "1024");
         synchronized (lock_2) {
-            while(setup_Match_2) {
+            while (setup_Match_2) {
                 try {
                     lock_2.wait();
                 } catch (InterruptedException e) {
@@ -405,7 +411,7 @@ class ServerTest {
         }
 
         System.out.println("client_4: Joining...");
-        assertTrue(clientSimulatorscheduledDisconnections(20, controller, PURPLE_TEXT + "client_4" + RESET));
+        assertTrue(clientSimulatorScheduledDisconnections(20, controller, PURPLE_TEXT + "client_4" + RESET));
 
         synchronized (lock_2) {
             timeToDisconnect = true;
@@ -419,7 +425,7 @@ class ServerTest {
 
         // Waiting for client_3 to load the match
         synchronized (lock_2) {
-            while(setup_Match_2) {
+            while (setup_Match_2) {
                 try {
                     lock_2.wait();
                 } catch (InterruptedException e) {
@@ -461,14 +467,15 @@ class ServerTest {
 
     /**
      * Method {@code clientSimulator}: simulates a client connection to the server
+     *
      * @param numberOfTurns number of turns to simulate or 0 if the simulation should continue indefinitely
-     * @param controller the controller to use for the simulation
+     * @param controller    the controller to use for the simulation
      */
     private boolean clientSimulator(int numberOfTurns, Controller controller, String name) {
         Integer remainingTurns = numberOfTurns;
         Integer counter = 1;
         ViewCLI view = new ViewCLI();
-        if(numberOfTurns == 0)
+        if (numberOfTurns == 0)
             remainingTurns = null;
         try {
             while (remainingTurns == null || remainingTurns > 0) {
@@ -478,8 +485,8 @@ class ServerTest {
                 String state = current.getStateName();
 
                 // REMOVE THIS
-                if(!Objects.equals(state, "AnswerCheckConnection") && (current.getCurrentPlayer() == null || Objects.equals(current.getCurrentPlayer().getNickname(), current.getPlayer().getNickname())))
-                    System.out.println( String.format("%2d",counter) + " - " + name + " State: " + state);
+                if (!Objects.equals(state, "AnswerCheckConnection") && (current.getCurrentPlayer() == null || Objects.equals(current.getCurrentPlayer().getNickname(), current.getPlayer().getNickname())))
+                    System.out.println(String.format("%2d", counter) + " - " + name + " State: " + state);
 
                 switch (state) {
                     case "StarterCardState": {
@@ -540,18 +547,18 @@ class ServerTest {
         }
 
 
-
         return true;
     }
 
 
     /**
-     * Method {@code clientSimulatorscheduledDisconnections}: simulates a client connection to the server.
+     * Method {@code clientSimulatorScheduledDisconnections}: simulates a client connection to the server.
      * When the first client disconnects, the second client will try to disconnect too.
+     *
      * @param numberOfTurns number of turns to simulate or 0 if the simulation should continue indefinitely
-     * @param controller the controller to use for the simulation
+     * @param controller    the controller to use for the simulation
      */
-    private boolean clientSimulatorscheduledDisconnections(int numberOfTurns, Controller controller, String name) {
+    private boolean clientSimulatorScheduledDisconnections(int numberOfTurns, Controller controller, String name) {
         Integer remainingTurns = numberOfTurns;
         Integer counter = 1;
         ViewCLI view = new ViewCLI();
@@ -569,8 +576,8 @@ class ServerTest {
                 }
 
                 // REMOVE THIS
-                if(!Objects.equals(state, "AnswerCheckConnection") && (current.getCurrentPlayer() == null || Objects.equals(current.getCurrentPlayer().getNickname(), current.getPlayer().getNickname())))
-                    System.out.println( String.format("%2d", counter) + " - " + name + " State: " + state);
+                if (!Objects.equals(state, "AnswerCheckConnection") && (current.getCurrentPlayer() == null || Objects.equals(current.getCurrentPlayer().getNickname(), current.getPlayer().getNickname())))
+                    System.out.println(String.format("%2d", counter) + " - " + name + " State: " + state);
 
                 switch (state) {
                     case "StarterCardState": {
@@ -672,17 +679,17 @@ class ServerTest {
      */
     public void placeCard(Controller controller, currentStateMessage current) {
         // Wrong choice
-        controller.placeCard(0, 0, 0,0, false);
+        controller.placeCard(0, 0, 0, 0, false);
         assertFalse(controller.correctAnswer().getCorrect());
 
         // Random choice
-        while(true) {
+        while (true) {
             ArrayList<Integer[]> availableCells = current.getCurrentPlayer().getPlayerArea().getAvailablePosition();
             int pick = new Random().nextInt(availableCells.size());
             int front = new Random().nextInt(2) + 1;
             Integer[] cell = availableCells.get(pick);
             controller.placeCard(0, front, cell[0], cell[1], false);
-            if(controller.correctAnswer().getCorrect())
+            if (controller.correctAnswer().getCorrect())
                 break;
         }
     }
@@ -696,8 +703,6 @@ class ServerTest {
         controller.pickCard(pick, false);
         assertTrue(controller.correctAnswer().getCorrect());
     }
-
-
 
 
 }

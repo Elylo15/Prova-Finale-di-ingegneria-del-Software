@@ -12,33 +12,28 @@ import it.polimi.ingsw.protocol.messages.PlayerTurnState.updatePlayerMessage;
 import it.polimi.ingsw.protocol.messages.ServerOptionState.serverOptionMessage;
 import it.polimi.ingsw.protocol.messages.StaterCardState.starterCardMessage;
 import it.polimi.ingsw.protocol.messages.WaitingforPlayerState.expectedPlayersMessage;
-import it.polimi.ingsw.protocol.server.ClientConnection;
-import it.polimi.ingsw.protocol.messages.*;
-import org.junit.jupiter.api.*;
-
+import it.polimi.ingsw.protocol.messages.currentStateMessage;
+import it.polimi.ingsw.protocol.messages.responseMessage;
 import it.polimi.ingsw.protocol.server.ClientConnection;
 import it.polimi.ingsw.protocol.server.ClientSocket;
-import it.polimi.ingsw.protocol.server.Server;
 import org.junit.jupiter.api.*;
 
-import java.io.*;
+import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.*;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ControllerSocketTest {
     ControllerSocket controller;
-
-     //in order to see if the controller can correctly send and receive messages we create a server to exchange them
+    ClientConnection connection;
+    //in order to see if the controller can correctly send and receive messages we create a server to exchange them
     private ServerSocket serverSocket;
     private Socket socket;
-    ClientConnection connection;
     private ThreadPoolExecutor executor;
-
 
 
     @BeforeEach
@@ -62,6 +57,7 @@ class ControllerSocketTest {
         controller = new ControllerSocket("localhost", "1024");
         controller.connectToServer("localhost", "1024");
     }
+
     @AfterEach
     void tearDown() throws IOException {
         connection.closeConnection();
@@ -69,7 +65,7 @@ class ControllerSocketTest {
             socket.close();
         if (serverSocket != null)
             serverSocket.close();
-         executor.shutdown();
+        executor.shutdown();
     }
 
     @Test

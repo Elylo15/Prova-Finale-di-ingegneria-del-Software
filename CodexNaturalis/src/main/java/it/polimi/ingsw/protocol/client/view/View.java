@@ -55,5 +55,7 @@ public abstract class View {
 
     public abstract void update(updatePlayerMessage update);
 
+    public abstract void waiting();
+
     public abstract String pickNameFA(unavailableNamesMessage message);
 }

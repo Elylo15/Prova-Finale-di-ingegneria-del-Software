@@ -1,17 +1,25 @@
 package it.polimi.ingsw.protocol.client.view.GUI.controller;
 
-import it.polimi.ingsw.protocol.client.Client;
-import javafx.stage.Stage;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.image.ImageView;
 
-public class WaitingController {
-    private Stage primaryStage;
-    private Client client;
+import java.net.URL;
+import java.util.ResourceBundle;
 
-    void setPrimaryStage(Stage primaryStage) {
-        this.primaryStage = primaryStage;
-    }
+public class WaitingController implements Initializable {
+    @FXML
+    ImageView red;
+    @FXML
+    ImageView blue;
+    @FXML
+    ImageView green;
+    @FXML
+    ImageView yellow;
 
-    public void setClient(Client clientCLI) {
-        this.client = clientCLI;
+
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        //set the images of the players based on color chosen
     }
 }

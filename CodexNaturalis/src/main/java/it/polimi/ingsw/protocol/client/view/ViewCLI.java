@@ -22,7 +22,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * this class is the view of the client, it is used to visualize the game in the command line
+ * This class is the view of the client, it is used to visualize the game in the command line
  */
 public class ViewCLI extends View {
     //the purpose of ViewCLI is to handle the interaction with the user and
@@ -62,14 +62,14 @@ public class ViewCLI extends View {
     private static final String BRIGHT_WHITE_BACKGROUND = "\033[107m";
 
     /**
-     * method {@code ViewCLI}: constructs a new ViewCLI
+     * Method {@code ViewCLI}: constructs a new ViewCLI
      */
     public ViewCLI() {
         super();
     }
 
     /**
-     * method {@code getBgColor}: gets the background color
+     * Method {@code getBgColor}: gets the background color
      *
      * @param card the card to get the background color of
      * @return the background color
@@ -93,7 +93,7 @@ public class ViewCLI extends View {
     }
 
     /**
-     * method {@code askPortIP}: asks the user to enter the IP and the port of the server
+     * Method {@code askPortIP}: asks the user to enter the IP and the port of the server
      *
      * @return String[]
      */
@@ -973,7 +973,7 @@ public class ViewCLI extends View {
     }
 
     /**
-     * this method allow the user to say if he wants to connect with socket or rmi
+     * This method allow the user to say if he wants to connect with socket or rmi
      *
      * @return boolean
      */
@@ -989,7 +989,7 @@ public class ViewCLI extends View {
     }
 
     /**
-     * this method allow the client to visualize the server response about the connection
+     * This method allow the client to visualize the server response about the connection
      *
      * @param message the message received from the server
      */
@@ -999,6 +999,9 @@ public class ViewCLI extends View {
     }
 
     /**
+     * This method allow the client to choose if he wants to create a new match, join an existing one in waiting,
+     * load a saved Match or join a running match
+     *
      * @param message the message received from the server
      * @return message with the values chosen by the user
      */
@@ -1174,7 +1177,7 @@ public class ViewCLI extends View {
     }
 
     /**
-     * this method shows which nicknames are not available and allows the user to choose his nickname
+     * This method shows which nicknames are not available and allows the user to choose his nickname
      *
      * @param message the message received from the server
      * @return the chosen nickname
@@ -1195,7 +1198,7 @@ public class ViewCLI extends View {
     }
 
     /**
-     * visualize the response about the value entered
+     * This method visualizes the response received from the server about the value entered by the user
      *
      * @param message the message received from the server
      */
@@ -1204,9 +1207,16 @@ public class ViewCLI extends View {
             System.out.println("You didn't entered a valid value, please try again");
     }
 
+    /**
+     * This method lets the user know that he has to wait for other players to join the game
+     */
+    public void waiting() {
+        System.out.println(PURPLE_TEXT + "Waiting for" + BLUE_TEXT + " other players" + GREEN_TEXT + " to join" + RED_TEXT + " the game...");
+    }
+
 
     /**
-     * this method shows what colors are available and allows the user to choose his color
+     * This method shows what colors are available and allows the user to choose his color
      *
      * @param message the message received from the server
      */
@@ -1222,7 +1232,7 @@ public class ViewCLI extends View {
     }
 
     /**
-     * this method allow the user to place his starter card
+     * This method allow the user to place his starter card
      *
      * @return the side of the card
      */
@@ -1245,7 +1255,7 @@ public class ViewCLI extends View {
     }
 
     /**
-     * allow the user to choose how many players will play
+     * This method allows the user to choose how many players will play
      *
      * @return number of expected players
      */
@@ -1269,9 +1279,9 @@ public class ViewCLI extends View {
     }
 
     /**
-     * allow the user to choose his secret objective
+     * This method allows the user to choose his secret objective
      *
-     * @return objective
+     * @return int representing the chosen objective
      */
     public int chooseObjective(ArrayList<ObjectiveCard> objectives) {
         int objective;
@@ -1303,6 +1313,9 @@ public class ViewCLI extends View {
         return objective;
     }
 
+    /**
+     * @param output ArrayList<String>
+     */
     private void printOutput(ArrayList<String> output) {
         System.out.println(output.get(0));
         System.out.println(output.get(1));
@@ -1315,9 +1328,9 @@ public class ViewCLI extends View {
     }
 
     /**
-     * allow the user to say what card he wants to play, front or back, and in which position
+     * This method allows the user to say what card he wants to play, front or back, and in which position
      *
-     * @return Array of int representing the card chosen by the user
+     * @return Array of int representing the card chosen by the user, side, and position
      */
     public int[] placeCard() {
         int[] chosenCard = new int[4];
@@ -1384,9 +1397,9 @@ public class ViewCLI extends View {
     }
 
     /**
-     * allow the user to say what card he wants to pick
+     * This method allows the user to say what card he wants to pick
      *
-     * @return the id of the card the user wants to pick
+     * @return int representing the card the user wants to pick
      */
     public int pickCard() {
         int choice = 1000;
@@ -1404,7 +1417,7 @@ public class ViewCLI extends View {
 
 
     /**
-     * visualize the final information about the game, points and number of objectives achieved by the players
+     * This method visualizes the final information about the game, points and number of objectives achieved by the players
      *
      * @param message the message received from the server
      */
@@ -1424,7 +1437,7 @@ public class ViewCLI extends View {
     }
 
     /**
-     * Visualizes the updated state of the current player
+     * This method visualizes the updated state of the current player
      *
      * @param update the message received from the server
      */
@@ -1438,7 +1451,7 @@ public class ViewCLI extends View {
 
 
     /**
-     * this method allows the user to choose a nickname from the list of available names
+     * This method allows the user to choose a nickname from the list of available names
      *
      * @param message the message containing the list of available names
      * @return the chosen nickname

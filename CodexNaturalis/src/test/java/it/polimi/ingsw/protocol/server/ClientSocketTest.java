@@ -16,28 +16,23 @@ import it.polimi.ingsw.protocol.messages.WaitingforPlayerState.expectedPlayersMe
 import it.polimi.ingsw.protocol.messages.currentStateMessage;
 import it.polimi.ingsw.protocol.messages.responseMessage;
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.function.Executable;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.*;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ClientSocketTest {
     ControllerSocket controller;
-
-     //in order to see if the controller can correctly send and receive messages we create a server to exchange them
+    ClientConnection connection;
+    //in order to see if the controller can correctly send and receive messages we create a server to exchange them
     private ServerSocket serverSocket;
     private Socket socket;
-    ClientConnection connection;
     private ThreadPoolExecutor executor;
-
 
 
     @BeforeEach
@@ -46,7 +41,7 @@ class ClientSocketTest {
         int maximumPoolSize = 200;
         long keepAliveTime = 300;
         TimeUnit unit = TimeUnit.SECONDS;
-        executor = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, unit, new LinkedBlockingQueue<Runnable>());
+        executor = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, unit, new LinkedBlockingQueue<>());
 
         serverSocket = new ServerSocket(1024);
         executor.submit(() -> {
@@ -61,6 +56,7 @@ class ClientSocketTest {
         controller = new ControllerSocket("localhost", "1024");
         controller.connectToServer("localhost", "1024");
     }
+
     @AfterEach
     void tearDown() throws IOException {
         connection.closeConnection();
@@ -68,15 +64,13 @@ class ClientSocketTest {
             socket.close();
         if (serverSocket != null)
             serverSocket.close();
-         executor.shutdown();
+        executor.shutdown();
     }
-
-
 
 
     @Test
     @DisplayName("Sending answer after connection")
-    public void sendAnswerToConnectionTest() throws InterruptedException {
+    public void sendAnswerToConnectionTest() {
         connectionResponseMessage expectedMessage = new connectionResponseMessage(true);
         executor.submit(() -> connection.sendAnswerToConnection(expectedMessage));
         connectionResponseMessage response = controller.answerConnection();
@@ -97,7 +91,7 @@ class ClientSocketTest {
 
     @Test
     @DisplayName("Sending and receiving server options")
-    public void getServerOptionsTest() throws InterruptedException {
+    public void getServerOptionsTest() {
         serverOptionMessage options = new serverOptionMessage(true, 0, 1, false, 0);
         controller.sendOptions(options);
         serverOptionMessage receivedOptions = connection.getServerOption(null, null, null);
@@ -254,9 +248,6 @@ class ClientSocketTest {
         Assertions.assertNull(connection.getName(null));
         Assertions.assertNull(connection.getColor(null));
     }
-
-
-
 
 
 }

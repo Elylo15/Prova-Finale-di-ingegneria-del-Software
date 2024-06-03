@@ -1,7 +1,6 @@
 package it.polimi.ingsw.protocol.client.view.GUI.controller;
+
 import it.polimi.ingsw.protocol.client.view.GUI.message.GUIMessages;
-
-
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
@@ -30,7 +29,6 @@ public class InsertIPController {
         submit_ip.setOnAction(event -> {
 
             GUIMessages.writeToClient(ip.getText());// Send the IP to the client
-            ;
         });
     }
 }

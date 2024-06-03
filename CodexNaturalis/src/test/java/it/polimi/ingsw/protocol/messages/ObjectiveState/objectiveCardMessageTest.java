@@ -4,7 +4,6 @@ import it.polimi.ingsw.model.CommonArea;
 import it.polimi.ingsw.model.cards.LoadDecks;
 import it.polimi.ingsw.model.cards.ObjectiveCard;
 import it.polimi.ingsw.model.cards.exceptions.InvalidIdException;
-import it.polimi.ingsw.protocol.messages.ObjectiveState.objectiveCardMessage;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

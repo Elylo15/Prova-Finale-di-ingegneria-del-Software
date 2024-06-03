@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-class availableColorsMessageTest {
+class AvailableColorsMessageTest {
 
     private availableColorsMessage message;
     private ArrayList<String> colors;

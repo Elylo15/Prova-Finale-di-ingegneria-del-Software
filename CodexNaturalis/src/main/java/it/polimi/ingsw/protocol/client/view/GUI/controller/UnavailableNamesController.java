@@ -15,18 +15,21 @@ public class UnavailableNamesController {
     @FXML
     public Button submitButton;
 
-
     private unavailableNamesMessage message;
 
+    /**
+     * This method is called when the scene is loaded.
+     * It reads the unavailableNamesMessage from the GUI and sets the label to the unavailable names.
+     * Then, it sets the action of the submit button to send the name chosen by the user to the client.
+     */
     @FXML
     public void initialize() {
         //deserialize the unavailableNamesMessage
         this.message = (unavailableNamesMessage) GUIMessages.readToGUI();
         // set the label to the anavailable names
-        if(message.toString().equals("[]")){
+        if (message.toString().equals("[]")) {
             unavailableNames.setText("All nicknames are available");
-        }
-        else {
+        } else {
             unavailableNames.setText("These nicknames are not available: " + message.getNames());
         }
         submitButton.setOnAction(event -> {

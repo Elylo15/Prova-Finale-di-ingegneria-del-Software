@@ -7,7 +7,7 @@ import it.polimi.ingsw.protocol.messages.ServerOptionState.serverOptionMessage;
 import it.polimi.ingsw.protocol.messages.currentStateMessage;
 import it.polimi.ingsw.protocol.server.FSM.MatchState;
 import it.polimi.ingsw.protocol.server.FSM.State;
-import it.polimi.ingsw.protocol.server.RMI.*;
+import it.polimi.ingsw.protocol.server.RMI.MainRemoteServer;
 import it.polimi.ingsw.protocol.server.exceptions.FailedToJoinMatch;
 
 import java.io.File;
@@ -20,7 +20,10 @@ import java.net.Socket;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Objects;
+import java.util.Random;
+import java.util.Scanner;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
@@ -28,22 +31,16 @@ import java.util.stream.Collectors;
  * Server class that manages the connections with the clients.
  */
 public class Server implements Runnable {
-    private CopyOnWriteArrayList<MatchManager> games;
-    private int portSocket;
-    private int portRMI;
-
-    private int timeoutSeconds;
-
+    private final CopyOnWriteArrayList<MatchManager> games;
+    private final int timeoutSeconds;
+    private final String defaultPath;
+    private final LogCreator logCreator;
+    private final int portSocket;
+    private final int portRMI;
+    private final ThreadPoolExecutor executor;
     private ServerSocket serverSocket;
     private MainRemoteServer server;
     private Registry registry;
-
-    private ThreadPoolExecutor executor;
-
-    private String defaultPath;
-
-    private LogCreator logCreator;
-
     private boolean serverRunning;
 
 
@@ -57,42 +54,41 @@ public class Server implements Runnable {
         defaultPath = "savedMatches";
         logCreator = new LogCreator();
         this.serverRunning = false;
-        this.timeoutSeconds = 2*60;
+        this.timeoutSeconds = 2 * 60;
 
         int corePoolSize = 15;
         int maximumPoolSize = 200;
         long keepAliveTime = 300;
         TimeUnit unit = TimeUnit.SECONDS;
-        executor = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, unit, new LinkedBlockingQueue<Runnable>());
+        executor = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, unit, new LinkedBlockingQueue<>());
     }
 
 
     /**
      * Accepts a connection via socket from a client and creates a new ClientConnection.
-      */
+     */
     protected void acceptConnectionSocket() {
         try {
             this.serverSocket = new ServerSocket(portSocket);
 
 
-            while(this.serverRunning) {
+            while (this.serverRunning) {
                 logCreator.log("server socket opened");
                 Socket socket = serverSocket.accept();
                 ClientConnection connection = null;
                 InetAddress clientAddress = socket.getInetAddress();
                 int clientPort = socket.getPort();
                 try {
-                        connection = new ClientSocket(clientAddress.toString(), Integer.toString(clientPort), socket);
-                    } catch (Exception e) {
-                        logCreator.log("Client " + clientAddress.toString() + " not connected");
-                        socket.close();
-                    }
+                    connection = new ClientSocket(clientAddress.toString(), Integer.toString(clientPort), socket);
+                } catch (Exception e) {
+                    logCreator.log("Client " + clientAddress.toString() + " not connected");
+                    socket.close();
+                }
                 ClientConnection finalConnection = connection;
                 executor.submit(() -> this.handleConnection(finalConnection));
             }
         } catch (IOException e) {
             logCreator.log("Server socket accept service crashed");
-            return;
         }
     }
 
@@ -107,7 +103,7 @@ public class Server implements Runnable {
             server = new MainRemoteServer();
             registry.bind("MainServer", server);
 
-            while(this.serverRunning) {
+            while (this.serverRunning) {
                 try {
                     logCreator.log("Waiting for new RMI client connection");
 
@@ -132,7 +128,7 @@ public class Server implements Runnable {
      * @param connection connection with the client.
      */
     private void handleConnection(ClientConnection connection) {
-        if(connection == null)
+        if (connection == null)
             return;
         // Confirms the connection to the client
         connection.sendAnswerToConnection(new connectionResponseMessage(true));
@@ -145,19 +141,18 @@ public class Server implements Runnable {
 
             serverOptionMessage msg = this.obtainServerOption(connection);
 
-            if(msg == null) {
+            if (msg == null) {
                 logCreator.log("Client " + connection.getIP() + " " + connection.getPort() + " kicked due to no serverOption received");
                 connection.closeConnection();
                 return;
             }
 
-            if(msg.isNewMatch()) {
-                logCreator.log("Client " + connection.getIP() +":" + connection.getPort() + " wants to join a new game");
-                if(msg.getMatchID() == null) {
+            if (msg.isNewMatch()) {
+                logCreator.log("Client " + connection.getIP() + ":" + connection.getPort() + " wants to join a new game");
+                if (msg.getMatchID() == null) {
                     this.joinNewMatch(connection);
                     break;
-                }
-                else {
+                } else {
                     try {
                         this.joinWaitingMatch(connection, msg);
                         break;
@@ -166,15 +161,15 @@ public class Server implements Runnable {
                     }
                 }
             } else if (msg.getStartedMatchID() != null) {
-                logCreator.log("Client " + connection.getIP() +":" + connection.getPort() + " wants to join an already started game");
+                logCreator.log("Client " + connection.getIP() + ":" + connection.getPort() + " wants to join an already started game");
                 try {
-                    this.joinStartedMatch(connection,msg);
+                    this.joinStartedMatch(connection, msg);
                     break;
                 } catch (FailedToJoinMatch e) {
                     logCreator.log("Client " + connection.getIP() + " " + connection.getPort() + " failed to join match " + msg.getStartedMatchID() + ": sending again the serverOption");
                 }
             } else {
-                logCreator.log("Client " + connection.getIP() +":" + connection.getPort() + " wants to load a game");
+                logCreator.log("Client " + connection.getIP() + ":" + connection.getPort() + " wants to load a game");
                 try {
                     this.joinSavedMatch(connection, msg);
                     break;
@@ -203,7 +198,7 @@ public class Server implements Runnable {
         serverOptionMessage msg = null;
 
 
-        while(!correctResponse) {
+        while (!correctResponse) {
             // Obtains the list of waiting
             ArrayList<Integer> waitingGames = games.stream()
                     .filter(game -> game.getMatchInfo().getStatus() == MatchState.Waiting)
@@ -241,11 +236,11 @@ public class Server implements Runnable {
                 return null;
             }
 
-            if(msg == null)
+            if (msg == null)
                 return null;
 
             // Checks if the response message is valid
-            if(msg.isNewMatch() && (msg.getMatchID() == null || waitingGames.contains(msg.getMatchID()))) {
+            if (msg.isNewMatch() && (msg.getMatchID() == null || waitingGames.contains(msg.getMatchID()))) {
                 correctResponse = true;
             } else if (msg.getStartedMatchID() != null && runningGames.contains(msg.getStartedMatchID())) {
                 correctResponse = true;
@@ -275,9 +270,9 @@ public class Server implements Runnable {
     private void joinNewMatch(ClientConnection connection) {
         // Client wants to join a new game
         boolean correctJoining = false;
-        while(!correctJoining) {
+        while (!correctJoining) {
             Integer id = this.createNewMatchID();
-            MatchInfo matchInfo = new MatchInfo(new Match(),id, null, MatchState.Waiting);
+            MatchInfo matchInfo = new MatchInfo(new Match(), id, null, MatchState.Waiting);
 
             MatchManager lobbyManager = new MatchManager(matchInfo);
             games.add(lobbyManager);
@@ -298,7 +293,7 @@ public class Server implements Runnable {
      * Client joins a waiting match.
      *
      * @param connection connection with the client.
-     * @param msg serverOptionMessage obtained from the client.
+     * @param msg        serverOptionMessage obtained from the client.
      * @throws FailedToJoinMatch if the player cannot join the game.
      */
     private void joinWaitingMatch(ClientConnection connection, serverOptionMessage msg) throws FailedToJoinMatch {
@@ -309,7 +304,7 @@ public class Server implements Runnable {
                 .findAny().orElse(null);
 
         // Checks again: Game not found
-        if(lobbyManager == null) {
+        if (lobbyManager == null) {
             logCreator.log("Client " + connection.getIP() + " " + connection.getPort() + " failed to join match " + msg.getMatchID() + " due to not found lobby");
             throw new FailedToJoinMatch("Failed to join match " + msg.getMatchID() + " due to not found lobby");
         }
@@ -321,7 +316,7 @@ public class Server implements Runnable {
      * Client joins a started match.
      *
      * @param connection connection with the client.
-     * @param msg serverOptionMessage obtained from the client.
+     * @param msg        serverOptionMessage obtained from the client.
      * @throws FailedToJoinMatch if the player cannot join the game.
      */
     private void joinStartedMatch(ClientConnection connection, serverOptionMessage msg) throws FailedToJoinMatch {
@@ -333,7 +328,7 @@ public class Server implements Runnable {
                 .findAny().orElse(null);
 
         // Checks again: Game not found
-        if(lobbyManager == null || lobbyManager.getMatchInfo().getExpectedPlayers() <= lobbyManager.getOnlinePlayerInfo().size()) {
+        if (lobbyManager == null || lobbyManager.getMatchInfo().getExpectedPlayers() <= lobbyManager.getOnlinePlayerInfo().size()) {
             logCreator.log("Client " + connection.getIP() + " " + connection.getPort() + " failed to join match " + msg.getMatchID() + " due to not found lobby");
             throw new FailedToJoinMatch("Failed to join match " + msg.getMatchID() + " due to not found lobby");
         }
@@ -346,12 +341,12 @@ public class Server implements Runnable {
      * Client joins a saved match.
      *
      * @param connection connection with the client.
-     * @param message serverOptionMessage obtained from the client.
+     * @param message    serverOptionMessage obtained from the client.
      * @throws FailedToJoinMatch if the player cannot join the game.
      */
     private void joinSavedMatch(ClientConnection connection, serverOptionMessage message) throws FailedToJoinMatch {
 
-        MatchManager lobbyManager = null;
+        MatchManager lobbyManager;
         synchronized (this) {
             if (this.games.stream().anyMatch(matchManager -> Objects.equals(matchManager.getMatchInfo().getID(), message.getSavedMatchID()))) {
                 logCreator.log("Client " + connection.getIP() + " " + connection.getPort() + " failed to join match " + message.getSavedMatchID() + " due to already started game");
@@ -384,8 +379,9 @@ public class Server implements Runnable {
 
     /**
      * Tries to add a new player to a match that is not in Waiting state.
-     * @param connection connection with the client.
-     * @param msg serverOptionMessage obtained from the client.
+     *
+     * @param connection   connection with the client.
+     * @param msg          serverOptionMessage obtained from the client.
      * @param lobbyManager ClientManager of the game.
      * @throws FailedToJoinMatch if the player cannot join the game.
      */
@@ -397,19 +393,19 @@ public class Server implements Runnable {
                 .map(playerInfo -> playerInfo.getPlayer().getNickname().toLowerCase())
                 .collect(Collectors.toCollection(ArrayList::new));
 
-        if(offlineNames.isEmpty() || lobbyManager.getOnlinePlayerInfo().size() >= lobbyManager.getMatchInfo().getExpectedPlayers()) {
+        if (offlineNames.isEmpty() || lobbyManager.getOnlinePlayerInfo().size() >= lobbyManager.getMatchInfo().getExpectedPlayers()) {
             logCreator.log("Client " + connection.getIP() + " " + connection.getPort() + " failed to join match " + msg.getMatchID() + " due to full lobby");
             throw new FailedToJoinMatch("Failed to join match " + msg.getMatchID() + " due to full lobby");
         }
 
         // Sends status information
-        currentStateMessage currState = new currentStateMessage(null,null,"ConnectionFAState", false, null, null, lobbyManager.getMatchInfo().getID());
+        currentStateMessage currState = new currentStateMessage(null, null, "ConnectionFAState", false, null, null, lobbyManager.getMatchInfo().getID());
         connection.sendCurrentState(currState);
 
         // Obtains the name of the player
         String name = "";
         boolean correctChoice = false;
-        while(!correctChoice) {
+        while (!correctChoice) {
 
             // Asks for the new player name
             Future<String> nameFuture = executor.submit(() -> connection.getName(offlineNames).getName().toLowerCase());
@@ -430,14 +426,14 @@ public class Server implements Runnable {
                 return;
             }
 
-            if(name == null) {
+            if (name == null) {
                 connection.closeConnection();
                 logCreator.log("Client " + connection.getIP() + " kicked due to no name received");
                 return;
             }
 
             // Checks if the name is correct
-            if(offlineNames.contains(name)) {
+            if (offlineNames.contains(name)) {
                 connection.sendAnswer(true);
                 correctChoice = true;
             } else {
@@ -459,12 +455,12 @@ public class Server implements Runnable {
      * Asks for the player name and color to the client.
      *
      * @param lobbyManager ClientManager of the game.
-     * @param connection connection with the client.
+     * @param connection   connection with the client.
      * @throws FailedToJoinMatch if the player cannot join the game.
      */
     private void welcomeNewPlayer(MatchManager lobbyManager, ClientConnection connection) throws FailedToJoinMatch {
         // Sends status information
-        currentStateMessage currState = new currentStateMessage(null,null,"ConnectionState", false, null, null, lobbyManager.getMatchInfo().getID());
+        currentStateMessage currState = new currentStateMessage(null, null, "ConnectionState", false, null, null, lobbyManager.getMatchInfo().getID());
         connection.sendCurrentState(currState);
         logCreator.log("ConnectionState sent to" + connection.getIP() + " " + connection.getPort());
 
@@ -491,7 +487,7 @@ public class Server implements Runnable {
             try {
                 name = nameFuture.get(this.timeoutSeconds, TimeUnit.SECONDS);
 
-                if(name == null) {
+                if (name == null) {
                     connection.closeConnection();
                     logCreator.log("Client " + connection.getIP() + " kicked due to no name received");
                     return;
@@ -520,7 +516,6 @@ public class Server implements Runnable {
         }
 
 
-
         logCreator.log("Client " + connection.getIP() + " " + connection.getPort() + " chose name: " + name);
 
         // Obtains unavailable colors
@@ -531,19 +526,19 @@ public class Server implements Runnable {
                     .collect(Collectors.toCollection(ArrayList::new));
         }
 
-        if(unavailableColors.size() >= 4) {
+        if (unavailableColors.size() >= 4) {
             logCreator.log("Client " + connection.getIP() + " " + connection.getPort() + " failed to join match " + lobbyManager.getMatchInfo().getID());
             throw new FailedToJoinMatch("Failed to join match " + lobbyManager.getMatchInfo().getID() + " due to full lobby");
         }
 
         ArrayList<String> availableColors = new ArrayList<>();
-        if(!unavailableColors.contains("blue"))
+        if (!unavailableColors.contains("blue"))
             availableColors.add("blue");
-        if(!unavailableColors.contains("red"))
+        if (!unavailableColors.contains("red"))
             availableColors.add("red");
-        if(!unavailableColors.contains("green"))
+        if (!unavailableColors.contains("green"))
             availableColors.add("green");
-        if(!unavailableColors.contains("purple"))
+        if (!unavailableColors.contains("purple"))
             availableColors.add("purple");
 
         correctChoice = false;
@@ -555,7 +550,7 @@ public class Server implements Runnable {
             try {
                 color = colorFuture.get(this.timeoutSeconds, TimeUnit.SECONDS);
 
-                if(color == null) {
+                if (color == null) {
                     connection.closeConnection();
                     logCreator.log("Client " + connection.getIP() + " kicked due to no color received");
                     return;
@@ -588,10 +583,10 @@ public class Server implements Runnable {
         // Adds the new player to the waiting list if the clientManager in not full
         try {
             Player player = new Player(name, color, lobbyManager.getMatchInfo().getMatch().getCommonArea());
-            PlayerInfo playerInfo = new PlayerInfo(player,State.WaitingForPlayers, connection);
+            PlayerInfo playerInfo = new PlayerInfo(player, State.WaitingForPlayers, connection);
             lobbyManager.addPlayerInfo(playerInfo);
             logCreator.log("Client " + connection.getIP() + " " + connection.getPort() + " joined match " + lobbyManager.getMatchInfo().getID());
-        } catch(Exception e) {
+        } catch (Exception e) {
             logCreator.log("Client " + connection.getIP() + " " + connection.getPort() + " failed to join match " + lobbyManager.getMatchInfo().getID());
             throw new FailedToJoinMatch("Failed to join match " + lobbyManager.getMatchInfo().getID() + " due to full lobby");
         }
@@ -602,39 +597,41 @@ public class Server implements Runnable {
      * Closes the match when the ClientManager is not running anymore.
      */
     private void closeMatch() {
-        while(this.serverRunning || !this.games.isEmpty()) {
+        while (this.serverRunning || !this.games.isEmpty()) {
             games.removeIf(matchManager -> matchManager.getMatchInfo().getStatus() == MatchState.KickingPlayers);
         }
     }
 
     /**
      * Creates a new match ID avoiding duplicates.
+     *
      * @return new match ID.
      */
     private Integer createNewMatchID() {
         int MatchID = 0;
         boolean correct = false;
         ArrayList<Integer> matchFiles = this.listSavedMatches();
-        while(!correct || MatchID == 1000 || matchFiles.contains(MatchID)) {
+        while (!correct || MatchID == 1000 || matchFiles.contains(MatchID)) {
             MatchID = (new Random()).nextInt(100000);
             Integer finalMatchID = MatchID;
-            if(games.stream()
+            if (games.stream()
                     .map(matchManager -> matchManager.getMatchInfo().getID())
                     .noneMatch(a -> Objects.equals(a, finalMatchID)))
                 correct = true;
         }
-        return  MatchID;
+        return MatchID;
     }
 
     /**
      * Lists the saved matches.
+     *
      * @return list of the saved matches.
      */
     private ArrayList<Integer> listSavedMatches() {
         File directory = new File(defaultPath);
         File[] files = directory.listFiles((dir, name) -> name.endsWith(".match"));
         ArrayList<Integer> matchFiles = new ArrayList<>();
-        if(files != null) {
+        if (files != null) {
             for (File file : files) {
                 matchFiles.add(Integer.parseInt(file.getName().substring(6, file.getName().length() - 6)));
             }
@@ -644,6 +641,7 @@ public class Server implements Runnable {
 
     /**
      * Loads a match from the saved games.
+     *
      * @param matchID ID of the match to load.
      * @return MatchInfo of the loaded match.
      */

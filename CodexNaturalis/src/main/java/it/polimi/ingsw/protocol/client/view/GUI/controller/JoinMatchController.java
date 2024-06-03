@@ -24,13 +24,11 @@ import java.util.List;
  * When a button is clicked, it sends a message to the client with the match ID and disables all other buttons.
  */
 public class JoinMatchController {
+    private final List<Button> buttons = new ArrayList<>();// List of buttons for each match
     @FXML
     private ListView<String> JoinMatchList; // ListView for the matches
-
     private serverOptionMessage serverOptionMessage;// Message to be sent to the client
     private ArrayList<Integer> MatchList;// List of matches waiting for players
-
-    private List<Button> buttons = new ArrayList<>();// List of buttons for each match
 
     /**
      * This method is called when the scene is loaded.
@@ -41,7 +39,7 @@ public class JoinMatchController {
     private void initialize() {
         // Read the serverOptionMessage from the GUI and get the list of matches
         serverOptionMessage = (serverOptionMessage) GUIMessages.readToGUI();
-        MatchList  = serverOptionMessage.getWaitingMatches();
+        MatchList = serverOptionMessage.getWaitingMatches();
 
 
         // Convert the integers to strings and add them to the ListView
@@ -61,9 +59,11 @@ public class JoinMatchController {
             }
         });
     }
+
     public void goBack(ActionEvent actionEvent) {
         Platform.runLater(SceneManager::InsertServerOption);
     }
+
     /**
      * This class is a custom cell for the ListView that uses buttons.
      * Each button represents a match.
@@ -99,17 +99,15 @@ public class JoinMatchController {
                 setGraphic(button);
             }
         }
+
         /**
          * This method disables all buttons except the one that was clicked.
+         *
          * @param clickedButton The button that was clicked.
          */
         private void disableOtherButtons(Button clickedButton) {
             for (Button btn : buttons) {
-                if (btn != clickedButton) {
-                    btn.setDisable(true);
-                } else {
-                    btn.setDisable(false);
-                }
+                btn.setDisable(btn != clickedButton);
             }
         }
     }

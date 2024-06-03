@@ -1,13 +1,10 @@
 package it.polimi.ingsw.protocol.client.view.GUI.controller;
 
-
-import it.polimi.ingsw.protocol.client.Client;
 import it.polimi.ingsw.protocol.client.view.GUI.message.GUIMessages;
 import it.polimi.ingsw.protocol.messages.ConnectionState.availableColorsMessage;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.stage.Stage;
 
 public class AvailableColorsController {
     @FXML
@@ -20,26 +17,13 @@ public class AvailableColorsController {
     Button red;
     @FXML
     Button purple;
-
-    private Stage primaryStage;
-    private Client client;
-    private WaitingController waitingController;
-
     availableColorsMessage message;
 
-    void setPrimaryStage(Stage primaryStage) {
-        this.primaryStage = primaryStage;
-    }
-
-    public void setClient(Client clientCLI) {
-        this.client = clientCLI;
-    }
-
-    public WaitingController getWaitingController() {
-        return waitingController;
-    }
-
-
+    /**
+     * This method is called when the scene is loaded.
+     * It sets the action for each button.
+     * When a button is clicked, it sends the color to the client.
+     */
     @FXML
     public void initialize() {
         //initialize
@@ -66,21 +50,11 @@ public class AvailableColorsController {
             }
         }
         //send the result
-        red.setOnAction(event -> {
-            GUIMessages.writeToClient("red");
-        });
-
-        purple.setOnAction(event -> {
-            GUIMessages.writeToClient("purple");
-        });
-        green.setOnAction(event -> {
-            GUIMessages.writeToClient("green");
-        });
-        blue.setOnAction(event -> {
-            GUIMessages.writeToClient("blue");
-        });
+        red.setOnAction(event -> GUIMessages.writeToClient("red"));
+        purple.setOnAction(event -> GUIMessages.writeToClient("purple"));
+        green.setOnAction(event -> GUIMessages.writeToClient("green"));
+        blue.setOnAction(event -> GUIMessages.writeToClient("blue"));
     }
-
 
 
 }

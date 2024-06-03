@@ -131,6 +131,7 @@ public class StarterCard extends PlaceableCard implements Serializable {
 
     /**
      * check if the requirement to place the card is met, it always returns true as starter cards have no requirement
+     *
      * @param req ArrayList containing the number of resources
      * @return true
      */

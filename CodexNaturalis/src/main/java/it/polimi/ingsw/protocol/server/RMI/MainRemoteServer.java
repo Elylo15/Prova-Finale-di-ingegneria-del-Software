@@ -14,7 +14,7 @@ import java.util.Random;
  * RMI server that manages client connections and provides methods for clients to establish a new connection with the server.
  */
 public class MainRemoteServer extends UnicastRemoteObject implements MainRemoteServerInterface, Runnable {
-    private ArrayList<String> connectionNames;
+    private final ArrayList<String> connectionNames;
     private boolean setUpClient;
     private int clientCounter;
 
@@ -49,7 +49,8 @@ public class MainRemoteServer extends UnicastRemoteObject implements MainRemoteS
         while (this.setUpClient) {
             try {
                 this.wait();
-            } catch (InterruptedException ignore) {}
+            } catch (InterruptedException ignore) {
+            }
         }
 
         return newClientName;
@@ -66,7 +67,8 @@ public class MainRemoteServer extends UnicastRemoteObject implements MainRemoteS
         while (!this.setUpClient) {
             try {
                 this.wait();
-            } catch (InterruptedException ignore) {}
+            } catch (InterruptedException ignore) {
+            }
         }
 
         // Sets up the new ClientConnection

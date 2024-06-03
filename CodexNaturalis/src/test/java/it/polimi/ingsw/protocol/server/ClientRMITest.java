@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.*;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ClientRMITest {
 
@@ -39,12 +39,12 @@ class ClientRMITest {
     private ControllerRMI controller;
 
     private ClientConnection waitForConnectionServer(Registry registry) {
-       try {
-           return server.clientConnected(registry);
-       } catch (RemoteException | AlreadyBoundException e) {
-           System.out.println("Server exception: " + e.getMessage());
-           throw new RuntimeException();
-       }
+        try {
+            return server.clientConnected(registry);
+        } catch (RemoteException | AlreadyBoundException e) {
+            System.out.println("Server exception: " + e.getMessage());
+            throw new RuntimeException();
+        }
     }
 
     @BeforeEach
@@ -53,7 +53,7 @@ class ClientRMITest {
         int maximumPoolSize = 200;
         long keepAliveTime = 300;
         TimeUnit unit = TimeUnit.SECONDS;
-        executor = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, unit, new LinkedBlockingQueue<Runnable>());
+        executor = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, unit, new LinkedBlockingQueue<>());
 
         try {
             registry = LocateRegistry.getRegistry(1099);
@@ -76,7 +76,6 @@ class ClientRMITest {
         }
 
 
-
         Future<ClientConnection> connectionFuture = executor.submit(() -> this.waitForConnectionServer(registry));
         controller = new ControllerRMI("localhost", "1099");
         controller.connectToServer("localhost", "1099");
@@ -93,7 +92,7 @@ class ClientRMITest {
 
     @Test
     @DisplayName("Sending answer after connection")
-    public void sendAnswerToConnectionTest() throws InterruptedException {
+    public void sendAnswerToConnectionTest() {
         connectionResponseMessage expectedMessage = new connectionResponseMessage(true);
         executor.submit(() -> connection.sendAnswerToConnection(expectedMessage));
         connectionResponseMessage response = controller.answerConnection();
@@ -114,7 +113,7 @@ class ClientRMITest {
 
     @Test
     @DisplayName("Sending and receiving server options")
-    public void getServerOptionsTest() throws InterruptedException {
+    public void getServerOptionsTest() {
         serverOptionMessage options = new serverOptionMessage(true, 0, 1, false, 0);
         controller.sendOptions(options);
         serverOptionMessage receivedOptions = connection.getServerOption(null, null, null);
@@ -270,7 +269,6 @@ class ClientRMITest {
         Assertions.assertNull(connection.getName(null));
         Assertions.assertNull(connection.getColor(null));
     }
-
 
 
 }

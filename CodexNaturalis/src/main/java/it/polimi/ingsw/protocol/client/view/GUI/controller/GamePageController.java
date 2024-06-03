@@ -8,9 +8,11 @@ import it.polimi.ingsw.model.cards.ObjectiveCard;
 import it.polimi.ingsw.model.cards.PlayerHand;
 import it.polimi.ingsw.protocol.client.view.GUI.ImageBinder;
 import it.polimi.ingsw.protocol.client.view.GUI.message.GUIMessages;
-import it.polimi.ingsw.protocol.messages.currentStateMessage;
 import it.polimi.ingsw.protocol.messages.PlayerTurnState.updatePlayerMessage;
-import javafx.animation.*;
+import it.polimi.ingsw.protocol.messages.currentStateMessage;
+import javafx.animation.FadeTransition;
+import javafx.animation.PauseTransition;
+import javafx.animation.SequentialTransition;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -29,7 +31,7 @@ import java.util.ResourceBundle;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-public class StarterController implements Initializable {
+public class GamePageController implements Initializable {
     @FXML
     public Pane mainPane;
     @FXML
@@ -104,9 +106,9 @@ public class StarterController implements Initializable {
     private ImageView fourthPion;
 
     /**
-     *
      * It is used to initialize the controller, it starts the message listener and processor threads.
-     * @param url not used
+     *
+     * @param url            not used
      * @param resourceBundle not used
      */
     @Override
@@ -156,6 +158,7 @@ public class StarterController implements Initializable {
 
     /**
      * Processes the message received from the server based on its type
+     *
      * @param message the message to process
      */
     private void processMessage(Object message) {
@@ -198,7 +201,7 @@ public class StarterController implements Initializable {
 
         Player currentPlayer = message.getCurrentPlayer();
         currentPlayerNickname = currentPlayer.getNickname();
-        if(!Objects.equals(myself.getNickname(), currentPlayer.getNickname())) {
+        if (!Objects.equals(myself.getNickname(), currentPlayer.getNickname())) {
             if (existentPlayer(currentPlayer.getNickname()))
                 setPlayer(currentPlayer);
             else
@@ -236,7 +239,7 @@ public class StarterController implements Initializable {
     private void placeTurnCase(boolean isLastTurn) {
         //TODO: PLACE CARD make pop up okay in dimensions
         hidePopup();
-        if(isLastTurn)
+        if (isLastTurn)
             showImagePopup("/img/Background/LastTurnStarted.png", 593, 298, 226, 655);
         else
             showImagePopup("/img/Background/YourTurnStarted.png", 593, 298, 226, 655);
@@ -251,7 +254,7 @@ public class StarterController implements Initializable {
         hidePopup();
 
         Player currentPlayer = update.getPlayer();
-        if(!Objects.equals(myself.getNickname(), currentPlayer.getNickname())) {
+        if (!Objects.equals(myself.getNickname(), currentPlayer.getNickname())) {
             if (existentPlayer(currentPlayer.getNickname()))
                 setPlayer(currentPlayer);
             else
@@ -286,7 +289,7 @@ public class StarterController implements Initializable {
         }
     }
 
-    public void addCardsToCommonArea(){
+    public void addCardsToCommonArea() {
         //Add the front up cards to commonArea
         Platform.runLater(() -> {
             addNewCardToMainPane(commonArea.getTableCards().getFirst().getID(), true,
@@ -303,15 +306,15 @@ public class StarterController implements Initializable {
             onTop.toFront();
 
             //Add the cards to deck
-            addNewCardToMainPane(commonArea.getD1().getList().getFirst().getID(),false,
+            addNewCardToMainPane(commonArea.getD1().getList().getFirst().getID(), false,
                     commonArea.getD1().getList().getFirst(), layoutXDeck, layoutYResource, fitHeightCommon, fitWidthCommon, this::pickCard);
             onTop.toFront();
-            addNewCardToMainPane(commonArea.getD2().getList().getFirst().getID(),false,
+            addNewCardToMainPane(commonArea.getD2().getList().getFirst().getID(), false,
                     commonArea.getD2().getList().getFirst(), layoutXDeck, layoutYGold, fitHeightCommon, fitWidthCommon, this::pickCard);
             onTop.toFront();
 
             //Add objective cards
-            if(commonObjectives != null && !commonObjectives.isEmpty()) {
+            if (commonObjectives != null && !commonObjectives.isEmpty()) {
                 addNewCardToMainPane(commonObjectives.get(0).getID(), true, commonObjectives.get(0), layoutXObjective,
                         layoutYObj0, fitHeightCommon, fitWidthCommon, this::turnAround);
                 onTop.toFront();
@@ -322,7 +325,7 @@ public class StarterController implements Initializable {
         });
     }
 
-    private void addCardsToHand(){
+    private void addCardsToHand() {
         Platform.runLater(() -> {
             addNewCardToMainPane(myHand.getPlaceableCards().getFirst().getID(), true,
                     myHand.getPlaceableCards().getFirst(), layoutXCard0, layoutYHand, fitHeightCard, fitWidthCard, this::placeCard);
@@ -340,7 +343,7 @@ public class StarterController implements Initializable {
 
     }
 
-    public void addMyObjective(){
+    public void addMyObjective() {
         Platform.runLater(() -> {
             addNewCardToMainPane(myObjective.getID(), true, myObjective, layoutXObjective, layoutYObjMy, fitHeightCommon, fitWidthCommon, this::turnAround);
             onTop.toFront();
@@ -348,7 +351,7 @@ public class StarterController implements Initializable {
     }
 
     private void addPlayerCardsToHand() {
-        if(players.get(clickCounter) != null) {
+        if (players.get(clickCounter) != null) {
             PlayerHand playerHand = players.get(clickCounter).getPlayerHand();
             Platform.runLater(() -> {
                 addNewCardToMainPane(playerHand.getPlaceableCards().getFirst().getID(), false, playerHand.getPlaceableCards().getFirst(),
@@ -365,7 +368,7 @@ public class StarterController implements Initializable {
     }
 
     public void addPlayerObjective() {
-        if(players.size() > clickCounter && players.get(clickCounter) != null) {
+        if (players.size() > clickCounter && players.get(clickCounter) != null) {
             Platform.runLater(() -> {
                 addNewCardToMainPane(players.get(clickCounter).getObjective().getID(), false, players.get(clickCounter).getObjective(),
                         layoutXObjective, layoutYObjMy, fitHeightCommon, fitWidthCommon, null);
@@ -376,7 +379,7 @@ public class StarterController implements Initializable {
 
     private void addStarterCardsToPane() {
         Platform.runLater(() -> {
-            addNewCardToMainPane(myself.getPlayerHand().getPlaceableCards().getFirst().getID(),true,
+            addNewCardToMainPane(myself.getPlayerHand().getPlaceableCards().getFirst().getID(), true,
                     myself.getPlayerHand().getPlaceableCards().getFirst(), layoutXCard1, layoutYHand, fitHeightCard, fitWidthCard, this::placeStarter);
             onTop.toFront();
         });
@@ -394,7 +397,7 @@ public class StarterController implements Initializable {
         });
     }
 
-    private void addClickablePane(int layoutX, int layoutY, int fitHeight, int fitWidth, EventHandler<MouseEvent> eventHandler){
+    private void addClickablePane(int layoutX, int layoutY, int fitHeight, int fitWidth, EventHandler<MouseEvent> eventHandler) {
         // Check if a pane with the same position and size already exists
         boolean paneExists = mainPane.getChildren().stream()
                 .filter(node -> node instanceof Pane)
@@ -419,16 +422,16 @@ public class StarterController implements Initializable {
     }
 
     private boolean existentPlayer(String currentPlayer) {
-        for(Player player : players) {
-            if(player.getNickname().equals(currentPlayer))
+        for (Player player : players) {
+            if (player.getNickname().equals(currentPlayer))
                 return true;
         }
         return false;
     }
 
     private void setPlayer(Player currentPlayer) {
-        for(int i = 0 ; i < players.size() ; i++) {
-            if(players.get(i).getNickname().equals(currentPlayer.getNickname())) {
+        for (int i = 0; i < players.size(); i++) {
+            if (players.get(i).getNickname().equals(currentPlayer.getNickname())) {
                 players.set(i, currentPlayer);
             }
         }
@@ -555,9 +558,9 @@ public class StarterController implements Initializable {
 
             clickedCard.getStyleClass().add("image-view-selected");
             this.selectedCard = clickedCard;
-            if(cardID == objectivesToChose.get(0).getID())
+            if (cardID == objectivesToChose.get(0).getID())
                 this.selectedObjective = 1;
-            else if(cardID == objectivesToChose.get(1).getID())
+            else if (cardID == objectivesToChose.get(1).getID())
                 this.selectedObjective = 2;
 
             if (event.getClickCount() == 2) {
@@ -659,7 +662,7 @@ public class StarterController implements Initializable {
 
     @FXML
     private void switchToNextPlayer(MouseEvent event) {
-        if(!Objects.equals(currentState,"StarterCardState") && !Objects.equals(currentState, "ObjectiveState")) {
+        if (!Objects.equals(currentState, "StarterCardState") && !Objects.equals(currentState, "ObjectiveState")) {
             clickCounter++;
             if (clickCounter == players.size()) {
                 clickCounter = -1;
@@ -742,9 +745,6 @@ public class StarterController implements Initializable {
             });
         }
     }
-
-
-
 
 
 //

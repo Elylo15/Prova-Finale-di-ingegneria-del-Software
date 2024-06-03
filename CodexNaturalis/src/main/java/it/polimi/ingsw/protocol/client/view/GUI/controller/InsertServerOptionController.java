@@ -2,7 +2,6 @@ package it.polimi.ingsw.protocol.client.view.GUI.controller;
 
 import it.polimi.ingsw.protocol.client.view.GUI.message.GUIMessages;
 import it.polimi.ingsw.protocol.messages.ServerOptionState.serverOptionMessage;
-
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -57,7 +56,6 @@ public class InsertServerOptionController {
             GUIMessages.writeToGUI(serverOptionMessage);
         });
     }
-
 
 
 }

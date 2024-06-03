@@ -1,17 +1,16 @@
 package it.polimi.ingsw.protocol.client;
 
-import it.polimi.ingsw.protocol.client.controller.Controller;
-import it.polimi.ingsw.protocol.client.controller.ControllerSocket;
 import it.polimi.ingsw.protocol.client.view.ViewCLI;
-import it.polimi.ingsw.protocol.server.Server;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.util.concurrent.*;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ClientCLITest {
 
@@ -34,7 +33,7 @@ class ClientCLITest {
         int maximumPoolSize = 100;
         long keepAliveTime = 300;
         TimeUnit unit = TimeUnit.SECONDS;
-        executor = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, unit, new LinkedBlockingQueue<Runnable>());
+        executor = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, unit, new LinkedBlockingQueue<>());
 
     }
 
@@ -54,7 +53,6 @@ class ClientCLITest {
     void connection() {
 
     }
-
 
 
     @Test
