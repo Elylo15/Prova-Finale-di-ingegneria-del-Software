@@ -10,9 +10,7 @@ import it.polimi.ingsw.protocol.client.view.GUI.ImageBinder;
 import it.polimi.ingsw.protocol.client.view.GUI.message.GUIMessages;
 import it.polimi.ingsw.protocol.messages.PlayerTurnState.updatePlayerMessage;
 import it.polimi.ingsw.protocol.messages.currentStateMessage;
-import javafx.animation.FadeTransition;
-import javafx.animation.PauseTransition;
-import javafx.animation.SequentialTransition;
+import javafx.animation.*;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -22,12 +20,13 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.shape.LineTo;
+import javafx.scene.shape.MoveTo;
+import javafx.scene.shape.Path;
 import javafx.util.Duration;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Objects;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -38,6 +37,23 @@ public class GamePageController implements Initializable {
     public Label playerName;
     private boolean isPopupVisible = false;
     private ImageView currentPopupImage;
+
+    ImageView red = new ImageView();
+    ImageView blue = new ImageView();
+    ImageView purple = new ImageView();
+    ImageView green = new ImageView();
+
+    // TODO I think this old ones are wrong, get the new ones
+    double[][] positions = {
+            {1731, 485}, {1794, 485}, {1826, 426}, {1762, 426},
+            {1689, 426}, {1635, 426}, {1635, 367}, {1689, 367},
+            {1762, 367}, {1826, 367}, {1826, 309}, {1762, 309},
+            {1689, 309}, {1635, 309}, {1635, 251}, {1689, 251},
+            {1762, 251}, {1826, 251}, {1826, 193}, {1730, 163},
+            {1635, 193}, {1730, 133}, {1730, 75}, {1671, 251},
+            {1731, 17}, {1789, 251}, {1826, 75}, {1730, 133},
+            {1731, 87}
+    };
 
     int fitHeightCommon = 141;
     int fitWidthCommon = 208;
@@ -95,15 +111,6 @@ public class GamePageController implements Initializable {
     @FXML
     private ImageView onTop;
 
-    //TODO: LOAD THEM BASED ON COLOR
-    @FXML
-    private ImageView firstPion;
-    @FXML
-    private ImageView secondPion;
-    @FXML
-    private ImageView thirdPion;
-    @FXML
-    private ImageView fourthPion;
 
     /**
      * It is used to initialize the controller, it starts the message listener and processor threads.
@@ -113,6 +120,10 @@ public class GamePageController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        red.setVisible(false);
+        blue.setVisible(false);
+        purple.setVisible(false);
+        green.setVisible(false);
         startMessageListener();
         startMessageProcessor();
     }
@@ -206,14 +217,16 @@ public class GamePageController implements Initializable {
                 setPlayer(currentPlayer);
             else
                 addPlayer(currentPlayer);
+            setPions(currentPlayer);
         }
 
         addCardsToCommonArea();
         onTop.toFront();
         setPage();
         onTop.toFront();
+        setPions(myself);
+        onTop.toFront();
 
-        //TODO: SET PIONS
         //TODO: SET PLAYER AREA
 
     }
@@ -259,11 +272,13 @@ public class GamePageController implements Initializable {
                 setPlayer(currentPlayer);
             else
                 addPlayer(currentPlayer);
+            setPions(currentPlayer);
         } else {
             this.myself = update.getPlayer();
             this.myHand = update.getPlayer().getPlayerHand();
             this.myObjective = update.getPlayer().getObjective();
             this.myPlayerArea = update.getPlayer().getPlayerArea();
+            setPions(myself);
         }
 
         this.commonArea = update.getPlayer().getCommonArea();
@@ -289,6 +304,7 @@ public class GamePageController implements Initializable {
         }
     }
 
+    //TODO make this gradual, not appear disappear
     public void addCardsToCommonArea() {
         //Add the front up cards to commonArea
         Platform.runLater(() -> {
@@ -325,24 +341,22 @@ public class GamePageController implements Initializable {
         });
     }
 
+    //TODO make this gradual, not appear disappear
     private void addCardsToHand() {
         Platform.runLater(() -> {
             addNewCardToMainPane(myHand.getPlaceableCards().getFirst().getID(), true,
-                    myHand.getPlaceableCards().getFirst(), layoutXCard0, layoutYHand, fitHeightCard, fitWidthCard, this::placeCard);
+                    myHand.getPlaceableCards().getFirst(), layoutXCard0, layoutYHand, fitHeightCard, fitWidthCard, this::choseCardToPlace);
             onTop.toFront();
             addNewCardToMainPane(myHand.getPlaceableCards().get(1).getID(), true,
-                    myHand.getPlaceableCards().get(1), layoutXCard1, layoutYHand, fitHeightCard, fitWidthCard, this::placeCard);
+                    myHand.getPlaceableCards().get(1), layoutXCard1, layoutYHand, fitHeightCard, fitWidthCard, this::choseCardToPlace);
             onTop.toFront();
             addNewCardToMainPane(myHand.getPlaceableCards().get(2).getID(), true,
-                    myHand.getPlaceableCards().get(2), layoutXCard2, layoutYHand, fitHeightCard, fitWidthCard, this::placeCard);
+                    myHand.getPlaceableCards().get(2), layoutXCard2, layoutYHand, fitHeightCard, fitWidthCard, this::choseCardToPlace);
             onTop.toFront();
         });
     }
 
-    private void placeCard(MouseEvent event) {
-
-    }
-
+    //TODO make this gradual, not appear disappear
     public void addMyObjective() {
         Platform.runLater(() -> {
             addNewCardToMainPane(myObjective.getID(), true, myObjective, layoutXObjective, layoutYObjMy, fitHeightCommon, fitWidthCommon, this::turnAround);
@@ -350,6 +364,7 @@ public class GamePageController implements Initializable {
         });
     }
 
+    //TODO make this gradual, not appear disappear
     private void addPlayerCardsToHand() {
         if (players.get(clickCounter) != null) {
             PlayerHand playerHand = players.get(clickCounter).getPlayerHand();
@@ -367,6 +382,7 @@ public class GamePageController implements Initializable {
         }
     }
 
+    //TODO make this gradual, not appear disappear
     public void addPlayerObjective() {
         if (players.size() > clickCounter && players.get(clickCounter) != null) {
             Platform.runLater(() -> {
@@ -377,6 +393,7 @@ public class GamePageController implements Initializable {
         }
     }
 
+    //TODO make this gradual, not appear disappear
     private void addStarterCardsToPane() {
         Platform.runLater(() -> {
             addNewCardToMainPane(myself.getPlayerHand().getPlaceableCards().getFirst().getID(), true,
@@ -385,7 +402,7 @@ public class GamePageController implements Initializable {
         });
     }
 
-
+    //TODO make this gradual, not appear disappear
     public void setObjectives() {
         Platform.runLater(() -> {
             addNewCardToMainPane(objectivesToChose.get(0).getID(), true, objectivesToChose.get(0), layoutXChoiceObjective1, layoutYHand, fitHeightCard,
@@ -397,7 +414,28 @@ public class GamePageController implements Initializable {
         });
     }
 
+    //TODO this will be an image of the dimensions of the card, of a random color loaded in the right position
     private void addClickablePane(int layoutX, int layoutY, int fitHeight, int fitWidth, EventHandler<MouseEvent> eventHandler) {
+//        Random random = new Random();
+//        int color = random.nextInt(5);
+//        Image image = null;
+//
+//        if(color == 0)
+//            image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/img/Background/Blue.png")));
+//        if(color == 1)
+//            image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/img/Background/Green.png")));
+//        if(color == 2)
+//            image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/img/Background/Red.png")));
+//        if(color == 3)
+//           image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/img/Background/Purple.png")));
+//        if(color == 4)
+//            image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/img/Background/Yellow.png")));
+//
+//        ImageView imageView = new ImageView(image);
+//        imageView.setLayoutX(layoutX);
+//        imageView.setLayoutY(layoutY);
+//        imageView.setOnMouseClicked(eventHandler);
+
         // Check if a pane with the same position and size already exists
         boolean paneExists = mainPane.getChildren().stream()
                 .filter(node -> node instanceof Pane)
@@ -441,6 +479,7 @@ public class GamePageController implements Initializable {
         players.add(currentPlayer);
     }
 
+    //TODO this needs to make it disappear gradually, then remove, not puff
     private void removeCardFromPosition(int layoutX, int layoutY) {
         Platform.runLater(() -> {
             mainPane.getChildren().removeIf(node -> {
@@ -471,6 +510,7 @@ public class GamePageController implements Initializable {
         return imageView;
     }
 
+    //TODO this needs to make the cards appear gradually, not puff
     private void addNewCardToMainPane(int cardID, boolean front, Card card, int layoutX, int layoutY, int fitHeight, int fitWidth, EventHandler<MouseEvent> eventHandler) {
         ImageView existingCard = mainPane.getChildren().stream()
                 .filter(node -> node instanceof ImageView)
@@ -498,6 +538,7 @@ public class GamePageController implements Initializable {
         }
     }
 
+    //TODO some effect, like appear disappear gradually
     private void turnAround(MouseEvent event) {
         ImageView clickedCard = (ImageView) event.getSource();
         Card card = (Card) clickedCard.getUserData();
@@ -513,6 +554,7 @@ public class GamePageController implements Initializable {
         }
     }
 
+    //TODO add the writings under so the player knows what to do
     private void placeStarter(MouseEvent event) {
         if (clickCounter == -1) {
             ImageView clickedCard = (ImageView) event.getSource();
@@ -537,6 +579,7 @@ public class GamePageController implements Initializable {
         }
     }
 
+    //TODO click on image like card, not the panel
     private void confirmPlaceStarter(MouseEvent event) {
         if (selectedCard != null) {
             selectedCard.getStyleClass().remove("image-view-selected");
@@ -546,29 +589,48 @@ public class GamePageController implements Initializable {
         }
     }
 
+    //TODO see if it works as expected
     private void chooseObjective(MouseEvent event) {
         ImageView clickedCard = (ImageView) event.getSource();
         ObjectiveCard card = (ObjectiveCard) clickedCard.getUserData();
         int cardID = card.getID();
 
-        if (clickCounter == -1) {
-            if (selectedCard != null) {
-                selectedCard.getStyleClass().remove("image-view-selected");
-            }
+        // Scale transitions makes bigger and smaller the card when hovered
+        ScaleTransition enlargeTransition = new ScaleTransition(Duration.millis(200), clickedCard);
+        enlargeTransition.setToX(1.5);
+        enlargeTransition.setToY(1.5);
 
-            clickedCard.getStyleClass().add("image-view-selected");
-            this.selectedCard = clickedCard;
-            if (cardID == objectivesToChose.get(0).getID())
-                this.selectedObjective = 1;
-            else if (cardID == objectivesToChose.get(1).getID())
-                this.selectedObjective = 2;
+        ScaleTransition shrinkTransition = new ScaleTransition(Duration.millis(200), clickedCard);
+        shrinkTransition.setToX(1.0);
+        shrinkTransition.setToY(1.0);
 
-            if (event.getClickCount() == 2) {
-                turnAround(event);
+        // Set mouse event handlers for transitions
+        clickedCard.setOnMouseEntered(e -> enlargeTransition.playFromStart());
+        clickedCard.setOnMouseExited(e -> shrinkTransition.playFromStart());
+
+        // Set mouse event handlers for click and double-click
+        clickedCard.setOnMouseClicked(e -> {
+            if (e.getClickCount() == 1) {
+                // Single-click event: select the card
+                if (selectedCard != null) {
+                    selectedCard.getStyleClass().remove("image-view-selected");
+                }
+                clickedCard.getStyleClass().add("image-view-selected");
+                this.selectedCard = clickedCard;
+
+                if (cardID == objectivesToChose.get(0).getID()) {
+                    this.selectedObjective = 1;
+                } else if (cardID == objectivesToChose.get(1).getID()) {
+                    this.selectedObjective = 2;
+                }
+            } else if (e.getClickCount() == 2) {
+                // Double-click event: turn the card over
+                turnAround(e);
             }
-        }
+        });
     }
 
+    //TODO instead of the pane an image that is in dimension like a card but is mono color
     private void confirmPlaceObjective(MouseEvent event) {
         if (selectedCard != null) {
             selectedCard.getStyleClass().remove("image-view-selected");
@@ -579,7 +641,55 @@ public class GamePageController implements Initializable {
         }
     }
 
-    //TODO ADD IMG TO HAND
+    //TODO see if it works as expected
+    private void choseCardToPlace(MouseEvent event) {
+        ImageView clickedCard = (ImageView) event.getSource();
+        ObjectiveCard card = (ObjectiveCard) clickedCard.getUserData();
+        int cardID = card.getID();
+
+        // Scale transitions makes bigger and smaller the card when hovered
+        ScaleTransition enlargeTransition = new ScaleTransition(Duration.millis(200), clickedCard);
+        enlargeTransition.setToX(1.5);
+        enlargeTransition.setToY(1.5);
+
+        ScaleTransition shrinkTransition = new ScaleTransition(Duration.millis(200), clickedCard);
+        shrinkTransition.setToX(1.0);
+        shrinkTransition.setToY(1.0);
+
+        // Set mouse event handlers for transitions
+        clickedCard.setOnMouseEntered(e -> enlargeTransition.playFromStart());
+        clickedCard.setOnMouseExited(e -> shrinkTransition.playFromStart());
+
+        // Set mouse event handlers for click and double-click
+        clickedCard.setOnMouseClicked(e -> {
+            if (e.getClickCount() == 1) {
+                // Single-click event: select the card
+                if (selectedCard != null) {
+                    selectedCard.getStyleClass().remove("image-view-selected");
+                }
+                clickedCard.getStyleClass().add("image-view-selected");
+                this.selectedCard = clickedCard;
+
+
+            } else if (e.getClickCount() == 2) {
+                // Double-click event: turn the card over
+                turnAround(e);
+            }
+        });
+    }
+
+    //TODO make images random colors appear in the positions where cards can be placed, and when clicked get position to place the card
+    private void confirmPlaceCard(MouseEvent event) {
+        if (selectedCard != null) {
+            selectedCard.getStyleClass().remove("image-view-selected");
+            mainPane.getChildren().remove(event.getSource());
+            removeCardFromPosition(layoutXChoiceObjective1, layoutYHand);
+            removeCardFromPosition(layoutXChoiceObjective2, layoutYHand);
+           // GUIMessages.writeToClient(selectedCard.getId(), isFront, selectedCard.getLayoutX(), selectedCard.getLayoutY());
+        }
+    }
+
+    //TODO ADD IMG TO HAND -> make appear disappear effect
     private void pickCard(MouseEvent event) {
         if (clickCounter == -1 && Objects.equals(currentState, "PickTurnState")) {
             ImageView clickedCard = (ImageView) event.getSource();
@@ -660,6 +770,7 @@ public class GamePageController implements Initializable {
         });
     }
 
+    //TODO when next players card are loaded make it gradual
     @FXML
     private void switchToNextPlayer(MouseEvent event) {
         if (!Objects.equals(currentState, "StarterCardState") && !Objects.equals(currentState, "ObjectiveState")) {
@@ -678,6 +789,7 @@ public class GamePageController implements Initializable {
         }
     }
 
+    //TODO make the image be in the right positions -> high near title. Big one only when its your turn
     private void showImagePopup(String imagePath, int layoutX, int layoutY, int fitHeight, int fitWidth) {
         if (isPopupVisible) {
             return; // Do not show another popup if one is already visible
@@ -727,6 +839,7 @@ public class GamePageController implements Initializable {
         });
     }
 
+    //TODO make this call in the right moments
     private void hidePopup() {
         if (isPopupVisible && currentPopupImage != null) {
             Platform.runLater(() -> {
@@ -746,54 +859,139 @@ public class GamePageController implements Initializable {
         }
     }
 
+    //TODO try to see if it works
+    private void setPions(Player player){
+        Platform.runLater(() -> {
+            ImageView pion = null;
+            String color = player.getColor();
+            List<ImageView> allPions = Arrays.asList(red, blue, purple, green);
 
-//
-//    private void firstSetPions(){
-//        String imagePath;
-//        Image cardImage;
-//
-//        //PIONS SETTING (BUT IT SHOULD BE BASED ON POINTS)
-//        String color = myself.getColor();
-//        cardImage = switch (color) {
-//            case "red" -> {
-//                imagePath = "/img/Pions/CODEX_pion_rouge.png";
-//                yield new Image(Objects.requireNonNull(getClass().getResourceAsStream(imagePath)));
-//            }
-//            case "blue" -> {
-//                imagePath = "CodexNaturalis/src/main/Resource/img/Pions/CODEX_pion_bleu.png";
-//                yield new Image(Objects.requireNonNull(getClass().getResourceAsStream(imagePath)));
-//            }
-//            case "green" -> {
-//                imagePath = "/img/Pions/CODEX_pion_vert.png";
-//                yield new Image(Objects.requireNonNull(getClass().getResourceAsStream(imagePath)));
-//            }
-//            case "purple" -> {
-//                imagePath = "/img/Pions/CODEX_pion_jaune.png";
-//                yield new Image(Objects.requireNonNull(getClass().getResourceAsStream(imagePath)));
-//            }
-//            default -> null;
-//        };
-//
-//        if(firstPion.isVisible()){
-//            if(secondPion.isVisible()) {
-//                if (thirdPion.isVisible()) {
-//                    fourthPion.setImage(cardImage);
-//                    fourthPion.setVisible(true);
-//                } else {
-//                    thirdPion.setImage(cardImage);
-//                    thirdPion.setVisible(true);
-//                }
-//            }
-//            secondPion.setImage(cardImage);
-//            secondPion.setVisible(true);
-//        } else {
-//            firstPion.setImage(cardImage);
-//            firstPion.setVisible(true);
-//        }
-//
-//    }
+            if(Objects.equals(color, "red") && !red.isVisible()) {
+                red.setImage(new Image("/img/Pions/CODEX_pion_rouge.png"));
+                pion = red;
+            } else if (Objects.equals(color, "blue") && !blue.isVisible()) {
+                blue.setImage(new Image("/img/Pions/CODEX_pion_bleu.png"));
+                pion = blue;
+            } else if (Objects.equals(color, "purple") && !purple.isVisible()) {
+                purple.setImage(new Image("/img/Pions/CODEX_pion_purple.png"));
+                pion = purple;
+            } else if (Objects.equals(color, "green") && !green.isVisible()) {
+                green.setImage(new Image("/img/Pions/CODEX_pion_green.png"));
+                pion = green;
+            } else if(Objects.equals(color, "red")){
+                pion = red;
+            } else if(Objects.equals(color, "blue")){
+                pion = blue;
+            } else if(Objects.equals(color, "purple")){
+                pion = purple;
+            } else if(Objects.equals(color, "green")){
+                pion = green;
+            }
+
+            if (pion != null && pion.isVisible() && !isPionAtDesiredPosition(pion, player.getScore())) {
+                int score = player.getScore();
+                addPoints(pion, score, allPions);
+                updatePionsPositions(allPions, pion);
+            } else if (pion != null && !pion.isVisible()){
+                double[] adjustedPosition = getAdjustedPosition(allPions, 0 , 0); //TODO get the real positions
+                pion.setLayoutX(adjustedPosition[0]);
+                pion.setLayoutY(adjustedPosition[1]);
+                pion.setVisible(true);
+            }
+        });
+    }
+
+    private void addPoints(ImageView pion, int score, List<ImageView> allPions) {
+        Platform.runLater(() -> {
+            if (score < 1 || score > 29) {
+                // Invalid score ?? count from 1??
+                return;
+            }
+
+            // Create a path to follow to the score position
+            Path path = new Path();
+            double startX = pion.getLayoutX();
+            double startY = pion.getLayoutY();
+            path.getElements().add(new MoveTo(startX, startY));
+
+            int steps = 0;
+            // Intermediate points to the path - stop at position that corresponds to the score
+            for (int i = getScoreByPosition((int) startX, (int) startY); i <= score; i++) {
+                steps++;
+                double[] adjustedPosition = getAdjustedPosition(allPions, positions[i-1][0], positions[i-1][1]);
+                path.getElements().add(new LineTo(adjustedPosition[0], adjustedPosition[1]));
+            }
+
+
+            PathTransition pathTransition = new PathTransition();
+            int speed = 100; //TODO I dont know if its too fast or not
+            int durationInSeconds = steps / speed;
+            pathTransition.setDuration(Duration.seconds(durationInSeconds)); // This should be based on how many points are added
+            pathTransition.setPath(path);
+            pathTransition.setNode(pion);
+            pathTransition.setCycleCount(1);
+            pathTransition.setAutoReverse(false);
+
+            // Start the animation
+            pathTransition.play();
+        });
+    }
+
+    private double[] getAdjustedPosition(List<ImageView> pions, double targetX, double targetY) {
+        double offsetY = 0;
+        double offsetIncrement = 4; // TODO set This to the right value
+
+        for (ImageView pion : pions) {
+            if (pion.isVisible() && pion.getLayoutX() == targetX && pion.getLayoutY() == targetY + offsetY) {
+                offsetY += offsetIncrement;
+            }
+        }
+        return new double[] { targetX, targetY + offsetY };
+    }
+
+    private boolean isPionAtDesiredPosition(ImageView pion, int score) {
+        double[] desiredPosition = positions[score - 1];
+        return pion.getLayoutX() == desiredPosition[0] && pion.getLayoutY() == desiredPosition[1];
+    }
+
+    private void updatePionsPositions(List<ImageView> allPions, ImageView movedPion) {
+        Platform.runLater(() -> {
+            double movedPionY = movedPion.getLayoutY();
+            for (ImageView pion : allPions) {
+                if (pion != movedPion && pion.isVisible() && pion.getLayoutY() < movedPionY) {
+                    double[] adjustedPosition = getAdjustedPosition(allPions, pion.getLayoutX(), pion.getLayoutY());
+                    pion.setLayoutX(adjustedPosition[0]);
+                    pion.setLayoutY(adjustedPosition[1]);
+                }
+            }
+        });
+    }
+
+    private int getScoreByPosition(double x, double y) {
+
+        for (int score = 1; score <= positions.length; score++) {
+            double[] position = positions[score - 1];
+            if (position[0] == x && position[1] == y) {
+                return score;
+            }
+        }
+
+        return -1; //not found
+    }
+
+
+
+
+
+
+
+
+
+    //TODO playerArea
+
+    //TODO add music
+
 
 
 }
-
 

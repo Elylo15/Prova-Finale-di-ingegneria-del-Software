@@ -23,6 +23,7 @@ import java.util.ArrayList;
  */
 public class ViewGUI extends View {
     int counter = 0;
+    String color;
 
 
     /**
@@ -37,10 +38,11 @@ public class ViewGUI extends View {
      * This method starts the main view of the game.
      * It clears the message queue and updates the scene to the main view.
      */
-    public void startMain() {
+    public boolean startMain() {
         //to avoid reading unexpected messages
         GUIMessages.clearQueue();
         Platform.runLater(SceneManager::MainView);
+        return (boolean) GUIMessages.readToClient();
     }
 
 
@@ -167,7 +169,6 @@ public class ViewGUI extends View {
     public String availableColors(availableColorsMessage message) {
         //to avoid reading unexpected messages
         GUIMessages.clearQueue();
-        String color;
         GUIMessages.writeToGUI(message); //in AvailableColorsController we call GUIMessages.readToGui() to receive this message
         Platform.runLater(SceneManager::availableColors); //run the method availableColors in SceneManager
         color = (String) GUIMessages.readToClient(); //read the object we sent calling GUIMessages.writeToClient() in AvailableColorsController
@@ -201,6 +202,7 @@ public class ViewGUI extends View {
     @Override
     public void waiting() {
         GUIMessages.clearQueue();
+        GUIMessages.writeToGUI(color);
         Platform.runLater(SceneManager::waiting);
     }
 

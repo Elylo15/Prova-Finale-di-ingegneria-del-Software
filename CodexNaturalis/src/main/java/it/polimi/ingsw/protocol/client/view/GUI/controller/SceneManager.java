@@ -62,7 +62,7 @@ public class SceneManager {
      */
     public static void Choose_Socket_RMI() {
         try {
-            Parent root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/Choose_Socket_RMI.fxml")));
+            Parent root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/choose_Socket_RMI.fxml")));
             primaryStage.setScene(new Scene(root));
             primaryStage.setFullScreen(true);
             primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
@@ -77,7 +77,7 @@ public class SceneManager {
      */
     public static void Disconnect() {
         try {
-            Parent root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/Disconnect.fxml")));
+            Parent root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/disconnect.fxml")));
             primaryStage.setScene(new Scene(root));
             primaryStage.setFullScreen(true);
             primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
@@ -122,7 +122,7 @@ public class SceneManager {
      */
     public static void InsertIP() {
         try {
-            Parent root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/InsertIP.fxml")));
+            Parent root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/insertIP.fxml")));
             primaryStage.setScene(new Scene(root));
             primaryStage.setFullScreen(true);
             primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
@@ -137,7 +137,7 @@ public class SceneManager {
      */
     public static void InsertServerOption() {
         try {
-            Parent root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/InsertServerOption.fxml")));
+            Parent root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/insertServerOption.fxml")));
             primaryStage.setScene(new Scene(root));
             primaryStage.setFullScreen(true);
             primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
@@ -152,7 +152,7 @@ public class SceneManager {
      */
     public static void JoinMatch() {
         try {
-            Parent root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/JoinMatch.fxml")));
+            Parent root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/joinMatch.fxml")));
             primaryStage.setScene(new Scene(root));
             primaryStage.setFullScreen(true);
             primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
@@ -167,7 +167,7 @@ public class SceneManager {
      */
     public static void JoinRunningMatch() {
         try {
-            Parent root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/JoinRunningMatch.fxml")));
+            Parent root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/joinRunningMatch.fxml")));
             primaryStage.setScene(new Scene(root));
             primaryStage.setFullScreen(true);
             primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
@@ -182,7 +182,7 @@ public class SceneManager {
      */
     public static void LoadMatch() {
         try {
-            Parent root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/LoadMatch.fxml")));
+            Parent root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/loadMatch.fxml")));
             primaryStage.setScene(new Scene(root));
             primaryStage.setFullScreen(true);
             primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
@@ -197,7 +197,7 @@ public class SceneManager {
      */
     public static void MainView() {
         try {
-            Parent root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/MainView.fxml")));
+            Parent root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/mainView.fxml")));
             primaryStage.setScene(new Scene(root));
             primaryStage.setFullScreen(true);
             primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);

@@ -4,7 +4,7 @@ import it.polimi.ingsw.protocol.client.view.GUI.message.GUIMessages;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 
-public class expectedPlayersController {
+public class ExpectedPlayersController {
 
     @FXML
     private Button two;

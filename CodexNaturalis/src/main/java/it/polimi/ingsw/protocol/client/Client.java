@@ -380,12 +380,14 @@ public class Client implements Runnable {
     @Override
     public void run() {
         if (getView() instanceof ViewGUI) {
-            ((ViewGUI) getView()).startMain();
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException ignore) {
-
-            }
+            boolean ok = false;
+            while(!ok)
+                ok = ((ViewGUI) getView()).startMain();
+//            try {
+//                Thread.sleep(2000);
+//            } catch (InterruptedException ignore) {
+//
+//            } TODO remove this
         }
 
         while (true) {

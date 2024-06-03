@@ -2,9 +2,11 @@ package it.polimi.ingsw.protocol.client.view.GUI.controller;
 
 import it.polimi.ingsw.protocol.client.view.GUI.message.GUIMessages;
 import it.polimi.ingsw.protocol.messages.ConnectionState.availableColorsMessage;
+import javafx.animation.ScaleTransition;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.util.Duration;
 
 public class AvailableColorsController {
     @FXML
@@ -56,5 +58,21 @@ public class AvailableColorsController {
         blue.setOnAction(event -> GUIMessages.writeToClient("blue"));
     }
 
+//    private void onHoover(mouseEvent e) {
+//        ScaleTransition enlargeTransition = new ScaleTransition(Duration.millis(200), clickedCard);
+//        enlargeTransition.setToX(1.5);
+//        enlargeTransition.setToY(1.5);
+//
+//        ScaleTransition shrinkTransition = new ScaleTransition(Duration.millis(200), clickedCard);
+//        shrinkTransition.setToX(1.0);
+//        shrinkTransition.setToY(1.0);
+//
+//        // Set mouse event handlers for transitions
+//        clickedCard.setOnMouseEntered(e -> enlargeTransition.playFromStart());
+//        clickedCard.setOnMouseExited(e -> shrinkTransition.playFromStart());
+//    }
+
+    //TODO: image with the four people, each image has a color attached, when the user clicks on the image, the color is sent to the server
+    //onHoover it became bigger
 
 }

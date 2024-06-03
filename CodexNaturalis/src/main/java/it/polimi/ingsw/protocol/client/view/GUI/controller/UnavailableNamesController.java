@@ -14,8 +14,8 @@ public class UnavailableNamesController {
     public TextField nameToChoose;
     @FXML
     public Button submitButton;
-
     private unavailableNamesMessage message;
+
 
     /**
      * This method is called when the scene is loaded.
@@ -26,7 +26,7 @@ public class UnavailableNamesController {
     public void initialize() {
         //deserialize the unavailableNamesMessage
         this.message = (unavailableNamesMessage) GUIMessages.readToGUI();
-        // set the label to the anavailable names
+        // set the label to the unavailable names
         if (message.toString().equals("[]")) {
             unavailableNames.setText("All nicknames are available");
         } else {
@@ -36,6 +36,13 @@ public class UnavailableNamesController {
             if (nameToChoose.getText().isEmpty()) {
                 return;
             }
+            if (nameToChoose.getText().length() > 10) {
+                Label errorLabel = new Label();
+                errorLabel.setStyle("-fx-text-fill: red;");     //TODO see if color and position is ok
+                errorLabel.setText("Your nickname is too long! Use at most 10 characters.");
+                errorLabel.setVisible(true);
+            }
+
             //serialize the name chosen by the user. The method unavailable names in viewGUI can than deserialize it
             GUIMessages.writeToClient(nameToChoose.getText());
         });
