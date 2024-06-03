@@ -1196,7 +1196,6 @@ public class ViewCLI extends View {
             Scanner scanner = new Scanner(System.in);
             System.out.println("Choose a nickname:");
             name = scanner.nextLine();
-            scanner.nextLine();
             if (name.length() > 10)
                 System.out.println(RED_TEXT + "Your nickname is too long! Use at most 10 characters.");
             else

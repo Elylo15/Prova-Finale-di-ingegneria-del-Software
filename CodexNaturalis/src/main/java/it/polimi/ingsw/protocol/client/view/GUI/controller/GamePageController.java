@@ -38,13 +38,15 @@ public class GamePageController implements Initializable {
     private boolean isPopupVisible = false;
     private ImageView currentPopupImage;
 
-    ImageView red = new ImageView();
-    ImageView blue = new ImageView();
-    ImageView purple = new ImageView();
-    ImageView green = new ImageView();
+    ImageView red;
+    ImageView blue;
+    ImageView purple;
+    ImageView green;
 
+    double offset = 5;
     // TODO I think this old ones are wrong, get the new ones
     double[][] positions = {
+            {1668 , 468},
             {1726, 468}, {1784, 468},
             {1812, 415}, {1755, 415}, {1697, 415}, {1639, 415},
             {1639, 362}, {1697, 362}, {1755, 362}, {1812, 362},
@@ -122,10 +124,6 @@ public class GamePageController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        red.setVisible(false);
-        blue.setVisible(false);
-        purple.setVisible(false);
-        green.setVisible(false);
         startMessageListener();
         startMessageProcessor();
     }
@@ -864,48 +862,63 @@ public class GamePageController implements Initializable {
     //TODO try to see if it works
     private void setPions(Player player){
         Platform.runLater(() -> {
-            ImageView pion = null;
             String color = player.getColor();
             List<ImageView> allPions = Arrays.asList(red, blue, purple, green);
+            int score = player.getScore();
+            Image img;
 
-            if(Objects.equals(color, "red") && !red.isVisible()) {
-                red.setImage(new Image("/img/Pions/CODEX_pion_rouge.png"));
-                pion = red;
-            } else if (Objects.equals(color, "blue") && !blue.isVisible()) {
-                blue.setImage(new Image("/img/Pions/CODEX_pion_bleu.png"));
-                pion = blue;
-            } else if (Objects.equals(color, "purple") && !purple.isVisible()) {
-                purple.setImage(new Image("/img/Pions/CODEX_pion_purple.png"));
-                pion = purple;
-            } else if (Objects.equals(color, "green") && !green.isVisible()) {
-                green.setImage(new Image("/img/Pions/CODEX_pion_green.png"));
-                pion = green;
+            if(Objects.equals(color, "red") && red == null){
+                img = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/img/Pions/CODEX_pion_rouge.png")));
+                red = new ImageView(img);
+                set(red, score, allPions);
+            } else if (Objects.equals(color, "blue") && blue == null) {
+                img = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/img/Pions/CODEX_pion_bleu.png")));
+                blue = new ImageView(img);
+                set(blue, score, allPions);
+            } else if (Objects.equals(color, "purple") && purple == null) {
+                img = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/img/Pions/CODEX_pion_purple.png")));
+                purple = new ImageView(img);
+                set(purple, score, allPions);
+            } else if (Objects.equals(color, "green") && green == null) {
+                img = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/img/Pions/CODEX_pion_vert.png")));
+                green = new ImageView(img);
+                set(green, score, allPions);
             } else if(Objects.equals(color, "red")){
-                pion = red;
+                set(red, score, allPions);
             } else if(Objects.equals(color, "blue")){
-                pion = blue;
+                set(blue, score, allPions);
             } else if(Objects.equals(color, "purple")){
-                pion = purple;
+                set(purple, score, allPions);
             } else if(Objects.equals(color, "green")){
-                pion = green;
+                set(green, score, allPions);
             }
 
-            if (pion != null && pion.isVisible() && !isPionAtDesiredPosition(pion, player.getScore())) {
-                int score = player.getScore();
-                addPoints(pion, score, allPions);
-                updatePionsPositions(allPions, pion);
-            } else if (pion != null && !pion.isVisible()){
-                double[] adjustedPosition = getAdjustedPosition(allPions, 1668 , 468); //TODO get the real positions
-                pion.setLayoutX(adjustedPosition[0]);
-                pion.setLayoutY(adjustedPosition[1]);
-                pion.setVisible(true);
-            }
+
         });
     }
 
+    private void set(ImageView pion, int score, List<ImageView> allPions){
+
+        if (pion != null && score == 0 && isPionAtDesiredPosition(pion, 0)) {
+            double[] adjustedPosition = getAdjustedPosition(allPions, 1668 , 468);
+            pion.setLayoutX(adjustedPosition[0]);
+            pion.setLayoutY(adjustedPosition[1]);
+            pion.setFitHeight(49);
+            pion.setFitWidth(49);
+            pion.setPreserveRatio(true);
+            mainPane.getChildren().add(pion);
+        } else  if (pion != null && isPionAtDesiredPosition(pion, score)) {
+            addPoints(pion, score, allPions);
+            updatePionsPositions(allPions, pion);
+            pion.toFront();
+        }
+
+    }
+
+
     private void addPoints(ImageView pion, int score, List<ImageView> allPions) {
         Platform.runLater(() -> {
-            if (score < 1 || score > 29) {
+            if (score < 0 || score > 29) {
                 // Invalid score ?? count from 1??
                 return;
             }
@@ -920,7 +933,7 @@ public class GamePageController implements Initializable {
             // Intermediate points to the path - stop at position that corresponds to the score
             for (int i = getScoreByPosition((int) startX, (int) startY); i <= score; i++) {
                 steps++;
-                double[] adjustedPosition = getAdjustedPosition(allPions, positions[i-1][0], positions[i-1][1]);
+                double[] adjustedPosition = getAdjustedPosition(allPions, positions[i][0], positions[i][1]);
                 path.getElements().add(new LineTo(adjustedPosition[0], adjustedPosition[1]));
             }
 
@@ -941,26 +954,29 @@ public class GamePageController implements Initializable {
 
     private double[] getAdjustedPosition(List<ImageView> pions, double targetX, double targetY) {
         double offsetY = 0;
-        double offsetIncrement = 4; // TODO set This to the right value
+         // TODO set This to the right value
 
         for (ImageView pion : pions) {
-            if (pion.isVisible() && pion.getLayoutX() == targetX && pion.getLayoutY() == targetY + offsetY) {
-                offsetY += offsetIncrement;
+            if (pion != null && pion.getLayoutX() == targetX && pion.getLayoutY() == targetY + offsetY) {
+                offsetY -= offset;
             }
         }
         return new double[] { targetX, targetY + offsetY };
     }
 
     private boolean isPionAtDesiredPosition(ImageView pion, int score) {
-        double[] desiredPosition = positions[score - 1];
-        return pion.getLayoutX() == desiredPosition[0] && pion.getLayoutY() == desiredPosition[1];
+        double[] desiredPosition = positions[score];
+        return pion.getLayoutX() != desiredPosition[0] && pion.getLayoutY() != desiredPosition[1]
+                || pion.getLayoutX() != desiredPosition[0]  && pion.getLayoutY() != desiredPosition[1] - offset
+                || pion.getLayoutX() != desiredPosition[0] && pion.getLayoutY() != desiredPosition[1] - 2 * offset
+                || pion.getLayoutX() != desiredPosition[0] && pion.getLayoutY() != desiredPosition[1] - 3 * offset;
     }
 
     private void updatePionsPositions(List<ImageView> allPions, ImageView movedPion) {
         Platform.runLater(() -> {
             double movedPionY = movedPion.getLayoutY();
             for (ImageView pion : allPions) {
-                if (pion != movedPion && pion.isVisible() && pion.getLayoutY() < movedPionY) {
+                if (pion != movedPion && pion != null && pion.getLayoutY() < movedPionY) {
                     double[] adjustedPosition = getAdjustedPosition(allPions, pion.getLayoutX(), pion.getLayoutY());
                     pion.setLayoutX(adjustedPosition[0]);
                     pion.setLayoutY(adjustedPosition[1]);
@@ -971,8 +987,8 @@ public class GamePageController implements Initializable {
 
     private int getScoreByPosition(double x, double y) {
 
-        for (int score = 1; score <= positions.length; score++) {
-            double[] position = positions[score - 1];
+        for (int score = 0; score <= positions.length; score++) {
+            double[] position = positions[score];
             if (position[0] == x && position[1] == y) {
                 return score;
             }
