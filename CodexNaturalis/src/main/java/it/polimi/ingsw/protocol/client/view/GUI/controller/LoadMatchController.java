@@ -38,8 +38,9 @@ public class LoadMatchController {
     private void initialize() {
 
         serverOptionMessage = (serverOptionMessage) GUIMessages.readToGUI();
-        MatchList = serverOptionMessage.getWaitingMatches();
+        MatchList = serverOptionMessage.getSavedMatches();
 
+        System.out.println("LoadMatchController:initialize:MatchList: " + MatchList.toString());
 
         // Convert the integers to strings and add them to the ListView
         ObservableList<String> items = FXCollections.observableArrayList();
@@ -47,9 +48,6 @@ public class LoadMatchController {
             items.add(match.toString());
         }
         LoadMatchList.setItems(items);
-
-
-        LoadMatchList.getItems().addAll(items);
 
         // Set the cell factory to use buttons as cells
         LoadMatchList.setCellFactory(new Callback<ListView<String>, ListCell<String>>() {
@@ -59,7 +57,12 @@ public class LoadMatchController {
             }
         });
     }
-
+    /**
+     * This method is called when the user clicks the "Back" button.
+     * It goes back to the server option scene.
+     * @param actionEvent The event triggered by the user
+     */
+    @FXML
     public void goBack(ActionEvent actionEvent) {
         Platform.runLater(SceneManager::InsertServerOption);
     }

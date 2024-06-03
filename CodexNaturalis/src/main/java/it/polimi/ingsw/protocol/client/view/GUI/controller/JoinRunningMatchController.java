@@ -14,7 +14,6 @@ import javafx.util.Callback;
 
 import java.util.ArrayList;
 import java.util.List;
-
 /**
  * This class is a controller for the GUI scene where the user joins a running match.
  * It contains a ListView for the matches and a list of buttons for each match.
@@ -48,8 +47,6 @@ public class JoinRunningMatchController {
         }
         JoinRunningMatchList.setItems(items);
 
-        JoinRunningMatchList.getItems().addAll(items);
-
         // Set the cell factory to use buttons as cells
         JoinRunningMatchList.setCellFactory(new Callback<ListView<String>, ListCell<String>>() {
             @Override
@@ -61,6 +58,11 @@ public class JoinRunningMatchController {
 
     }
 
+    /**
+     * This method is called when the user clicks the "Back" button.
+     * It goes back to the server option scene.
+     * @param actionEvent The event triggered by the user
+     */
     public void goBack(ActionEvent actionEvent) {
         Platform.runLater(SceneManager::InsertServerOption);
     }

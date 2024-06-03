@@ -49,8 +49,6 @@ public class JoinMatchController {
         }
         JoinMatchList.setItems(items);
 
-        JoinMatchList.getItems().addAll(items);
-
         // Set the cell factory to use buttons as cells
         JoinMatchList.setCellFactory(new Callback<ListView<String>, ListCell<String>>() {
             @Override
@@ -59,7 +57,11 @@ public class JoinMatchController {
             }
         });
     }
-
+    /**
+     * This method is called when the user clicks the "Back" button.
+     * It goes back to the server option scene.
+     * @param actionEvent The event triggered by the user
+     */
     public void goBack(ActionEvent actionEvent) {
         Platform.runLater(SceneManager::InsertServerOption);
     }
