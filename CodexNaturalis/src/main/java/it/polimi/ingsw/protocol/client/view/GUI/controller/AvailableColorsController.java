@@ -19,7 +19,7 @@ public class AvailableColorsController {
     @FXML
     Button red;
     @FXML
-    Button yellow;
+    Button purple;
 
     private Stage primaryStage;
     private Client client;
@@ -45,7 +45,7 @@ public class AvailableColorsController {
         //initialize
         this.message = (availableColorsMessage) GUIMessages.readToGUI();
         red.setDisable(true);
-        yellow.setDisable(true);
+        purple.setDisable(true);
         blue.setDisable(true);
         green.setDisable(true);
         availableColors.setText("These colors are available: " + message.getColors());
@@ -61,8 +61,8 @@ public class AvailableColorsController {
             if (message.getColors().get(i).equalsIgnoreCase("blue")) {
                 blue.setDisable(false);
             }
-            if (message.getColors().get(i).equalsIgnoreCase("yellow")) {
-                yellow.setDisable(false);
+            if (message.getColors().get(i).equalsIgnoreCase("purple")) {
+                purple.setDisable(false);
             }
         }
         //send the result
@@ -70,8 +70,8 @@ public class AvailableColorsController {
             GUIMessages.writeToClient("red");
         });
 
-        yellow.setOnAction(event -> {
-            GUIMessages.writeToClient("yellow");
+        purple.setOnAction(event -> {
+            GUIMessages.writeToClient("purple");
         });
         green.setOnAction(event -> {
             GUIMessages.writeToClient("green");

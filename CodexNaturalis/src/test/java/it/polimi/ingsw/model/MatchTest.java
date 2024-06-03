@@ -18,7 +18,7 @@ class MatchTest {
     @BeforeEach
     void setUp() {
         player1 = new Player("Bianca", "Blue", commonArea);
-        player2 = new Player("Agnese", "Yellow", commonArea);
+        player2 = new Player("Agnese", "Purple", commonArea);
         player3 = new Player("Nicoló", "Green", commonArea);
         player4 = new Player("Elisabetta", "Red", commonArea);
         match = new Match();

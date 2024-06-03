@@ -543,8 +543,8 @@ public class Server implements Runnable {
             availableColors.add("red");
         if(!unavailableColors.contains("green"))
             availableColors.add("green");
-        if(!unavailableColors.contains("yellow"))
-            availableColors.add("yellow");
+        if(!unavailableColors.contains("purple"))
+            availableColors.add("purple");
 
         correctChoice = false;
         String color = "";

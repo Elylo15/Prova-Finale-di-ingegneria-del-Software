@@ -30,7 +30,7 @@
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Button fx:id="yellow" mnemonicParsing="false" prefHeight="33.0" prefWidth="66.0" style="-fx-background-color: #fff30d;" text="YELLOW" GridPane.columnIndex="3" GridPane.rowIndex="2">
+            <Button fx:id="purple" mnemonicParsing="false" prefHeight="33.0" prefWidth="66.0" style="-fx-background-color: #800080;" text="PURPLE" GridPane.columnIndex="3" GridPane.rowIndex="2">
                <font>
                   <Font name="System Bold" size="12.0" />
                </font></Button>

@@ -30,7 +30,7 @@ class ServerTest {
     private static final String RESET = "\033[0m";  // Reset to default color
     private static final String RED_TEXT = "\033[0;31m";
     private static final String GREEN_TEXT = "\033[0;32m";
-    private static final String YELLOW_TEXT = "\033[0;33m";
+    private static final String PURPLE_TEXT = "\033[0;35m";
     private static final String BLUE_TEXT = "\033[0;34m";
     private Server server;
     private ThreadPoolExecutor executor;
@@ -208,7 +208,7 @@ class ServerTest {
                 controller.chooseColor("RED");
                 assertFalse(controller.correctAnswer().getCorrect());
                 controller.getAvailableColor();
-                controller.chooseColor("YELLOW");
+                controller.chooseColor("PURPLE");
                 assertTrue(controller.correctAnswer().getCorrect());
                 System.out.println("client_2: Color chosen");
                 setup_Match_1 = true;
@@ -395,7 +395,7 @@ class ServerTest {
                 assertTrue(controller.correctAnswer().getCorrect());
                 System.out.println("client_4: Name chosen");
                 controller.getAvailableColor();
-                controller.chooseColor("YELLOW");
+                controller.chooseColor("PURPLE");
                 assertTrue(controller.correctAnswer().getCorrect());
                 System.out.println("client_4: Color chosen");
             }
@@ -405,14 +405,14 @@ class ServerTest {
         }
 
         System.out.println("client_4: Joining...");
-        assertTrue(clientSimulatorscheduledDisconnections(20, controller, YELLOW_TEXT + "client_4" + RESET));
+        assertTrue(clientSimulatorscheduledDisconnections(20, controller, PURPLE_TEXT + "client_4" + RESET));
 
         synchronized (lock_2) {
             timeToDisconnect = true;
             lock_2.notifyAll();
         }
 
-        System.out.println(YELLOW_TEXT + "client_4" + RESET + ": Disconnected after " + BLUE_TEXT + "client_3" + RESET);
+        System.out.println(PURPLE_TEXT + "client_4" + RESET + ": Disconnected after " + BLUE_TEXT + "client_3" + RESET);
 
 
         controller = new ControllerRMI("localhost", "1099");
@@ -447,13 +447,13 @@ class ServerTest {
             assertTrue(controller.correctAnswer().getCorrect());
             System.out.println("client_4: Name chosen again");
 
-            System.out.println(YELLOW_TEXT + "client_4" + RESET + ": Rejoining...");
+            System.out.println(PURPLE_TEXT + "client_4" + RESET + ": Rejoining...");
 
             lock_2.notifyAll();
         }
 
-        assertTrue(clientSimulator(30, controller, YELLOW_TEXT + "client_4" + RESET));
-        System.out.println(YELLOW_TEXT + "client_4" + RESET + ": Disconnected");
+        assertTrue(clientSimulator(30, controller, PURPLE_TEXT + "client_4" + RESET));
+        System.out.println(PURPLE_TEXT + "client_4" + RESET + ": Disconnected");
 
         return true;
     }

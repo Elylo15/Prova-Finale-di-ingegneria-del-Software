@@ -767,7 +767,7 @@ public class StarterController implements Initializable {
 //                imagePath = "/img/Pions/CODEX_pion_vert.png";
 //                yield new Image(Objects.requireNonNull(getClass().getResourceAsStream(imagePath)));
 //            }
-//            case "yellow" -> {
+//            case "purple" -> {
 //                imagePath = "/img/Pions/CODEX_pion_jaune.png";
 //                yield new Image(Objects.requireNonNull(getClass().getResourceAsStream(imagePath)));
 //            }

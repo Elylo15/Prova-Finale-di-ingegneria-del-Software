@@ -28,7 +28,7 @@ class availableColorsMessageTest {
     @Test
     @DisplayName("Colors are correctly set")
     public void colorsAreCorrectlySet() {
-        ArrayList<String> newColors = new ArrayList<>(Arrays.asList("Yellow", "Purple"));
+        ArrayList<String> newColors = new ArrayList<>(Arrays.asList("Purple", "Yellow"));
         message = new availableColorsMessage(newColors);
         Assertions.assertEquals(newColors, message.getColors());
     }
