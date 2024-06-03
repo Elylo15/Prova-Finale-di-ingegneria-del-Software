@@ -34,7 +34,7 @@
                            mouseTransparent="true" preserveRatio="true">
                     <Image url="@img/Background/GamePage.png"/>
                 </ImageView>
-                <Pane id="Playground" layoutX="16.0" layoutY="152.0" prefHeight="540.0" prefWidth="1556.0">
+                <Pane id="Playground" fx:id="playground" layoutX="16.0" layoutY="152.0" prefHeight="540.0" prefWidth="1556.0">
                 </Pane>
             </Pane>
         </center>

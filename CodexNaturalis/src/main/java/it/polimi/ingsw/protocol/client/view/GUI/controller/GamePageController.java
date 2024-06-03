@@ -5,6 +5,7 @@ import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.PlayerArea;
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.cards.ObjectiveCard;
+import it.polimi.ingsw.model.cards.PlaceableCard;
 import it.polimi.ingsw.model.cards.PlayerHand;
 import it.polimi.ingsw.protocol.client.view.GUI.ImageBinder;
 import it.polimi.ingsw.protocol.client.view.GUI.message.GUIMessages;
@@ -35,6 +36,8 @@ public class GamePageController implements Initializable {
     public Pane mainPane;
     @FXML
     public Label playerName;
+    @FXML
+    public Pane playground;
     private boolean isPopupVisible = false;
     private ImageView currentPopupImage;
 
@@ -236,7 +239,7 @@ public class GamePageController implements Initializable {
         showImagePopup("/img/Background/StarterCard.png", 593, 298, 226, 655);
         if (clickCounter == -1 && Objects.equals(currentPlayerNickname, myself.getNickname())) {
             addStarterCardsToPane();
-            addClickablePane(12, 151, 552, 1568, this::confirmPlaceStarter);
+            addClickablePlaceholder(playground, 648, 215, 133, 200, this::confirmPlaceStarter);
         }
     }
 
@@ -245,7 +248,7 @@ public class GamePageController implements Initializable {
         showImagePopup("/img/Background/ObjectiveCard.png", 593, 298, 226, 655);
         if (clickCounter == -1 && Objects.equals(currentPlayerNickname, myself.getNickname())) {
             setObjectives();
-            addClickablePane(1651, 605, 141, 225, this::confirmPlaceObjective);
+            addClickablePlaceholder(mainPane, layoutXObjective, layoutYObjMy, fitHeightCommon, fitWidthCommon, this::confirmPlaceObjective);
         }
     }
 
@@ -415,49 +418,40 @@ public class GamePageController implements Initializable {
     }
 
     //TODO this will be an image of the dimensions of the card, of a random color loaded in the right position
-    private void addClickablePane(int layoutX, int layoutY, int fitHeight, int fitWidth, EventHandler<MouseEvent> eventHandler) {
-//        Random random = new Random();
-//        int color = random.nextInt(5);
-//        Image image = null;
-//
-//        if(color == 0)
-//            image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/img/Background/Blue.png")));
-//        if(color == 1)
-//            image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/img/Background/Green.png")));
-//        if(color == 2)
-//            image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/img/Background/Red.png")));
-//        if(color == 3)
-//           image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/img/Background/Purple.png")));
-//        if(color == 4)
-//            image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/img/Background/Yellow.png")));
-//
-//        ImageView imageView = new ImageView(image);
-//        imageView.setLayoutX(layoutX);
-//        imageView.setLayoutY(layoutY);
-//        imageView.setOnMouseClicked(eventHandler);
+    private void addClickablePlaceholder(Pane pane, int layoutX, int layoutY, int fitHeight, int fitWidth, EventHandler<MouseEvent> eventHandler) {
+        Random random = new Random();
+        int color = random.nextInt(5);
 
-        // Check if a pane with the same position and size already exists
-        boolean paneExists = mainPane.getChildren().stream()
-                .filter(node -> node instanceof Pane)
+        Image image = switch (color) {
+            case 0 -> new Image(Objects.requireNonNull(getClass().getResourceAsStream("/img/Placeholders/blue.png")));
+            case 1 -> new Image(Objects.requireNonNull(getClass().getResourceAsStream("/img/Placeholders/green.png")));
+            case 2 -> new Image(Objects.requireNonNull(getClass().getResourceAsStream("/img/Placeholders/red.png")));
+            case 3 -> new Image(Objects.requireNonNull(getClass().getResourceAsStream("/img/Placeholders/yellow.png")));
+            case 4 -> new Image(Objects.requireNonNull(getClass().getResourceAsStream("/img/Placeholders/purple.png")));
+            default -> null;
+        };
+
+        // Check if an ImageView with the same position and size already exists
+        boolean exists = pane.getChildren().stream()
+                .filter(node -> node instanceof ImageView)
                 .anyMatch(node -> {
-                    Pane pane = (Pane) node;
-                    return (int) pane.getLayoutX() == layoutX && (int) pane.getLayoutY() == layoutY &&
-                            (int) pane.getPrefWidth() == fitWidth && (int) pane.getPrefHeight() == fitHeight;
+                    ImageView imageView = (ImageView) node;
+                    return (int) imageView.getLayoutX() == layoutX && (int) imageView.getLayoutY() == layoutY &&
+                            (int) imageView.getFitWidth() == fitWidth && (int) imageView.getFitHeight() == fitHeight;
                 });
 
-        if (!paneExists) {
-            // Pane with the same position and size doesn't exist, so add the new one
-            Pane clickableArea = new Pane();
-            clickableArea.setLayoutX(layoutX);
-            clickableArea.setLayoutY(layoutY);
-            clickableArea.setPrefSize(fitWidth, fitHeight);
-            clickableArea.setStyle("-fx-background-color: lightblue;");
-            clickableArea.setOpacity(0.2);
-            mainPane.getChildren().add(clickableArea);
-            clickableArea.setOnMouseClicked(eventHandler);
+        if (!exists) {
+            ImageView imageView = new ImageView(image);
+            imageView.setLayoutX(layoutX);
+            imageView.setLayoutY(layoutY);
+            imageView.setFitHeight(fitHeight);
+            imageView.setFitWidth(fitWidth);
+            imageView.setOpacity(0.5);
+            imageView.setOnMouseClicked(eventHandler);
+            pane.getChildren().add(imageView);
         }
-        onTop.toFront();
     }
+
 
     private boolean existentPlayer(String currentPlayer) {
         for (Player player : players) {
@@ -530,6 +524,9 @@ public class GamePageController implements Initializable {
             if (eventHandler != null) {
                 newCard.setOnMouseClicked(eventHandler);
             }
+            if (card instanceof ObjectiveCard || card instanceof PlaceableCard) {
+                hooverEffect(newCard);
+            }
             Platform.runLater(() -> {
                 mainPane.getChildren().add(newCard);
                 onTop.toFront();
@@ -569,68 +566,50 @@ public class GamePageController implements Initializable {
             clickedCard.getStyleClass().add("image-view-selected");
             this.selectedCard = clickedCard;
 
-            // Set the selected card ID
             this.selectedStarterFront = card.isFront() ? 1 : 0;
 
-            // Handle double-click to turn around the card
             if (event.getClickCount() == 2) {
                 turnAround(event);
             }
         }
     }
 
-    //TODO click on image like card, not the panel
+
+
+    private void chooseObjective(MouseEvent event) {
+        ImageView clickedCard = (ImageView) event.getSource();
+        ObjectiveCard card = (ObjectiveCard) clickedCard.getUserData();
+        int cardID = card.getID();
+        System.out.println("Card ID: " + cardID);
+
+        if (event.getClickCount() == 1) {
+            if (selectedCard != null) {
+                selectedCard.getStyleClass().remove("image-view-selected");
+            }
+            clickedCard.getStyleClass().add("image-view-selected");
+            this.selectedCard = clickedCard;
+
+            System.out.println("Card 1: " + objectivesToChose.get(0).getID());
+            System.out.println("Card 2: " + objectivesToChose.get(1).getID());
+            if (cardID == objectivesToChose.get(0).getID()) {
+                this.selectedObjective = 1;
+            } else if (cardID == objectivesToChose.get(1).getID()) {
+                this.selectedObjective = 2;
+            }
+        } else if (event.getClickCount() == 2) {
+            turnAround(event);
+        }
+    }
+
     private void confirmPlaceStarter(MouseEvent event) {
         if (selectedCard != null) {
             selectedCard.getStyleClass().remove("image-view-selected");
-            mainPane.getChildren().remove(event.getSource());
+            playground.getChildren().remove(event.getSource());
             removeCardFromPosition(layoutXCard1, layoutYHand);
             GUIMessages.writeToClient(selectedStarterFront);
         }
     }
 
-    //TODO see if it works as expected
-    private void chooseObjective(MouseEvent event) {
-        ImageView clickedCard = (ImageView) event.getSource();
-        ObjectiveCard card = (ObjectiveCard) clickedCard.getUserData();
-        int cardID = card.getID();
-
-        // Scale transitions makes bigger and smaller the card when hovered
-        ScaleTransition enlargeTransition = new ScaleTransition(Duration.millis(200), clickedCard);
-        enlargeTransition.setToX(1.5);
-        enlargeTransition.setToY(1.5);
-
-        ScaleTransition shrinkTransition = new ScaleTransition(Duration.millis(200), clickedCard);
-        shrinkTransition.setToX(1.0);
-        shrinkTransition.setToY(1.0);
-
-        // Set mouse event handlers for transitions
-        clickedCard.setOnMouseEntered(e -> enlargeTransition.playFromStart());
-        clickedCard.setOnMouseExited(e -> shrinkTransition.playFromStart());
-
-        // Set mouse event handlers for click and double-click
-        clickedCard.setOnMouseClicked(e -> {
-            if (e.getClickCount() == 1) {
-                // Single-click event: select the card
-                if (selectedCard != null) {
-                    selectedCard.getStyleClass().remove("image-view-selected");
-                }
-                clickedCard.getStyleClass().add("image-view-selected");
-                this.selectedCard = clickedCard;
-
-                if (cardID == objectivesToChose.get(0).getID()) {
-                    this.selectedObjective = 1;
-                } else if (cardID == objectivesToChose.get(1).getID()) {
-                    this.selectedObjective = 2;
-                }
-            } else if (e.getClickCount() == 2) {
-                // Double-click event: turn the card over
-                turnAround(e);
-            }
-        });
-    }
-
-    //TODO instead of the pane an image that is in dimension like a card but is mono color
     private void confirmPlaceObjective(MouseEvent event) {
         if (selectedCard != null) {
             selectedCard.getStyleClass().remove("image-view-selected");
@@ -640,6 +619,21 @@ public class GamePageController implements Initializable {
             GUIMessages.writeToClient(selectedObjective);
         }
     }
+
+    private void hooverEffect(ImageView imageView){
+        ScaleTransition enlargeTransition = new ScaleTransition(Duration.millis(200), imageView);
+        enlargeTransition.setToX(1.1);
+        enlargeTransition.setToY(1.1);
+
+        ScaleTransition shrinkTransition = new ScaleTransition(Duration.millis(200), imageView);
+        shrinkTransition.setToX(1.0);
+        shrinkTransition.setToY(1.0);
+
+        imageView.setOnMouseEntered(e -> enlargeTransition.playFromStart());
+        imageView.setOnMouseExited(e -> shrinkTransition.playFromStart());
+    }
+
+
 
     //TODO see if it works as expected
     private void choseCardToPlace(MouseEvent event) {
@@ -954,7 +948,6 @@ public class GamePageController implements Initializable {
 
     private double[] getAdjustedPosition(List<ImageView> pions, double targetX, double targetY) {
         double offsetY = 0;
-         // TODO set This to the right value
 
         for (ImageView pion : pions) {
             if (pion != null && pion.getLayoutX() == targetX && pion.getLayoutY() == targetY + offsetY) {

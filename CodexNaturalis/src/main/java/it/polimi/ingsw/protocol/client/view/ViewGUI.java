@@ -230,7 +230,9 @@ public class ViewGUI extends View {
      */
     @Override
     public int placeStarter() {
-        return (int) GUIMessages.readToClient();
+        int side = (int) GUIMessages.readToClient();
+        System.out.println(side);
+        return side;
 
     }
 
@@ -242,8 +244,11 @@ public class ViewGUI extends View {
      */
     @Override
     public int chooseObjective(ArrayList<ObjectiveCard> objectives) {
+
         GUIMessages.writeToGUI(objectives);
-        return (int) GUIMessages.readToClient();
+        int card = (int) GUIMessages.readToClient();
+        System.out.println(card);
+        return card;
 
     }
 
