@@ -9,8 +9,8 @@
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.protocol.client.view.GUI.controller.MainPageController">
    <center>
-      <Pane fx:id="pane" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-         <ImageView fitHeight="1171.0" fitWidth="2000.0" layoutX="-38.0" layoutY="-30.0" preserveRatio="true">
+      <Pane fx:id="pane" prefHeight="1080.0" prefWidth="1920.0" BorderPane.alignment="CENTER">
+         <ImageView fitHeight="1080.0" fitWidth="1920.0" preserveRatio="true">
             <Image url="@img/Background/Background.png"/>
          </ImageView>
          <Button id="Play" fx:id="playBtn" layoutX="128.0" layoutY="892.0" mnemonicParsing="false"

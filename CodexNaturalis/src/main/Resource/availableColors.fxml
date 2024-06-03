@@ -1,63 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
-<BorderPane xmlns:fx="http://javafx.com/fxml/1" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-            prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21"
-            fx:controller="it.polimi.ingsw.protocol.client.view.GUI.controller.AvailableColorsController">
-    <center>
-        <GridPane BorderPane.alignment="CENTER">
-            <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-            </columnConstraints>
-            <rowConstraints>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-            </rowConstraints>
-            <Button fx:id="purple" mnemonicParsing="false" prefHeight="33.0" prefWidth="66.0"
-                    style="-fx-background-color: #800080;" text="PURPLE" GridPane.columnIndex="3" GridPane.rowIndex="2">
-                <font>
-                    <Font name="System Bold" size="12.0"/>
-                </font>
-            </Button>
-            <Button fx:id="red" mnemonicParsing="false" prefHeight="34.0" prefWidth="66.0"
-                    style="-fx-background-color: #ff0000;" text="RED" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                <font>
-                    <Font name="System Bold" size="12.0"/>
-                </font>
-            </Button>
-            <Button fx:id="green" mnemonicParsing="false" prefHeight="33.0" prefWidth="66.0"
-                    style="-fx-background-color: #03ff50;" text="GREEN" GridPane.columnIndex="5" GridPane.rowIndex="2">
-                <font>
-                    <Font name="System Bold" size="12.0"/>
-                </font>
-            </Button>
-            <Button fx:id="blue" mnemonicParsing="false" prefHeight="33.0" prefWidth="66.0"
-                    style="-fx-background-color: #000dff;" text="BLUE" textFill="#d8ff0a" GridPane.columnIndex="7"
-                    GridPane.rowIndex="2">
-                <font>
-                    <Font name="System Bold" size="12.0"/>
-                </font>
-            </Button>
-            <Label text="Please, choose a color to join the game" GridPane.columnIndex="4" GridPane.columnSpan="2"
-                   GridPane.rowIndex="1">
-                <font>
-                    <Font name="System Bold" size="13.0"/>
-                </font>
-            </Label>
-            <Label fx:id="availableColors" GridPane.columnIndex="4" GridPane.columnSpan="2"/>
-        </GridPane>
-    </center>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.protocol.client.view.GUI.controller.AvailableColorsController">
+   <center>
+      <Pane prefHeight="1080.0" prefWidth="1920.0" BorderPane.alignment="CENTER">
+         <children>
+            <ImageView id="red" fx:id="red" fitHeight="540.0" fitWidth="701.0" layoutX="1434.0" layoutY="543.0" preserveRatio="true">
+               <image>
+                  <Image url="@img/Colors/red.png" />
+               </image>
+            </ImageView>
+            <ImageView id="purple" fx:id="purple" fitHeight="540.0" fitWidth="701.0" layoutX="496.0" layoutY="543.0" preserveRatio="true">
+               <image>
+                  <Image url="@img/Colors/purple.png" />
+               </image>
+            </ImageView>
+            <ImageView id="blue" fx:id="blue" fitHeight="540.0" fitWidth="701.0" layoutX="922.0" layoutY="545.0" preserveRatio="true">
+               <image>
+                  <Image url="@img/Colors/blue.png" />
+               </image>
+            </ImageView>
+            <ImageView id="green" fx:id="green" fitHeight="540.0" fitWidth="701.0" layoutX="-18.0" layoutY="543.0" preserveRatio="true">
+               <image>
+                  <Image url="@img/Colors/green.png" />
+               </image>
+            </ImageView>
+            <Text layoutX="623.0" layoutY="338.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Choose your color" wrappingWidth="720.13671875">
+               <font>
+                  <Font size="85.0" />
+               </font>
+            </Text>
+         </children>
+      </Pane>
+   </center>
 </BorderPane>

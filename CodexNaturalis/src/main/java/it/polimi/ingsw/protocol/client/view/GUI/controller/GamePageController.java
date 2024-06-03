@@ -45,14 +45,16 @@ public class GamePageController implements Initializable {
 
     // TODO I think this old ones are wrong, get the new ones
     double[][] positions = {
-            {1731, 485}, {1794, 485}, {1826, 426}, {1762, 426},
-            {1689, 426}, {1635, 426}, {1635, 367}, {1689, 367},
-            {1762, 367}, {1826, 367}, {1826, 309}, {1762, 309},
-            {1689, 309}, {1635, 309}, {1635, 251}, {1689, 251},
-            {1762, 251}, {1826, 251}, {1826, 193}, {1730, 163},
-            {1635, 193}, {1730, 133}, {1730, 75}, {1671, 251},
-            {1731, 17}, {1789, 251}, {1826, 75}, {1730, 133},
-            {1731, 87}
+            {1726, 468}, {1784, 468},
+            {1812, 415}, {1755, 415}, {1697, 415}, {1639, 415},
+            {1639, 362}, {1697, 362}, {1755, 362}, {1812, 362},
+            {1812, 311}, {1755, 311}, {1697, 311}, {1639, 311},
+            {1639, 256}, {1697, 256}, {1755, 256}, {1812, 256},
+            {1812, 204}, {1726, 175}, {1639, 204},
+            {1639, 150}, {1639, 96},
+            {1673, 53}, {1726, 45}, {1781, 53},
+            {1812, 150}, {1812, 96},
+            {1726, 108 }
     };
 
     int fitHeightCommon = 141;
@@ -893,7 +895,7 @@ public class GamePageController implements Initializable {
                 addPoints(pion, score, allPions);
                 updatePionsPositions(allPions, pion);
             } else if (pion != null && !pion.isVisible()){
-                double[] adjustedPosition = getAdjustedPosition(allPions, 0 , 0); //TODO get the real positions
+                double[] adjustedPosition = getAdjustedPosition(allPions, 1668 , 468); //TODO get the real positions
                 pion.setLayoutX(adjustedPosition[0]);
                 pion.setLayoutY(adjustedPosition[1]);
                 pion.setVisible(true);

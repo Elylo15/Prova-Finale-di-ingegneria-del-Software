@@ -35,26 +35,8 @@
                     <Image url="@img/Background/GamePage.png"/>
                 </ImageView>
                 <Pane id="Playground" layoutX="16.0" layoutY="152.0" prefHeight="540.0" prefWidth="1556.0">
-                    <Button layoutX="-10.0" mnemonicParsing="false" opacity="0.0" prefHeight="545.0" prefWidth="1571.0"
-                            text="Button"/>
                 </Pane>
             </Pane>
         </center>
     </BorderPane>
-    <ImageView id="firstPion" fx:id="firstPion" fitHeight="52.0" fitWidth="48.0" layoutX="1666.0" layoutY="499.0"
-               preserveRatio="true">
-        <Image url="@img/Pions/CODEX_pion_bleu.png"/>
-    </ImageView>
-    <ImageView id="secondPion" fx:id="secondPion" fitHeight="52.0" fitWidth="48.0" layoutX="1666.0" layoutY="494.0"
-               preserveRatio="true">
-        <Image url="@img/Pions/CODEX_pion_bleu.png"/>
-    </ImageView>
-    <ImageView id="thirdPion" fx:id="thirdPion" fitHeight="52.0" fitWidth="48.0" layoutX="1666.0" layoutY="489.0"
-               preserveRatio="true">
-        <Image url="@img/Pions/CODEX_pion_bleu.png"/>
-    </ImageView>
-    <ImageView id="fourthPion" fx:id="fourthPion" fitHeight="52.0" fitWidth="48.0" layoutX="1666.0" layoutY="485.0"
-               preserveRatio="true">
-        <Image url="@img/Pions/CODEX_pion_bleu.png"/>
-    </ImageView>
 </AnchorPane>
