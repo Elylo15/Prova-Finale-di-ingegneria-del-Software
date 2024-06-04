@@ -700,7 +700,7 @@ public class ViewCLI extends View {
      * @return the string to be printed
      */
     private String printAvailablePosition(int row, int column) {
-        return BLACK_BACKGROUND + String.format("[%2d,%2d]", row, column) + RESET;
+        return WHITE_TEXT + BLACK_BACKGROUND + String.format("[%2d,%2d]", row, column) + RESET;
     }
 
     /**

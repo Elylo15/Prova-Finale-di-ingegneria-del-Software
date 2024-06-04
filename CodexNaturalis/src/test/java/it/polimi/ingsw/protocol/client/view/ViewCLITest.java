@@ -1,94 +1,82 @@
 package it.polimi.ingsw.protocol.client.view;
 
+import it.polimi.ingsw.model.CommonArea;
 import it.polimi.ingsw.model.Match;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.PlayerArea;
-import it.polimi.ingsw.model.cards.PlaceableCard;
-import it.polimi.ingsw.model.cards.ResourceCard;
-import it.polimi.ingsw.model.cards.StarterCard;
+import it.polimi.ingsw.model.cards.*;
 import it.polimi.ingsw.model.cards.enumeration.Reign;
 import it.polimi.ingsw.model.cards.enumeration.Resource;
 import it.polimi.ingsw.model.cards.exceptions.InvalidIdException;
 import it.polimi.ingsw.model.cards.exceptions.noPlaceCardException;
+import it.polimi.ingsw.protocol.messages.ConnectionState.availableColorsMessage;
+import it.polimi.ingsw.protocol.messages.ConnectionState.unavailableNamesMessage;
 import it.polimi.ingsw.protocol.messages.EndGameState.declareWinnerMessage;
+import it.polimi.ingsw.protocol.messages.PlayerTurnState.updatePlayerMessage;
+import it.polimi.ingsw.protocol.messages.ServerOptionState.serverOptionMessage;
+import it.polimi.ingsw.protocol.messages.currentStateMessage;
 import it.polimi.ingsw.protocol.messages.responseMessage;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ViewCLITest {
 
     private ViewCLI viewCLI;
     private PlayerArea playerArea;
+    private CommonArea commonArea;
+    private InputStream sysInBackup;
 
     @BeforeEach
     void setUp() {
+        Match match = new Match();
+        match.start();
+        commonArea = match.getCommonArea();
+        sysInBackup = System.in;
         playerArea = new PlayerArea();
         viewCLI = new ViewCLI();
 
     }
 
     @Test
-    void checkShowArea() throws noPlaceCardException {
+    @DisplayName("Ask IP test")
+    void askIpTest() {
+        ByteArrayInputStream in = new ByteArrayInputStream("192.168.1.1\n".getBytes());
+        System.setIn(in);
 
-        viewCLI = new ViewCLI();
-        ArrayList<Resource> resources = new ArrayList<>();
-        resources.add(Resource.Empty);
-        resources.add(Resource.Plant);
-        resources.add(Resource.Insect);
-        resources.add(Resource.Empty);
-        ArrayList<Resource> permanentResources = new ArrayList<>();
-        permanentResources.add(Resource.Insect);
-        ArrayList<Resource> bottomResources = new ArrayList<>();
-        bottomResources.add(Resource.Fungus);
-        bottomResources.add(Resource.Plant);
-        bottomResources.add(Resource.Insect);
-        bottomResources.add(Resource.Animal);
-        PlaceableCard starterCard;
-        try {
-            starterCard = new StarterCard(81, 0, null, true, resources, permanentResources, bottomResources);
-        } catch (InvalidIdException e) {
-            throw new RuntimeException(e);
-        }
+        Assertions.assertEquals("192.168.1.1", viewCLI.askIP());
 
-        PlaceableCard testCard;
-        resources = new ArrayList<>();
-        resources.add(Resource.Fungus);
-        resources.add(Resource.Fungus);
-        resources.add(Resource.Blocked);
-        resources.add(Resource.Empty);
-        try {
-            testCard = new ResourceCard(2, 0, Reign.Fungus, true, resources);
-        } catch (InvalidIdException e) {
-            throw new RuntimeException(e);
-        }
-        PlaceableCard testCard2;
-        resources = new ArrayList<>();
-        resources.add(Resource.Quill);
-        resources.add(Resource.Blocked);
-        resources.add(Resource.Animal);
-        resources.add(Resource.Fungus);
-        try {
-            testCard2 = new ResourceCard(27, 0, Reign.Animal, false, resources);
-        } catch (InvalidIdException e) {
-            throw new RuntimeException(e);
-        }
-        PlaceableCard testCard3;
-        resources = new ArrayList<>();
-        resources.add(Resource.Insect);
-        resources.add(Resource.Insect);
-        resources.add(Resource.Empty);
-        resources.add(Resource.Blocked);
-        try {
-            testCard3 = new ResourceCard(31, 0, Reign.Insect, true, resources);
-        } catch (InvalidIdException e) {
-            throw new RuntimeException(e);
-        }
+        System.setIn(sysInBackup);
+    }
 
-        playerArea.placeStarterCard(starterCard, true);
-        playerArea.placeCard(testCard, 1, 1, true);
+    @Test
+    @DisplayName("PlayerDisconnected test")
+    void playerDisconnectedTest() {
+        viewCLI.playerDisconnected();
+    }
+
+    @Test
+    @DisplayName("ShowPlayerArea test")
+    void showPlayerAreaTest() throws noPlaceCardException {
+
+        PlaceableCard starterCard = commonArea.drawFromToPlayer(3);
+        PlaceableCard testCard = commonArea.drawFromToPlayer(1);
+        PlaceableCard testCard2 = commonArea.drawFromToPlayer(2);
+        PlaceableCard testCard3 = commonArea.drawFromToPlayer(1);
+
+
+        playerArea.placeStarterCard(starterCard, false);
+        playerArea.placeCard(testCard, 1, 1, false);
         playerArea.placeCard(testCard2, 2, 2, false);
         playerArea.placeCard(testCard3, -1, -1, true);
 
@@ -99,6 +87,7 @@ class ViewCLITest {
 
 
     @Test
+    @DisplayName("Scoreboard test")
     void testEnd() {
         HashMap<String, Integer> scores = new HashMap<>();
         scores.put("player1", 10);
@@ -113,8 +102,11 @@ class ViewCLITest {
     }
 
     @Test
+    @DisplayName("CheckAnswer test")
     void checkAnswer() {
         responseMessage message = new responseMessage(false);
+        viewCLI.answer(message);
+        message = new responseMessage(true);
         viewCLI.answer(message);
     }
 
@@ -137,7 +129,8 @@ class ViewCLITest {
 
 
     @Test
-    void commonAreaPrintingTest() throws Exception {
+    @DisplayName("ShowCommonArea and PlayerHand test")
+    void commonAreaAndPlayerHandPrintingTest() throws Exception {
         Match match = new Match();
         match.start();
         Player player1 = new Player("player1", "RED", match.getCommonArea());
@@ -149,5 +142,253 @@ class ViewCLITest {
         viewCLI.showPlayerHand(player1, "player2");
     }
 
+    @Test
+    @DisplayName("UpdatePlayer from currentStateMessage test")
+    void updatePlayerTest() throws noPlaceCardException {
+        Player player = new Player("player1", "RED", commonArea);
+        Player player2 = new Player("player2", "BLUE", commonArea);
+        PlayerArea playerArea = player.getPlayerArea();
+
+        ObjectiveCard[] objectives = new ObjectiveCard[2];
+        objectives[0] = commonArea.drawObjectiveCard();
+        objectives[1] = commonArea.drawObjectiveCard();
+
+        player.pickObjectiveCard(1, objectives);
+        player2.pickObjectiveCard(2, objectives);
+
+        PlaceableCard starterCard = commonArea.drawFromToPlayer(3);
+        PlaceableCard testCard = commonArea.drawFromToPlayer(1);
+        PlaceableCard testCard2 = commonArea.drawFromToPlayer(2);
+        PlaceableCard testCard3 = commonArea.drawFromToPlayer(1);
+
+
+        playerArea.placeStarterCard(starterCard, false);
+        playerArea.placeCard(testCard, 1, 1, false);
+        playerArea.placeCard(testCard2, 2, 2, false);
+        playerArea.placeCard(testCard3, -1, -1, true);
+
+        currentStateMessage message = new currentStateMessage(player,player,"PickCard", false, null, objectives, 12345);
+        viewCLI.updatePlayer(message);
+        message = new currentStateMessage(player,player2,"PickCard", true, null,objectives, 12345);
+        viewCLI.updatePlayer(message);
+    }
+
+    @Test
+    @DisplayName("UpdatePlayer from update test")
+    void updatePlayerAfterTurnTest() {
+        Player player = new Player("player1", "RED", commonArea);
+        Player player2 = new Player("player2", "BLUE", commonArea);
+        PlayerArea playerArea = player.getPlayerArea();
+
+        ObjectiveCard[] objectives = new ObjectiveCard[2];
+        objectives[0] = commonArea.drawObjectiveCard();
+        objectives[1] = commonArea.drawObjectiveCard();
+
+        player.pickObjectiveCard(1, objectives);
+        player2.pickObjectiveCard(2, objectives);
+
+        PlaceableCard starterCard = commonArea.drawFromToPlayer(3);
+        PlaceableCard testCard = commonArea.drawFromToPlayer(1);
+        PlaceableCard testCard2 = commonArea.drawFromToPlayer(2);
+        PlaceableCard testCard3 = commonArea.drawFromToPlayer(1);
+
+        updatePlayerMessage message = new updatePlayerMessage(player, "player1");
+        viewCLI.update(message);
+        message = new updatePlayerMessage(player, "player2");
+        viewCLI.update(message);
+    }
+
+    @Test
+    @DisplayName("Choice of the name test")
+    void nameChoiceTest() {
+        ByteArrayInputStream in = new ByteArrayInputStream("GAMMA\n".getBytes());
+        System.setIn(in);
+
+        ArrayList<String> names = new ArrayList<>();
+        names.add("ALFA");
+        names.add("BETA");
+        unavailableNamesMessage message = new unavailableNamesMessage(names);
+
+        Assertions.assertEquals("GAMMA", viewCLI.unavailableNames(message));
+
+
+
+        System.setIn(sysInBackup);
+    }
+
+    @Test
+    @DisplayName("Color choice test")
+    void colorChoiceTest() {
+        ByteArrayInputStream in = new ByteArrayInputStream("RED\n".getBytes());
+        System.setIn(in);
+
+        ArrayList<String> colors = new ArrayList<>();
+        colors.add("BLUE");
+        colors.add("YELLOW");
+        colors.add("GREEN");
+
+        availableColorsMessage message = new availableColorsMessage(colors);
+        Assertions.assertEquals("RED", viewCLI.availableColors(message));
+
+        System.setIn(sysInBackup);
+    }
+
+    @Test
+    @DisplayName("StarterCard placement test")
+    void starterCardPlacementTest() {
+        ByteArrayInputStream in = new ByteArrayInputStream("front\n".getBytes());
+        System.setIn(in);
+        assertEquals(1, viewCLI.placeStarter());
+
+        in = new ByteArrayInputStream("back\n".getBytes());
+        System.setIn(in);
+        assertEquals(0, viewCLI.placeStarter());
+
+        System.setIn(sysInBackup);
+    }
+
+    @Test
+    @DisplayName("Expected players test")
+    void expectedPlayersTest() {
+        ByteArrayInputStream in = new ByteArrayInputStream("a\n1\n".getBytes());
+        System.setIn(in);
+
+        assertEquals(1, viewCLI.expectedPlayers());
+
+        System.setIn(sysInBackup);
+    }
+
+    @Test
+    @DisplayName("Objective choice test")
+    void chooseObjectiveTest() {
+        ByteArrayInputStream in = new ByteArrayInputStream("1\n".getBytes());
+        System.setIn(in);
+
+        ArrayList<ObjectiveCard> objectives = new ArrayList<>();
+        objectives.add(commonArea.drawObjectiveCard());
+        objectives.add(commonArea.drawObjectiveCard());
+
+        assertEquals(1, viewCLI.chooseObjective(objectives));
+
+       in = new ByteArrayInputStream("2\n".getBytes());
+       System.setIn(in);
+       assertEquals(2, viewCLI.chooseObjective(objectives));
+
+        System.setIn(sysInBackup);
+    }
+
+    @Test
+    @DisplayName("Card placement test")
+    void cardPlacementTest() {
+        ByteArrayInputStream in = new ByteArrayInputStream("1\nfront\n2\n3\n".getBytes());
+        System.setIn(in);
+
+        int[] expected = {1, 1, 2, 3};
+        int[] result = viewCLI.placeCard();
+
+        for (int i = 0; i < expected.length; i++) {
+            assertEquals(expected[i], result[i]);
+        }
+
+        System.setIn(sysInBackup);
+    }
+
+    @Test
+    @DisplayName("CardPick test")
+    void cardPickTest() {
+        ByteArrayInputStream in = new ByteArrayInputStream("1\n".getBytes());
+        System.setIn(in);
+
+        assertEquals(1, viewCLI.pickCard());
+
+        System.setIn(sysInBackup);
+    }
+
+    @Test
+    @DisplayName("ServerOptions test")
+    void serverOptionsTest() {
+        ByteArrayInputStream in = new ByteArrayInputStream("yes\n1\n".getBytes());
+        System.setIn(in);
+        ArrayList<Integer> waitingMatches = new ArrayList<>();
+        waitingMatches.add(1000);
+        waitingMatches.add(1001);
+        ArrayList<Integer> runningMatches = new ArrayList<>();
+        runningMatches.add(1002);
+        runningMatches.add(1003);
+        ArrayList<Integer> savedMatches = new ArrayList<>();
+        savedMatches.add(1004);
+        savedMatches.add(1005);
+        serverOptionMessage message = new serverOptionMessage(false, null, null, false, null, waitingMatches, runningMatches, savedMatches);
+
+        // Creates a new match
+        serverOptionMessage answer = viewCLI.serverOptions(message);
+        Assertions.assertTrue(answer.isNewMatch());
+        Assertions.assertNull(answer.getMatchID());
+        Assertions.assertNull(answer.getStartedMatchID());
+        Assertions.assertFalse(answer.isLoadMatch());
+        Assertions.assertNull(answer.getSavedMatchID());
+        Assertions.assertNull(answer.getWaitingMatches());
+        Assertions.assertNull(answer.getRunningMatches());
+        Assertions.assertNull(answer.getSavedMatches());
+
+        // Joins a waiting match
+        in = new ByteArrayInputStream("yes\n2\n1\n".getBytes());
+        System.setIn(in);
+        answer = viewCLI.serverOptions(message);
+        Assertions.assertTrue(answer.isNewMatch());
+        Assertions.assertEquals(answer.getMatchID(), 1000);
+        Assertions.assertNull(answer.getStartedMatchID());
+        Assertions.assertFalse(answer.isLoadMatch());
+        Assertions.assertNull(answer.getSavedMatchID());
+        Assertions.assertNull(answer.getWaitingMatches());
+        Assertions.assertNull(answer.getRunningMatches());
+        Assertions.assertNull(answer.getSavedMatches());
+
+        // Joins a running match
+        in = new ByteArrayInputStream("no\nyes\n1\n".getBytes());
+        System.setIn(in);
+        answer = viewCLI.serverOptions(message);
+        Assertions.assertFalse(answer.isNewMatch());
+        Assertions.assertNull(answer.getMatchID());
+        Assertions.assertEquals(answer.getStartedMatchID(), 1002);
+        Assertions.assertNull(answer.getSavedMatchID());
+        Assertions.assertFalse(answer.isLoadMatch());
+        Assertions.assertNull(answer.getWaitingMatches());
+        Assertions.assertNull(answer.getRunningMatches());
+        Assertions.assertNull(answer.getSavedMatches());
+
+        // Loads a saved match
+        in = new ByteArrayInputStream("no\nno\nyes\n1\n".getBytes());
+        System.setIn(in);
+        answer = viewCLI.serverOptions(message);
+        Assertions.assertFalse(answer.isNewMatch());
+        Assertions.assertNull(answer.getMatchID());
+        Assertions.assertNull(answer.getStartedMatchID());
+        Assertions.assertTrue(answer.isLoadMatch());
+        Assertions.assertEquals(answer.getSavedMatchID(), 1004);
+        Assertions.assertNull(answer.getWaitingMatches());
+        Assertions.assertNull(answer.getRunningMatches());
+        Assertions.assertNull(answer.getSavedMatches());
+
+
+
+        System.setIn(sysInBackup);
+    }
+
+    @Test
+    @DisplayName("Pick name FA test")
+    void pickNameFATest() {
+        ByteArrayInputStream in = new ByteArrayInputStream("1\n".getBytes());
+        System.setIn(in);
+
+        ArrayList<String> names = new ArrayList<>();
+        names.add("ALFA");
+        names.add("BETA");
+        unavailableNamesMessage message = new unavailableNamesMessage(names);
+
+        Assertions.assertEquals("ALFA", viewCLI.pickNameFA(message));
+
+        System.setIn(sysInBackup);
+    }
 
 }
