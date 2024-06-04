@@ -1,10 +1,16 @@
 package it.polimi.ingsw.protocol.client.view;
 
 import it.polimi.ingsw.protocol.client.view.GUI.message.GUIMessages;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.util.Timer;
+import java.util.concurrent.*;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class GUIMessagesTest {
 
@@ -15,6 +21,7 @@ public class GUIMessagesTest {
     }
 
     @Test
+    @DisplayName("Test writeToClient and readToClient")
     public void testWriteToClientAndReadToClient() {
         String message = "Test message to client";
 
@@ -29,6 +36,7 @@ public class GUIMessagesTest {
     }
 
     @Test
+    @DisplayName("Test writeToGUI and readToGUI")
     public void testWriteToGUIAndReadToGUI() {
         String message = "Test message to GUI";
 
@@ -44,6 +52,7 @@ public class GUIMessagesTest {
 
 
     @Test
+    @DisplayName("Test concurrent access")
     public void testConcurrentAccess() {
         // Define two different messages for client and GUI
         String clientMessage = "Client message";
@@ -60,6 +69,27 @@ public class GUIMessagesTest {
         // Assert that the received messages match the sent messages
         assertEquals(clientMessage, receivedClientMessage);
         assertEquals(guiMessage, receivedGuiMessage);
+    }
+
+
+    @Test
+    @DisplayName("Test clearQueue")
+    void shouldClearQueue() {
+        String message = "Test message";
+        GUIMessages.writeToClient(message);
+        GUIMessages.writeToGUI(message);
+        GUIMessages.clearQueue();
+
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Future<Object> clientMessage = executor.submit(() -> GUIMessages.readToClient());
+        Future<Object> guiMessage = executor.submit(() -> GUIMessages.readToGUI());
+
+        try {
+            assertNull(clientMessage.get(1, TimeUnit.SECONDS));
+            assertNull(guiMessage.get(1, TimeUnit.SECONDS));
+        } catch (ExecutionException | InterruptedException | TimeoutException e) {
+            assertTrue(e.getClass().equals(TimeoutException.class));
+        }
     }
 
 }
