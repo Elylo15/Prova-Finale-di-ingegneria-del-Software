@@ -28,18 +28,16 @@ public class SceneManager {
      * @param stage the primary stage
      */
     public static void setPrimaryStage(Stage stage) {
-        //TODO: change the font nad import song
-        //Font customFont = Font.loadFont(SceneManager.class.getResourceAsStream("/Fonts/MyCustomFont.ttf"), 20);
-//        String audioFile = "audio/song.mp3";
-//        Media media = new Media(new File(audioFile).toURI().toString());
-//
-//        MediaPlayer mediaPlayer = new MediaPlayer(media);
-//
-//        mediaPlayer.play();
-//        mediaPlayer.setOnEndOfMedia(() -> {
-//            mediaPlayer.seek(mediaPlayer.getStartTime()); // Restart from the beginning
-//            mediaPlayer.play();
-//        });
+        Font customFont = Font.loadFont(SceneManager.class.getResourceAsStream("/Fonts/FantasyScript.ttf"), 20);
+        String audioFile = Objects.requireNonNull(SceneManager.class.getResource("/Audio/song.mp3")).toString();
+        Media media = new Media(audioFile);
+        MediaPlayer mediaPlayer = new MediaPlayer(media);
+
+        mediaPlayer.play();
+        mediaPlayer.setOnEndOfMedia(() -> {
+            mediaPlayer.seek(mediaPlayer.getStartTime()); // Restart from the beginning
+            mediaPlayer.play();
+        });
 
         primaryStage = stage;
     }
