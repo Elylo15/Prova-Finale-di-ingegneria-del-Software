@@ -30,6 +30,49 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class GamePageController implements Initializable {
+    private final double offsetPions = 5;
+    private final double[][] positions = {
+            {1668, 468},
+            {1726, 468}, {1784, 468},
+            {1812, 415}, {1755, 415}, {1697, 415}, {1639, 415},
+            {1639, 362}, {1697, 362}, {1755, 362}, {1812, 362},
+            {1812, 311}, {1755, 311}, {1697, 311}, {1639, 311},
+            {1639, 256}, {1697, 256}, {1755, 256}, {1812, 256},
+            {1812, 204}, {1726, 175}, {1639, 204},
+            {1639, 150}, {1639, 96},
+            {1673, 53}, {1726, 45}, {1781, 53},
+            {1812, 150}, {1812, 96},
+            {1726, 108}
+    };
+    private final int offsetAreaX = 100;
+    private final int offsetAreaY = 50;
+    private final int layoutPlacedStarterX = 648;
+    private final int layoutPlacedStarterY = 215;
+    private final int fitHeightPlaced = 133;
+    private final int fitWidthPlaced = 200;
+    private final int fitHeightCommon = 141;
+    private final int fitWidthCommon = 208;
+    private final int fitHeightCard = 157;
+    private final int fitWidthCard = 234;
+    private final int layoutYResource = 746;
+    private final int layoutXPick0 = 364;
+    private final int layoutXPick1 = 587;
+    private final int layoutYGold = 895;
+    private final int layoutXDeck = 56;
+    private final int layoutYObjMy = 606;
+    private final int layoutYObj0 = 750;
+    private final int layoutYObj1 = 894;
+    private final int layoutXObjective = 1659;
+    private final int layoutXChoiceObjective1 = 949;
+    private final int layoutXChoiceObjective2 = 1279;
+    private final int layoutYHand = 814;
+    private final int layoutXCard0 = 864;
+    private final int layoutXCard1 = 1110;
+    private final int layoutXCard2 = 1356;
+    private final BlockingQueue<Object> messageQueue = new LinkedBlockingQueue<>();
+    private final ArrayList<Player> players = new ArrayList<>();
+    private final ArrayList<ObjectiveCard> objectivesToChose = new ArrayList<>();
+    private final int[] selectedToPlace = new int[4];
     @FXML
     private Pane mainPane;
     @FXML
@@ -40,97 +83,28 @@ public class GamePageController implements Initializable {
     private ImageView state;
     @FXML
     private Text explanation;
-
+    @FXML
+    private ImageView onTop;
     private ImageView red;
     private ImageView blue;
     private ImageView purple;
     private ImageView green;
-
-    private final double offsetPions = 5;
-    private final double[][] positions = {
-            {1668 , 468},
-            {1726, 468}, {1784, 468},
-            {1812, 415}, {1755, 415}, {1697, 415}, {1639, 415},
-            {1639, 362}, {1697, 362}, {1755, 362}, {1812, 362},
-            {1812, 311}, {1755, 311}, {1697, 311}, {1639, 311},
-            {1639, 256}, {1697, 256}, {1755, 256}, {1812, 256},
-            {1812, 204}, {1726, 175}, {1639, 204},
-            {1639, 150}, {1639, 96},
-            {1673, 53}, {1726, 45}, {1781, 53},
-            {1812, 150}, {1812, 96},
-            {1726, 108 }
-    };
-
-    private final int offsetAreaX = 100;
-    private final int offsetAreaY = 50;
-
-    private final int layoutPlacedStarterX = 648;
-    private final int layoutPlacedStarterY = 215;
-
-    private final int fitHeightPlaced = 133;
-    private final int  fitWidthPlaced = 200;
-
-    private final int fitHeightCommon = 141;
-    private final int fitWidthCommon = 208;
-
-    private final int fitHeightCard = 157;
-    private final int fitWidthCard = 234;
-
-    private final int layoutYResource = 746;
-
-    private final int layoutXPick0 = 364;
-    private final int layoutXPick1 = 587;
-    private final int layoutYGold = 895;
-
-    private final int layoutXDeck = 56;
-
-    private final int layoutYObjMy = 606;
-    private final int layoutYObj0 = 750;
-    private final int layoutYObj1 = 894;
-    private final int layoutXObjective = 1659;
-
-    private final int layoutXChoiceObjective1 = 949;
-    private final int layoutXChoiceObjective2 = 1279;
-
-    private final int layoutYHand = 814;
-
-    private final int layoutXCard0 = 864;
-    private final int layoutXCard1 = 1110;
-    private final int layoutXCard2 = 1356;
-
-    private final BlockingQueue<Object> messageQueue = new LinkedBlockingQueue<>();
-
-    private boolean isLastTurn = false;
-
     private Player myself;
     private PlayerHand myHand;
     private ObjectiveCard myObjective;
     private PlayerArea myPlayerArea;
     private String currentPlayerNickname;
-
     private CommonArea commonArea;
     private ArrayList<ObjectiveCard> commonObjectives;
-
-    private final ArrayList<Player> players = new ArrayList<>();
-
-    private final ArrayList<ObjectiveCard> objectivesToChose = new ArrayList<>();
-
     private String currentState;
-
     private int clickCounter = -1;
+    private boolean isLastTurn = false;
     private boolean firstTimePlace = true;
     private boolean firstTimeDraw = true;
-
+    private ImageView selectedCard;
     private int selectedStarterFront;
     private int selectedPick;
     private int selectedObjective;
-    private ImageView selectedCard;
-    private final int[] selectedToPlace = new int[4];
-
-
-    @FXML
-    private ImageView onTop;
-
 
     /**
      * It is used to initialize the controller, it starts the message listener and processor threads.
@@ -157,7 +131,7 @@ public class GamePageController implements Initializable {
 
                     }
                 } catch (Exception e) {
-                   System.out.println("Error in reading message");
+                    System.out.println("Error in reading message");
                 }
             }
         }).start();
@@ -181,9 +155,11 @@ public class GamePageController implements Initializable {
         }).start();
     }
 
-    //TODO add font to resources, and make expl look ok
+    //TODO add font to resources, and make explanation look ok
+
     /**
      * Processes the message received from the server based on its type
+     * Displays text and shows popups based on the message received
      *
      * @param message the message to process
      */
@@ -194,7 +170,7 @@ public class GamePageController implements Initializable {
                 isLastTurn = currentStateMessage.isLastTurn();
                 currentStateCase(currentStateMessage);
 
-                if(isLastTurn){
+                if (isLastTurn) {
                     state.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Background/LastTurnState.png"))));
                 }
 
@@ -205,21 +181,21 @@ public class GamePageController implements Initializable {
                         showImagePopup("/Images/Background/starterState.png");
                         explanation.setText("Click twice if you want to turn the card around, then place it");
                     } else if (Objects.equals(currentState, "PlaceTurnState")) {
-                        placeTurnCase();
-                        if(!isLastTurn) {
+                        seePlaceHolders();
+                        if (!isLastTurn) {
                             state.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Background/youTurn.png"))));
                             showImagePopup("/Images/Background/yourTurn.png");
                         }
 
-                        if(firstTimePlace) {
+                        if (firstTimePlace) {
                             firstTimePlace = false;
                             explanation.setText("Select a card, turn it around if you want, then place it");
                         }
 
                     } else if (Objects.equals(currentState, "PickTurnState") && !isLastTurn && firstTimeDraw) {
-                            firstTimeDraw = false;
-                            explanation.setText("Click on the card you want to draw");
-//                        I think it will be still setted from placeTurnCase
+                        firstTimeDraw = false;
+                        explanation.setText("Click on the card you want to draw");
+//                        I think it will be still set from placeTurnCase
 //                        if (!isLastTurn)
 //                            state.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Background/yourTurn.png"))));
                     }
@@ -244,7 +220,12 @@ public class GamePageController implements Initializable {
         }
     }
 
-
+    /**
+     * Sets the page with the information received
+     * Displays the pions of the player, and of the current player (if they are not the same)
+     *
+     * @param message currentStateMessage received from the server
+     */
     private void currentStateCase(currentStateMessage message) {
         this.myself = message.getPlayer();
         this.commonArea = message.getPlayer().getCommonArea();
@@ -272,6 +253,9 @@ public class GamePageController implements Initializable {
 
     }
 
+    /**
+     * Displays the starterCard on the page if the player is visualizing his own page
+     */
     private void starterCase() {
         if (clickCounter == -1 && Objects.equals(currentPlayerNickname, myself.getNickname())) {
             addStarterCardsToPane();
@@ -279,6 +263,9 @@ public class GamePageController implements Initializable {
         }
     }
 
+    /**
+     * Displays the objectiveCard on the page if the player is visualizing his own page
+     */
     private void objectiveCase() {
         if (clickCounter == -1 && Objects.equals(currentPlayerNickname, myself.getNickname())) {
             setObjectives();
@@ -286,10 +273,12 @@ public class GamePageController implements Initializable {
         }
     }
 
-    private void placeTurnCase() {
-        seePlaceHolders();
-    }
-
+    /**
+     * Updates the page with the information received
+     * Updates the pions of the player, or of the current player (if they are not the same)
+     *
+     * @param update updatePlayerMessage received from the server
+     */
     private void updatePlayerCase(updatePlayerMessage update) {
 
         Player currentPlayer = update.getPlayer();
@@ -314,6 +303,9 @@ public class GamePageController implements Initializable {
         onTop.toFront();
     }
 
+    /**
+     * Sets the visualized page with the cards of the page's player
+     */
     private void setPage() {
         String nickname = (clickCounter == -1) ? myself.getNickname() : players.get(clickCounter).getNickname();
         playerName.setText(nickname);
@@ -331,6 +323,9 @@ public class GamePageController implements Initializable {
         }
     }
 
+    /**
+     * Displays the commonArea
+     */
     public void addCardsToCommonArea() {
         //Add the front up cards to commonArea
         Platform.runLater(() -> {
@@ -367,6 +362,9 @@ public class GamePageController implements Initializable {
         });
     }
 
+    /**
+     * Displays the client's PlayerHand
+     */
     private void addCardsToHand() {
         Platform.runLater(() -> {
             addNewCardToPane(mainPane, myHand.getPlaceableCards().getFirst().getID(), true,
@@ -381,6 +379,9 @@ public class GamePageController implements Initializable {
         });
     }
 
+    /**
+     * Displays the player's secret objective
+     */
     public void addMyObjective() {
         Platform.runLater(() -> {
             addNewCardToPane(mainPane, myObjective.getID(), true, myObjective, layoutXObjective, layoutYObjMy, fitHeightCommon, fitWidthCommon, this::turnAround);
@@ -388,6 +389,9 @@ public class GamePageController implements Initializable {
         });
     }
 
+    /**
+     * Displays the visualized player's PlayerHand
+     */
     private void addPlayerCardsToHand() {
         if (players.get(clickCounter) != null) {
             PlayerHand playerHand = players.get(clickCounter).getPlayerHand();
@@ -405,6 +409,9 @@ public class GamePageController implements Initializable {
         }
     }
 
+    /**
+     * Displays the visualized player's secret objective back
+     */
     public void addPlayerObjective() {
         if (players.size() > clickCounter && players.get(clickCounter) != null) {
             Platform.runLater(() -> {
@@ -415,6 +422,9 @@ public class GamePageController implements Initializable {
         }
     }
 
+    /**
+     * Displays the starterCard
+     */
     private void addStarterCardsToPane() {
         Platform.runLater(() -> {
             addNewCardToPane(mainPane, myself.getPlayerHand().getPlaceableCards().getFirst().getID(), true,
@@ -423,6 +433,9 @@ public class GamePageController implements Initializable {
         });
     }
 
+    /**
+     * Displays the two objectives from which the player can choose
+     */
     public void setObjectives() {
         Platform.runLater(() -> {
             addNewCardToPane(mainPane, objectivesToChose.get(0).getID(), true, objectivesToChose.get(0), layoutXChoiceObjective1, layoutYHand, fitHeightCard,
@@ -434,16 +447,31 @@ public class GamePageController implements Initializable {
         });
     }
 
+    /**
+     * Displays the cards placeholders that can be clicked to select the position where to place the card
+     * in the playground and to place the objective in the objective area
+     *
+     * @param pane         the pane where to display the placeholders
+     * @param layoutX      the x position of the placeholder
+     * @param layoutY      the y position of the placeholder
+     * @param fitHeight    the height of the placeholder
+     * @param fitWidth     the width of the placeholder
+     * @param eventHandler the event handler to call when the placeholder is clicked
+     */
     private void addClickablePlaceholder(Pane pane, int layoutX, int layoutY, int fitHeight, int fitWidth, EventHandler<MouseEvent> eventHandler) {
         Random random = new Random();
         int color = random.nextInt(5);
 
         Image image = switch (color) {
-            case 0 -> new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Placeholders/blue.png")));
-            case 1 -> new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Placeholders/green.png")));
+            case 0 ->
+                    new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Placeholders/blue.png")));
+            case 1 ->
+                    new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Placeholders/green.png")));
             case 2 -> new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Placeholders/red.png")));
-            case 3 -> new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Placeholders/yellow.png")));
-            case 4 -> new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Placeholders/purple.png")));
+            case 3 ->
+                    new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Placeholders/yellow.png")));
+            case 4 ->
+                    new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Placeholders/purple.png")));
             default -> null;
         };
 
@@ -469,7 +497,12 @@ public class GamePageController implements Initializable {
         }
     }
 
-
+    /**
+     * Checks if the currentPlayer is already in the list of players
+     *
+     * @param currentPlayer the nickname of the player to check
+     * @return true if the player is already in the list, false otherwise
+     */
     private boolean existentPlayer(String currentPlayer) {
         for (Player player : players) {
             if (player.getNickname().equals(currentPlayer))
@@ -478,6 +511,11 @@ public class GamePageController implements Initializable {
         return false;
     }
 
+    /**
+     * Updates the player in the list of players
+     *
+     * @param currentPlayer the player to update
+     */
     private void setPlayer(Player currentPlayer) {
         for (int i = 0; i < players.size(); i++) {
             if (players.get(i).getNickname().equals(currentPlayer.getNickname())) {
@@ -486,10 +524,21 @@ public class GamePageController implements Initializable {
         }
     }
 
+    /**
+     * Adds the player to the list of players
+     *
+     * @param currentPlayer the player to add
+     */
     private void addPlayer(Player currentPlayer) {
         players.add(currentPlayer);
     }
 
+    /**
+     * Removes a card from the pane.
+     *
+     * @param layoutX the x position of the card
+     * @param layoutY the y position of the card
+     */
     private void removeCardFromPosition(int layoutX, int layoutY) {
         Platform.runLater(() -> {
             mainPane.getChildren().stream()
@@ -508,6 +557,14 @@ public class GamePageController implements Initializable {
         });
     }
 
+    /**
+     * Bind the image to the card and set the card to the imageView
+     *
+     * @param imageView the imageView to set the card to
+     * @param cardID    the ID of the card
+     * @param front     if the card is front up
+     * @param card      the card to set to the imageView
+     */
     private void setupCard(ImageView imageView, int cardID, boolean front, Card card) {
         ImageBinder imageBinder = new ImageBinder();
         ImageView cardImageView = imageBinder.bindImage(cardID, front);
@@ -515,6 +572,18 @@ public class GamePageController implements Initializable {
         imageView.setUserData(card); // Store card ID and state
     }
 
+    /**
+     * Creates an imageView with the card and sets the card to the imageView
+     *
+     * @param cardID    the ID of the card
+     * @param front     if the card is front up
+     * @param card      the card to set to the imageView
+     * @param layoutX   the x position of the imageView
+     * @param layoutY   the y position of the imageView
+     * @param fitHeight the height of the imageView
+     * @param fitWidth  the width of the imageView
+     * @return the imageView with the card set
+     */
     private ImageView createCardImageView(int cardID, boolean front, Card card, int layoutX, int layoutY, int fitHeight, int fitWidth) {
         ImageView imageView = new ImageView();
         imageView.setFitWidth(fitWidth);
@@ -526,6 +595,19 @@ public class GamePageController implements Initializable {
         return imageView;
     }
 
+    /**
+     * Adds a new card to the pane if it doesn't exist already in the same position and with the same ID
+     *
+     * @param pane         the pane where to add the card
+     * @param cardID       the ID of the card
+     * @param front        if the card is front up
+     * @param card         the card to add
+     * @param layoutX      the x position of the card
+     * @param layoutY      the y position of the card
+     * @param fitHeight    the height of the card
+     * @param fitWidth     the width of the card
+     * @param eventHandler the event handler to call when the card is clicked
+     */
     private void addNewCardToPane(Pane pane, int cardID, boolean front, Card card, int layoutX, int layoutY, int fitHeight, int fitWidth, EventHandler<MouseEvent> eventHandler) {
         ImageView existingCard = pane.getChildren().stream()
                 .filter(node -> node instanceof ImageView)
@@ -557,6 +639,11 @@ public class GamePageController implements Initializable {
         }
     }
 
+    /**
+     * Turns the card around when clicked
+     *
+     * @param event the mouse event
+     */
     private void turnAround(MouseEvent event) {
         ImageView clickedCard = (ImageView) event.getSource();
         Card card = (Card) clickedCard.getUserData();
@@ -583,6 +670,13 @@ public class GamePageController implements Initializable {
             fadeOut.play();
         }
     }
+
+    /**
+     * Selects the card when clicked once, making it bigger and stores this selection in selectedCard
+     * Turns the card around when clicked twice
+     *
+     * @param event the mouse event
+     */
     private void placeStarter(MouseEvent event) {
         if (clickCounter == -1) {
             ImageView clickedCard = (ImageView) event.getSource();
@@ -604,7 +698,12 @@ public class GamePageController implements Initializable {
         }
     }
 
-
+    /**
+     * Selects the card when clicked once, making it bigger and stores this selection in selectedCard
+     * Turns the card around when clicked twice
+     *
+     * @param event the mouse event
+     */
     private void chooseObjective(MouseEvent event) {
         ImageView clickedCard = (ImageView) event.getSource();
         ObjectiveCard card = (ObjectiveCard) clickedCard.getUserData();
@@ -628,6 +727,11 @@ public class GamePageController implements Initializable {
         }
     }
 
+    /**
+     * If there is a selected card, it sends the information about the selectedCard to the server
+     *
+     * @param event the mouse event
+     */
     private void confirmPlaceStarter(MouseEvent event) {
         if (selectedCard != null) {
             makeSmallerTransition(selectedCard);
@@ -635,12 +739,17 @@ public class GamePageController implements Initializable {
             fadeOutTransition(mainPane, image, 0.5);
             removeCardFromPosition(layoutXCard1, layoutYHand);
             StarterCard card = (StarterCard) selectedCard.getUserData();
-            addNewCardToPane(playground, card.getID(), card.isFront(), card,layoutPlacedStarterX, layoutPlacedStarterY,
+            addNewCardToPane(playground, card.getID(), card.isFront(), card, layoutPlacedStarterX, layoutPlacedStarterY,
                     fitHeightPlaced, fitWidthPlaced, null);
             GUIMessages.writeToClient(selectedStarterFront);
         }
     }
 
+    /**
+     * If there is a selected card, it sends the information about the selectedCard to the server
+     *
+     * @param event the mouse event
+     */
     private void confirmPlaceObjective(MouseEvent event) {
         if (selectedCard != null) {
             makeSmallerTransition(selectedCard);
@@ -655,7 +764,13 @@ public class GamePageController implements Initializable {
         }
     }
 
-    private void hooverEffect(ImageView imageView){
+    /**
+     * When the mouse enters the imageView, it makes it bigger
+     * When the mouse exits the imageView, it makes it smaller
+     *
+     * @param imageView the imageView to apply the effect to
+     */
+    private void hooverEffect(ImageView imageView) {
         imageView.setOnMouseEntered(e -> makeBiggerTransition(imageView));
         imageView.setOnMouseExited(e -> {
             if (selectedCard != imageView)
@@ -663,6 +778,11 @@ public class GamePageController implements Initializable {
         });
     }
 
+    /**
+     * When the mouse enters the imageView, it makes it bigger
+     *
+     * @param imageView the imageView to apply the effect to
+     */
     private void makeBiggerTransition(ImageView imageView) {
         ScaleTransition makeBigger = new ScaleTransition(Duration.millis(200), imageView);
         makeBigger.setToX(1.1);
@@ -670,6 +790,11 @@ public class GamePageController implements Initializable {
         makeBigger.play();
     }
 
+    /**
+     * When the mouse exits the imageView, it makes it smaller
+     *
+     * @param imageView the imageView to apply the effect to
+     */
     private void makeSmallerTransition(ImageView imageView) {
         ScaleTransition makeSmaller = new ScaleTransition(Duration.millis(200), imageView);
         makeSmaller.setToX(1.0);
@@ -677,10 +802,16 @@ public class GamePageController implements Initializable {
         makeSmaller.play();
     }
 
-
     //TODO see if it works as expected
+
+    /**
+     * When the mouse is clicked once, and if the page visualized is the client's, it selects the card to place
+     * When the mouse is clicked twice, it turns the card around
+     *
+     * @param event the mouse event
+     */
     private void choseCardToPlace(MouseEvent event) {
-        if(clickCounter == -1 && Objects.equals(currentState, "PlaceTurnState")) {
+        if (clickCounter == -1 && Objects.equals(currentState, "PlaceTurnState")) {
             ImageView clickedCard = (ImageView) event.getSource();
             PlaceableCard card = (PlaceableCard) clickedCard.getUserData();
             int cardID = card.getID();
@@ -710,6 +841,13 @@ public class GamePageController implements Initializable {
     }
 
     //TODO see if it works as expected
+
+    /**
+     * When the mouse is clicked, it selects the position where to place the card
+     * and send all the information needed to the server
+     *
+     * @param event the mouse event
+     */
     private void confirmPlaceCard(MouseEvent event) {
         if (selectedCard != null) {
             makeSmallerTransition(selectedCard);
@@ -729,12 +867,17 @@ public class GamePageController implements Initializable {
 
             removeCardFromPosition((int) selectedCard.getLayoutX(), (int) selectedCard.getLayoutY());
 
-            addNewCardToPane(playground, card.getID() , card.isFront(), card, selectedToPlace[2], selectedToPlace[3],
+            addNewCardToPane(playground, card.getID(), card.isFront(), card, selectedToPlace[2], selectedToPlace[3],
                     fitHeightCard, fitWidthCard, null);
-           GUIMessages.writeToClient(selectedToPlace);
+            GUIMessages.writeToClient(selectedToPlace);
         }
     }
 
+    /**
+     * Calculate the available position in the PlayerHand
+     *
+     * @return the available position in the PlayerHand
+     */
     private int[] findFirstAvailableHandPosition() {
         int[][] handPositions = {
                 {layoutXCard0, layoutYHand},
@@ -757,7 +900,11 @@ public class GamePageController implements Initializable {
         return null; // No available positions
     }
 
-
+    /**
+     * When the mouse is clicked, it selects the card to pick
+     *
+     * @param event the mouse event
+     */
     private void pickCard(MouseEvent event) {
         if (clickCounter == -1 && Objects.equals(currentState, "PickTurnState") && !isLastTurn) {
             ImageView clickedCard = (ImageView) event.getSource();
@@ -830,6 +977,9 @@ public class GamePageController implements Initializable {
         }
     }
 
+    /**
+     * Effects to apply when a gold face up card is picked
+     */
     private void pickGold(Card card, int cardID, int layoutX, int layoutY, int layoutXPick) {
         addNewCardToPane(mainPane, commonArea.getD2().getList().get(1).getID(), false, commonArea.getD2().getList().get(1),
                 layoutXDeck, layoutYGold, fitHeightCommon, fitWidthCommon, this::pickCard);
@@ -841,6 +991,9 @@ public class GamePageController implements Initializable {
         addNewCardToPane(mainPane, cardID, true, card, layoutX, layoutY, fitHeightCard, fitWidthCard, this::choseCardToPlace);
     }
 
+    /**
+     * Effects to apply when a resource face up card is picked
+     */
     private void pickResource(Card card, int cardID, int layoutX, int layoutY, int layoutXPick) {
         addNewCardToPane(mainPane, commonArea.getD1().getList().get(1).getID(), false, commonArea.getD1().getList().get(1),
                 layoutXDeck, layoutYResource, fitHeightCommon, fitWidthCommon, this::pickCard);
@@ -854,6 +1007,11 @@ public class GamePageController implements Initializable {
 
 
     //TODO create images for when non you
+
+    /**
+     * When clicked, it displays the next player's page or the client's page
+     * If the state is StarterCardState or ObjectiveState, it displays a popup
+     */
     @FXML
     private void switchToNextPlayer() {
         if (!Objects.equals(currentState, "StarterCardState") && !Objects.equals(currentState, "ObjectiveState")) {
@@ -867,13 +1025,18 @@ public class GamePageController implements Initializable {
             showImagePopup("/Images/Background/starterState.png");
         } else if (Objects.equals(currentState, "ObjectiveState") && Objects.equals(currentPlayerNickname, myself.getNickname())) {
             showImagePopup("/Images/Background/objectiveState.png");
-       }  // else if(Objects.equals(currentState, "StarterCardState")) {
+        }  // else if(Objects.equals(currentState, "StarterCardState")) {
 //            showImagePopup("/Images/Background/waitStarter.png");
 //        } else if(Objects.equals(currentState, "ObjectiveState")) {
 //            showImagePopup("/Images/Background/waitObjective.png");
 //        }
     }
 
+    /**
+     * Displays the popup with the image
+     *
+     * @param imagePath the path of the image
+     */
     private void showImagePopup(String imagePath) {
         Platform.runLater(() -> {
             Image imageLoad = new Image(Objects.requireNonNull(getClass().getResourceAsStream(imagePath)));
@@ -890,6 +1053,12 @@ public class GamePageController implements Initializable {
         });
     }
 
+    /**
+     * Fades in the image
+     *
+     * @param image      the image to fade in
+     * @param maxOpacity the maximum opacity
+     */
     private void fadeInTransition(ImageView image, double maxOpacity) {
         FadeTransition fadeTransitionIn = new FadeTransition(Duration.seconds(1), image);
         fadeTransitionIn.setFromValue(0.0);
@@ -898,6 +1067,13 @@ public class GamePageController implements Initializable {
         fadeTransitionIn.play();
     }
 
+    /**
+     * Fades out the image and removes it
+     *
+     * @param pane       the pane where the image is
+     * @param image      the image to fade out
+     * @param maxOpacity the maximum opacity
+     */
     private void fadeOutTransition(Pane pane, ImageView image, double maxOpacity) {
         FadeTransition fadeTransitionOut = new FadeTransition(Duration.seconds(1), image);
         fadeTransitionOut.setFromValue(maxOpacity);
@@ -909,6 +1085,11 @@ public class GamePageController implements Initializable {
     }
 
 
+    /**
+     * Fades in the image and then fades it out
+     *
+     * @param image the image to fade in and out
+     */
     private void fadeTransitionForPopUP(ImageView image) {
         FadeTransition fadeTransitionIn = new FadeTransition(Duration.seconds(1), image);
         fadeTransitionIn.setFromValue(0.0);
@@ -933,14 +1114,20 @@ public class GamePageController implements Initializable {
 
 
     //TODO try to see if the movement works
-    private void setPions(Player player){
+
+    /**
+     * Displays the pions positions based on color
+     *
+     * @param player the player to set the pions positions
+     */
+    private void setPions(Player player) {
         Platform.runLater(() -> {
             String color = player.getColor();
             List<ImageView> allPions = Arrays.asList(red, blue, purple, green);
             int score = player.getScore();
             Image img;
 
-            if(Objects.equals(color, "red") && red == null){
+            if (Objects.equals(color, "red") && red == null) {
                 img = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Pions/CODEX_pion_rouge.png")));
                 red = new ImageView(img);
                 setPionPosition(red, score, allPions);
@@ -956,35 +1143,49 @@ public class GamePageController implements Initializable {
                 img = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Pions/CODEX_pion_vert.png")));
                 green = new ImageView(img);
                 setPionPosition(green, score, allPions);
-            } else if(Objects.equals(color, "red")){
+            } else if (Objects.equals(color, "red")) {
                 setPionPosition(red, score, allPions);
-            } else if(Objects.equals(color, "blue")){
+            } else if (Objects.equals(color, "blue")) {
                 setPionPosition(blue, score, allPions);
-            } else if(Objects.equals(color, "purple")){
+            } else if (Objects.equals(color, "purple")) {
                 setPionPosition(purple, score, allPions);
-            } else if(Objects.equals(color, "green")){
+            } else if (Objects.equals(color, "green")) {
                 setPionPosition(green, score, allPions);
             }
         });
     }
 
-    private void setPionPosition(ImageView pion, int score, List<ImageView> allPions){
+    /**
+     * Sets the pion position based on score
+     *
+     * @param pion     the pion to set the position
+     * @param score    the score of the player
+     * @param allPions the list of all pions
+     */
+    private void setPionPosition(ImageView pion, int score, List<ImageView> allPions) {
 
         if (pion != null && score == 0 && isPionAtDesiredPosition(pion, 0)) {
-            double[] adjustedPosition = getAdjustedPosition(allPions, positions[0][0] , positions[0][1]);
+            double[] adjustedPosition = getAdjustedPosition(allPions, positions[0][0], positions[0][1]);
             pion.setLayoutX(adjustedPosition[0]);
             pion.setLayoutY(adjustedPosition[1]);
             pion.setFitHeight(49);
             pion.setFitWidth(49);
             pion.setPreserveRatio(true);
             mainPane.getChildren().add(pion);
-        } else  if (pion != null && isPionAtDesiredPosition(pion, score)) {
+        } else if (pion != null && isPionAtDesiredPosition(pion, score)) {
             addPoints(pion, score, allPions);
             updatePionsPositions(allPions, pion);
             pion.toFront();
         }
     }
 
+    /**
+     * Move the pion to the desired position based on his score
+     *
+     * @param pion     the pion to add points to
+     * @param score    the score of the player
+     * @param allPions the list of all pions
+     */
     private void addPoints(ImageView pion, int score, List<ImageView> allPions) {
         Platform.runLater(() -> {
             if (score < 0 || score > 29) {
@@ -1019,6 +1220,14 @@ public class GamePageController implements Initializable {
         });
     }
 
+    /**
+     * Get the adjusted position of the pion, if in his desired position there is already a pion
+     *
+     * @param pions   the list of all pions
+     * @param targetX the x position of the pion
+     * @param targetY the y position of the pion
+     * @return the adjusted position of the pion
+     */
     private double[] getAdjustedPosition(List<ImageView> pions, double targetX, double targetY) {
         double offsetY = 0;
 
@@ -1027,17 +1236,30 @@ public class GamePageController implements Initializable {
                 offsetY -= offsetPions;
             }
         }
-        return new double[] { targetX, targetY + offsetY };
+        return new double[]{targetX, targetY + offsetY};
     }
 
+    /**
+     * Check if the pion is at the desired position
+     *
+     * @param pion  the pion to check
+     * @param score the score of the player
+     * @return true if the pion is at the desired position, false otherwise
+     */
     private boolean isPionAtDesiredPosition(ImageView pion, int score) {
         double[] desiredPosition = positions[score];
         return pion.getLayoutX() != desiredPosition[0] && pion.getLayoutY() != desiredPosition[1]
-                || pion.getLayoutX() != desiredPosition[0]  && pion.getLayoutY() != desiredPosition[1] - offsetPions
+                || pion.getLayoutX() != desiredPosition[0] && pion.getLayoutY() != desiredPosition[1] - offsetPions
                 || pion.getLayoutX() != desiredPosition[0] && pion.getLayoutY() != desiredPosition[1] - 2 * offsetPions
                 || pion.getLayoutX() != desiredPosition[0] && pion.getLayoutY() != desiredPosition[1] - 3 * offsetPions;
     }
 
+    /**
+     * Update the pions positions if a pion moved
+     *
+     * @param allPions  the list of all pions
+     * @param movedPion the pion that moved
+     */
     private void updatePionsPositions(List<ImageView> allPions, ImageView movedPion) {
         Platform.runLater(() -> {
             double movedPionY = movedPion.getLayoutY();
@@ -1051,6 +1273,12 @@ public class GamePageController implements Initializable {
         });
     }
 
+    /**
+     * Gets the score based on the position
+     *
+     * @param x the x position
+     * @param y the y position
+     */
     private int getScoreByPosition(double x, double y) {
 
         for (int score = 0; score <= positions.length; score++) {
@@ -1063,7 +1291,10 @@ public class GamePageController implements Initializable {
         return -1; //not found
     }
 
-    private void seePlaceHolders(){
+    /**
+     * Displays the placeholders of the available positions in the playerArea
+     */
+    private void seePlaceHolders() {
         ArrayList<Integer[]> availablePositions = myPlayerArea.getAvailablePosition();
         for (Integer[] pos : availablePositions) {
             int newLayoutX = layoutPlacedStarterX + pos[0] * offsetAreaX;
@@ -1072,6 +1303,9 @@ public class GamePageController implements Initializable {
         }
     }
 
+    /**
+     * Removes all the placeholders from the playerArea
+     */
     private void removeAllPlaceholders() {
         List<ImageView> placeholders = playground.getChildren().stream()
                 .filter(node -> node instanceof ImageView && node.getStyleClass().contains("placeholder"))
@@ -1083,7 +1317,11 @@ public class GamePageController implements Initializable {
         }
     }
 
-
+    /**
+     * Displays the cards in the playerArea
+     *
+     * @param playerArea the playerArea to display
+     */
     public void displayPlayerArea(PlayerArea playerArea) {
         Platform.runLater(() -> {
             // Remove all existing cards from the player area
@@ -1112,14 +1350,32 @@ public class GamePageController implements Initializable {
         });
     }
 
+    /**
+     * Calculates the x position of the card
+     *
+     * @param card the card to calculate the x position
+     * @return the x position of the card
+     */
     private int calculateLayoutX(PlaceableCard card) {
         return layoutPlacedStarterX + card.getCells().getFirst().getColumn() * offsetAreaX;
     }
 
+    /**
+     * Calculates the y position of the card
+     *
+     * @param card the card to calculate the y position
+     * @return the y position of the card
+     */
     private int calculateLayoutY(PlaceableCard card) {
         return layoutPlacedStarterY + card.getCells().getFirst().getRow() * offsetAreaY;
     }
 
+    /**
+     * Adjusts the elements to fit in the playerArea
+     *
+     * @param cardImageViews     the list of cardImageViews
+     * @param availablePositions the list of available positions
+     */
     private void adjustElementsToFit(List<ImageView> cardImageViews, ArrayList<Integer[]> availablePositions) {
         double playgroundWidth = playground.getWidth();
         double playgroundHeight = playground.getHeight();
@@ -1177,6 +1433,12 @@ public class GamePageController implements Initializable {
         }
     }
 
+    /**
+     * Adjusts the z-order of the card
+     *
+     * @param cardImageView the cardImageView to adjust
+     * @param card          the card to adjust
+     */
     private void adjustCardZOrder(ImageView cardImageView, PlaceableCard card) {
         Cell cell = card.getCells().getFirst();
 
