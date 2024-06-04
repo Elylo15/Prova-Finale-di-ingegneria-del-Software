@@ -4,8 +4,12 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCombination;
+import javafx.scene.text.Font;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
 
@@ -24,6 +28,19 @@ public class SceneManager {
      * @param stage the primary stage
      */
     public static void setPrimaryStage(Stage stage) {
+        //TODO: change the font nad import song
+        //Font customFont = Font.loadFont(SceneManager.class.getResourceAsStream("/Fonts/MyCustomFont.ttf"), 20);
+//        String audioFile = "audio/song.mp3";
+//        Media media = new Media(new File(audioFile).toURI().toString());
+//
+//        MediaPlayer mediaPlayer = new MediaPlayer(media);
+//
+//        mediaPlayer.play();
+//        mediaPlayer.setOnEndOfMedia(() -> {
+//            mediaPlayer.seek(mediaPlayer.getStartTime()); // Restart from the beginning
+//            mediaPlayer.play();
+//        });
+
         primaryStage = stage;
     }
 

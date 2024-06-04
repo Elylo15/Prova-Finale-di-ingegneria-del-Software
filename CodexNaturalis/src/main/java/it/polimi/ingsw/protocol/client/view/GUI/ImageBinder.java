@@ -15,11 +15,11 @@ public class ImageBinder {
      */
     public ImageBinder() {
         for (int i = 1; i < 10; i++)
-            imageMap.put(i, new String[]{"/img/Cards/Front/00" + i + ".png", "/img/Cards/Back/00" + i + ".png"});
+            imageMap.put(i, new String[]{"/Images/Cards/Front/00" + i + ".png", "/Images/Cards/Back/00" + i + ".png"});
         for (int i = 10; i < 100; i++)
-            imageMap.put(i, new String[]{"/img/Cards/Front/0" + i + ".png", "/img/Cards/Back/0" + i + ".png"});
+            imageMap.put(i, new String[]{"/Images/Cards/Front/0" + i + ".png", "/Images/Cards/Back/0" + i + ".png"});
         for (int i = 100; i < 103; i++)
-            imageMap.put(i, new String[]{"/img/Cards/Front/" + i + ".png", "/img/Cards/Back/" + i + ".png"});
+            imageMap.put(i, new String[]{"/Images/Cards/Front/" + i + ".png", "/Images/Cards/Back/" + i + ".png"});
     }
 
     /**

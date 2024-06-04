@@ -23,13 +23,13 @@ public class WaitingController implements Initializable {
 
         switch (color) {
             case "red" ->
-                img = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/img/Waiting/WaitingRed.png")));
+                img = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Waiting/WaitingRed.png")));
             case "blue" ->
-                img = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/img/Waiting/WaitingBlue.png")));
+                img = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Waiting/WaitingBlue.png")));
             case "green" ->
-                img = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/img/Waiting/WaitingGreen.png")));
+                img = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Waiting/WaitingGreen.png")));
             case "purple" ->
-                img = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/img/Waiting/WaitingPurple.png")));
+                img = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Waiting/WaitingPurple.png")));
         }
 
         ImageView imageView = new ImageView(img);

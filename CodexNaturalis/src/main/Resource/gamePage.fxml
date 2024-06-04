@@ -14,19 +14,19 @@
         <center>
             <Pane fx:id="mainPane" prefHeight="1080.0" prefWidth="1920.0" BorderPane.alignment="CENTER">
                 <ImageView id="background" fitHeight="1080.0" fitWidth="1920.0" preserveRatio="true">
-                    <Image url="@img/Background/Background.png" />
+                    <Image url="@Images/Background/Background.png" />
                 </ImageView>
                 <ImageView id="scoreBoard" fitHeight="491.0" fitWidth="246.0" layoutX="1627.0" layoutY="38.0" preserveRatio="true">
-                    <Image url="@img/Scoreboard/plateau.png" />
+                    <Image url="@Images/Scoreboard/plateau.png" />
                 </ImageView>
             <ImageView id="NextPlayer" fitHeight="243.0" fitWidth="334.0" layoutX="11.0" layoutY="5.0" onMouseClicked="#switchToNextPlayer" preserveRatio="true">
                <image>
-                  <Image url="@img/Background/next.png" />
+                  <Image url="@Images/Background/next.png" />
                </image>
             </ImageView>
             <ImageView id="state" fx:id="state" fitHeight="243.0" fitWidth="334.0" layoutX="1099.0" layoutY="5.0" preserveRatio="true">
                <image>
-                  <Image url="@img/Background/starterState.png" />
+                  <Image url="@Images/Background/starterState.png" />
                </image>
             </ImageView>
                 <Label id="playerName" fx:id="playerName" alignment="CENTER" contentDisplay="CENTER" layoutX="348.0" layoutY="-35.0" prefHeight="176.0" prefWidth="742.0" text="Bianca" textAlignment="CENTER">
@@ -37,7 +37,7 @@
                 <Pane id="Playground" fx:id="playground" layoutX="16.0" layoutY="152.0" prefHeight="540.0" prefWidth="1556.0">
                 </Pane>
                 <ImageView id="layout" fx:id="onTop" fitHeight="1080.0" fitWidth="1920.0" focusTraversable="true" mouseTransparent="true" preserveRatio="true">
-                    <Image url="@img/Background/GamePage.png" />
+                    <Image url="@Images/Background/GamePage.png" />
                 </ImageView>
             <Text id="explanation" fx:id="explanation" layoutX="866.0" layoutY="1025.0" strokeType="OUTSIDE" strokeWidth="0.0" textAlignment="CENTER" wrappingWidth="738.1369018554688">
                <font>

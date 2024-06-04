@@ -1,6 +1,7 @@
 module CodexNaturalis {
     requires javafx.controls;
     requires javafx.fxml;
+    requires javafx.media;
     requires java.rmi;
     requires com.fasterxml.jackson.core;
     requires com.fasterxml.jackson.databind;

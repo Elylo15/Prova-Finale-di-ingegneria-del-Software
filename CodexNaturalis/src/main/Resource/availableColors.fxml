@@ -11,27 +11,27 @@
          <children>
             <ImageView id="chose" fitHeight="1108.0" fitWidth="2008.0" focusTraversable="true" layoutX="-25.0" layoutY="-71.0" mouseTransparent="true" preserveRatio="true">
                <image>
-                  <Image url="@img/Colors/Choose.png" />
+                  <Image url="@Images/Colors/Choose.png" />
                </image>
             </ImageView>
             <ImageView id="red" fx:id="red" fitHeight="540.0" fitWidth="701.0" focusTraversable="true" layoutX="1434.0" layoutY="543.0" preserveRatio="true">
                <image>
-                  <Image url="@img/Colors/red.png" />
+                  <Image url="@Images/Colors/red.png" />
                </image>
             </ImageView>
             <ImageView id="purple" fx:id="purple" fitHeight="540.0" fitWidth="701.0" focusTraversable="true" layoutX="496.0" layoutY="543.0" preserveRatio="true">
                <image>
-                  <Image url="@img/Colors/purple.png" />
+                  <Image url="@Images/Colors/purple.png" />
                </image>
             </ImageView>
             <ImageView id="blue" fx:id="blue" fitHeight="540.0" fitWidth="701.0" focusTraversable="true" layoutX="922.0" layoutY="545.0" preserveRatio="true">
                <image>
-                  <Image url="@img/Colors/blue.png" />
+                  <Image url="@Images/Colors/blue.png" />
                </image>
             </ImageView>
             <ImageView id="green" fx:id="green" fitHeight="540.0" fitWidth="701.0" focusTraversable="true" layoutX="-18.0" layoutY="543.0" preserveRatio="true">
                <image>
-                  <Image url="@img/Colors/green.png" />
+                  <Image url="@Images/Colors/green.png" />
                </image>
             </ImageView>
          </children>

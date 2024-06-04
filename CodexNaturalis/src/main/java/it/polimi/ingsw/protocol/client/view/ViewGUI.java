@@ -22,8 +22,8 @@ import java.util.ArrayList;
  * It uses the GUIMessages class to communicate with the client.
  */
 public class ViewGUI extends View {
-    int counter = 0;
-    String color;
+    private boolean firstTime = true;
+    private String color;
 
 
     /**
@@ -217,8 +217,8 @@ public class ViewGUI extends View {
         GUIMessages.clearQueue();
         System.out.println(message.getStateName());
         GUIMessages.writeToGUI(message);
-        if (counter == 0) {
-            counter++; //Load this page only the first time the method is called
+        if (firstTime) {
+            firstTime = false; //Load this page only the first time the method is called
             Platform.runLater(SceneManager::starterPage);
         }
     }

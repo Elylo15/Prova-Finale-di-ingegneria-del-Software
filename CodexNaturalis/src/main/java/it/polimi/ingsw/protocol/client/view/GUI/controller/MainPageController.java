@@ -44,20 +44,20 @@ public class MainPageController {
             counter++;
 
         if(counter == 1 ) {
-            img = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/img/Rules/Rules1.png")));
+            img = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Rules/Rules1.png")));
         }if(counter == 2) {
 
-            img = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/img/Rules/Rules2.png")));
+            img = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Rules/Rules2.png")));
         }else if(counter == 3) {
 
-            img = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/img/Rules/Rules3.png")));
+            img = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Rules/Rules3.png")));
         }else if(counter == 4) {
 
-            img = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/img/Rules/Rules4.png")));
+            img = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Rules/Rules4.png")));
         }else if(counter == 5) {
-            img = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/img/Rules/Rules5.png")));
+            img = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Rules/Rules5.png")));
         } else if (counter == 0) {
-            img = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/img/Background/Background.png")));
+            img = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Background/Background.png")));
         }
 
         ImageView imageView = new ImageView(img);
