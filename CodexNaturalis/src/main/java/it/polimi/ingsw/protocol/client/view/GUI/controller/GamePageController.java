@@ -392,15 +392,6 @@ public class GamePageController implements Initializable {
                             myHand.getPlaceableCards().get(i), layoutXCard0 + i * 246, layoutYHand, fitHeightCard, fitWidthCard, this::choseCardToPlace);
                     onTop.toFront();
             }
-//            addNewCardToPane(mainPane, myHand.getPlaceableCards().getFirst().getID(), true,
-//                    myHand.getPlaceableCards().getFirst(), layoutXCard0, layoutYHand, fitHeightCard, fitWidthCard, this::choseCardToPlace);
-//            onTop.toFront();
-//            addNewCardToPane(mainPane, myHand.getPlaceableCards().get(1).getID(), true,
-//                    myHand.getPlaceableCards().get(1), layoutXCard1, layoutYHand, fitHeightCard, fitWidthCard, this::choseCardToPlace);
-//            onTop.toFront();
-//            addNewCardToPane(mainPane, myHand.getPlaceableCards().get(2).getID(), true,
-//                    myHand.getPlaceableCards().get(2), layoutXCard2, layoutYHand, fitHeightCard, fitWidthCard, this::choseCardToPlace);
-//            onTop.toFront();
         });
     }
 
@@ -415,7 +406,7 @@ public class GamePageController implements Initializable {
         if (players.get(clickCounter) != null) {
             PlayerHand playerHand = players.get(clickCounter).getPlayerHand();
             Platform.runLater(() -> {
-                if(playerHand.getPlaceableCards().size() < 2)
+                if(playerHand.getPlaceableCards().size() < 3)
                     removeCardFromPosition(layoutXCard2, layoutYHand);
 
                 for(int i = 0; i < playerHand.getPlaceableCards().size(); i++) {
@@ -423,16 +414,6 @@ public class GamePageController implements Initializable {
                                 playerHand.getPlaceableCards().get(i), layoutXCard0 + i * 246, layoutYHand, fitHeightCard, fitWidthCard, null);
                         onTop.toFront();
                 }
-//
-//                addNewCardToPane(mainPane, playerHand.getPlaceableCards().getFirst().getID(), false, playerHand.getPlaceableCards().getFirst(),
-//                        layoutXCard0, layoutYHand, fitHeightCard, fitWidthCard, null);
-//                onTop.toFront();
-//                addNewCardToPane(mainPane, playerHand.getPlaceableCards().get(1).getID(), false, playerHand.getPlaceableCards().get(1),
-//                        layoutXCard1, layoutYHand, fitHeightCard, fitWidthCard, null);
-//                onTop.toFront();
-//                addNewCardToPane(mainPane, playerHand.getPlaceableCards().get(2).getID(), false, playerHand.getPlaceableCards().get(2),
-//                        layoutXCard2, layoutYHand, fitHeightCard, fitWidthCard, null);
-//                onTop.toFront();
             });
         }
     }
@@ -573,16 +554,19 @@ public class GamePageController implements Initializable {
                     .filter(node -> node instanceof ImageView)
                     .filter(node -> {
                         ImageView imageView = (ImageView) node;
-                        return (int) imageView.getLayoutX() == layoutX && (int) imageView.getLayoutY() == layoutY;
+                        return imageView.getLayoutX() == layoutX && imageView.getLayoutY() == layoutY;
                     })
                     .toList();
 
             // Remove nodes after iteration
             for (Node node : nodesToRemove) {
                 ImageView imageView = (ImageView) node;
-                imageView.toFront(); // Card to the front
+//                imageView.toFront(); // Card to the front
                 onTop.toFront();
-                fadeOutTransition(mainPane, imageView, 1.0);
+                if(imageView.getUserData() instanceof Card)
+                    fadeOutTransition(mainPane, imageView, 1);
+                else
+                    fadeOutTransition(mainPane, imageView, 0.5);
             }
             onTop.toFront();
         });
@@ -927,7 +911,6 @@ public class GamePageController implements Initializable {
             this.selectedToPlace[3] = relativePosY;
 
             PlaceableCard card = (PlaceableCard) selectedCard.getUserData();
-
 
             addNewCardToPane(playground, card.getID(), card.isFront(), card, placeholderX, placeholderY,
                     fitHeightPlaced, fitWidthPlaced, null);
