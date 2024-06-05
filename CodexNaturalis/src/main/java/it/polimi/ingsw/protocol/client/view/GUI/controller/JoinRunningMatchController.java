@@ -83,7 +83,7 @@ public class JoinRunningMatchController {
                     // Send a message to the client with the match ID and disable all other buttons
                     GUIMessages.writeToClient(new serverOptionMessage(false, null, Integer.parseInt(item), false, null));
                     disableOtherButtons(button);
-                    Platform.runLater(SceneManager::waiting);
+                    //Platform.runLater(SceneManager::waiting);
                 }
             });
             buttons.add(button);

@@ -123,7 +123,7 @@ public class ViewGUI extends View {
     @Override
     public void answerToConnection(connectionResponseMessage message) {
         //to avoid reading unexpected messages
-        GUIMessages.clearQueue();
+        //GUIMessages.clearQueue();
         //da vedere poi
     }
 

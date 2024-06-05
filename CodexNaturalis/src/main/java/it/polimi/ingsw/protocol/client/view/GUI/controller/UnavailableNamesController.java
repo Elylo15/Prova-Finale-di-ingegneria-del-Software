@@ -7,6 +7,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
+import java.util.ArrayList;
+
 public class UnavailableNamesController {
     @FXML
     public Label unavailableNames;
@@ -27,11 +29,16 @@ public class UnavailableNamesController {
         //deserialize the unavailableNamesMessage
         this.message = (unavailableNamesMessage) GUIMessages.readToGUI();
         // set the label to the unavailable names
-        if (message.toString().equals("[]")) {
+        ArrayList<String> names = message.getNames();
+
+        if(names.isEmpty()) {
             unavailableNames.setText("All nicknames are available");
         } else {
-            unavailableNames.setText("These nicknames are not available: " + message.getNames());
+            unavailableNames.setText("These nicknames are not available: ");
+            for (int i = 0; i < names.size(); i++)
+                unavailableNames.setText(names.get(i) + "\n");
         }
+
         submitButton.setOnAction(event -> {
             if (nameToChoose.getText().isEmpty()) {
                 return;
