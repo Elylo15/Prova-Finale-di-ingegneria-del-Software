@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
 <BorderPane xmlns:fx="http://javafx.com/fxml/1" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-            prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21"
+            prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/21"
             fx:controller="it.polimi.ingsw.protocol.client.view.GUI.controller.ExpectedPlayersController">
     <center>
         <GridPane BorderPane.alignment="CENTER">

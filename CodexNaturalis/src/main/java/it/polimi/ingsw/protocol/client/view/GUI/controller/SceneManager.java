@@ -28,17 +28,6 @@ public class SceneManager {
      * @param stage the primary stage
      */
     public static void setPrimaryStage(Stage stage) {
-        Font customFont = Font.loadFont(SceneManager.class.getResourceAsStream("/Fonts/FantasyScript.ttf"), 20);
-        String audioFile = Objects.requireNonNull(SceneManager.class.getResource("/Audio/song.mp3")).toString();
-        Media media = new Media(audioFile);
-        MediaPlayer mediaPlayer = new MediaPlayer(media);
-
-        mediaPlayer.play();
-        mediaPlayer.setOnEndOfMedia(() -> {
-            mediaPlayer.seek(mediaPlayer.getStartTime()); // Restart from the beginning
-            mediaPlayer.play();
-        });
-
         primaryStage = stage;
     }
 
@@ -49,9 +38,6 @@ public class SceneManager {
         try {
             Parent root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/availableColors.fxml")));
             primaryStage.setScene(new Scene(root));
-            primaryStage.setFullScreen(true);
-            primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
-            primaryStage.show();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -64,9 +50,6 @@ public class SceneManager {
         try {
             Parent root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/answer.fxml")));
             primaryStage.setScene(new Scene(root));
-            primaryStage.setFullScreen(true);
-            primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
-            primaryStage.show();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -79,9 +62,6 @@ public class SceneManager {
         try {
             Parent root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/choose_Socket_RMI.fxml")));
             primaryStage.setScene(new Scene(root));
-            primaryStage.setFullScreen(true);
-            primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
-            primaryStage.show();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -94,9 +74,6 @@ public class SceneManager {
         try {
             Parent root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/disconnect.fxml")));
             primaryStage.setScene(new Scene(root));
-            primaryStage.setFullScreen(true);
-            primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
-            primaryStage.show();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -109,9 +86,6 @@ public class SceneManager {
         try {
             Parent root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/endGame.fxml")));
             primaryStage.setScene(new Scene(root));
-            primaryStage.setFullScreen(true);
-            primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
-            primaryStage.show();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -124,9 +98,6 @@ public class SceneManager {
         try {
             Parent root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/expectedPlayers.fxml")));
             primaryStage.setScene(new Scene(root));
-            primaryStage.setFullScreen(true);
-            primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
-            primaryStage.show();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -139,9 +110,6 @@ public class SceneManager {
         try {
             Parent root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/insertIP.fxml")));
             primaryStage.setScene(new Scene(root));
-            primaryStage.setFullScreen(true);
-            primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
-            primaryStage.show();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -154,9 +122,10 @@ public class SceneManager {
         try {
             Parent root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/insertServerOption.fxml")));
             primaryStage.setScene(new Scene(root));
-            primaryStage.setFullScreen(true);
+            if (!primaryStage.isFullScreen()) {
+                primaryStage.setFullScreen(true);
+            }
             primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
-            primaryStage.show();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -169,9 +138,6 @@ public class SceneManager {
         try {
             Parent root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/joinMatch.fxml")));
             primaryStage.setScene(new Scene(root));
-            primaryStage.setFullScreen(true);
-            primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
-            primaryStage.show();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -184,9 +150,6 @@ public class SceneManager {
         try {
             Parent root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/joinRunningMatch.fxml")));
             primaryStage.setScene(new Scene(root));
-            primaryStage.setFullScreen(true);
-            primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
-            primaryStage.show();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -199,9 +162,6 @@ public class SceneManager {
         try {
             Parent root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/loadMatch.fxml")));
             primaryStage.setScene(new Scene(root));
-            primaryStage.setFullScreen(true);
-            primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
-            primaryStage.show();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -214,8 +174,6 @@ public class SceneManager {
         try {
             Parent root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/mainView.fxml")));
             primaryStage.setScene(new Scene(root));
-            primaryStage.setFullScreen(true);
-            primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
             primaryStage.show();
         } catch (IOException e) {
             e.printStackTrace();
@@ -232,9 +190,6 @@ public class SceneManager {
             Scene scene = new Scene(root);
             primaryStage.setScene(scene);
             scene.getStylesheets().add(Objects.requireNonNull(SceneManager.class.getResource("/styles.css")).toExternalForm());
-            primaryStage.setFullScreen(true);
-            primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
-            primaryStage.show();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -247,9 +202,6 @@ public class SceneManager {
         try {
             Parent root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/unavailableNames.fxml")));
             primaryStage.setScene(new Scene(root));
-            primaryStage.setFullScreen(true);
-            primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
-            primaryStage.show();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -262,9 +214,6 @@ public class SceneManager {
         try {
             Parent root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/waiting.fxml")));
             primaryStage.setScene(new Scene(root));
-            primaryStage.setFullScreen(true);
-            primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
-            primaryStage.show();
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -1181,18 +1181,20 @@ public class GamePageController implements Initializable {
      */
     private void setPionPosition(ImageView pion, int score, List<ImageView> allPions) {
 
-        if (pion != null && score == 0 && isPionAtDesiredPosition(pion, 0)) {
-            double[] adjustedPosition = getAdjustedPosition(allPions, positions[0][0], positions[0][1]);
+            System.out.println("Score: " + score);
+
+        if (pion != null && score == 0 && !isPionAtDesiredPosition(pion, 0)) {
+            double[] adjustedPosition = getAdjustedPosition(allPions, positions[0][0], positions[0][1], pion);
             pion.setLayoutX(adjustedPosition[0]);
             pion.setLayoutY(adjustedPosition[1]);
             pion.setFitHeight(49);
             pion.setFitWidth(49);
             pion.setPreserveRatio(true);
             mainPane.getChildren().add(pion);
-        } else if (pion != null && isPionAtDesiredPosition(pion, score)) {
+        } else if (pion != null && !isPionAtDesiredPosition(pion, score)) {
+            System.out.println("Moving to: " + score);
             addPoints(pion, score, allPions);
             updatePionsPositions(allPions, pion);
-            pion.toFront();
         }
     }
 
@@ -1218,21 +1220,22 @@ public class GamePageController implements Initializable {
 
             int steps = 0;
             // Intermediate points to the path - stop at position that corresponds to the score
-            for (int i = getScoreByPosition((int) startX, (int) startY); i <= score; i++) {
+            for (int i = getScoreByPosition(startX, startY); i <= score; i++) {
                 steps++;
-                double[] adjustedPosition = getAdjustedPosition(allPions, positions[i][0], positions[i][1]);
+                double[] adjustedPosition = getAdjustedPosition(allPions, positions[i][0], positions[i][1], pion);
                 path.getElements().add(new LineTo(adjustedPosition[0], adjustedPosition[1]));
             }
 
+            //TODO WHY DOES THE PION DISAPPEAR!?
             PathTransition pathTransition = new PathTransition();
             int speed = 100; //TODO I dont know if its too fast or not
             int durationInSeconds = steps / speed;
-            pathTransition.setDuration(Duration.seconds(durationInSeconds));
+            pathTransition.setDuration(Duration.seconds(1));
             pathTransition.setPath(path);
             pathTransition.setNode(pion);
             pathTransition.setCycleCount(1);
             pathTransition.setAutoReverse(false);
-
+            pion.toFront();
             pathTransition.play();
         });
     }
@@ -1245,12 +1248,13 @@ public class GamePageController implements Initializable {
      * @param targetY the y position of the pion
      * @return the adjusted position of the pion
      */
-    private double[] getAdjustedPosition(List<ImageView> pions, double targetX, double targetY) {
+    private double[] getAdjustedPosition(List<ImageView> pions, double targetX, double targetY,ImageView myPion) {
         double offsetY = 0;
 
         for (ImageView pion : pions) {
-            if (pion != null && pion.getLayoutX() == targetX && pion.getLayoutY() == targetY + offsetY) {
-                offsetY -= offsetPions;
+            if(pion != myPion)
+                if (pion != null && pion.getLayoutX() == targetX && pion.getLayoutY() == targetY + offsetY) {
+                    offsetY -= offsetPions;
             }
         }
         return new double[]{targetX, targetY + offsetY};
@@ -1265,10 +1269,13 @@ public class GamePageController implements Initializable {
      */
     private boolean isPionAtDesiredPosition(ImageView pion, int score) {
         double[] desiredPosition = positions[score];
-        return pion.getLayoutX() != desiredPosition[0] && pion.getLayoutY() != desiredPosition[1]
-                || pion.getLayoutX() != desiredPosition[0] && pion.getLayoutY() != desiredPosition[1] - offsetPions
-                || pion.getLayoutX() != desiredPosition[0] && pion.getLayoutY() != desiredPosition[1] - 2 * offsetPions
-                || pion.getLayoutX() != desiredPosition[0] && pion.getLayoutY() != desiredPosition[1] - 3 * offsetPions;
+        if ((pion.getLayoutX() != desiredPosition[0] && pion.getLayoutY() != desiredPosition[1])
+                || (pion.getLayoutX() != desiredPosition[0] && pion.getLayoutY() != desiredPosition[1] - offsetPions)
+                || (pion.getLayoutX() != desiredPosition[0] && pion.getLayoutY() != desiredPosition[1] - 2 * offsetPions)
+                || (pion.getLayoutX() != desiredPosition[0] && pion.getLayoutY() != desiredPosition[1] - 3 * offsetPions))
+            return false;
+
+        return true;
     }
 
     /**
@@ -1282,9 +1289,10 @@ public class GamePageController implements Initializable {
             double movedPionY = movedPion.getLayoutY();
             for (ImageView pion : allPions) {
                 if (pion != movedPion && pion != null && pion.getLayoutY() < movedPionY) {
-                    double[] adjustedPosition = getAdjustedPosition(allPions, pion.getLayoutX(), pion.getLayoutY());
+                    double[] adjustedPosition = getAdjustedPosition(allPions, pion.getLayoutX(), pion.getLayoutY(), pion);
                     pion.setLayoutX(adjustedPosition[0]);
                     pion.setLayoutY(adjustedPosition[1]);
+                    pion.toFront();
                 }
             }
         });
@@ -1298,9 +1306,10 @@ public class GamePageController implements Initializable {
      */
     private int getScoreByPosition(double x, double y) {
 
-        for (int score = 0; score <= positions.length; score++) {
+        for (int score = 0; score < positions.length; score++) {
             double[] position = positions[score];
-            if (position[0] == x && position[1] == y) {
+            if (position[0] == x && position[1] == y || position[0] == x && position[1] == y + offsetPions
+                    || position[0] == x && position[1] == y + 2 * offsetPions || position[0] == x && position[1] == y + 3 * offsetPions) {
                 return score;
             }
         }

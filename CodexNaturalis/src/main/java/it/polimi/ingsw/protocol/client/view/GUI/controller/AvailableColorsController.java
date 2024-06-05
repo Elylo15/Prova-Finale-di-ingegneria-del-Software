@@ -5,64 +5,69 @@ import it.polimi.ingsw.protocol.messages.ConnectionState.availableColorsMessage;
 import javafx.animation.ScaleTransition;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 
+import java.util.Objects;
+
 public class AvailableColorsController {
+    @FXML
+    public Pane mainPane;
     availableColorsMessage message;
 
-    @FXML
-    ImageView blue;
-    @FXML
-    ImageView green;
-    @FXML
-    ImageView red;
-    @FXML
-    ImageView purple;
+    private final double[][] positions = {
+              {496.0, 543.0},  {922.0, 543.0}, {-18.0, 543.0},  {-1434.0, 543.0},
+    };
 
     /**
      * This method is called when the scene is loaded.
      * It sets the action for each button.
      * When a button is clicked, it sends the color to the client.
-     */
+     *///TODO MAKE THEM APPEAR GRADUALLY
     @FXML
     public void initialize() {
-        red.setVisible(false);
-        red.setDisable(true);
-        green.setVisible(false);
-        green.setDisable(true);
-        blue.setVisible(false);
-        blue.setDisable(true);
-        purple.setVisible(false);
-        purple.setDisable(true);
-
         this.message = (availableColorsMessage) GUIMessages.readToGUI();
 
         for (int i = 0; i < message.getColors().size(); i++) {
-            if (message.getColors().get(i).equalsIgnoreCase("red")) {
-                red.setVisible(true);
-                red.setDisable(false);
-                initializeHoverEffect(red);
+            double fitHeight = 540;
+            double fitWidth = 701;
+            if (message.getColors().get(i).equalsIgnoreCase("purple")) {
+                Image image = new Image(Objects.requireNonNull(SceneManager.class.getResource("/Images/Colors/purple.png")).toString());
+                ImageView imageView = new ImageView(image);
+                placeInFirstFree(imageView, fitWidth, fitHeight);
+                imageView.setOnMouseClicked(event -> GUIMessages.writeToClient("purple"));
             } else if (message.getColors().get(i).equalsIgnoreCase("green")) {
-                green.setVisible(true);
-                green.setDisable(false);
-                initializeHoverEffect(green);
+                Image image = new Image(Objects.requireNonNull(SceneManager.class.getResource("/Images/Colors/green.png")).toString());
+                ImageView imageView = new ImageView(image);
+                placeInFirstFree(imageView, fitWidth, fitHeight);
+                imageView.setOnMouseClicked(event -> GUIMessages.writeToClient("green"));
             } else if (message.getColors().get(i).equalsIgnoreCase("blue")) {
-                blue.setVisible(true);
-                blue.setDisable(false);
-                initializeHoverEffect(blue);
-            } else if (message.getColors().get(i).equalsIgnoreCase("purple")) {
-                purple.setVisible(true);
-                purple.setDisable(false);
-                initializeHoverEffect(purple);
+                Image image = new Image(Objects.requireNonNull(SceneManager.class.getResource("/Images/Colors/blue.png")).toString());
+                ImageView imageView = new ImageView(image);
+                placeInFirstFree(imageView, fitWidth, fitHeight);
+                imageView.setOnMouseClicked(event -> GUIMessages.writeToClient("blue"));
+            } else if (message.getColors().get(i).equalsIgnoreCase("red")) {
+                Image image = new Image(Objects.requireNonNull(SceneManager.class.getResource("/Images/Colors/red.png")).toString());
+                ImageView imageView = new ImageView(image);
+                placeInFirstFree(imageView, fitWidth, fitHeight);
+                imageView.setOnMouseClicked(event -> GUIMessages.writeToClient("red"));
             }
         }
-        //send the result
-        red.setOnMouseClicked(event -> GUIMessages.writeToClient("red"));
-        purple.setOnMouseClicked(event -> GUIMessages.writeToClient("purple"));
-        green.setOnMouseClicked(event -> GUIMessages.writeToClient("green"));
-        blue.setOnMouseClicked(event -> GUIMessages.writeToClient("blue"));
+    }
+
+    private void placeInFirstFree(ImageView imageView, double fitWidth, double fitHeight) {
+        double[] positions = getFirstFreeLayout();
+        imageView.setLayoutX(positions[0]);
+        imageView.setLayoutY(positions[1]);
+        imageView.setFitWidth(fitWidth);
+        imageView.setFitHeight(fitHeight);
+        imageView.preserveRatioProperty().setValue(true);
+        mainPane.getChildren().add(imageView);
+        initializeHoverEffect(imageView);
     }
 
     @FXML
@@ -70,8 +75,8 @@ public class AvailableColorsController {
         Node source = (Node) event.getSource();
 
         ScaleTransition enlargeTransition = new ScaleTransition(Duration.millis(200), source);
-        enlargeTransition.setToX(1.2);
-        enlargeTransition.setToY(1.2);
+        enlargeTransition.setToX(1.1);
+        enlargeTransition.setToY(1.1);
 
         ScaleTransition shrinkTransition = new ScaleTransition(Duration.millis(200), source);
         shrinkTransition.setToX(1.0);
@@ -85,6 +90,25 @@ public class AvailableColorsController {
     public void initializeHoverEffect(Node node) {
         node.setOnMouseEntered(this::onHover);
         node.setOnMouseExited(this::onHover);
+    }
+
+    public double[] getFirstFreeLayout() {
+        for (double[] position : positions) {
+            if (isFree(position[0], position[1])) {
+                return position;
+            }
+        }
+        return null;
+    }
+
+
+    public boolean isFree(double x, double y) {
+        for (Node node : mainPane.getChildren()) {
+            if (node.getLayoutX() == x && node.getLayoutY() == y) {
+                return false;
+            }
+        }
+        return true;
     }
 
 }

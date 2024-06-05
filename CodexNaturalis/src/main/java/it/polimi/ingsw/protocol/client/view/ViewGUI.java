@@ -12,8 +12,14 @@ import it.polimi.ingsw.protocol.messages.ServerOptionState.serverOptionMessage;
 import it.polimi.ingsw.protocol.messages.currentStateMessage;
 import it.polimi.ingsw.protocol.messages.responseMessage;
 import javafx.application.Platform;
+import javafx.scene.input.KeyCombination;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.text.Font;
+import javafx.stage.Stage;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * This class represents the GUI view of the game.
