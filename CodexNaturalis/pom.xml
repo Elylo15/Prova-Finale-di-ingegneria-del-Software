@@ -33,7 +33,7 @@
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
-      <version>RELEASE</version>
+      <version>5.10.2</version>
       <scope>test</scope>
     </dependency>
 
@@ -64,7 +64,7 @@
   <build>
     <resources>
       <resource>
-        <directory>src/main/Resources</directory>
+        <directory>src/main/Resource</directory>
         <includes>
           <include>**/*.ttf</include>
         </includes>
@@ -125,31 +125,20 @@
           </configuration >
           </execution >
           </executions >
-          </plugin >
-        <plugin>
+        </plugin >
+        
+      </plugins>
+    </pluginManagement>
+    <plugins>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
         <version>3.2.4</version>
+        <configuration>
+        </configuration>
         <executions>
           <execution>
-            <id>server</id>
-            <phase>package</phase>
-            <goals>
-              <goal>shade</goal>
-            </goals>
-            <configuration>
-              <shadedArtifactAttached>true</shadedArtifactAttached>
-              <shadedClassifierName>server</shadedClassifierName>
-              <transformers>
-                <transformer implementation=
-                                     "org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                  <mainClass>it.polimi.ingsw.app.AppServer</mainClass>
-                </transformer>
-              </transformers>
-            </configuration>
-          </execution>
-          <execution>
-            <id>AppGUI</id>
+            <id>clientGUI</id>
             <phase>package</phase>
             <goals>
               <goal>shade</goal>
@@ -158,15 +147,30 @@
               <shadedArtifactAttached>true</shadedArtifactAttached>
               <shadedClassifierName>clientGUI</shadedClassifierName>
               <transformers>
-                <transformer implementation=
-                                     "org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                   <mainClass>it.polimi.ingsw.app.AppGUI</mainClass>
                 </transformer>
               </transformers>
             </configuration>
           </execution>
           <execution>
-            <id>AppCLI</id>
+            <id>sever</id>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <shadedArtifactAttached>true</shadedArtifactAttached>
+              <shadedClassifierName>server</shadedClassifierName>
+              <transformers>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                  <mainClass>it.polimi.ingsw.app.AppServer</mainClass>
+                </transformer>
+              </transformers>
+            </configuration>
+          </execution>
+          <execution>
+            <id>clientCLI</id>
             <phase>package</phase>
             <goals>
               <goal>shade</goal>
@@ -175,8 +179,7 @@
               <shadedArtifactAttached>true</shadedArtifactAttached>
               <shadedClassifierName>clientCLI</shadedClassifierName>
               <transformers>
-                <transformer implementation=
-                                     "org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                   <mainClass>it.polimi.ingsw.app.AppCLI</mainClass>
                 </transformer>
               </transformers>
@@ -184,7 +187,6 @@
           </execution>
         </executions>
       </plugin>
-      </plugins>
-    </pluginManagement>
+    </plugins>
   </build>
 </project>

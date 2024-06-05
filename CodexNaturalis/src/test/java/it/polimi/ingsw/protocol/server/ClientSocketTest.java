@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.concurrent.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 class ClientSocketTest {
     ControllerSocket controller;
@@ -44,17 +45,23 @@ class ClientSocketTest {
         executor = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, unit, new LinkedBlockingQueue<>());
 
         serverSocket = new ServerSocket(1024);
-        executor.submit(() -> {
+        Future<ClientSocket> connectionFuture = executor.submit(() -> {
             try {
                 socket = serverSocket.accept();
-                connection = new ClientSocket(socket.getInetAddress().toString(), Integer.toString(socket.getPort()), socket);
+                return new ClientSocket(socket.getInetAddress().toString(), Integer.toString(socket.getPort()), socket);
             } catch (IOException e) {
                 e.printStackTrace();
+                return null;
             }
         });
 
         controller = new ControllerSocket("localhost", "1024");
         controller.connectToServer("localhost", "1024");
+        try {
+            connection = connectionFuture.get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
     }
 
     @AfterEach
