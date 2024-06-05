@@ -97,10 +97,7 @@ public class LogCreator {
                 writer.write(timestamp + " -> " + message);
             writer.newLine();
             writer.flush();
-        } catch (IOException e) {
-            System.out.println("Error writing to log file.");
-            e.printStackTrace();
-        }
+        } catch (Exception ignore) {}
     }
 
     /**

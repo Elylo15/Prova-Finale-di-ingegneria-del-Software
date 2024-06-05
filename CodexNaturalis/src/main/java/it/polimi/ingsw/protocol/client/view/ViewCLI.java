@@ -1219,7 +1219,7 @@ public class ViewCLI extends View {
      * This method lets the user know that he has to wait for other players to join the game
      */
     public void waiting() {
-        System.out.println(PURPLE_TEXT + "Waiting for" + BLUE_TEXT + " other players" + GREEN_TEXT + " to join" + RED_TEXT + " the game...");
+        System.out.println(PURPLE_TEXT + "Waiting for" + BLUE_TEXT + " other players" + GREEN_TEXT + " to join" + RED_TEXT + " the game..." + RESET);
     }
 
 

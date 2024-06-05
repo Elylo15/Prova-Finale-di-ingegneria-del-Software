@@ -192,7 +192,7 @@ public class MatchManager implements Runnable {
             // or objective state
             synchronized (this) {
                 // Draws common objective cards
-                if (this.turnNumber == 2) {
+                if (this.turnNumber == 2 && this.matchInfo.getMatch().getCommonObjective()[0] == null){
                     this.matchInfo.getMatch().drawCommonObjective();
                     this.saveMatch();
                 }

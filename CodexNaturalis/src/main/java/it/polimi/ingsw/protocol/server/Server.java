@@ -88,7 +88,7 @@ public class Server implements Runnable {
                 executor.submit(() -> this.handleConnection(finalConnection));
             }
         } catch (IOException e) {
-            logCreator.log("Server socket accept service crashed");
+            logCreator.log("Server socket accept service closed: " + e.getMessage());
         }
     }
 
@@ -116,7 +116,7 @@ public class Server implements Runnable {
             }
 
         } catch (Exception e) {
-            logCreator.log("Server RMI service crashed: " + e.getMessage());
+            logCreator.log("Server RMI service closed: " + e.getMessage());
         }
 
     }
@@ -662,6 +662,7 @@ public class Server implements Runnable {
     protected void closeServer() {
         this.serverRunning = false;
         try {
+            executor.shutdown();
             this.serverSocket.close();
             this.registry.unbind("MainServer");
             UnicastRemoteObject.unexportObject(this.server, true);
@@ -684,17 +685,17 @@ public class Server implements Runnable {
         executor.submit(this::closeMatch);
         logCreator.log("Server started");
 
-        Scanner scanner = new Scanner(System.in);
-        while (this.serverRunning) {
-            System.out.println("\n Stop the server? (yes/no)");
-            String input = scanner.nextLine();
-            if (input.equals("yes") || input.equals("y")) {
-                this.serverRunning = false;
-            }
-        }
-        executor.shutdown();
-        this.closeServer();
-        logCreator.log("Server stopped");
-        logCreator.close();
+//        Scanner scanner = new Scanner(System.in);
+//        while (this.serverRunning) {
+//            System.out.println("\nStop the server? (yes/no)");
+//            String input = scanner.nextLine();
+//            if (input.equals("yes") || input.equals("y")) {
+//                this.serverRunning = false;
+//            }
+//        }
+//        executor.shutdown();
+//        this.closeServer();
+//        logCreator.log("Server stopped");
+//        logCreator.close();
     }
 }

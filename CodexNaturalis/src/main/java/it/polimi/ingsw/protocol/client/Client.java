@@ -474,6 +474,8 @@ public class Client implements Runnable {
                     }
                 }
             } catch (Exception e) {
+                System.out.println("Error: " + e.getMessage());
+                e.printStackTrace();
                 getView().playerDisconnected();
             }
         }
