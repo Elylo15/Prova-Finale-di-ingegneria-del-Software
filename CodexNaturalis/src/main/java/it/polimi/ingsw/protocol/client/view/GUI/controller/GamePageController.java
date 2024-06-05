@@ -959,14 +959,11 @@ public class GamePageController implements Initializable {
             else if (cardID == commonArea.getTableCards().get(3).getID())
                 this.selectedPick = 6;
 
-            int layoutX = selectedToPlace[2] * offsetAreaX + layoutPlacedStarterX;
-            int layoutY = selectedToPlace[3] * offsetAreaY + layoutPlacedStarterY;
-
             if (selectedPick == 1) {
                 Platform.runLater(() -> {
                     //add selected card to hand
                     addNewCardToPane(mainPane, commonArea.getD1().getList().get(0).getID(), true, commonArea.getD1().getList().get(0),
-                            layoutX, layoutY, fitHeightCard, fitWidthCard, this::choseCardToPlace);
+                            layoutXCard2, layoutYHand, fitHeightCard, fitWidthCard, this::choseCardToPlace);
                     onTop.toFront();
                     //add new card to deck
                     addNewCardToPane(mainPane, commonArea.getD1().getList().get(1).getID(), false, commonArea.getD1().getList().get(1),
@@ -977,7 +974,7 @@ public class GamePageController implements Initializable {
             } else if (selectedPick == 2) {
                 Platform.runLater(() -> {
                     addNewCardToPane(mainPane, commonArea.getD2().getList().get(0).getID(), true, commonArea.getD2().getList().get(0),
-                            layoutX, layoutY, fitHeightCard, fitWidthCard, this::choseCardToPlace);
+                            layoutXCard2, layoutYHand, fitHeightCard, fitWidthCard, this::choseCardToPlace);
                     onTop.toFront();
                     addNewCardToPane(mainPane, commonArea.getD2().getList().get(1).getID(), false, commonArea.getD2().getList().get(1),
                             layoutXDeck, layoutYGold, fitHeightCommon, fitWidthCommon, this::pickCard);
@@ -987,7 +984,7 @@ public class GamePageController implements Initializable {
             } else if (selectedPick == 3) {
                 //add selected card to hand
                 addNewCardToPane(mainPane, commonArea.getTableCards().getFirst().getID(), true, commonArea.getTableCards().getFirst(),
-                        layoutX, layoutY, fitHeightCard, fitWidthCard, this::choseCardToPlace);
+                        layoutXCard2, layoutYHand, fitHeightCard, fitWidthCard, this::choseCardToPlace);
                 onTop.toFront();
                 //add new card to table
                 addNewCardToPane(mainPane, commonArea.getD1().getList().get(0).getID(), true, commonArea.getD1().getList().get(0),
@@ -999,7 +996,7 @@ public class GamePageController implements Initializable {
                 onTop.toFront();
             } else if (selectedPick == 4) {
                 addNewCardToPane(mainPane, commonArea.getTableCards().get(1).getID(), true, commonArea.getTableCards().get(1),
-                        layoutX, layoutY, fitHeightCard, fitWidthCard, this::choseCardToPlace);
+                        layoutXCard2, layoutYHand, fitHeightCard, fitWidthCard, this::choseCardToPlace);
                 onTop.toFront();
                 addNewCardToPane(mainPane, commonArea.getD1().getList().get(0).getID(), true, commonArea.getD1().getList().get(0),
                         layoutXPick1, layoutYResource, fitHeightCommon, fitWidthCommon, this::pickCard);
@@ -1008,7 +1005,7 @@ public class GamePageController implements Initializable {
                         layoutXDeck, layoutYResource, fitHeightCommon, fitWidthCommon, this::pickCard);
             } else if (selectedPick == 5) {
                 addNewCardToPane(mainPane, commonArea.getTableCards().get(2).getID(), true, commonArea.getTableCards().get(2),
-                        layoutX, layoutY, fitHeightCard, fitWidthCard, this::choseCardToPlace);
+                        layoutXCard2, layoutYHand, fitHeightCard, fitWidthCard, this::choseCardToPlace);
                 onTop.toFront();
                 addNewCardToPane(mainPane, commonArea.getD2().getList().get(0).getID(), true, commonArea.getD2().getList().get(0),
                         layoutXPick0, layoutYGold, fitHeightCommon, fitWidthCommon, this::pickCard);
@@ -1017,7 +1014,7 @@ public class GamePageController implements Initializable {
                         layoutXDeck, layoutYGold, fitHeightCommon, fitWidthCommon, this::pickCard);
             } else if (selectedPick == 6) {
                 addNewCardToPane(mainPane, commonArea.getTableCards().get(3).getID(), true, commonArea.getTableCards().get(3),
-                        layoutX, layoutY, fitHeightCard, fitWidthCard, this::choseCardToPlace);
+                        layoutXCard2, layoutYHand, fitHeightCard, fitWidthCard, this::choseCardToPlace);
                 onTop.toFront();
                 addNewCardToPane(mainPane, commonArea.getD2().getList().get(0).getID(), true, commonArea.getD2().getList().get(0),
                         layoutXPick1, layoutYGold, fitHeightCommon, fitWidthCommon, this::pickCard);

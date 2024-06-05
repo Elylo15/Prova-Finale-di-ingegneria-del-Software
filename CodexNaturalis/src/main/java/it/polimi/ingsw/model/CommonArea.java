@@ -38,22 +38,47 @@ public class CommonArea implements Serializable {
      */
     public PlaceableCard pickTableCard(int cardNumber) {
         PlaceableCard c;
-        for (PlaceableCard tableCard : tableCards) {
-            if (cardNumber == tableCard.getID()) {
-                if (tableCard instanceof StarterCard)
+        int cardIndex;
+
+        for (int i = 0; i < tableCards.size(); i++) {
+            if (cardNumber == tableCards.get(i).getID()) {
+                if (tableCards.get(i) instanceof StarterCard) {
                     throw new IllegalArgumentException("Cannot pick StarterCard");
-                c = tableCard;
-                tableCards.remove(c);
-                if (tableCard.getClass() == ResourceCard.class)
-                    drawFromDeck(1);
-                else
-                    drawFromDeck(2);
+                }
+                c = tableCards.get(i);
+                cardIndex = i; // Save the index of the card to remove
+                tableCards.remove(cardIndex);
+                if (c.getClass() == ResourceCard.class) {
+                    drawFromDeck(1, cardIndex);
+                } else {
+                    drawFromDeck(2, cardIndex);
+                }
                 return c;
             }
         }
 
         return null;
     }
+
+    /**
+     * method drawFromDeck: remove the top GoldCard/ResourceCard of the deck and places it as a face-up card
+     *
+     * @param d: number of the deck from which you want to remove a card to put in among the face up cards
+     * @param index: index where you want to place the card
+     */
+    public void drawFromDeck(int d, int index) {
+        PlaceableCard c = null;
+        switch (d) {
+            case 1 -> c = d1.removeCard();
+            case 2 -> c = d2.removeCard();
+        }
+        if (c != null && index >= 0 && index <= tableCards.size()) {
+            tableCards.add(index, c); // Add the card to the same position in the tableCards
+        } else if (c != null) {
+            tableCards.add(c); // Fallback: Add the card to the end if the index is invalid
+        }
+    }
+
 
     /**
      * method drawFromDeck: remove the top GoldCard/ResourceCard of the deck and places it as a face-up card
