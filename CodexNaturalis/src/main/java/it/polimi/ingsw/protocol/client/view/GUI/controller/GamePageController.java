@@ -384,7 +384,7 @@ public class GamePageController implements Initializable {
 
     private void addCardsToHand() {
         Platform.runLater(() -> {
-            if(myHand.getPlaceableCards().size() < 2)
+            if(myHand.getPlaceableCards().size() < 3)
                 removeCardFromPosition(layoutXCard2, layoutYHand);
 
             for(int i = 0; myHand.getPlaceableCards().size() > i;  i++){
@@ -675,6 +675,8 @@ public class GamePageController implements Initializable {
 
             fadeOut.setOnFinished(e -> {
                 ImageBinder imageBinder = new ImageBinder();
+                //TODO SEE IF IT WORKS
+                System.out.println(card.isFront());
                 Image newImage = imageBinder.getOppositeImage(card.getID(), card.isFront());
                 clickedCard.setImage(newImage);
 
@@ -911,6 +913,8 @@ public class GamePageController implements Initializable {
             this.selectedToPlace[3] = relativePosY;
 
             PlaceableCard card = (PlaceableCard) selectedCard.getUserData();
+
+            //removeCardFromPosition(layoutXCard2, layoutYHand);
 
             addNewCardToPane(playground, card.getID(), card.isFront(), card, placeholderX, placeholderY,
                     fitHeightPlaced, fitWidthPlaced, null);
