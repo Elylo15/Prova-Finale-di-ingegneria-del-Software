@@ -4,7 +4,6 @@ import it.polimi.ingsw.protocol.client.Client;
 import it.polimi.ingsw.protocol.client.view.GUI.controller.SceneManager;
 import it.polimi.ingsw.protocol.client.view.ViewGUI;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;

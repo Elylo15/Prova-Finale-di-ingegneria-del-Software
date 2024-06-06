@@ -19,9 +19,11 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
@@ -88,6 +90,7 @@ public class GamePageController implements Initializable {
     private Text explanation;
     @FXML
     private ImageView onTop;
+    private Rectangle overlay;
     private ImageView red;
     private ImageView blue;
     private ImageView purple;
@@ -118,6 +121,7 @@ public class GamePageController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        createOverlay();
         startMessageListener();
         startMessageProcessor();
     }
@@ -314,26 +318,48 @@ public class GamePageController implements Initializable {
      * Sets the visualized page with the cards of the page's player
      */
     private void setPage() {
-        String nickname = (clickCounter == -1) ? myself.getNickname() : players.get(clickCounter).getNickname();
-        playerName.setText(nickname);
+       Platform.runLater(() -> {
+           showOverlay();
 
-        if (!currentState.equals("StarterCardState") && !currentState.equals("ObjectiveState")) {
-            if (clickCounter == -1) {
-                addCardsToHand();
-                addMyObjective();
-                displayPlayerArea(myPlayerArea);
-                if(Objects.equals(currentState, "PlaceTurnState") && Objects.equals(myself.getNickname(), currentPlayerNickname) && !placeholdersVisible)
-                    seePlaceHolders();
-                else if(placeholdersVisible)
-                    removeAllPlaceholders();
-            } else {
-                if(placeholdersVisible)
-                    removeAllPlaceholders();
-                addPlayerCardsToHand();
-                addPlayerObjective();
-                displayPlayerArea(players.get(clickCounter).getPlayerArea());
-            }
-        }
+           String nickname = (clickCounter == -1) ? myself.getNickname() : players.get(clickCounter).getNickname();
+           playerName.setText(nickname);
+
+           if (!currentState.equals("StarterCardState") && !currentState.equals("ObjectiveState")) {
+               if (clickCounter == -1) {
+                   addCardsToHand();
+                   addMyObjective();
+                   displayPlayerArea(myPlayerArea);
+                   if (Objects.equals(currentState, "PlaceTurnState") && Objects.equals(myself.getNickname(), currentPlayerNickname) && !placeholdersVisible)
+                       seePlaceHolders();
+                   else if (placeholdersVisible)
+                       removeAllPlaceholders();
+               } else {
+                   if (placeholdersVisible)
+                       removeAllPlaceholders();
+                   addPlayerCardsToHand();
+                   addPlayerObjective();
+                   displayPlayerArea(players.get(clickCounter).getPlayerArea());
+               }
+           }
+
+           PauseTransition pause = new PauseTransition(Duration.seconds(2));
+           pause.setOnFinished(event -> hideOverlay());
+           pause.play();
+       });
+    }
+
+    private void createOverlay() {
+        overlay = new Rectangle(mainPane.getWidth(), mainPane.getHeight(), Color.rgb(0, 0, 0, 0.5));
+        overlay.setVisible(false);
+        mainPane.getChildren().add(overlay);
+    }
+
+    private void showOverlay() {
+        overlay.setVisible(true);
+    }
+
+    private void hideOverlay() {
+        overlay.setVisible(false);
     }
 
     /**
@@ -384,7 +410,8 @@ public class GamePageController implements Initializable {
 
     private void addCardsToHand() {
         Platform.runLater(() -> {
-            if(myHand.getPlaceableCards().size() < 2)
+            showOverlay();
+            if(myHand.getPlaceableCards().size() < 3)
                 removeCardFromPosition(layoutXCard2, layoutYHand);
 
             for(int i = 0; myHand.getPlaceableCards().size() > i;  i++){
@@ -392,6 +419,10 @@ public class GamePageController implements Initializable {
                             myHand.getPlaceableCards().get(i), layoutXCard0 + i * 246, layoutYHand, fitHeightCard, fitWidthCard, this::choseCardToPlace);
                     onTop.toFront();
             }
+
+            PauseTransition pause = new PauseTransition(Duration.seconds(2));
+            pause.setOnFinished(event -> hideOverlay());
+            pause.play();
         });
     }
 
@@ -399,6 +430,7 @@ public class GamePageController implements Initializable {
         Platform.runLater(() -> {
             addNewCardToPane(mainPane, myObjective.getID(), true, myObjective, layoutXObjective, layoutYObjMy, fitHeightCommon, fitWidthCommon, this::turnAround);
             onTop.toFront();
+
         });
     }
 
@@ -406,6 +438,8 @@ public class GamePageController implements Initializable {
         if (players.get(clickCounter) != null) {
             PlayerHand playerHand = players.get(clickCounter).getPlayerHand();
             Platform.runLater(() -> {
+                showOverlay();
+
                 if(playerHand.getPlaceableCards().size() < 3)
                     removeCardFromPosition(layoutXCard2, layoutYHand);
 
@@ -414,6 +448,10 @@ public class GamePageController implements Initializable {
                                 playerHand.getPlaceableCards().get(i), layoutXCard0 + i * 246, layoutYHand, fitHeightCard, fitWidthCard, null);
                         onTop.toFront();
                 }
+
+                PauseTransition pause = new PauseTransition(Duration.seconds(2));
+                pause.setOnFinished(event -> hideOverlay());
+                pause.play();
             });
         }
     }
@@ -1358,40 +1396,68 @@ public class GamePageController implements Initializable {
      */
     public void displayPlayerArea(PlayerArea playerArea) {
         Platform.runLater(() -> {
+            showOverlay();
             // Remove all existing cards from the player area
             playground.getChildren().removeIf(node -> node instanceof ImageView && node.getUserData() instanceof PlaceableCard);
 
             ArrayList<PlaceableCard> allCards = playerArea.getAllCards();
 
+            double[] boundingBox = calculateBoundingBox(allCards);
+            double totalWidth = boundingBox[2] - boundingBox[0];
+            double totalHeight = boundingBox[3] - boundingBox[1];
+
+            double centerXOffset = (playground.getWidth() - totalWidth) / 2 - boundingBox[0];
+            double centerYOffset = (playground.getHeight() - totalHeight) / 2 - boundingBox[1];
+
             List<ImageView> cardImageViews = new ArrayList<>();
+
             for (PlaceableCard card : allCards) {
-                int layoutX = calculateLayoutX(card);
-                int layoutY = calculateLayoutY(card);
+                int layoutX =  calculateLayoutX(card) + (int) centerXOffset;
+                int layoutY = calculateLayoutY(card) +  (int) centerYOffset;
 
                 ImageView cardImageView = createCardImageView(card.getID(), card.isFront(), card, layoutX, layoutY, fitHeightPlaced, fitWidthPlaced);
                 playground.getChildren().add(cardImageView);
                 cardImageViews.add(cardImageView);
 
                 // Adjust z-order
-                adjustCardZOrder(cardImageView, card);
+                //adjustCardZOrder(cardImageView, card);
             }
 
             ArrayList<Integer[]> availablePositions = playerArea.getAvailablePosition();
 
             // Check space for placeholders
-            adjustElementsToFit(cardImageViews, availablePositions);
+            //adjustElementsToFit(cardImageViews, availablePositions);
             onTop.toFront();
+
+            PauseTransition pause = new PauseTransition(Duration.seconds(2));
+            pause.setOnFinished(event -> hideOverlay());
+            pause.play();
         });
     }
 
     private int calculateLayoutX(PlaceableCard card) {
-        int minColumn = card.getCells().stream().mapToInt(Cell::getColumn).min().orElse(0);
-        return layoutPlacedStarterX + minColumn * offsetAreaX;
+        return card.getCells().getFirst().getColumn() * fitWidthPlaced + offsetAreaX;
     }
 
     private int calculateLayoutY(PlaceableCard card) {
-        int minRow = card.getCells().stream().mapToInt(Cell::getRow).min().orElse(0);
-        return layoutPlacedStarterY + minRow * offsetAreaY;
+        return card.getCells().getFirst().getRow() * fitHeightPlaced + offsetAreaY;
+    }
+
+    private double[] calculateBoundingBox(ArrayList<PlaceableCard> cards) {
+        double minX = Double.MAX_VALUE, minY = Double.MAX_VALUE;
+        double maxX = Double.MIN_VALUE, maxY = Double.MIN_VALUE;
+
+        for (PlaceableCard card : cards) {
+            double posX = calculateLayoutX(card);
+            double posY = calculateLayoutY(card);
+
+            if (posX < minX) minX = posX;
+            if (posY < minY) minY = posY;
+            if (posX + fitWidthPlaced > maxX) maxX = posX + fitWidthPlaced;
+            if (posY + fitHeightPlaced > maxY) maxY = posY + fitHeightPlaced;
+        }
+
+        return new double[]{minX, minY, maxX, maxY};
     }
 
     private void adjustCardZOrder(ImageView cardImageView, PlaceableCard card) {
