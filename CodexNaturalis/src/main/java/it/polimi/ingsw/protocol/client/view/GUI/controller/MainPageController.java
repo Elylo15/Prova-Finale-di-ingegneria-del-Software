@@ -6,6 +6,7 @@ import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
+import javafx.scene.text.Font;
 
 import java.util.Objects;
 
@@ -17,9 +18,42 @@ public class MainPageController {
     public Button rulesBtn;
     @FXML
     public Pane pane;
+    @FXML
+    public ImageView image;
 
     private int counter = 0;
 
+    public void initialize() {
+        image.fitWidthProperty().bind(pane.widthProperty());
+        image.fitHeightProperty().bind(pane.heightProperty());
+
+
+        pane.widthProperty().addListener((obs, oldVal, newVal) -> adjustLayout());
+        pane.heightProperty().addListener((obs, oldVal, newVal) -> adjustLayout());
+
+        adjustLayout();
+    }
+
+    private void adjustLayout() {
+        double paneWidth = pane.getWidth();
+        double paneHeight = pane.getHeight();
+
+        // Set button sizes
+        playBtn.setPrefWidth(paneWidth * 210.0 / 1920.0);
+        playBtn.setPrefHeight(paneHeight * 72.0 / 1080.0);
+        rulesBtn.setPrefWidth(paneWidth * 210.0 / 1920.0);
+        rulesBtn.setPrefHeight(paneHeight * 72.0 / 1080.0);
+
+        // Set button positions
+        playBtn.setLayoutX(paneWidth * 128.0 / 1920.0);
+        playBtn.setLayoutY(paneHeight * 892.0 / 1080.0);
+        rulesBtn.setLayoutX(paneWidth * 1528.0 / 1920.0);
+        rulesBtn.setLayoutY(paneHeight * 900.0 / 1080.0);
+
+        // Adjust font sizes
+        playBtn.setFont(new Font("Curlz MT", paneHeight * 34.0 / 1080.0));
+        rulesBtn.setFont(new Font("Curlz MT", paneHeight * 34.0 / 1080.0));
+    }
     /**
      * This method is called when the player presses the play button.
      * It sends a message to start the game.
