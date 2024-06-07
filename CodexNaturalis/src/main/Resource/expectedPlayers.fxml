@@ -16,22 +16,22 @@
             </ImageView>
             <ImageView fx:id="two" fitHeight="761.0" fitWidth="1128.0" layoutX="-4.0" layoutY="334.0" preserveRatio="true">
                <image>
-                  <Image url="@Images/Players/2.png" />
+                  <Image url="@Images/PlayersNumber/2.png" />
                </image>
             </ImageView>
             <ImageView fx:id="three" fitHeight="761.0" fitWidth="1128.0" layoutX="647.0" layoutY="334.0" preserveRatio="true">
                <image>
-                  <Image url="@Images/Players/3.png" />
+                  <Image url="@Images/PlayersNumber/3.png" />
                </image>
             </ImageView>
             <ImageView fitHeight="1080.0" fitWidth="1920.0" preserveRatio="true">
                <image>
-                  <Image url="@Images/Players/howMany.png" />
+                  <Image url="@Images/PlayersNumber/howMany.png" />
                </image>
             </ImageView>
             <ImageView fx:id="four" fitHeight="761.0" fitWidth="1128.0" layoutX="1280.0" layoutY="336.0" preserveRatio="true">
                <image>
-                  <Image url="@Images/Players/4.png" />
+                  <Image url="@Images/PlayersNumber/4.png" />
                </image>
             </ImageView>
          </children>

@@ -32,6 +32,27 @@ public class SceneManager {
         primaryStage = stage;
     }
 
+    public static void initializeBackgroundMusic() {
+        String audioFile = Objects.requireNonNull(SceneManager.class.getResource("/Audio/song.mp3")).toString();
+        Media media = new Media(audioFile);
+        MediaPlayer backgroundMediaPlayer = new MediaPlayer(media);
+
+        backgroundMediaPlayer.setOnEndOfMedia(() -> {
+            backgroundMediaPlayer.seek(backgroundMediaPlayer.getStartTime()); // Restart from the beginning
+            backgroundMediaPlayer.play();
+        });
+
+        backgroundMediaPlayer.play();
+    }
+
+
+    public static void playSoundEffect(String soundFile) {
+        String audioFile = Objects.requireNonNull(SceneManager.class.getResource(soundFile)).toString();
+        Media media = new Media(audioFile);
+        MediaPlayer mediaPlayer = new MediaPlayer(media);
+        mediaPlayer.play();
+    }
+
     /**
      * Loads and displays the scene for choosing available colors.
      */

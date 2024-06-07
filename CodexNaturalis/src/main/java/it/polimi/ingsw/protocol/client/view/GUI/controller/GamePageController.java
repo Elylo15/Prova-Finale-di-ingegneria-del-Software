@@ -20,6 +20,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
@@ -30,6 +32,8 @@ import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.stream.Collectors;
+
+import static it.polimi.ingsw.protocol.client.view.GUI.controller.SceneManager.playSoundEffect;
 
 public class GamePageController implements Initializable {
     private final double offsetPions = 5;
@@ -181,6 +185,8 @@ public class GamePageController implements Initializable {
             }
             case ArrayList<?> list -> {
                 if (Objects.equals(currentState, "ObjectiveState") && !list.isEmpty() && list.getFirst() instanceof ObjectiveCard) {
+                    playSoundEffect("/Audio/you.mp3");
+
                     objectivesToChose.add((ObjectiveCard) list.get(0));
                     objectivesToChose.add((ObjectiveCard) list.get(1));
                     objectiveCase();
@@ -191,8 +197,11 @@ public class GamePageController implements Initializable {
             case updatePlayerMessage update -> updatePlayerCase(update);
             case responseMessage responseMessage -> {
                 if (!responseMessage.getCorrect()) {
-                    wrongPopUp(currentStateMessageSaved.getPlayer().getColor());
                     wrong = true;
+                    wrongPopUp(currentStateMessageSaved.getPlayer().getColor());
+
+                    playSoundEffect("/Audio/wrong.mp3");
+
                     caseCurrentStateMessage(currentStateMessageSaved);
                 }
             }
@@ -212,11 +221,20 @@ public class GamePageController implements Initializable {
 
         if (currentStateMessage.getCurrentPlayer().getNickname().equals(myself.getNickname())) {
             if (Objects.equals(currentState, "StarterCardState")) {
+                String audioFile = Objects.requireNonNull(SceneManager.class.getResource("/Audio/you.mp3")).toString();
+                Media media = new Media(audioFile);
+                MediaPlayer mediaPlayer = new MediaPlayer(media);
+                mediaPlayer.play();
+
                 setState(currentStateMessage.getPlayer().getColor());
                 starterCase();
                 choosePopUp(currentStateMessage.getPlayer().getColor());
             } else if (Objects.equals(currentState, "PlaceTurnState")) {
                 if (!isLastTurn && !wrong) {
+                    String audioFile = Objects.requireNonNull(SceneManager.class.getResource("/Audio/you.mp3")).toString();
+                    Media media = new Media(audioFile);
+                    MediaPlayer mediaPlayer = new MediaPlayer(media);
+                    mediaPlayer.play();
                     setState(currentStateMessage.getPlayer().getColor());
                     //add sound to tell u turn
                 }
@@ -321,10 +339,10 @@ public class GamePageController implements Initializable {
 
     private void wrongPopUp(String color) {
         switch (color) {
-            case "red" -> showImagePopup("/Images/Wrong/wrongRed.png");
-            case "blue" -> showImagePopup("/Images/Wrong/wrongBlue.png");
-            case "green" -> showImagePopup("/Images/Wrong/wrongGreen.png");
-            case "purple" -> showImagePopup("/Images/Wrong/wrongPur.png");
+            case "red" -> showImagePopup("/Images/TryAgain/retryRed.png");
+            case "blue" -> showImagePopup("/Images/TryAgain/retryBlue.png");
+            case "green" -> showImagePopup("/Images/TryAgain/retryGreen.png");
+            case "purple" -> showImagePopup("/Images/TryAgain/retryPur.png");
         }
     }
 
