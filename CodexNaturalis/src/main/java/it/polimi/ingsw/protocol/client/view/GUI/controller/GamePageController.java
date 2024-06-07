@@ -78,6 +78,7 @@ public class GamePageController implements Initializable {
     private final ArrayList<Player> players = new ArrayList<>();
     private final ArrayList<ObjectiveCard> objectivesToChose = new ArrayList<>();
     private final int[] selectedToPlace = new int[4];
+    private ArrayList<PlaceableCard> allCards = new ArrayList<>();
     @FXML
     private Pane mainPane;
     @FXML
@@ -906,11 +907,21 @@ public class GamePageController implements Initializable {
             ImageView clickedPlaceholder = (ImageView) event.getSource();
             int placeholderX = (int) clickedPlaceholder.getLayoutX();
             int placeholderY = (int) clickedPlaceholder.getLayoutY();
-            int relativePosX = (placeholderY - layoutPlacedStarterY) / offsetAreaY;
-            int relativePosY = (placeholderX - layoutPlacedStarterX) / offsetAreaX;
 
-            this.selectedToPlace[3] = relativePosY;
-            this.selectedToPlace[2] = relativePosX;
+            int relativePosX;
+            int relativePosY;
+
+
+            if (centerXOffset < 0 || centerYOffset < 0) {
+                relativePosX = (placeholderX - layoutPlacedStarterX) / offsetAreaX;
+                relativePosY = (placeholderY - layoutPlacedStarterY) / offsetAreaY;
+            } else {
+                relativePosX = (placeholderX - (int) centerXOffset) / offsetAreaX;
+                relativePosY = (placeholderY - (int) centerYOffset) / offsetAreaY;
+            }
+
+            this.selectedToPlace[2] = relativePosY;
+            this.selectedToPlace[3] = relativePosX;
 
             PlaceableCard card = (PlaceableCard) selectedCard.getUserData();
 
@@ -1324,12 +1335,30 @@ public class GamePageController implements Initializable {
      */
     private void displayPlaceHolders() {
         placeholdersVisible = true;
-        ArrayList<Integer[]> availablePositions = myPlayerArea.getAvailablePosition();
+        ArrayList<Integer[]> availablePositions = new ArrayList<>();
+        availablePositions = myPlayerArea.getAvailablePosition();
+
+        double[] boundingBox = calculateBoundingBox(allCards);
+        double totalWidth = boundingBox[2] - boundingBox[0];
+        double totalHeight = boundingBox[3] - boundingBox[1];
+
+        centerXOffset = (playground.getWidth() - totalWidth) / 2 - boundingBox[0];
+        centerYOffset = (playground.getHeight() - totalHeight) / 2 - boundingBox[1];
+
+        int newLayoutX;
+        int newLayoutY;
 
         for (Integer[] pos : availablePositions) {
             // Calculate the new layout position of the placeholder
-            int newLayoutX = layoutPlacedStarterX + pos[1] * offsetAreaX;
-            int newLayoutY = layoutPlacedStarterY - pos[0] * offsetAreaY;
+            if(centerXOffset <0 || centerYOffset <0) {
+                newLayoutX = layoutPlacedStarterX + pos[1] * offsetAreaX;
+                newLayoutY = layoutPlacedStarterY + pos[0] * offsetAreaY;
+            } else {
+                newLayoutX = (int) centerXOffset + pos[1] * offsetAreaX;
+                newLayoutY = (int) centerYOffset + pos[0] * offsetAreaY;
+            }
+
+            System.out.println("Center: " + centerXOffset + " " + centerYOffset);
 
             addClickablePlaceholder(playground, newLayoutX, newLayoutY, fitHeightPlaced, fitWidthPlaced, this::confirmPlaceCard);
         }
@@ -1360,7 +1389,7 @@ public class GamePageController implements Initializable {
             // Remove all existing cards from the player area
             playground.getChildren().removeIf(node -> node instanceof ImageView && node.getUserData() instanceof PlaceableCard);
 
-            ArrayList<PlaceableCard> allCards = playerArea.getAllCards();
+            allCards = playerArea.getAllCards();
 
             double[] boundingBox = calculateBoundingBox(allCards);
             double totalWidth = boundingBox[2] - boundingBox[0];
@@ -1422,7 +1451,6 @@ public class GamePageController implements Initializable {
         } else if (isBottom) {
             cardImageView.toBack();
         } else {
-            int cardIndex = playground.getChildren().indexOf(cardImageView);
             playground.getChildren().remove(cardImageView);
             playground.getChildren().add(cardImageView);
         }
