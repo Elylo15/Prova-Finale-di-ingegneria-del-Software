@@ -343,28 +343,50 @@ public class GamePageController implements Initializable {
      * Displays the commonArea
      */
     public void addCardsToCommonArea() {
-        //Add the front up cards to commonArea
+
         Platform.runLater(() -> {
-            //Add the cards to table
-            addNewCardToPane(mainPane, commonArea.getTableCards().getFirst().getID(), true,
-                    commonArea.getTableCards().getFirst(), layoutXPick0, layoutYResource, fitHeightCommon, fitWidthCommon, this::pickCard);
+            //Add the front up cards to commonArea
+            if(commonArea.getTableCards().getFirst() == null)
+                removeCardFromPosition(layoutXPick0, layoutYResource);
+            else
+                addNewCardToPane(mainPane, commonArea.getTableCards().getFirst().getID(), true,
+                        commonArea.getTableCards().getFirst(), layoutXPick0, layoutYResource, fitHeightCommon, fitWidthCommon, this::pickCard);
             onTop.toFront();
-            addNewCardToPane(mainPane, commonArea.getTableCards().get(1).getID(), true,
-                    commonArea.getTableCards().get(1), layoutXPick1, layoutYResource, fitHeightCommon, fitWidthCommon, this::pickCard);
+
+            if(commonArea.getTableCards().get(1) == null)
+                removeCardFromPosition(layoutXPick1, layoutYResource);
+            else
+                addNewCardToPane(mainPane, commonArea.getTableCards().get(1).getID(), true,
+                        commonArea.getTableCards().get(1), layoutXPick1, layoutYResource, fitHeightCommon, fitWidthCommon, this::pickCard);
             onTop.toFront();
-            addNewCardToPane(mainPane, commonArea.getTableCards().get(2).getID(), true,
-                    commonArea.getTableCards().get(2), layoutXPick0, layoutYGold, fitHeightCommon, fitWidthCommon, this::pickCard);
+
+            if(commonArea.getTableCards().get(2) == null)
+                removeCardFromPosition(layoutXPick0, layoutYGold);
+            else
+                addNewCardToPane(mainPane, commonArea.getTableCards().get(2).getID(), true,
+                        commonArea.getTableCards().get(2), layoutXPick0, layoutYGold, fitHeightCommon, fitWidthCommon, this::pickCard);
             onTop.toFront();
-            addNewCardToPane(mainPane, commonArea.getTableCards().get(3).getID(), true,
-                    commonArea.getTableCards().get(3), layoutXPick1, layoutYGold, fitHeightCommon, fitWidthCommon, this::pickCard);
+
+            if(commonArea.getTableCards().get(3) == null)
+                removeCardFromPosition(layoutXPick1, layoutYGold);
+            else
+                addNewCardToPane(mainPane, commonArea.getTableCards().get(3).getID(), true,
+                        commonArea.getTableCards().get(3), layoutXPick1, layoutYGold, fitHeightCommon, fitWidthCommon, this::pickCard);
             onTop.toFront();
 
             //Add the cards to deck
-            addNewCardToPane(mainPane, commonArea.getD1().getList().getFirst().getID(), false,
-                    commonArea.getD1().getList().getFirst(), layoutXDeck, layoutYResource, fitHeightCommon, fitWidthCommon, this::pickCard);
+            if(commonArea.getD1().getList().getFirst() == null)
+                removeCardFromPosition(layoutXDeck, layoutYResource);
+            else
+                addNewCardToPane(mainPane, commonArea.getD1().getList().getFirst().getID(), false,
+                        commonArea.getD1().getList().getFirst(), layoutXDeck, layoutYResource, fitHeightCommon, fitWidthCommon, this::pickCard);
             onTop.toFront();
-            addNewCardToPane(mainPane, commonArea.getD2().getList().getFirst().getID(), false,
-                    commonArea.getD2().getList().getFirst(), layoutXDeck, layoutYGold, fitHeightCommon, fitWidthCommon, this::pickCard);
+
+            if(commonArea.getD2().getList().getFirst() == null)
+                removeCardFromPosition(layoutXDeck, layoutYGold);
+            else
+                addNewCardToPane(mainPane, commonArea.getD2().getList().getFirst().getID(), false,
+                        commonArea.getD2().getList().getFirst(), layoutXDeck, layoutYGold, fitHeightCommon, fitWidthCommon, this::pickCard);
             onTop.toFront();
         });
     }
@@ -968,23 +990,27 @@ public class GamePageController implements Initializable {
 
             if (selectedPick == 1) {
                 Platform.runLater(() -> {
-                    //add selected card to hand
+                    //add selected card from deck to hand
                     addNewCardToPane(mainPane, commonArea.getD1().getList().get(0).getID(), true, commonArea.getD1().getList().get(0),
                             layoutXCard2, layoutYHand, fitHeightCard, fitWidthCard, this::choseCardToPlace);
                     onTop.toFront();
-                    //add new card to deck
-                    addNewCardToPane(mainPane, commonArea.getD1().getList().get(1).getID(), false, commonArea.getD1().getList().get(1),
-                            layoutXDeck, layoutYResource, fitHeightCommon, fitWidthCommon, this::pickCard);
+                    //add new card to deck if deck not empty
+                    if(commonArea.getD1().getList().get(1) != null)
+                        addNewCardToPane(mainPane, commonArea.getD1().getList().get(1).getID(), false, commonArea.getD1().getList().get(1),
+                                layoutXDeck, layoutYResource, fitHeightCommon, fitWidthCommon, this::pickCard);
                     clickedCard.toFront();
                     onTop.toFront();
                 });
             } else if (selectedPick == 2) {
                 Platform.runLater(() -> {
+                    //add selected card from deck to hand
                     addNewCardToPane(mainPane, commonArea.getD2().getList().get(0).getID(), true, commonArea.getD2().getList().get(0),
                             layoutXCard2, layoutYHand, fitHeightCard, fitWidthCard, this::choseCardToPlace);
                     onTop.toFront();
-                    addNewCardToPane(mainPane, commonArea.getD2().getList().get(1).getID(), false, commonArea.getD2().getList().get(1),
-                            layoutXDeck, layoutYGold, fitHeightCommon, fitWidthCommon, this::pickCard);
+                    //add new card to deck if deck not empty
+                    if (commonArea.getD2().getList().get(1) != null)
+                        addNewCardToPane(mainPane, commonArea.getD2().getList().get(1).getID(), false, commonArea.getD2().getList().get(1),
+                                layoutXDeck, layoutYGold, fitHeightCommon, fitWidthCommon, this::pickCard);
                     clickedCard.toFront();
                     onTop.toFront();
                 });
@@ -993,41 +1019,61 @@ public class GamePageController implements Initializable {
                 addNewCardToPane(mainPane, commonArea.getTableCards().getFirst().getID(), true, commonArea.getTableCards().getFirst(),
                         layoutXCard2, layoutYHand, fitHeightCard, fitWidthCard, this::choseCardToPlace);
                 onTop.toFront();
-                //add new card to table
-                addNewCardToPane(mainPane, commonArea.getD1().getList().get(0).getID(), true, commonArea.getD1().getList().get(0),
-                        layoutXPick0, layoutYResource, fitHeightCommon, fitWidthCommon, this::pickCard);
+                //add new card to table if deck not empty
+                if (commonArea.getD1().getList().get(0) != null)
+                    addNewCardToPane(mainPane, commonArea.getD1().getList().get(0).getID(), true, commonArea.getD1().getList().get(0),
+                            layoutXPick0, layoutYResource, fitHeightCommon, fitWidthCommon, this::pickCard);
                 onTop.toFront();
-                //add new card to deck
-                addNewCardToPane(mainPane, commonArea.getD1().getList().get(1).getID(), false, commonArea.getD1().getList().get(1),
-                        layoutXDeck, layoutYResource, fitHeightCommon, fitWidthCommon, this::pickCard);
+                //add new card to deck if deck not empty
+                if(commonArea.getD1().getList().get(1) != null)
+                    addNewCardToPane(mainPane, commonArea.getD1().getList().get(1).getID(), false, commonArea.getD1().getList().get(1),
+                            layoutXDeck, layoutYResource, fitHeightCommon, fitWidthCommon, this::pickCard);
                 onTop.toFront();
             } else if (selectedPick == 4) {
+                //add selected card to hand
                 addNewCardToPane(mainPane, commonArea.getTableCards().get(1).getID(), true, commonArea.getTableCards().get(1),
                         layoutXCard2, layoutYHand, fitHeightCard, fitWidthCard, this::choseCardToPlace);
                 onTop.toFront();
-                addNewCardToPane(mainPane, commonArea.getD1().getList().get(0).getID(), true, commonArea.getD1().getList().get(0),
-                        layoutXPick1, layoutYResource, fitHeightCommon, fitWidthCommon, this::pickCard);
+                //add new card to table if deck not empty
+                if (commonArea.getD1().getList().get(0) != null)
+                    addNewCardToPane(mainPane, commonArea.getD1().getList().get(0).getID(), true, commonArea.getD1().getList().get(0),
+                            layoutXPick1, layoutYResource, fitHeightCommon, fitWidthCommon, this::pickCard);
                 onTop.toFront();
-                addNewCardToPane(mainPane, commonArea.getD1().getList().get(1).getID(), false, commonArea.getD1().getList().get(1),
-                        layoutXDeck, layoutYResource, fitHeightCommon, fitWidthCommon, this::pickCard);
+                //add new card to deck if deck not empty
+                if(commonArea.getD1().getList().get(1) != null)
+                    addNewCardToPane(mainPane, commonArea.getD1().getList().get(1).getID(), false, commonArea.getD1().getList().get(1),
+                            layoutXDeck, layoutYResource, fitHeightCommon, fitWidthCommon, this::pickCard);
+                onTop.toFront();
             } else if (selectedPick == 5) {
+                //add selected card to hand
                 addNewCardToPane(mainPane, commonArea.getTableCards().get(2).getID(), true, commonArea.getTableCards().get(2),
                         layoutXCard2, layoutYHand, fitHeightCard, fitWidthCard, this::choseCardToPlace);
                 onTop.toFront();
-                addNewCardToPane(mainPane, commonArea.getD2().getList().get(0).getID(), true, commonArea.getD2().getList().get(0),
-                        layoutXPick0, layoutYGold, fitHeightCommon, fitWidthCommon, this::pickCard);
+                //add new card to table if deck not empty
+                if (commonArea.getD2().getList().get(0) != null)
+                    addNewCardToPane(mainPane, commonArea.getD2().getList().get(0).getID(), true, commonArea.getD2().getList().get(0),
+                            layoutXPick0, layoutYGold, fitHeightCommon, fitWidthCommon, this::pickCard);
                 onTop.toFront();
-                addNewCardToPane(mainPane, commonArea.getD2().getList().get(1).getID(), false, commonArea.getD2().getList().get(1),
-                        layoutXDeck, layoutYGold, fitHeightCommon, fitWidthCommon, this::pickCard);
+                //add new card to deck if deck not empty
+                if(commonArea.getD2().getList().get(1) != null)
+                    addNewCardToPane(mainPane, commonArea.getD2().getList().get(1).getID(), false, commonArea.getD2().getList().get(1),
+                            layoutXDeck, layoutYGold, fitHeightCommon, fitWidthCommon, this::pickCard);
+                onTop.toFront();
             } else if (selectedPick == 6) {
+                //add selected card to hand
                 addNewCardToPane(mainPane, commonArea.getTableCards().get(3).getID(), true, commonArea.getTableCards().get(3),
                         layoutXCard2, layoutYHand, fitHeightCard, fitWidthCard, this::choseCardToPlace);
                 onTop.toFront();
-                addNewCardToPane(mainPane, commonArea.getD2().getList().get(0).getID(), true, commonArea.getD2().getList().get(0),
-                        layoutXPick1, layoutYGold, fitHeightCommon, fitWidthCommon, this::pickCard);
+                //add new card to table if deck not empty
+                if (commonArea.getD2().getList().get(0) != null)
+                    addNewCardToPane(mainPane, commonArea.getD2().getList().get(0).getID(), true, commonArea.getD2().getList().get(0),
+                            layoutXPick1, layoutYGold, fitHeightCommon, fitWidthCommon, this::pickCard);
                 onTop.toFront();
-                addNewCardToPane(mainPane, commonArea.getD2().getList().get(1).getID(), false, commonArea.getD2().getList().get(1),
-                        layoutXDeck, layoutYGold, fitHeightCommon, fitWidthCommon, this::pickCard);
+                //add new card to deck if deck not empty
+                if(commonArea.getD2().getList().get(1) != null)
+                    addNewCardToPane(mainPane, commonArea.getD2().getList().get(1).getID(), false, commonArea.getD2().getList().get(1),
+                            layoutXDeck, layoutYGold, fitHeightCommon, fitWidthCommon, this::pickCard);
+                onTop.toFront();
             }
 
             GUIMessages.writeToClient(selectedPick);
