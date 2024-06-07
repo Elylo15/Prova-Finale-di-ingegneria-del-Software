@@ -48,6 +48,8 @@ public class GamePageController implements Initializable {
     };
     private final int offsetAreaX = 156;
     private final int offsetAreaY = 79;
+    double centerXOffset = 0;
+    double centerYOffset = 0;
     double scale = 1.0;
     private final int layoutPlacedStarterX = 678;
     private final int layoutPlacedStarterY = 203;
@@ -323,7 +325,7 @@ public class GamePageController implements Initializable {
                 addMyObjective();
                 displayPlayerArea(myPlayerArea);
                 if(Objects.equals(currentState, "PlaceTurnState") && Objects.equals(myself.getNickname(), currentPlayerNickname) && !placeholdersVisible)
-                    seePlaceHolders();
+                    displayPlaceHolders();
                 else if(placeholdersVisible)
                     removeAllPlaceholders();
             } else {
@@ -904,24 +906,24 @@ public class GamePageController implements Initializable {
             ImageView clickedPlaceholder = (ImageView) event.getSource();
             int placeholderX = (int) clickedPlaceholder.getLayoutX();
             int placeholderY = (int) clickedPlaceholder.getLayoutY();
-            int relativePosX = (placeholderX - layoutPlacedStarterX) / offsetAreaX;
-            int relativePosY = (placeholderY - layoutPlacedStarterY) / offsetAreaY;
+            int relativePosX = (placeholderY - layoutPlacedStarterY) / offsetAreaY;
+            int relativePosY = (placeholderX - layoutPlacedStarterX) / offsetAreaX;
 
-            this.selectedToPlace[2] = relativePosX;
             this.selectedToPlace[3] = relativePosY;
+            this.selectedToPlace[2] = relativePosX;
 
             PlaceableCard card = (PlaceableCard) selectedCard.getUserData();
 
             addNewCardToPane(playground, card.getID(), card.isFront(), card, placeholderX, placeholderY,
                     fitHeightPlaced, fitWidthPlaced, null);
+
+            System.out.println("Selected to place: " + Arrays.toString(selectedToPlace));
             GUIMessages.writeToClient(selectedToPlace);
         }
     }
 
 
-    //TODO when clicked, remove last card from hand
     //TODO fix bug card placed in the wrong position on playground.
-    //TODO anche i deck scorrono non solo la playerHand
     //TODO fix bug turn around not always working
     /**
      * When the mouse is clicked, it selects the card to pick
@@ -1320,17 +1322,14 @@ public class GamePageController implements Initializable {
     /**
      * Displays the placeholders of the available positions in the playerArea
      */
-    private void seePlaceHolders() {
+    private void displayPlaceHolders() {
         placeholdersVisible = true;
         ArrayList<Integer[]> availablePositions = myPlayerArea.getAvailablePosition();
 
         for (Integer[] pos : availablePositions) {
+            // Calculate the new layout position of the placeholder
             int newLayoutX = layoutPlacedStarterX + pos[1] * offsetAreaX;
-            int newLayoutY = layoutPlacedStarterY + pos[0] * offsetAreaY;
-
-            // Adjust the position according to the layout adjustment
-            //newLayoutX = (int) (newLayoutX * scale);
-            //newLayoutY = (int) (newLayoutY * scale);
+            int newLayoutY = layoutPlacedStarterY - pos[0] * offsetAreaY;
 
             addClickablePlaceholder(playground, newLayoutX, newLayoutY, fitHeightPlaced, fitWidthPlaced, this::confirmPlaceCard);
         }
@@ -1367,30 +1366,23 @@ public class GamePageController implements Initializable {
             double totalWidth = boundingBox[2] - boundingBox[0];
             double totalHeight = boundingBox[3] - boundingBox[1];
 
-            double centerXOffset = (playground.getWidth() - totalWidth) / 2 - boundingBox[0];
-            double centerYOffset = (playground.getHeight() - totalHeight) / 2 - boundingBox[1];
-
-            List<ImageView> cardImageViews = new ArrayList<>();
+            centerXOffset = (playground.getWidth() - totalWidth) / 2 - boundingBox[0];
+            centerYOffset = (playground.getHeight() - totalHeight) / 2 - boundingBox[1];
 
             for (PlaceableCard card : allCards) {
                 int layoutX =  calculateLayoutX(card) + (int) centerXOffset;
                 int layoutY = calculateLayoutY(card) +  (int) centerYOffset;
 
-                System.out.println("LayoutX: " + layoutX + " LayoutY: " + layoutY);
 
                 ImageView cardImageView = createCardImageView(card.getID(), card.isFront(), card, layoutX, layoutY, fitHeightPlaced, fitWidthPlaced);
                 playground.getChildren().add(cardImageView);
-                cardImageViews.add(cardImageView);
                 cardImageView.toFront();
 
                 // Adjust z-order
                 adjustCardZOrder(cardImageView, card);
             }
 
-            ArrayList<Integer[]> availablePositions = playerArea.getAvailablePosition();
 
-            // Check space for placeholders
-            //adjustElementsToFit(cardImageViews, availablePositions);
             onTop.toFront();
         });
     }
