@@ -5,9 +5,12 @@ import it.polimi.ingsw.protocol.messages.ConnectionState.availableColorsMessage;
 import javafx.animation.ScaleTransition;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Duration;
+
+import java.util.Objects;
 
 public class AvailableColorsController {
     availableColorsMessage message;
@@ -28,33 +31,29 @@ public class AvailableColorsController {
      */
     @FXML
     public void initialize() {
-        red.setVisible(false);
         red.setDisable(true);
-        green.setVisible(false);
         green.setDisable(true);
-        blue.setVisible(false);
         blue.setDisable(true);
-        purple.setVisible(false);
         purple.setDisable(true);
 
         this.message = (availableColorsMessage) GUIMessages.readToGUI();
 
         for (int i = 0; i < message.getColors().size(); i++) {
             if (message.getColors().get(i).equalsIgnoreCase("red")) {
-                red.setVisible(true);
                 red.setDisable(false);
+                red.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Colors/red.png"))));
                 initializeHoverEffect(red);
             } else if (message.getColors().get(i).equalsIgnoreCase("green")) {
-                green.setVisible(true);
                 green.setDisable(false);
+                green.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Colors/green.png"))));
                 initializeHoverEffect(green);
             } else if (message.getColors().get(i).equalsIgnoreCase("blue")) {
-                blue.setVisible(true);
                 blue.setDisable(false);
+                blue.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Colors/blue.png"))));
                 initializeHoverEffect(blue);
             } else if (message.getColors().get(i).equalsIgnoreCase("purple")) {
-                purple.setVisible(true);
                 purple.setDisable(false);
+                purple.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Colors/purple.png"))));
                 initializeHoverEffect(purple);
             }
         }

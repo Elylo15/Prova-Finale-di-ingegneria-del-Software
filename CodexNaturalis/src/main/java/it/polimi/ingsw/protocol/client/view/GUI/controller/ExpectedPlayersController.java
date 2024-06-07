@@ -1,19 +1,24 @@
 package it.polimi.ingsw.protocol.client.view.GUI.controller;
 
 import it.polimi.ingsw.protocol.client.view.GUI.message.GUIMessages;
+import javafx.animation.ScaleTransition;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
+import javafx.util.Duration;
 
 public class ExpectedPlayersController {
 
     @FXML
-    private Button two;
+    private ImageView two;
 
     @FXML
-    private Button three;
+    private ImageView three;
 
     @FXML
-    private Button four;
+    private ImageView four;
 
     /**
      * This method is called when the scene is loaded.
@@ -22,10 +27,37 @@ public class ExpectedPlayersController {
      */
     @FXML
     private void initialize() {
+
+        initializeHoverEffect(two);
+        initializeHoverEffect(three);
+        initializeHoverEffect(four);
+
         //serialize the number to send corresponding on the button clicked
-        two.setOnAction(event -> GUIMessages.writeToClient(2));
-        three.setOnAction(event -> GUIMessages.writeToClient(3));
-        four.setOnAction(event -> GUIMessages.writeToClient(4));
+        two.setOnMouseClicked(event -> GUIMessages.writeToClient(2));
+        three.setOnMouseClicked(event -> GUIMessages.writeToClient(3));
+        four.setOnMouseClicked(event -> GUIMessages.writeToClient(4));
+    }
+
+    @FXML
+    private void onHover(MouseEvent event) {
+        Node source = (Node) event.getSource();
+
+        ScaleTransition enlargeTransition = new ScaleTransition(Duration.millis(200), source);
+        enlargeTransition.setToX(1.1);
+        enlargeTransition.setToY(1.1);
+
+        ScaleTransition shrinkTransition = new ScaleTransition(Duration.millis(200), source);
+        shrinkTransition.setToX(1.0);
+        shrinkTransition.setToY(1.0);
+
+        source.setOnMouseEntered(e -> enlargeTransition.playFromStart());
+        source.setOnMouseExited(e -> shrinkTransition.playFromStart());
+    }
+
+
+    public void initializeHoverEffect(Node node) {
+        node.setOnMouseEntered(this::onHover);
+        node.setOnMouseExited(this::onHover);
     }
 
 }

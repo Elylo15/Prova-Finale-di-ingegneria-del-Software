@@ -23,7 +23,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
-import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 import java.net.URL;
@@ -50,6 +49,7 @@ public class GamePageController implements Initializable {
     private final int offsetAreaX = 156;
     private final int offsetAreaY = 79;
     public ImageView nextPlayer;
+    public ImageView colorName;
     double centerXOffset = 0;
     double centerYOffset = 0;
     double scale = 1.0;
@@ -90,8 +90,6 @@ public class GamePageController implements Initializable {
     @FXML
     private ImageView state;
     @FXML
-    private Text explanation;
-    @FXML
     private ImageView onTop;
     private ImageView red;
     private ImageView blue;
@@ -108,7 +106,6 @@ public class GamePageController implements Initializable {
     private int clickCounter = -1;
     private boolean isLastTurn = false;
     private boolean firstTimePlace = true;
-    private boolean firstTimeDraw = true;
     private ImageView selectedCard;
     private int selectedStarterFront;
     private int selectedPick;
@@ -180,24 +177,23 @@ public class GamePageController implements Initializable {
         switch (message) {
             case currentStateMessage currentStateMessage -> {
                 currentStateMessageSaved = currentStateMessage;
-                caseCurrentState(currentStateMessageSaved);
+                caseCurrentStateMessage(currentStateMessageSaved);
             }
             case ArrayList<?> list -> {
                 if (Objects.equals(currentState, "ObjectiveState") && !list.isEmpty() && list.getFirst() instanceof ObjectiveCard) {
                     objectivesToChose.add((ObjectiveCard) list.get(0));
                     objectivesToChose.add((ObjectiveCard) list.get(1));
                     objectiveCase();
-                    state.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Background/objectiveState.png"))));
-                    showImagePopup("/Images/Background/objectiveState.png");
-                    explanation.setText("Select your secret Objective, then place it");
+                    setState(currentStateMessageSaved.getPlayer().getColor());
+                    choosePopUp(currentStateMessageSaved.getPlayer().getColor());
                 }
             }
             case updatePlayerMessage update -> updatePlayerCase(update);
             case responseMessage responseMessage -> {
                 if (!responseMessage.getCorrect()) {
-                    showImagePopup("/Images/Background/wrong.png");
+                    wrongPopUp(currentStateMessageSaved.getPlayer().getColor());
                     wrong = true;
-                    caseCurrentState(currentStateMessageSaved);
+                    caseCurrentStateMessage(currentStateMessageSaved);
                 }
             }
 
@@ -205,39 +201,130 @@ public class GamePageController implements Initializable {
         }
     }
 
-    private void caseCurrentState(currentStateMessage currentStateMessage) {
+    private void caseCurrentStateMessage(currentStateMessage currentStateMessage) {
         this.currentState = currentStateMessage.getStateName();
         isLastTurn = currentStateMessage.isLastTurn();
         currentStateCase(currentStateMessage);
 
         if (isLastTurn) {
-            state.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Background/LastTurnState.png"))));
+            setLastTurn(currentStateMessage.getCurrentPlayer().getColor());
         }
 
         if (currentStateMessage.getCurrentPlayer().getNickname().equals(myself.getNickname())) {
             if (Objects.equals(currentState, "StarterCardState")) {
+                setState(currentStateMessage.getPlayer().getColor());
                 starterCase();
-                state.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Background/starterState.png"))));
-                showImagePopup("/Images/Background/starterState.png");
-                explanation.setText("Click twice if you want to turn the card around, then place it");
+                choosePopUp(currentStateMessage.getPlayer().getColor());
             } else if (Objects.equals(currentState, "PlaceTurnState")) {
                 if (!isLastTurn && !wrong) {
-                    state.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Background/yourTurn.png"))));
-                    showImagePopup("/Images/Background/yourTurn.png");
+                    setState(currentStateMessage.getPlayer().getColor());
+                    //add sound to tell u turn
                 }
 
                 if (firstTimePlace) {
                     firstTimePlace = false;
-                    explanation.setText("Select a card, turn it around if you want, then place it");
                 }
-
-            } else if (Objects.equals(currentState, "PickTurnState") && !isLastTurn && firstTimeDraw) {
-                firstTimeDraw = false;
-                explanation.setText("Click on the card you want to draw");
             }
         } else {
-            state.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Background/waitingState.png"))));
-            explanation.setText("");
+            setStateNotPlaying(currentStateMessage.getCurrentPlayer().getColor());
+        }
+    }
+
+    private void setState(String color) {
+
+        switch (color) {
+            case "red" ->
+                    state.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/YourTurn/youRed.png"))));
+            case "blue" ->
+                    state.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/YourTurn/youBlue.png"))));
+            case "green" ->
+                    state.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/YourTurn/youGreen.png"))));
+            case "purple" ->
+                    state.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/YourTurn/youPur.png"))));
+        }
+    }
+
+    private void setStateNotPlaying(String color) {
+        if (Objects.equals(currentState, "StarterCardState") || Objects.equals(currentState, "ObjectiveState")) {
+            switch (color) {
+                case "red" ->
+                        state.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Choosing/choosingRed.png"))));
+                case "blue" ->
+                        state.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Choosing/choosingBlue.png"))));
+                case "green" ->
+                        state.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Choosing/choosingGreen.png"))));
+                case "purple" ->
+                        state.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Background/ChoosingPur.png"))));
+            }
+        } else {
+            switch (color) {
+                case "red" ->
+                        state.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/IsPlaying/redPlaying.png"))));
+                case "blue" ->
+                        state.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/IsPlaying/bluePlaying.png"))));
+                case "green" ->
+                        state.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/IsPlaying/greenPlaying.png"))));
+                case "purple" ->
+                        state.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/IsPlaying/purPlaying.png"))));
+            }
+        }
+    }
+
+    private void setLastTurn(String color) {
+        switch (color) {
+            case "red" ->
+                    state.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/LastTurn/lastRed.png"))));
+            case "blue" ->
+                    state.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/LastTurn/lastBlue.png"))));
+            case "green" ->
+                    state.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/LastTurn/lastGreen.png"))));
+            case "purple" ->
+                    state.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/LastTurn/lastPur.png"))));
+        }
+    }
+
+    private void setNextButton(String color) {
+        switch (color) {
+            case "red" -> nextPlayer.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/NextButton/nextRed.png"))));
+            case "blue" -> nextPlayer.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/NextButton/nextBlue.png"))));
+            case "green" -> nextPlayer.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/NextButton/nextGreen.png"))));
+            case "purple" -> nextPlayer.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/NextButton/nextPur.png"))));
+        }
+    }
+
+    private void setColorName(String color) {
+        switch (color) {
+            case "red" -> colorName.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/NameTemplate/redName.png"))));
+            case "blue" -> colorName.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/NameTemplate/blueName.png"))));
+            case "green" -> colorName.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/NameTemplate/greenName.png"))));
+            case "purple" -> colorName.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/NameTemplate/purpleName.png"))));
+        }
+    }
+
+    private void waitPopUp(String color) {
+        switch (color) {
+            case "red" -> showImagePopup("/Images/PleaseWait/waitRed.png");
+            case "blue" -> showImagePopup("/Images/PleaseWait/waitBlue.png");
+            case "green" -> showImagePopup("/Images/PleaseWait/waitGreen.png");
+            case "purple" -> showImagePopup("/Images/PleaseWait/waitPur.png");
+        }
+    }
+
+    private void choosePopUp(String color) {
+        switch (color) {
+            case "red" -> showImagePopup("/Images/YouChoose/youChoRe.png");
+            case "blue" -> showImagePopup("/Images/YouChoose/youChoBl.png");
+            case "green" -> showImagePopup("/Images/YouChoose/youChoGr.png");
+            case "purple" -> showImagePopup("/Images/YouChoose/youChoPu.png");
+        }
+    }
+
+    private void wrongPopUp(String color) {
+        switch (color) {
+            case "red" -> showImagePopup("/Images/Wrong/wrongRed.png");
+            case "blue" -> showImagePopup("/Images/Wrong/wrongBlue.png");
+            case "green" -> showImagePopup("/Images/Wrong/wrongGreen.png");
+            case "purple" -> showImagePopup("/Images/Wrong/wrongPur.png");
         }
     }
 
@@ -332,6 +419,19 @@ public class GamePageController implements Initializable {
     private void setPage() {
         String nickname = (clickCounter == -1) ? myself.getNickname() : players.get(clickCounter).getNickname();
         playerName.setText(nickname);
+
+        String color = (clickCounter == -1) ? myself.getColor() : players.get(clickCounter).getColor();
+        setColorName(color);
+
+        int next = clickCounter;
+        if(clickCounter == players.size() -1)
+            next = -1;
+        else
+            next++;
+
+        String nextColor = (next == -1) ? myself.getColor() : players.get(next).getColor();
+        setNextButton(nextColor);
+
 
         if (!currentState.equals("StarterCardState") && !currentState.equals("ObjectiveState")) {
             if (clickCounter == -1) {
@@ -1096,7 +1196,7 @@ public class GamePageController implements Initializable {
     //TODO create images for when non you
 
     /**
-     * When clicked, it displays the next player's page or the client's page
+     * When clicked, it displays the NextButton player's page or the client's page
      * If the state is StarterCardState or ObjectiveState, it displays a popup
      */
     @FXML
@@ -1105,19 +1205,15 @@ public class GamePageController implements Initializable {
 
         if (!Objects.equals(currentState, "StarterCardState") && !Objects.equals(currentState, "ObjectiveState")) {
             clickCounter++;
-            if (clickCounter == players.size()) {
+            if (clickCounter == players.size() ) {
                 clickCounter = -1;
             }
             setPage();
             onTop.toFront();
-        } else if (Objects.equals(currentState, "StarterCardState") && Objects.equals(currentPlayerNickname, myself.getNickname())) {
-            showImagePopup("/Images/Background/starterState.png");
-        } else if (Objects.equals(currentState, "ObjectiveState") && Objects.equals(currentPlayerNickname, myself.getNickname())) {
-            showImagePopup("/Images/Background/objectiveState.png");
-        }   else if(Objects.equals(currentState, "StarterCardState")) {
-            showImagePopup("/Images/Background/pleaseWait.png");
-        } else if(Objects.equals(currentState, "ObjectiveState")) {
-            showImagePopup("/Images/Background/pleaseWait.png");
+        } else if ((Objects.equals(currentState, "StarterCardState") || Objects.equals(currentState, "ObjectiveState")) && Objects.equals(currentPlayerNickname, myself.getNickname())) {
+            choosePopUp(myself.getColor());
+        }   else if(Objects.equals(currentState, "StarterCardState") || Objects.equals(currentState, "ObjectiveState")) {
+            waitPopUp(myself.getColor());
         }
 
         PauseTransition pause = new PauseTransition(Duration.seconds(1));
@@ -1136,8 +1232,10 @@ public class GamePageController implements Initializable {
             ImageView image = new ImageView(imageLoad);
 
             image.preserveRatioProperty().setValue(true);
-            image.setLayoutX(1074);
-            image.setLayoutY(639);
+            image.setFitWidth(646);
+            image.setFitHeight(167);
+            image.setLayoutX(957);
+            image.setLayoutY(608);
             image.setOpacity(0.0); // Initially invisible
 
             mainPane.getChildren().add(image);

@@ -7,7 +7,6 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
-<?import javafx.scene.text.Text?>
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.protocol.client.view.GUI.controller.GamePageController">
     <BorderPane prefHeight="1080.0" prefWidth="1920.0">
@@ -19,31 +18,31 @@
                 <ImageView id="scoreBoard" fitHeight="491.0" fitWidth="246.0" layoutX="1627.0" layoutY="38.0" preserveRatio="true">
                     <Image url="@Images/Scoreboard/plateau.png" />
                 </ImageView>
-            <ImageView id="nextPlayer" fx:id="nextPlayer" fitHeight="243.0" fitWidth="334.0" layoutX="11.0" layoutY="5.0" onMouseClicked="#switchToNextPlayer" preserveRatio="true">
+            <ImageView id="nextPlayer" fx:id="nextPlayer" fitHeight="147.0" fitWidth="535.0" layoutX="6.0" layoutY="5.0" onMouseClicked="#switchToNextPlayer" preserveRatio="true">
                <image>
-                  <Image url="@Images/Background/next.png" />
+                  <Image url="@Images/NextButton/nextPur.png" />
                </image>
             </ImageView>
-            <ImageView id="state" fx:id="state" fitHeight="243.0" fitWidth="334.0" layoutX="1099.0" layoutY="5.0" preserveRatio="true">
+            <ImageView id="state" fx:id="state" fitHeight="147.0" fitWidth="535.0" layoutX="1049.0" layoutY="5.0" preserveRatio="true">
                <image>
-                  <Image url="@Images/Background/starterState.png" />
+                  <Image url="@Images/Choosing/choosingPur.png" />
                </image>
             </ImageView>
-                <Label id="playerName" fx:id="playerName" alignment="CENTER" contentDisplay="CENTER" layoutX="348.0" layoutY="-35.0" prefHeight="176.0" prefWidth="742.0" text="Bianca" textAlignment="CENTER">
-                    <font>
-                        <Font name="Fantasy Script" size="71.0" />
-                    </font>
-                </Label>
                 <Pane id="Playground" fx:id="playground" layoutX="16.0" layoutY="152.0" prefHeight="540.0" prefWidth="1556.0">
                 </Pane>
                 <ImageView id="layout" fx:id="onTop" fitHeight="1080.0" fitWidth="1920.0" focusTraversable="true" mouseTransparent="true" preserveRatio="true">
                     <Image url="@Images/Background/GamePage.png" />
                 </ImageView>
-            <Text id="explanation" fx:id="explanation" layoutX="866.0" layoutY="1025.0" strokeType="OUTSIDE" strokeWidth="0.0" textAlignment="CENTER" wrappingWidth="738.1369018554688">
-               <font>
-                  <Font name="Fantasy Script" size="35.0" />
-               </font>
-            </Text>
+            <ImageView id="colorName" fx:id="colorName" fitHeight="147.0" fitWidth="535.0" layoutX="523.0" layoutY="5.0" preserveRatio="true">
+               <image>
+                  <Image url="@Images/NameTemplate/purpleName.png" />
+               </image>
+            </ImageView>
+                <Label id="playerName" fx:id="playerName" alignment="CENTER" contentDisplay="CENTER" layoutX="528.0" layoutY="-20.0" opacity="0.8" prefHeight="176.0" prefWidth="415.0" text="Bianca" textAlignment="CENTER" textFill="#1e1e1e">
+                    <font>
+                        <Font name="Fantasy Script" size="54.0" />
+                    </font>
+                </Label>
             </Pane>
         </center>
     </BorderPane>
