@@ -1404,31 +1404,26 @@ public class GamePageController implements Initializable {
                 return;
             }
 
-            // Create a path
-            Path path = new Path();
             double startX = pion.getLayoutX();
             double startY = pion.getLayoutY();
-            path.getElements().add(new MoveTo(startX, startY));
 
-            int steps = 0;
-            // Intermediate points to the path - stop at position that corresponds to the score
-            for (int i = getScoreByPosition(startX, startY); i <= score; i++) {
-                steps++;
+            Timeline timeline = new Timeline();
+
+            int start = getScoreByPosition(startX, startY);
+
+            for (int i = start; i <= score; i++) {
                 double[] adjustedPosition = getAdjustedPosition(allPions, positions[i][0], positions[i][1], pion);
-                path.getElements().add(new LineTo(adjustedPosition[0], adjustedPosition[1]));
+
+                KeyFrame keyFrame = new KeyFrame(Duration.millis((i - start) * 200), e -> {
+                    pion.setLayoutX(adjustedPosition[0]);
+                    pion.setLayoutY(adjustedPosition[1]);
+                });
+
+                timeline.getKeyFrames().add(keyFrame);
             }
 
-            //TODO WHY DOES THE PION DISAPPEAR!?
-            PathTransition pathTransition = new PathTransition();
-            int speed = 100; //TODO I dont know if its too fast or not
-            int durationInSeconds = steps / speed;
-            pathTransition.setDuration(Duration.seconds(1));
-            pathTransition.setPath(path);
-            pathTransition.setNode(pion);
-            pathTransition.setCycleCount(1);
-            pathTransition.setAutoReverse(false);
+            timeline.play();
             pion.toFront();
-            pathTransition.play();
         });
     }
 
