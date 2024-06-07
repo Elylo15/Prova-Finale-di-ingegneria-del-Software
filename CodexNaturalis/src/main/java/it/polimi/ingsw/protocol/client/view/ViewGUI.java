@@ -29,6 +29,7 @@ import java.util.Objects;
  */
 public class ViewGUI extends View {
     private boolean firstTime = true;
+    private String state;
     private String color;
 
 
@@ -161,7 +162,10 @@ public class ViewGUI extends View {
         //to avoid reading unexpected messages
         GUIMessages.clearQueue();
         if (!message.getCorrect())
-            Platform.runLater(SceneManager::answer);
+            if(Objects.equals(state, "PlaceTurnState"))
+                GUIMessages.writeToGUI(message);
+            else
+                Platform.runLater(SceneManager::answer);
 
     }
 
@@ -222,6 +226,7 @@ public class ViewGUI extends View {
     public void updatePlayer(currentStateMessage message) {
         GUIMessages.clearQueue();
         System.out.println(message.getStateName());
+        state = message.getStateName();
         GUIMessages.writeToGUI(message);
         if (firstTime) {
             firstTime = false; //Load this page only the first time the method is called

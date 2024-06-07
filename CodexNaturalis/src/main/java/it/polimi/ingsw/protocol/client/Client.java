@@ -195,7 +195,7 @@ public class Client implements Runnable {
             controller.placeStarter(side, noResponse.get());
             responseMessage answer = controller.correctAnswer();
 
-            //view.answer(answer);
+            view.answer(answer);
             if (answer.getCorrect())
                 break;
         }

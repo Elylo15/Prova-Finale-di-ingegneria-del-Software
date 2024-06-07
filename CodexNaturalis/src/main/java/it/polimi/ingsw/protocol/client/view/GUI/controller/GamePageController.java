@@ -8,6 +8,7 @@ import it.polimi.ingsw.protocol.client.view.GUI.ImageBinder;
 import it.polimi.ingsw.protocol.client.view.GUI.message.GUIMessages;
 import it.polimi.ingsw.protocol.messages.PlayerTurnState.updatePlayerMessage;
 import it.polimi.ingsw.protocol.messages.currentStateMessage;
+import it.polimi.ingsw.protocol.messages.responseMessage;
 import javafx.animation.*;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
@@ -48,6 +49,7 @@ public class GamePageController implements Initializable {
     };
     private final int offsetAreaX = 156;
     private final int offsetAreaY = 79;
+    public ImageView nextPlayer;
     double centerXOffset = 0;
     double centerYOffset = 0;
     double scale = 1.0;
@@ -112,6 +114,8 @@ public class GamePageController implements Initializable {
     private int selectedPick;
     private int selectedObjective;
     private boolean placeholdersVisible = false;
+    private currentStateMessage currentStateMessageSaved;
+    private boolean wrong = false;
 
     /**
      * It is used to initialize the controller, it starts the message listener and processor threads.
@@ -175,42 +179,8 @@ public class GamePageController implements Initializable {
     private void processMessage(Object message) {
         switch (message) {
             case currentStateMessage currentStateMessage -> {
-                this.currentState = currentStateMessage.getStateName();
-                isLastTurn = currentStateMessage.isLastTurn();
-                currentStateCase(currentStateMessage);
-
-                if (isLastTurn) {
-                    state.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Background/LastTurnState.png"))));
-                }
-
-                if (currentStateMessage.getCurrentPlayer().getNickname().equals(myself.getNickname())) {
-                    if (Objects.equals(currentState, "StarterCardState")) {
-                        starterCase();
-                        state.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Background/starterState.png"))));
-                        showImagePopup("/Images/Background/starterState.png");
-                        explanation.setText("Click twice if you want to turn the card around, then place it");
-                    } else if (Objects.equals(currentState, "PlaceTurnState")) {
-                        if (!isLastTurn) {
-                            state.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Background/yourTurn.png"))));
-                            showImagePopup("/Images/Background/yourTurn.png");
-                        }
-
-                        if (firstTimePlace) {
-                            firstTimePlace = false;
-                            explanation.setText("Select a card, turn it around if you want, then place it");
-                        }
-
-                    } else if (Objects.equals(currentState, "PickTurnState") && !isLastTurn && firstTimeDraw) {
-                        firstTimeDraw = false;
-                        explanation.setText("Click on the card you want to draw");
-//                        I think it will be still set from placeTurnCase
-//                        if (!isLastTurn)
-//                            state.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Background/yourTurn.png"))));
-                    }
-                } else {
-                    state.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Background/waitingState.png"))));
-                    explanation.setText("");
-                }
+                currentStateMessageSaved = currentStateMessage;
+                caseCurrentState(currentStateMessageSaved);
             }
             case ArrayList<?> list -> {
                 if (Objects.equals(currentState, "ObjectiveState") && !list.isEmpty() && list.getFirst() instanceof ObjectiveCard) {
@@ -223,8 +193,51 @@ public class GamePageController implements Initializable {
                 }
             }
             case updatePlayerMessage update -> updatePlayerCase(update);
+            case responseMessage responseMessage -> {
+                if (!responseMessage.getCorrect()) {
+                    showImagePopup("/Images/Background/wrong.png");
+                    wrong = true;
+                    caseCurrentState(currentStateMessageSaved);
+                }
+            }
 
             default -> throw new IllegalStateException("Unexpected value: " + message);
+        }
+    }
+
+    private void caseCurrentState(currentStateMessage currentStateMessage) {
+        this.currentState = currentStateMessage.getStateName();
+        isLastTurn = currentStateMessage.isLastTurn();
+        currentStateCase(currentStateMessage);
+
+        if (isLastTurn) {
+            state.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Background/LastTurnState.png"))));
+        }
+
+        if (currentStateMessage.getCurrentPlayer().getNickname().equals(myself.getNickname())) {
+            if (Objects.equals(currentState, "StarterCardState")) {
+                starterCase();
+                state.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Background/starterState.png"))));
+                showImagePopup("/Images/Background/starterState.png");
+                explanation.setText("Click twice if you want to turn the card around, then place it");
+            } else if (Objects.equals(currentState, "PlaceTurnState")) {
+                if (!isLastTurn && !wrong) {
+                    state.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Background/yourTurn.png"))));
+                    showImagePopup("/Images/Background/yourTurn.png");
+                }
+
+                if (firstTimePlace) {
+                    firstTimePlace = false;
+                    explanation.setText("Select a card, turn it around if you want, then place it");
+                }
+
+            } else if (Objects.equals(currentState, "PickTurnState") && !isLastTurn && firstTimeDraw) {
+                firstTimeDraw = false;
+                explanation.setText("Click on the card you want to draw");
+            }
+        } else {
+            state.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Background/waitingState.png"))));
+            explanation.setText("");
         }
     }
 
@@ -325,7 +338,7 @@ public class GamePageController implements Initializable {
                 addCardsToHand();
                 addMyObjective();
                 displayPlayerArea(myPlayerArea);
-                if(Objects.equals(currentState, "PlaceTurnState") && Objects.equals(myself.getNickname(), currentPlayerNickname) && !placeholdersVisible)
+                if((Objects.equals(currentState, "PlaceTurnState") && Objects.equals(myself.getNickname(), currentPlayerNickname) && !placeholdersVisible) || wrong)
                     displayPlaceHolders();
                 else if(placeholdersVisible)
                     removeAllPlaceholders();
@@ -397,11 +410,11 @@ public class GamePageController implements Initializable {
     private void addCommonObjective() {
         Platform.runLater(() -> {
             if (commonObjectives != null && !commonObjectives.isEmpty()) {
-                addNewCardToPane(mainPane, commonObjectives.get(0).getID(), true, commonObjectives.get(0), layoutXObjective,
-                        layoutYObj0, fitHeightCommon, fitWidthCommon, this::turnAround);
+                addNewCardToPane(mainPane, commonObjectives.get(0).getID(), commonObjectives.get(0).isFront(), commonObjectives.get(0), layoutXObjective,
+                        layoutYObj0, fitHeightCommon, fitWidthCommon, this::turnObjectives);
                 onTop.toFront();
-                addNewCardToPane(mainPane, commonObjectives.get(1).getID(), true, commonObjectives.get(1), layoutXObjective,
-                        layoutYObj1, fitHeightCommon, fitWidthCommon, this::turnAround);
+                addNewCardToPane(mainPane, commonObjectives.get(1).getID(), commonObjectives.get(1).isFront(), commonObjectives.get(1), layoutXObjective,
+                        layoutYObj1, fitHeightCommon, fitWidthCommon, this::turnObjectives);
                 onTop.toFront();
             }
         });
@@ -422,7 +435,7 @@ public class GamePageController implements Initializable {
 
     public void addMyObjective() {
         Platform.runLater(() -> {
-            addNewCardToPane(mainPane, myObjective.getID(), true, myObjective, layoutXObjective, layoutYObjMy, fitHeightCommon, fitWidthCommon, this::turnAround);
+            addNewCardToPane(mainPane, myObjective.getID(), myObjective.isFront(), myObjective, layoutXObjective, layoutYObjMy, fitHeightCommon, fitWidthCommon, this::turnObjectives);
             onTop.toFront();
         });
     }
@@ -682,6 +695,11 @@ public class GamePageController implements Initializable {
         }
     }
 
+    private void turnObjectives(MouseEvent event){
+         if (event.getClickCount() == 2)
+            turnAround(event);
+    }
+
     /**
      * Turns the card around when clicked
      *
@@ -914,7 +932,6 @@ public class GamePageController implements Initializable {
 
     }
 
-    //TODO see if it works as expected
 
     /**
      * When the mouse is clicked, it selects the position where to place the card
@@ -945,19 +962,11 @@ public class GamePageController implements Initializable {
             this.selectedToPlace[2] = relativePosY;
             this.selectedToPlace[3] = relativePosX;
 
-            PlaceableCard card = (PlaceableCard) selectedCard.getUserData();
-
-            addNewCardToPane(playground, card.getID(), card.isFront(), card, placeholderX, placeholderY,
-                    fitHeightPlaced, fitWidthPlaced, null);
-
-            System.out.println("Selected to place: " + Arrays.toString(selectedToPlace));
+            wrong = false;
             GUIMessages.writeToClient(selectedToPlace);
         }
     }
 
-
-    //TODO fix bug card placed in the wrong position on playground.
-    //TODO fix bug turn around not always working
     /**
      * When the mouse is clicked, it selects the card to pick
      *
@@ -988,93 +997,95 @@ public class GamePageController implements Initializable {
             else if (cardID == commonArea.getTableCards().get(3).getID())
                 this.selectedPick = 6;
 
-            if (selectedPick == 1) {
-                Platform.runLater(() -> {
-                    //add selected card from deck to hand
-                    addNewCardToPane(mainPane, commonArea.getD1().getList().get(0).getID(), true, commonArea.getD1().getList().get(0),
-                            layoutXCard2, layoutYHand, fitHeightCard, fitWidthCard, this::choseCardToPlace);
-                    onTop.toFront();
-                    //add new card to deck if deck not empty
-                    if(commonArea.getD1().getList().get(1) != null)
-                        addNewCardToPane(mainPane, commonArea.getD1().getList().get(1).getID(), false, commonArea.getD1().getList().get(1),
-                                layoutXDeck, layoutYResource, fitHeightCommon, fitWidthCommon, this::pickCard);
-                    clickedCard.toFront();
-                    onTop.toFront();
-                });
-            } else if (selectedPick == 2) {
-                Platform.runLater(() -> {
-                    //add selected card from deck to hand
-                    addNewCardToPane(mainPane, commonArea.getD2().getList().get(0).getID(), true, commonArea.getD2().getList().get(0),
-                            layoutXCard2, layoutYHand, fitHeightCard, fitWidthCard, this::choseCardToPlace);
-                    onTop.toFront();
-                    //add new card to deck if deck not empty
-                    if (commonArea.getD2().getList().get(1) != null)
-                        addNewCardToPane(mainPane, commonArea.getD2().getList().get(1).getID(), false, commonArea.getD2().getList().get(1),
-                                layoutXDeck, layoutYGold, fitHeightCommon, fitWidthCommon, this::pickCard);
-                    clickedCard.toFront();
-                    onTop.toFront();
-                });
-            } else if (selectedPick == 3) {
-                //add selected card to hand
-                addNewCardToPane(mainPane, commonArea.getTableCards().getFirst().getID(), true, commonArea.getTableCards().getFirst(),
-                        layoutXCard2, layoutYHand, fitHeightCard, fitWidthCard, this::choseCardToPlace);
-                onTop.toFront();
-                //add new card to table if deck not empty
-                if (commonArea.getD1().getList().get(0) != null)
-                    addNewCardToPane(mainPane, commonArea.getD1().getList().get(0).getID(), true, commonArea.getD1().getList().get(0),
-                            layoutXPick0, layoutYResource, fitHeightCommon, fitWidthCommon, this::pickCard);
-                onTop.toFront();
-                //add new card to deck if deck not empty
-                if(commonArea.getD1().getList().get(1) != null)
-                    addNewCardToPane(mainPane, commonArea.getD1().getList().get(1).getID(), false, commonArea.getD1().getList().get(1),
-                            layoutXDeck, layoutYResource, fitHeightCommon, fitWidthCommon, this::pickCard);
-                onTop.toFront();
-            } else if (selectedPick == 4) {
-                //add selected card to hand
-                addNewCardToPane(mainPane, commonArea.getTableCards().get(1).getID(), true, commonArea.getTableCards().get(1),
-                        layoutXCard2, layoutYHand, fitHeightCard, fitWidthCard, this::choseCardToPlace);
-                onTop.toFront();
-                //add new card to table if deck not empty
-                if (commonArea.getD1().getList().get(0) != null)
-                    addNewCardToPane(mainPane, commonArea.getD1().getList().get(0).getID(), true, commonArea.getD1().getList().get(0),
-                            layoutXPick1, layoutYResource, fitHeightCommon, fitWidthCommon, this::pickCard);
-                onTop.toFront();
-                //add new card to deck if deck not empty
-                if(commonArea.getD1().getList().get(1) != null)
-                    addNewCardToPane(mainPane, commonArea.getD1().getList().get(1).getID(), false, commonArea.getD1().getList().get(1),
-                            layoutXDeck, layoutYResource, fitHeightCommon, fitWidthCommon, this::pickCard);
-                onTop.toFront();
-            } else if (selectedPick == 5) {
-                //add selected card to hand
-                addNewCardToPane(mainPane, commonArea.getTableCards().get(2).getID(), true, commonArea.getTableCards().get(2),
-                        layoutXCard2, layoutYHand, fitHeightCard, fitWidthCard, this::choseCardToPlace);
-                onTop.toFront();
-                //add new card to table if deck not empty
-                if (commonArea.getD2().getList().get(0) != null)
-                    addNewCardToPane(mainPane, commonArea.getD2().getList().get(0).getID(), true, commonArea.getD2().getList().get(0),
-                            layoutXPick0, layoutYGold, fitHeightCommon, fitWidthCommon, this::pickCard);
-                onTop.toFront();
-                //add new card to deck if deck not empty
-                if(commonArea.getD2().getList().get(1) != null)
-                    addNewCardToPane(mainPane, commonArea.getD2().getList().get(1).getID(), false, commonArea.getD2().getList().get(1),
-                            layoutXDeck, layoutYGold, fitHeightCommon, fitWidthCommon, this::pickCard);
-                onTop.toFront();
-            } else if (selectedPick == 6) {
-                //add selected card to hand
-                addNewCardToPane(mainPane, commonArea.getTableCards().get(3).getID(), true, commonArea.getTableCards().get(3),
-                        layoutXCard2, layoutYHand, fitHeightCard, fitWidthCard, this::choseCardToPlace);
-                onTop.toFront();
-                //add new card to table if deck not empty
-                if (commonArea.getD2().getList().get(0) != null)
-                    addNewCardToPane(mainPane, commonArea.getD2().getList().get(0).getID(), true, commonArea.getD2().getList().get(0),
-                            layoutXPick1, layoutYGold, fitHeightCommon, fitWidthCommon, this::pickCard);
-                onTop.toFront();
-                //add new card to deck if deck not empty
-                if(commonArea.getD2().getList().get(1) != null)
-                    addNewCardToPane(mainPane, commonArea.getD2().getList().get(1).getID(), false, commonArea.getD2().getList().get(1),
-                            layoutXDeck, layoutYGold, fitHeightCommon, fitWidthCommon, this::pickCard);
-                onTop.toFront();
-            }
+            //TODO it may not be necessary
+
+//            if (selectedPick == 1) {
+//                Platform.runLater(() -> {
+//                    //add selected card from deck to hand
+//                    addNewCardToPane(mainPane, commonArea.getD1().getList().get(0).getID(), true, commonArea.getD1().getList().get(0),
+//                            layoutXCard2, layoutYHand, fitHeightCard, fitWidthCard, this::choseCardToPlace);
+//                    onTop.toFront();
+//                    //add new card to deck if deck not empty
+//                    if(commonArea.getD1().getList().get(1) != null)
+//                        addNewCardToPane(mainPane, commonArea.getD1().getList().get(1).getID(), false, commonArea.getD1().getList().get(1),
+//                                layoutXDeck, layoutYResource, fitHeightCommon, fitWidthCommon, this::pickCard);
+//                    clickedCard.toFront();
+//                    onTop.toFront();
+//                });
+//            } else if (selectedPick == 2) {
+//                Platform.runLater(() -> {
+//                    //add selected card from deck to hand
+//                    addNewCardToPane(mainPane, commonArea.getD2().getList().get(0).getID(), true, commonArea.getD2().getList().get(0),
+//                            layoutXCard2, layoutYHand, fitHeightCard, fitWidthCard, this::choseCardToPlace);
+//                    onTop.toFront();
+//                    //add new card to deck if deck not empty
+//                    if (commonArea.getD2().getList().get(1) != null)
+//                        addNewCardToPane(mainPane, commonArea.getD2().getList().get(1).getID(), false, commonArea.getD2().getList().get(1),
+//                                layoutXDeck, layoutYGold, fitHeightCommon, fitWidthCommon, this::pickCard);
+//                    clickedCard.toFront();
+//                    onTop.toFront();
+//                });
+//            } else if (selectedPick == 3) {
+//                //add selected card to hand
+//                addNewCardToPane(mainPane, commonArea.getTableCards().getFirst().getID(), true, commonArea.getTableCards().getFirst(),
+//                        layoutXCard2, layoutYHand, fitHeightCard, fitWidthCard, this::choseCardToPlace);
+//                onTop.toFront();
+//                //add new card to table if deck not empty
+//                if (commonArea.getD1().getList().get(0) != null)
+//                    addNewCardToPane(mainPane, commonArea.getD1().getList().get(0).getID(), true, commonArea.getD1().getList().get(0),
+//                            layoutXPick0, layoutYResource, fitHeightCommon, fitWidthCommon, this::pickCard);
+//                onTop.toFront();
+//                //add new card to deck if deck not empty
+//                if(commonArea.getD1().getList().get(1) != null)
+//                    addNewCardToPane(mainPane, commonArea.getD1().getList().get(1).getID(), false, commonArea.getD1().getList().get(1),
+//                            layoutXDeck, layoutYResource, fitHeightCommon, fitWidthCommon, this::pickCard);
+//                onTop.toFront();
+//            } else if (selectedPick == 4) {
+//                //add selected card to hand
+//                addNewCardToPane(mainPane, commonArea.getTableCards().get(1).getID(), true, commonArea.getTableCards().get(1),
+//                        layoutXCard2, layoutYHand, fitHeightCard, fitWidthCard, this::choseCardToPlace);
+//                onTop.toFront();
+//                //add new card to table if deck not empty
+//                if (commonArea.getD1().getList().get(0) != null)
+//                    addNewCardToPane(mainPane, commonArea.getD1().getList().get(0).getID(), true, commonArea.getD1().getList().get(0),
+//                            layoutXPick1, layoutYResource, fitHeightCommon, fitWidthCommon, this::pickCard);
+//                onTop.toFront();
+//                //add new card to deck if deck not empty
+//                if(commonArea.getD1().getList().get(1) != null)
+//                    addNewCardToPane(mainPane, commonArea.getD1().getList().get(1).getID(), false, commonArea.getD1().getList().get(1),
+//                            layoutXDeck, layoutYResource, fitHeightCommon, fitWidthCommon, this::pickCard);
+//                onTop.toFront();
+//            } else if (selectedPick == 5) {
+//                //add selected card to hand
+//                addNewCardToPane(mainPane, commonArea.getTableCards().get(2).getID(), true, commonArea.getTableCards().get(2),
+//                        layoutXCard2, layoutYHand, fitHeightCard, fitWidthCard, this::choseCardToPlace);
+//                onTop.toFront();
+//                //add new card to table if deck not empty
+//                if (commonArea.getD2().getList().get(0) != null)
+//                    addNewCardToPane(mainPane, commonArea.getD2().getList().get(0).getID(), true, commonArea.getD2().getList().get(0),
+//                            layoutXPick0, layoutYGold, fitHeightCommon, fitWidthCommon, this::pickCard);
+//                onTop.toFront();
+//                //add new card to deck if deck not empty
+//                if(commonArea.getD2().getList().get(1) != null)
+//                    addNewCardToPane(mainPane, commonArea.getD2().getList().get(1).getID(), false, commonArea.getD2().getList().get(1),
+//                            layoutXDeck, layoutYGold, fitHeightCommon, fitWidthCommon, this::pickCard);
+//                onTop.toFront();
+//            } else if (selectedPick == 6) {
+//                //add selected card to hand
+//                addNewCardToPane(mainPane, commonArea.getTableCards().get(3).getID(), true, commonArea.getTableCards().get(3),
+//                        layoutXCard2, layoutYHand, fitHeightCard, fitWidthCard, this::choseCardToPlace);
+//                onTop.toFront();
+//                //add new card to table if deck not empty
+//                if (commonArea.getD2().getList().get(0) != null)
+//                    addNewCardToPane(mainPane, commonArea.getD2().getList().get(0).getID(), true, commonArea.getD2().getList().get(0),
+//                            layoutXPick1, layoutYGold, fitHeightCommon, fitWidthCommon, this::pickCard);
+//                onTop.toFront();
+//                //add new card to deck if deck not empty
+//                if(commonArea.getD2().getList().get(1) != null)
+//                    addNewCardToPane(mainPane, commonArea.getD2().getList().get(1).getID(), false, commonArea.getD2().getList().get(1),
+//                            layoutXDeck, layoutYGold, fitHeightCommon, fitWidthCommon, this::pickCard);
+//                onTop.toFront();
+//            }
 
             GUIMessages.writeToClient(selectedPick);
 
@@ -1090,6 +1101,8 @@ public class GamePageController implements Initializable {
      */
     @FXML
     private void switchToNextPlayer() {
+        nextPlayer.setDisable(true);
+
         if (!Objects.equals(currentState, "StarterCardState") && !Objects.equals(currentState, "ObjectiveState")) {
             clickCounter++;
             if (clickCounter == players.size()) {
@@ -1101,11 +1114,15 @@ public class GamePageController implements Initializable {
             showImagePopup("/Images/Background/starterState.png");
         } else if (Objects.equals(currentState, "ObjectiveState") && Objects.equals(currentPlayerNickname, myself.getNickname())) {
             showImagePopup("/Images/Background/objectiveState.png");
-        }  // else if(Objects.equals(currentState, "StarterCardState")) {
-//            showImagePopup("/Images/Background/waitStarter.png");
-//        } else if(Objects.equals(currentState, "ObjectiveState")) {
-//            showImagePopup("/Images/Background/waitObjective.png");
-//        }
+        }   else if(Objects.equals(currentState, "StarterCardState")) {
+            showImagePopup("/Images/Background/pleaseWait.png");
+        } else if(Objects.equals(currentState, "ObjectiveState")) {
+            showImagePopup("/Images/Background/pleaseWait.png");
+        }
+
+        PauseTransition pause = new PauseTransition(Duration.seconds(1));
+        pause.setOnFinished(event -> nextPlayer.setDisable(false));
+        pause.play();
     }
 
     /**

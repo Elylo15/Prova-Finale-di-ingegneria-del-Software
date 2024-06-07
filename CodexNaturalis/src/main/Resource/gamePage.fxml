@@ -19,7 +19,7 @@
                 <ImageView id="scoreBoard" fitHeight="491.0" fitWidth="246.0" layoutX="1627.0" layoutY="38.0" preserveRatio="true">
                     <Image url="@Images/Scoreboard/plateau.png" />
                 </ImageView>
-            <ImageView id="NextPlayer" fitHeight="243.0" fitWidth="334.0" layoutX="11.0" layoutY="5.0" onMouseClicked="#switchToNextPlayer" preserveRatio="true">
+            <ImageView id="nextPlayer" fx:id="nextPlayer" fitHeight="243.0" fitWidth="334.0" layoutX="11.0" layoutY="5.0" onMouseClicked="#switchToNextPlayer" preserveRatio="true">
                <image>
                   <Image url="@Images/Background/next.png" />
                </image>
