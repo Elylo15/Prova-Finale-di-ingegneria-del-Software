@@ -22,17 +22,12 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
-import javafx.scene.shape.LineTo;
-import javafx.scene.shape.MoveTo;
-import javafx.scene.shape.Path;
 import javafx.util.Duration;
 
 import java.net.URL;
 import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.stream.Collectors;
-
 import static it.polimi.ingsw.protocol.client.view.GUI.controller.SceneManager.playSoundEffect;
 
 public class GamePageController implements Initializable {
@@ -51,12 +46,13 @@ public class GamePageController implements Initializable {
             {1726, 108}
     };
     private final int offsetAreaX = 156;
+    double scaleFactor = 1.0;
+    double[] boundingBox;
     private final int offsetAreaY = 79;
     public ImageView nextPlayer;
     public ImageView colorName;
     double centerXOffset = 0;
     double centerYOffset = 0;
-    double scale = 1.0;
     private final int layoutPlacedStarterX = 678;
     private final int layoutPlacedStarterY = 203;
     private final int fitHeightPlaced = 133;
@@ -623,7 +619,7 @@ public class GamePageController implements Initializable {
      * @param fitWidth     the width of the placeholder
      * @param eventHandler the event handler to call when the placeholder is clicked
      */
-    private void addClickablePlaceholder(Pane pane, int layoutX, int layoutY, int fitHeight, int fitWidth, EventHandler<MouseEvent> eventHandler) {
+    private void addClickablePlaceholder(Pane pane, int layoutX, int layoutY, double fitHeight, double fitWidth, EventHandler<MouseEvent> eventHandler) {
         Random random = new Random();
         int color = random.nextInt(5);
 
@@ -755,7 +751,7 @@ public class GamePageController implements Initializable {
      * @param fitWidth  the width of the imageView
      * @return the imageView with the card set
      */
-    private ImageView createCardImageView(int cardID, boolean front, Card card, int layoutX, int layoutY, int fitHeight, int fitWidth) {
+    private ImageView createCardImageView(int cardID, boolean front, Card card, int layoutX, int layoutY, double fitHeight, double fitWidth) {
         ImageView imageView = new ImageView();
         imageView.setFitWidth(fitWidth);
         imageView.setFitHeight(fitHeight);
@@ -845,9 +841,7 @@ public class GamePageController implements Initializable {
                 fadeIn.setFromValue(0.0);
                 fadeIn.setToValue(1.0);
 
-                fadeIn.setOnFinished(e2 -> {
-                    clickedCard.setDisable(false);
-                });
+                fadeIn.setOnFinished(e2 -> clickedCard.setDisable(false));
 
                 fadeIn.play();
             });
@@ -1115,103 +1109,10 @@ public class GamePageController implements Initializable {
             else if (cardID == commonArea.getTableCards().get(3).getID())
                 this.selectedPick = 6;
 
-            //TODO it may not be necessary
-
-//            if (selectedPick == 1) {
-//                Platform.runLater(() -> {
-//                    //add selected card from deck to hand
-//                    addNewCardToPane(mainPane, commonArea.getD1().getList().get(0).getID(), true, commonArea.getD1().getList().get(0),
-//                            layoutXCard2, layoutYHand, fitHeightCard, fitWidthCard, this::choseCardToPlace);
-//                    onTop.toFront();
-//                    //add new card to deck if deck not empty
-//                    if(commonArea.getD1().getList().get(1) != null)
-//                        addNewCardToPane(mainPane, commonArea.getD1().getList().get(1).getID(), false, commonArea.getD1().getList().get(1),
-//                                layoutXDeck, layoutYResource, fitHeightCommon, fitWidthCommon, this::pickCard);
-//                    clickedCard.toFront();
-//                    onTop.toFront();
-//                });
-//            } else if (selectedPick == 2) {
-//                Platform.runLater(() -> {
-//                    //add selected card from deck to hand
-//                    addNewCardToPane(mainPane, commonArea.getD2().getList().get(0).getID(), true, commonArea.getD2().getList().get(0),
-//                            layoutXCard2, layoutYHand, fitHeightCard, fitWidthCard, this::choseCardToPlace);
-//                    onTop.toFront();
-//                    //add new card to deck if deck not empty
-//                    if (commonArea.getD2().getList().get(1) != null)
-//                        addNewCardToPane(mainPane, commonArea.getD2().getList().get(1).getID(), false, commonArea.getD2().getList().get(1),
-//                                layoutXDeck, layoutYGold, fitHeightCommon, fitWidthCommon, this::pickCard);
-//                    clickedCard.toFront();
-//                    onTop.toFront();
-//                });
-//            } else if (selectedPick == 3) {
-//                //add selected card to hand
-//                addNewCardToPane(mainPane, commonArea.getTableCards().getFirst().getID(), true, commonArea.getTableCards().getFirst(),
-//                        layoutXCard2, layoutYHand, fitHeightCard, fitWidthCard, this::choseCardToPlace);
-//                onTop.toFront();
-//                //add new card to table if deck not empty
-//                if (commonArea.getD1().getList().get(0) != null)
-//                    addNewCardToPane(mainPane, commonArea.getD1().getList().get(0).getID(), true, commonArea.getD1().getList().get(0),
-//                            layoutXPick0, layoutYResource, fitHeightCommon, fitWidthCommon, this::pickCard);
-//                onTop.toFront();
-//                //add new card to deck if deck not empty
-//                if(commonArea.getD1().getList().get(1) != null)
-//                    addNewCardToPane(mainPane, commonArea.getD1().getList().get(1).getID(), false, commonArea.getD1().getList().get(1),
-//                            layoutXDeck, layoutYResource, fitHeightCommon, fitWidthCommon, this::pickCard);
-//                onTop.toFront();
-//            } else if (selectedPick == 4) {
-//                //add selected card to hand
-//                addNewCardToPane(mainPane, commonArea.getTableCards().get(1).getID(), true, commonArea.getTableCards().get(1),
-//                        layoutXCard2, layoutYHand, fitHeightCard, fitWidthCard, this::choseCardToPlace);
-//                onTop.toFront();
-//                //add new card to table if deck not empty
-//                if (commonArea.getD1().getList().get(0) != null)
-//                    addNewCardToPane(mainPane, commonArea.getD1().getList().get(0).getID(), true, commonArea.getD1().getList().get(0),
-//                            layoutXPick1, layoutYResource, fitHeightCommon, fitWidthCommon, this::pickCard);
-//                onTop.toFront();
-//                //add new card to deck if deck not empty
-//                if(commonArea.getD1().getList().get(1) != null)
-//                    addNewCardToPane(mainPane, commonArea.getD1().getList().get(1).getID(), false, commonArea.getD1().getList().get(1),
-//                            layoutXDeck, layoutYResource, fitHeightCommon, fitWidthCommon, this::pickCard);
-//                onTop.toFront();
-//            } else if (selectedPick == 5) {
-//                //add selected card to hand
-//                addNewCardToPane(mainPane, commonArea.getTableCards().get(2).getID(), true, commonArea.getTableCards().get(2),
-//                        layoutXCard2, layoutYHand, fitHeightCard, fitWidthCard, this::choseCardToPlace);
-//                onTop.toFront();
-//                //add new card to table if deck not empty
-//                if (commonArea.getD2().getList().get(0) != null)
-//                    addNewCardToPane(mainPane, commonArea.getD2().getList().get(0).getID(), true, commonArea.getD2().getList().get(0),
-//                            layoutXPick0, layoutYGold, fitHeightCommon, fitWidthCommon, this::pickCard);
-//                onTop.toFront();
-//                //add new card to deck if deck not empty
-//                if(commonArea.getD2().getList().get(1) != null)
-//                    addNewCardToPane(mainPane, commonArea.getD2().getList().get(1).getID(), false, commonArea.getD2().getList().get(1),
-//                            layoutXDeck, layoutYGold, fitHeightCommon, fitWidthCommon, this::pickCard);
-//                onTop.toFront();
-//            } else if (selectedPick == 6) {
-//                //add selected card to hand
-//                addNewCardToPane(mainPane, commonArea.getTableCards().get(3).getID(), true, commonArea.getTableCards().get(3),
-//                        layoutXCard2, layoutYHand, fitHeightCard, fitWidthCard, this::choseCardToPlace);
-//                onTop.toFront();
-//                //add new card to table if deck not empty
-//                if (commonArea.getD2().getList().get(0) != null)
-//                    addNewCardToPane(mainPane, commonArea.getD2().getList().get(0).getID(), true, commonArea.getD2().getList().get(0),
-//                            layoutXPick1, layoutYGold, fitHeightCommon, fitWidthCommon, this::pickCard);
-//                onTop.toFront();
-//                //add new card to deck if deck not empty
-//                if(commonArea.getD2().getList().get(1) != null)
-//                    addNewCardToPane(mainPane, commonArea.getD2().getList().get(1).getID(), false, commonArea.getD2().getList().get(1),
-//                            layoutXDeck, layoutYGold, fitHeightCommon, fitWidthCommon, this::pickCard);
-//                onTop.toFront();
-//            }
-
             GUIMessages.writeToClient(selectedPick);
 
         }
     }
-
-
-    //TODO create images for when non you
 
     /**
      * When clicked, it displays the NextButton player's page or the client's page
@@ -1509,32 +1410,21 @@ public class GamePageController implements Initializable {
      */
     private void displayPlaceHolders() {
         placeholdersVisible = true;
-        ArrayList<Integer[]> availablePositions = new ArrayList<>();
+        ArrayList<Integer[]> availablePositions;
         availablePositions = myPlayerArea.getAvailablePosition();
 
-        double[] boundingBox = calculateBoundingBox(allCards);
         double totalWidth = boundingBox[2] - boundingBox[0];
         double totalHeight = boundingBox[3] - boundingBox[1];
 
-        centerXOffset = (playground.getWidth() - totalWidth) / 2 - boundingBox[0];
-        centerYOffset = (playground.getHeight() - totalHeight) / 2 - boundingBox[1];
-
-        int newLayoutX;
-        int newLayoutY;
+        centerXOffset = (playground.getWidth() - (totalWidth * scaleFactor)) / 2 - boundingBox[0] * scaleFactor;
+        centerYOffset = (playground.getHeight() - (totalHeight * scaleFactor)) / 2 - boundingBox[1] * scaleFactor;
 
         for (Integer[] pos : availablePositions) {
             // Calculate the new layout position of the placeholder
-            if(centerXOffset <0 || centerYOffset <0) {
-                newLayoutX = layoutPlacedStarterX + pos[1] * offsetAreaX;
-                newLayoutY = layoutPlacedStarterY + pos[0] * offsetAreaY;
-            } else {
-                newLayoutX = (int) centerXOffset + pos[1] * offsetAreaX;
-                newLayoutY = (int) centerYOffset + pos[0] * offsetAreaY;
-            }
+            int newLayoutX = (int) (centerXOffset + pos[1] * offsetAreaX * scaleFactor);
+            int newLayoutY = (int) (centerYOffset + pos[0] * offsetAreaY * scaleFactor);
 
-            System.out.println("Center: " + centerXOffset + " " + centerYOffset);
-
-            addClickablePlaceholder(playground, newLayoutX, newLayoutY, fitHeightPlaced, fitWidthPlaced, this::confirmPlaceCard);
+            addClickablePlaceholder(playground, newLayoutX, newLayoutY, fitHeightPlaced * scaleFactor, fitWidthPlaced * scaleFactor, this::confirmPlaceCard);
         }
     }
 
@@ -1565,19 +1455,20 @@ public class GamePageController implements Initializable {
 
             allCards = playerArea.getAllCards();
 
-            double[] boundingBox = calculateBoundingBox(allCards);
+            boundingBox = calculateBoundingBox(allCards);
             double totalWidth = boundingBox[2] - boundingBox[0];
             double totalHeight = boundingBox[3] - boundingBox[1];
 
-            centerXOffset = (playground.getWidth() - totalWidth) / 2 - boundingBox[0];
-            centerYOffset = (playground.getHeight() - totalHeight) / 2 - boundingBox[1];
+            scaleFactor = calculateScaleFactor(totalWidth, totalHeight, playerArea.getAvailablePosition());
+
+            centerXOffset = (playground.getWidth() - (totalWidth * scaleFactor)) / 2 - boundingBox[0] * scaleFactor;
+            centerYOffset = (playground.getHeight() - (totalHeight * scaleFactor)) / 2 - boundingBox[1] * scaleFactor;
 
             for (PlaceableCard card : allCards) {
-                int layoutX =  calculateLayoutX(card) + (int) centerXOffset;
-                int layoutY = calculateLayoutY(card) +  (int) centerYOffset;
+                int layoutX = (int) (calculateLayoutX(card) * scaleFactor + centerXOffset);
+                int layoutY = (int) (calculateLayoutY(card) * scaleFactor + centerYOffset);
 
-
-                ImageView cardImageView = createCardImageView(card.getID(), card.isFront(), card, layoutX, layoutY, fitHeightPlaced, fitWidthPlaced);
+                ImageView cardImageView = createCardImageView(card.getID(), card.isFront(), card, layoutX, layoutY, fitHeightPlaced *  scaleFactor, fitWidthPlaced *  scaleFactor);
                 playground.getChildren().add(cardImageView);
                 cardImageView.toFront();
 
@@ -1585,9 +1476,35 @@ public class GamePageController implements Initializable {
                 adjustCardZOrder(cardImageView, card);
             }
 
-
             onTop.toFront();
         });
+    }
+
+    private double calculateScaleFactor(double totalWidth, double totalHeight, ArrayList<Integer[]> availablePositions) {
+        double playgroundWidth = playground.getWidth();
+        double playgroundHeight = playground.getHeight();
+
+        // Calculate the total dimensions including placeholders
+        double totalWithPlaceholdersWidth = totalWidth;
+        double totalWithPlaceholdersHeight = totalHeight;
+
+        for (Integer[] pos : availablePositions) {
+            double placeholderX = pos[1] * offsetAreaX;
+            double placeholderY = pos[0] * offsetAreaY;
+            totalWithPlaceholdersWidth = Math.max(totalWithPlaceholdersWidth, placeholderX + fitWidthPlaced);
+            totalWithPlaceholdersHeight = Math.max(totalWithPlaceholdersHeight, placeholderY + fitHeightPlaced);
+        }
+
+        // Calculate the scale factors
+        double widthScaleFactor = playgroundWidth / totalWithPlaceholdersWidth;
+        double heightScaleFactor = playgroundHeight / totalWithPlaceholdersHeight;
+        double scaleFactor = 1.0;
+
+        if (totalWithPlaceholdersWidth > playgroundWidth || totalWithPlaceholdersHeight > playgroundHeight) {
+            scaleFactor = Math.min(widthScaleFactor, heightScaleFactor);
+        }
+
+        return Math.min(scaleFactor, 1.0);
     }
 
     private int calculateLayoutX(PlaceableCard card) {
@@ -1630,70 +1547,6 @@ public class GamePageController implements Initializable {
         }
     }
 
-    private void adjustElementsToFit(List<ImageView> cardImageViews, ArrayList<Integer[]> availablePositions) {
-        double playgroundWidth = playground.getWidth();
-        double playgroundHeight = playground.getHeight();
-
-        double minX = Double.MAX_VALUE;
-        double maxX = Double.MIN_VALUE;
-        double minY = Double.MAX_VALUE;
-        double maxY = Double.MIN_VALUE;
-
-        for (ImageView imageView : cardImageViews) {
-            double imageViewMinX = imageView.getLayoutX();
-            double imageViewMaxX = imageView.getLayoutX() + imageView.getFitWidth();
-            double imageViewMinY = imageView.getLayoutY();
-            double imageViewMaxY = imageView.getLayoutY() + imageView.getFitHeight();
-
-            if (imageViewMinX < minX) minX = imageViewMinX;
-            if (imageViewMaxX > maxX) maxX = imageViewMaxX;
-            if (imageViewMinY < minY) minY = imageViewMinY;
-            if (imageViewMaxY > maxY) maxY = imageViewMaxY;
-        }
-
-        for (Integer[] pos : availablePositions) {
-            double posMinX = layoutPlacedStarterX + pos[0] * offsetAreaX;
-            double posMaxX = posMinX + fitWidthPlaced;
-            double posMinY = layoutPlacedStarterY + pos[1] * offsetAreaY;
-            double posMaxY = posMinY + fitHeightPlaced;
-
-            if (posMinX < minX) minX = posMinX;
-            if (posMaxX > maxX) maxX = posMaxX;
-            if (posMinY < minY) minY = posMinY;
-            if (posMaxY > maxY) maxY = posMaxY;
-        }
-
-        double overflowX = Math.max(0, maxX - playgroundWidth);
-        double overflowY = Math.max(0, maxY - playgroundHeight);
-
-        if (overflowX > 0 || overflowY > 0) {
-            for (ImageView imageView : cardImageViews) {
-                imageView.setLayoutX(imageView.getLayoutX() - overflowX);
-                imageView.setLayoutY(imageView.getLayoutY() - overflowY);
-            }
-        }
-
-        if (minX < 0 || minY < 0 || overflowX > 0 || overflowY > 0) {
-            double scaleX = playgroundWidth / (maxX - minX);
-            double scaleY = playgroundHeight / (maxY - minY);
-            scale = Math.min(scaleX, scaleY);
-
-            for (ImageView imageView : cardImageViews) {
-                imageView.setFitWidth(imageView.getFitWidth() * scale);
-                imageView.setFitHeight(imageView.getFitHeight() * scale);
-                imageView.setLayoutX((imageView.getLayoutX() - minX) * scale);
-                imageView.setLayoutY((imageView.getLayoutY() - minY) * scale);
-            }
-
-            // Adjust placeholder positions
-            for (ImageView placeholder : playground.getChildren().stream().filter(node -> node instanceof ImageView && node.getStyleClass().contains("placeholder")).map(node -> (ImageView) node).collect(Collectors.toList())) {
-                double placeholderX = placeholder.getLayoutX();
-                double placeholderY = placeholder.getLayoutY();
-                placeholder.setLayoutX((placeholderX - minX) * scale);
-                placeholder.setLayoutY((placeholderY - minY) * scale);
-            }
-        }
-    }
 
 
 
