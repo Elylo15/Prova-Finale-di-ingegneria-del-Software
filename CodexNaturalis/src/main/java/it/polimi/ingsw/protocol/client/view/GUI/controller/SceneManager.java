@@ -11,6 +11,7 @@ import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.Objects;
 
 /**
@@ -173,7 +174,10 @@ public class SceneManager {
     public static void MainView() {
         try {
             Parent root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/mainView.fxml")));
-            primaryStage.setScene(new Scene(root));
+            Scene scene = new Scene(root);
+            primaryStage.setScene(scene);
+
+            scene.getStylesheets().add(Objects.requireNonNull(SceneManager.class.getResource("/styles.css")).toExternalForm());
             primaryStage.show();
         } catch (IOException e) {
             e.printStackTrace();
