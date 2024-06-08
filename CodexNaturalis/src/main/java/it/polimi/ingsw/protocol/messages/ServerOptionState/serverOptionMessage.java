@@ -10,9 +10,9 @@ import java.util.ArrayList;
  */
 public class serverOptionMessage implements Message, Serializable {
     private final boolean newMatch;         // true if the client wants to join a new game
-    private final Integer matchID;                // ID of the match (not yet started) the client wants to join. null if the client wants to join a new game
+    private final Integer matchID;         // ID of the match (not yet started) the client wants to join. Null if the client wants to join a new game
     private final Integer startedMatchID;  // ID of the started match the client wants to join
-    private final boolean loadMatch;        // true if the client wants to load a custom match
+    private final boolean loadMatch;        // true if the client wants to load a saved match
     private final Integer savedMatchID;        // name of the saved game that the client wants to load
 
     private final ArrayList<Integer> WaitingMatches;

@@ -30,12 +30,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class ControllerSocketTest {
     ControllerSocket controller;
     ClientConnection connection;
-    //in order to see if the controller can correctly send and receive messages we create a server to exchange them
+
     private ServerSocket serverSocket;
     private Socket socket;
     private ThreadPoolExecutor executor;
 
-
+    //in order to see if the controller can correctly send and receive messages we create a ClientSocket object to exchange them
     @BeforeEach
     void setUp() throws IOException {
         int corePoolSize = 15;
@@ -79,9 +79,14 @@ class ControllerSocketTest {
     @Test
     @DisplayName("Getting the current state")
     void getCurrentTest() {
-        currentStateMessage current = new currentStateMessage(null, null, "State", false, null, null, 0);
+        //controller should correctly receive a currentStateMessage from server
+        CommonArea area = new CommonArea();
+        Player player = new Player("player", "red",area);
+        currentStateMessage current = new currentStateMessage(player, player, "State", false, null, null, 0);
         connection.sendCurrentState(current);
         currentStateMessage controllerCurrent = controller.getCurrent();
+        Assertions.assertEquals(player.getNickname(),controllerCurrent.getCurrentPlayer().getNickname()); //the player received must be the same as the player send
+        Assertions.assertEquals(player.getColor(),controllerCurrent.getPlayer().getColor());
         Assertions.assertEquals("State", controllerCurrent.getStateName());
         Assertions.assertFalse(controllerCurrent.isLastTurn());
         Assertions.assertEquals(0, (int) controllerCurrent.getMatchID());
@@ -90,10 +95,15 @@ class ControllerSocketTest {
     @Test
     @DisplayName("Getting the server options")
     void serverOptionsTest() {
-        Future<serverOptionMessage> futureMessage = executor.submit(() -> connection.getServerOption(null, null, null));
+        //controller should correctly a serverOption message
+        ArrayList<Integer> runningMatch = new ArrayList<>();
+        runningMatch.add(234);
+        Future<serverOptionMessage> futureMessage = executor.submit(() -> connection.getServerOption(null, runningMatch, null));
         serverOptionMessage options = controller.serverOptions();
         Assertions.assertFalse(options.isNewMatch());
+        Assertions.assertNull(options.getSavedMatchID());
         Assertions.assertFalse(options.isLoadMatch());
+        Assertions.assertEquals(runningMatch.get(0), options.getRunningMatches().get(0));
     }
 
     @Test
@@ -107,19 +117,24 @@ class ControllerSocketTest {
     @Test
     @DisplayName("Sending options to the server")
     void sendOptionsTest() {
-        serverOptionMessage options = new serverOptionMessage(true, 0, 1, false, 0);
-        controller.sendOptions(options);
+        //controller should correctly send a serverOptionMessage
+        int matchID = 34;
+        int startedID = 67;
+        int savedID = 234;
+        serverOptionMessage options = new serverOptionMessage(true, matchID, startedID, false, savedID);
+        controller.sendOptions(options); //controller sends message
         serverOptionMessage receivedOptions = connection.getServerOption(null, null, null);
         Assertions.assertTrue(receivedOptions.isNewMatch());
-        Assertions.assertEquals(0, receivedOptions.getMatchID());
-        Assertions.assertEquals(1, receivedOptions.getStartedMatchID());
+        Assertions.assertEquals(matchID, receivedOptions.getMatchID());
+        Assertions.assertEquals(startedID, receivedOptions.getStartedMatchID());
         Assertions.assertFalse(receivedOptions.isLoadMatch());
-        Assertions.assertEquals(0, receivedOptions.getSavedMatchID());
+        Assertions.assertEquals(savedID, receivedOptions.getSavedMatchID());
     }
 
     @Test
     @DisplayName("Getting unavailable names and choosing a name")
     void NamesTest() throws InterruptedException, ExecutionException {
+        //controller should correctly receive an unavailableNameMessage and send the name chosen
         ArrayList<String> unavailableNames = new ArrayList<>();
         unavailableNames.add("Alfa");
         unavailableNames.add("Beta");
@@ -127,13 +142,17 @@ class ControllerSocketTest {
         ArrayList<String> names = controller.getUnavailableName().getNames();
         Assertions.assertEquals("Alfa", names.get(0));
         Assertions.assertEquals("Beta", names.get(1));
-        controller.chooseName("Alfa");
-        Assertions.assertEquals("Alfa", name.get());
+
+        String playername = "name";
+        controller.chooseName(playername); //controller sends name chosen
+        String nameReceived = name.get(); //clientSocket receives name chosen
+        Assertions.assertEquals(playername, nameReceived);
     }
 
     @Test
     @DisplayName("Getting available colors and choosing a color")
     void ColorsTest() throws ExecutionException, InterruptedException {
+        //controller should correctly receive an availableColors message and sends the color chosen
         ArrayList<String> availableColors = new ArrayList<>();
         availableColors.add("Red");
         availableColors.add("Blue");
@@ -141,8 +160,10 @@ class ControllerSocketTest {
         ArrayList<String> colors = controller.getAvailableColor().getColors();
         Assertions.assertEquals("Red", colors.get(0));
         Assertions.assertEquals("Blue", colors.get(1));
-        controller.chooseColor("Red");
-        Assertions.assertEquals("Red", color.get());
+
+        String colorChosen = "purple";
+        controller.chooseColor(colorChosen);
+        Assertions.assertEquals(colorChosen, color.get());
     }
 
     @Test
@@ -155,22 +176,27 @@ class ControllerSocketTest {
     @Test
     @DisplayName("Sending the expected players")
     void expectedPlayersTest() {
+        //controller should correctly create and send an expectedPlayersMessage
         controller.expectedPlayers(3, false);
         expectedPlayersMessage expected = connection.getExpectedPlayer();
         Assertions.assertEquals(3, expected.getExpectedPlayers());
+        Assertions.assertFalse(expected.isNoResponse());
     }
 
     @Test
     @DisplayName("Placing the starter card")
     void placeStarterTest() {
+        //controller should correctly create and send a starterCard message
         controller.placeStarter(0, false);
-        starterCardMessage starter = connection.getStaterCard();
-        Assertions.assertEquals(0, starter.getSide());
+        starterCardMessage starterReceived = connection.getStaterCard();
+        Assertions.assertEquals(0, starterReceived.getSide());
+        Assertions.assertFalse(starterReceived.isNoResponse());
     }
 
     @Test
     @DisplayName("Getting the objective cards and choosing one")
     void ObjectiveCardsTest() throws ExecutionException, InterruptedException {
+        //controller should correctly receive an objectiveCardMessage
         ArrayList<ObjectiveCard> cards = new ArrayList<>();
         CommonArea area = (new LoadDecks()).load();
         cards.add(area.drawObjectiveCard());
@@ -179,8 +205,11 @@ class ControllerSocketTest {
         ArrayList<ObjectiveCard> receivedCards = controller.getObjectiveCards().getObjectiveCard();
         Assertions.assertEquals(cards.get(0).getID(), receivedCards.get(0).getID());
         Assertions.assertEquals(cards.get(1).getID(), receivedCards.get(1).getID());
-        controller.chooseObjective(0, false);
-        Assertions.assertEquals(0, messageFuture.get().getChoice());
+
+        controller.chooseObjective(1, false);
+        int choiceReceived = messageFuture.get().getChoice();
+        Assertions.assertEquals(1, choiceReceived);
+        Assertions.assertFalse(messageFuture.get().isNoResponse());
     }
 
     @Test
