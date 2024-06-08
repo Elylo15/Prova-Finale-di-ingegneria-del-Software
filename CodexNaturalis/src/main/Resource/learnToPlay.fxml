@@ -40,7 +40,7 @@
                 </ImageView>
                 <ImageView fitHeight="90.0" fitWidth="349.0" layoutX="1100.0" layoutY="996.0" onMouseClicked="#back"
                            preserveRatio="true">
-                    <Image url="@Images/rulesTxt/back.png"/>
+                    <Image url="@Images/Background/image.png"/>
                 </ImageView>
                 <Label id="playerName" fx:id="playerName" alignment="CENTER" contentDisplay="CENTER" layoutX="528.0" layoutY="-20.0" opacity="0.8" prefHeight="176.0" prefWidth="415.0" text="Player 1" textAlignment="CENTER" textFill="#1e1e1e">
                     <font>

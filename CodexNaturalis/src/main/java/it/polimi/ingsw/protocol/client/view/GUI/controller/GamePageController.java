@@ -9,11 +9,13 @@ import it.polimi.ingsw.protocol.client.view.GUI.message.GUIMessages;
 import it.polimi.ingsw.protocol.messages.PlayerTurnState.updatePlayerMessage;
 import it.polimi.ingsw.protocol.messages.currentStateMessage;
 import it.polimi.ingsw.protocol.messages.responseMessage;
+import it.polimi.ingsw.protocol.messages.EndGameState.declareWinnerMessage;
 import javafx.animation.*;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -22,6 +24,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.util.Duration;
 
 import java.net.URL;
@@ -81,6 +85,8 @@ public class GamePageController implements Initializable {
     private final ArrayList<ObjectiveCard> objectivesToChose = new ArrayList<>();
     private final int[] selectedToPlace = new int[4];
     private ArrayList<PlaceableCard> allCards = new ArrayList<>();
+    ImageView winner;
+
     @FXML
     private Pane mainPane;
     @FXML
@@ -113,6 +119,10 @@ public class GamePageController implements Initializable {
     private boolean placeholdersVisible = false;
     private currentStateMessage currentStateMessageSaved;
     private boolean wrong = false;
+    private final Label winnerLabel = new Label();
+    ImageView back;
+    Label playerInfoLabel;
+    ImageView display;
 
     /**
      * It is used to initialize the controller, it starts the message listener and processor threads.
@@ -201,9 +211,171 @@ public class GamePageController implements Initializable {
                     caseCurrentStateMessage(currentStateMessageSaved);
                 }
             }
+            case declareWinnerMessage declareWinnerMessage -> {
+                display = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/SocketRmi/rotate.png"))));
+                display.setFitWidth(124);
+                display.setFitHeight(106);
+                display.setLayoutX(1473);
+                display.setLayoutY(108);
+                mainPane.getChildren().add(display);
 
+                winner(declareWinnerMessage);
+                seeWinner();
+            }
             default -> throw new IllegalStateException("Unexpected value: " + message);
         }
+    }
+
+    private void seeWinner(){
+        mainPane.setOnMouseClicked(event -> {
+            if(winner.isVisible()) {
+                winner.setVisible(false);
+                winnerLabel.setVisible(false);
+                back.setVisible(false);
+                playerInfoLabel.setVisible(false);
+            }
+        });
+
+        display.setOnMouseClicked(event -> {
+            if(winner.isVisible()) {
+                winner.setVisible(false);
+                winnerLabel.setVisible(false);
+                back.setVisible(false);
+                playerInfoLabel.setVisible(false);
+            } else {
+                winner.setVisible(true);
+                winnerLabel.setVisible(true);
+                back.setVisible(true);
+                playerInfoLabel.setVisible(true);
+            }
+        });
+
+    }
+
+    private void winner(declareWinnerMessage message) {
+        HashMap<String, Integer> objectives = message.getNumberOfObjects();
+        HashMap<String, Integer> scores = message.getPlayersPoints();
+
+        List<String> winners = getWinners(objectives, scores);
+
+        if(winners.size() == 1) {
+            String color = findPlayerByName(winners.getFirst()).getColor();
+            if(Objects.equals(color, "red"))
+                Platform.runLater(() -> {
+                    winner = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Winner/winRed.png"))));
+                    mainPane.getChildren().add(winner);
+                });
+            else if(Objects.equals(color, "blue"))
+                Platform.runLater(() -> {
+                    winner = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Winner/winBlue.png"))));
+                    mainPane.getChildren().add(winner);
+                });
+            else if(Objects.equals(color, "green"))
+                Platform.runLater(() -> {
+                    winner = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Winner/winGreen.png"))));
+                    mainPane.getChildren().add(winner);
+                });
+            else if(Objects.equals(color, "purple"))
+                Platform.runLater(() -> {
+                    winner = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Winner/winPur.png"))));
+                    mainPane.getChildren().add(winner);
+                });
+
+            winnerLabel.setText(winners.getFirst());
+        } else{
+            Platform.runLater(() -> {
+                winner = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Winner/winTwo.png"))));
+                mainPane.getChildren().add(winner);
+            });
+            winnerLabel.setText(winners.get(0) + "\n" + winners.get(1));
+        }
+
+        winnerLabel.setFont(Font.loadFont(getClass().getResourceAsStream("/Fonts/FantasyScript.ttf"), 60));
+        winnerLabel.setTextFill(Color.rgb(30, 30, 30));
+        winnerLabel.setLayoutX(980);
+        winnerLabel.setLayoutY(555);
+        winnerLabel.setPrefWidth(440);
+        winnerLabel.setPrefHeight(120);
+        winnerLabel.setAlignment(Pos.CENTER);
+        mainPane.getChildren().add(winnerLabel);
+        displayPlayerInfo(scores, objectives);
+
+        Platform.runLater(() -> {
+            back = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Background/image.png"))));
+            back.setOnMouseClicked(event -> SceneManager.MainView());
+            back.setFitWidth(500);
+            back.setFitHeight(131);
+            back.setLayoutX(1038);
+            back.setLayoutY(882);
+            mainPane.getChildren().add(back);
+        });
+
+    }
+
+    public static List<String> getWinners(HashMap<String, Integer> objectives, HashMap<String, Integer> scores) {
+        List<String> winners = new ArrayList<>();
+        int highestScore = Integer.MIN_VALUE;
+        int mostObjectives = Integer.MIN_VALUE;
+
+        // First pass to determine the highest score and most objectives
+        for (Map.Entry<String, Integer> entry : scores.entrySet()) {
+            String player = entry.getKey();
+            int score = entry.getValue();
+            int playerObjectives = objectives.getOrDefault(player, 0);
+
+            if (score > highestScore || (score == highestScore && playerObjectives > mostObjectives)) {
+                highestScore = score;
+                mostObjectives = playerObjectives;
+            }
+        }
+
+        // Second pass to collect all players with the highest score and most objectives
+        for (Map.Entry<String, Integer> entry : scores.entrySet()) {
+            String player = entry.getKey();
+            int score = entry.getValue();
+            int playerObjectives = objectives.getOrDefault(player, 0);
+
+            if (score == highestScore && playerObjectives == mostObjectives) {
+                winners.add(player);
+            }
+        }
+
+        return winners;
+    }
+
+    public void displayPlayerInfo(HashMap<String, Integer> scores, HashMap<String, Integer> objectives) {
+        int i =0;
+        for (Map.Entry<String, Integer> entry : scores.entrySet()) {
+            String playerName = entry.getKey();
+            Integer playerScore = entry.getValue();
+            Integer playerObjectives = objectives.get(playerName);
+
+            // Create a label with the player information
+            playerInfoLabel = new Label(playerName + " - " + playerScore + " Points - " + playerObjectives +" Objectives");
+
+            playerInfoLabel.setFont(Font.loadFont(getClass().getResourceAsStream("/Fonts/FantasyScript.ttf"), 37));
+            playerInfoLabel.setTextFill(Color.rgb(30, 30, 30));
+            playerInfoLabel.setLayoutX(497);
+            playerInfoLabel.setLayoutY(198 + 79 * i);
+            playerInfoLabel.setPrefWidth(916);
+            playerInfoLabel.setPrefHeight(75);
+            playerInfoLabel.setAlignment(Pos.CENTER);
+            i++;
+
+            mainPane.getChildren().add(playerInfoLabel);
+        }
+    }
+
+    public Player findPlayerByName(String name) {
+        players.add(myself);
+
+        for (Player player : players) {
+            if (player.getNickname().equalsIgnoreCase(name)) {
+                return player;
+            }
+        }
+
+        return null;
     }
 
     private void caseCurrentStateMessage(currentStateMessage currentStateMessage) {

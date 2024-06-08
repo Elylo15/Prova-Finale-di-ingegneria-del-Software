@@ -314,9 +314,7 @@ public class ViewGUI extends View {
      */
     @Override
     public void endGame(declareWinnerMessage message) {
-        //to avoid reading unexpected messages
-        GUIMessages.clearQueue();
-
+        GUIMessages.writeToGUI(message);
     }
 
 }
