@@ -4,19 +4,18 @@ import it.polimi.ingsw.model.CommonArea;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.PlayerArea;
 import it.polimi.ingsw.model.cards.*;
-import it.polimi.ingsw.protocol.client.view.GUI.ImageBinder;
 import it.polimi.ingsw.protocol.client.view.GUI.message.GUIMessages;
+import it.polimi.ingsw.protocol.messages.EndGameState.declareWinnerMessage;
 import it.polimi.ingsw.protocol.messages.PlayerTurnState.updatePlayerMessage;
 import it.polimi.ingsw.protocol.messages.currentStateMessage;
 import it.polimi.ingsw.protocol.messages.responseMessage;
-import it.polimi.ingsw.protocol.messages.EndGameState.declareWinnerMessage;
-import javafx.animation.*;
+import javafx.animation.KeyFrame;
+import javafx.animation.PauseTransition;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -32,6 +31,8 @@ import java.net.URL;
 import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+
+import static it.polimi.ingsw.protocol.client.view.GUI.Utilities.*;
 import static it.polimi.ingsw.protocol.client.view.GUI.controller.SceneManager.playSoundEffect;
 
 public class GamePageController implements Initializable {
@@ -49,44 +50,36 @@ public class GamePageController implements Initializable {
             {1812, 150}, {1812, 96},
             {1726, 108}
     };
-    private final int offsetAreaX = 156;
-    double scaleFactor = 1.0;
-    double[] boundingBox;
+    private final double offsetAreaX = 156;
     private final int offsetAreaY = 79;
-    public ImageView nextPlayer;
-    public ImageView colorName;
-    double centerXOffset = 0;
-    double centerYOffset = 0;
-    private final int layoutPlacedStarterX = 678;
-    private final int layoutPlacedStarterY = 203;
-    private final int fitHeightPlaced = 133;
-    private final int fitWidthPlaced = 200;
-    private final int fitHeightCommon = 141;
-    private final int fitWidthCommon = 208;
-    private final int fitHeightCard = 157;
-    private final int fitWidthCard = 234;
-    private final int layoutYResource = 746;
-    private final int layoutXPick0 = 364;
-    private final int layoutXPick1 = 587;
-    private final int layoutYGold = 895;
-    private final int layoutXDeck = 56;
-    private final int layoutYObjMy = 606;
-    private final int layoutYObj0 = 750;
-    private final int layoutYObj1 = 894;
-    private final int layoutXObjective = 1659;
-    private final int layoutXChoiceObjective1 = 949;
-    private final int layoutXChoiceObjective2 = 1279;
-    private final int layoutYHand = 814;
-    private final int layoutXCard0 = 864;
-    private final int layoutXCard1 = 1110;
-    private final int layoutXCard2 = 1356;
+    private final double layoutPlacedStarterX = 678;
+    private final double layoutPlacedStarterY = 203;
+    private final double fitHeightPlaced = 133;
+    private final double fitWidthPlaced = 200;
+    private final double fitHeightCommon = 141;
+    private final double fitWidthCommon = 208;
+    private final double fitHeightCard = 157;
+    private final double fitWidthCard = 234;
+    private final double layoutYResource = 746;
+    private final double layoutXPick0 = 364;
+    private final double layoutXPick1 = 587;
+    private final double layoutYGold = 895;
+    private final double layoutXDeck = 56;
+    private final double layoutYObjMy = 606;
+    private final double layoutYObj0 = 750;
+    private final double layoutYObj1 = 894;
+    private final double layoutXObjective = 1659;
+    private final double layoutXChoiceObjective1 = 949;
+    private final double layoutXChoiceObjective2 = 1279;
+    private final double layoutYHand = 814;
+    private final double layoutXCard0 = 864;
+    private final double layoutXCard1 = 1110;
+    private final double layoutXCard2 = 1356;
+    private final Label winnerLabel = new Label();
     private final BlockingQueue<Object> messageQueue = new LinkedBlockingQueue<>();
     private final ArrayList<Player> players = new ArrayList<>();
     private final ArrayList<ObjectiveCard> objectivesToChose = new ArrayList<>();
     private final int[] selectedToPlace = new int[4];
-    private ArrayList<PlaceableCard> allCards = new ArrayList<>();
-    ImageView winner;
-
     @FXML
     private Pane mainPane;
     @FXML
@@ -97,10 +90,23 @@ public class GamePageController implements Initializable {
     private ImageView state;
     @FXML
     private ImageView onTop;
+    @FXML
+    private ImageView nextPlayer;
+    @FXML
+    private ImageView colorName;
+    private double scaleFactor = 1.0;
+    private double[] boundingBox;
+    private double centerXOffset = 0;
+    private double centerYOffset = 0;
+    private ImageView winner;
     private ImageView red;
     private ImageView blue;
     private ImageView purple;
     private ImageView green;
+    private ImageView back;
+    private Label playerInfoLabel;
+    private ImageView display;
+    private ImageView selectedCard;
     private Player myself;
     private PlayerHand myHand;
     private ObjectiveCard myObjective;
@@ -109,20 +115,17 @@ public class GamePageController implements Initializable {
     private CommonArea commonArea;
     private ArrayList<ObjectiveCard> commonObjectives;
     private String currentState;
+    private ArrayList<PlaceableCard> allCards = new ArrayList<>();
     private int clickCounter = -1;
     private boolean isLastTurn = false;
     private boolean firstTimePlace = true;
-    private ImageView selectedCard;
     private int selectedStarterFront;
     private int selectedPick;
     private int selectedObjective;
     private boolean placeholdersVisible = false;
     private currentStateMessage currentStateMessageSaved;
     private boolean wrong = false;
-    private final Label winnerLabel = new Label();
-    ImageView back;
-    Label playerInfoLabel;
-    ImageView display;
+
 
     /**
      * It is used to initialize the controller, it starts the message listener and processor threads.
@@ -159,9 +162,8 @@ public class GamePageController implements Initializable {
      * Starts a new internal thread to process messages
      */
     private void startMessageProcessor() {
-        // Start a new thread to process messages from the queue
         new Thread(() -> {
-            while (true) { // You might want to add a stopping condition
+            while (true) {
                 try {
                     Object message = messageQueue.take();
 
@@ -173,13 +175,9 @@ public class GamePageController implements Initializable {
         }).start();
     }
 
-    //TODO add font to resources, and make explanation look ok
-
     /**
-     *
-     *
-     * Processes the message received from the server based on its type
-     * Displays text and shows popups based on the message received
+     * Processes the message received from the server based on its type.
+     * Displays text and shows popups or images based on the message received.
      *
      * @param message the message to process
      */
@@ -218,6 +216,7 @@ public class GamePageController implements Initializable {
                 display.setLayoutX(1473);
                 display.setLayoutY(108);
                 mainPane.getChildren().add(display);
+                rotateEffect(display, 3);
 
                 winner(declareWinnerMessage);
                 seeWinner();
@@ -226,9 +225,12 @@ public class GamePageController implements Initializable {
         }
     }
 
-    private void seeWinner(){
+    /**
+     * Displays or hides the winner, and player info
+     */
+    private void seeWinner() {
         mainPane.setOnMouseClicked(event -> {
-            if(winner.isVisible()) {
+            if (winner.isVisible()) {
                 winner.setVisible(false);
                 winnerLabel.setVisible(false);
                 back.setVisible(false);
@@ -237,7 +239,7 @@ public class GamePageController implements Initializable {
         });
 
         display.setOnMouseClicked(event -> {
-            if(winner.isVisible()) {
+            if (winner.isVisible()) {
                 winner.setVisible(false);
                 winnerLabel.setVisible(false);
                 back.setVisible(false);
@@ -252,37 +254,42 @@ public class GamePageController implements Initializable {
 
     }
 
+    /**
+     * Displays the winner of the game and the player info
+     *
+     * @param message the message containing the winner
+     */
     private void winner(declareWinnerMessage message) {
         HashMap<String, Integer> objectives = message.getNumberOfObjects();
         HashMap<String, Integer> scores = message.getPlayersPoints();
 
         List<String> winners = getWinners(objectives, scores);
 
-        if(winners.size() == 1) {
-            String color = findPlayerByName(winners.getFirst()).getColor();
-            if(Objects.equals(color, "red"))
+        if (winners.size() == 1) {
+            String color = Objects.requireNonNull(findPlayerByName(winners.getFirst())).getColor();
+            if (Objects.equals(color, "red"))
                 Platform.runLater(() -> {
                     winner = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Winner/winRed.png"))));
                     mainPane.getChildren().add(winner);
                 });
-            else if(Objects.equals(color, "blue"))
+            else if (Objects.equals(color, "blue"))
                 Platform.runLater(() -> {
                     winner = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Winner/winBlue.png"))));
                     mainPane.getChildren().add(winner);
                 });
-            else if(Objects.equals(color, "green"))
+            else if (Objects.equals(color, "green"))
                 Platform.runLater(() -> {
                     winner = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Winner/winGreen.png"))));
                     mainPane.getChildren().add(winner);
                 });
-            else if(Objects.equals(color, "purple"))
+            else if (Objects.equals(color, "purple"))
                 Platform.runLater(() -> {
                     winner = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Winner/winPur.png"))));
                     mainPane.getChildren().add(winner);
                 });
 
             winnerLabel.setText(winners.getFirst());
-        } else{
+        } else {
             Platform.runLater(() -> {
                 winner = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Winner/winTwo.png"))));
                 mainPane.getChildren().add(winner);
@@ -312,7 +319,14 @@ public class GamePageController implements Initializable {
 
     }
 
-    public static List<String> getWinners(HashMap<String, Integer> objectives, HashMap<String, Integer> scores) {
+    /**
+     * Returns the winners of the game
+     *
+     * @param objectives the objectives of the players
+     * @param scores     the scores of the players
+     * @return the list of winners
+     */
+    private List<String> getWinners(HashMap<String, Integer> objectives, HashMap<String, Integer> scores) {
         List<String> winners = new ArrayList<>();
         int highestScore = Integer.MIN_VALUE;
         int mostObjectives = Integer.MIN_VALUE;
@@ -343,15 +357,21 @@ public class GamePageController implements Initializable {
         return winners;
     }
 
-    public void displayPlayerInfo(HashMap<String, Integer> scores, HashMap<String, Integer> objectives) {
-        int i =0;
+    /**
+     * Displays the player information
+     *
+     * @param scores     the scores of the players
+     * @param objectives the objectives of the players
+     */
+    private void displayPlayerInfo(HashMap<String, Integer> scores, HashMap<String, Integer> objectives) {
+        int i = 0;
         for (Map.Entry<String, Integer> entry : scores.entrySet()) {
             String playerName = entry.getKey();
             Integer playerScore = entry.getValue();
             Integer playerObjectives = objectives.get(playerName);
 
             // Create a label with the player information
-            playerInfoLabel = new Label(playerName + " - " + playerScore + " Points - " + playerObjectives +" Objectives");
+            playerInfoLabel = new Label(playerName + " - " + playerScore + " Points - " + playerObjectives + " Objectives");
 
             playerInfoLabel.setFont(Font.loadFont(getClass().getResourceAsStream("/Fonts/FantasyScript.ttf"), 37));
             playerInfoLabel.setTextFill(Color.rgb(30, 30, 30));
@@ -366,7 +386,13 @@ public class GamePageController implements Initializable {
         }
     }
 
-    public Player findPlayerByName(String name) {
+    /**
+     * Finds a player by its nickname
+     *
+     * @param name the nickname of the player
+     * @return the player with the given nickname
+     */
+    private Player findPlayerByName(String name) {
         players.add(myself);
 
         for (Player player : players) {
@@ -378,6 +404,12 @@ public class GamePageController implements Initializable {
         return null;
     }
 
+    /**
+     * Processes the currentStateMessage received from the server
+     * Displays the information about the current state of the game and the player's turn
+     *
+     * @param currentStateMessage the currentStateMessage received from the server
+     */
     private void caseCurrentStateMessage(currentStateMessage currentStateMessage) {
         this.currentState = currentStateMessage.getStateName();
         isLastTurn = currentStateMessage.isLastTurn();
@@ -416,6 +448,11 @@ public class GamePageController implements Initializable {
         }
     }
 
+    /**
+     * Displays the correct image for player's turn based on the color of the player
+     *
+     * @param color the color of the player
+     */
     private void setState(String color) {
 
         switch (color) {
@@ -430,6 +467,11 @@ public class GamePageController implements Initializable {
         }
     }
 
+    /**
+     * Displays the correct image for player's turn based on the color of the player
+     *
+     * @param color the color of the player
+     */
     private void setStateNotPlaying(String color) {
         if (Objects.equals(currentState, "StarterCardState") || Objects.equals(currentState, "ObjectiveState")) {
             switch (color) {
@@ -456,6 +498,11 @@ public class GamePageController implements Initializable {
         }
     }
 
+    /**
+     * Displays the correct image for last turn based on the color of the player
+     *
+     * @param color the color of the player
+     */
     private void setLastTurn(String color) {
         switch (color) {
             case "red" ->
@@ -469,48 +516,81 @@ public class GamePageController implements Initializable {
         }
     }
 
+    /**
+     * Displays the correct image for next player button based on the color of the player
+     *
+     * @param color the color of the player
+     */
     private void setNextButton(String color) {
         switch (color) {
-            case "red" -> nextPlayer.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/NextButton/nextRed.png"))));
-            case "blue" -> nextPlayer.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/NextButton/nextBlue.png"))));
-            case "green" -> nextPlayer.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/NextButton/nextGreen.png"))));
-            case "purple" -> nextPlayer.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/NextButton/nextPur.png"))));
+            case "red" ->
+                    nextPlayer.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/NextButton/nextRed.png"))));
+            case "blue" ->
+                    nextPlayer.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/NextButton/nextBlue.png"))));
+            case "green" ->
+                    nextPlayer.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/NextButton/nextGreen.png"))));
+            case "purple" ->
+                    nextPlayer.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/NextButton/nextPur.png"))));
         }
     }
 
+    /**
+     * Displays the correct template for the player's name based on the color of the player
+     *
+     * @param color the color of the player
+     */
     private void setColorName(String color) {
         switch (color) {
-            case "red" -> colorName.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/NameTemplate/redName.png"))));
-            case "blue" -> colorName.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/NameTemplate/blueName.png"))));
-            case "green" -> colorName.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/NameTemplate/greenName.png"))));
-            case "purple" -> colorName.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/NameTemplate/purpleName.png"))));
+            case "red" ->
+                    colorName.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/NameTemplate/redName.png"))));
+            case "blue" ->
+                    colorName.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/NameTemplate/blueName.png"))));
+            case "green" ->
+                    colorName.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/NameTemplate/greenName.png"))));
+            case "purple" ->
+                    colorName.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/NameTemplate/purpleName.png"))));
         }
     }
 
+    /**
+     * Displays the correct image pop-up indicating the player to wait based on the color of the player
+     *
+     * @param color the color of the player
+     */
     private void waitPopUp(String color) {
         switch (color) {
-            case "red" -> showImagePopup("/Images/PleaseWait/waitRed.png");
-            case "blue" -> showImagePopup("/Images/PleaseWait/waitBlue.png");
-            case "green" -> showImagePopup("/Images/PleaseWait/waitGreen.png");
-            case "purple" -> showImagePopup("/Images/PleaseWait/waitPur.png");
+            case "red" -> showImagePopup("/Images/PleaseWait/waitRed.png", mainPane);
+            case "blue" -> showImagePopup("/Images/PleaseWait/waitBlue.png", mainPane);
+            case "green" -> showImagePopup("/Images/PleaseWait/waitGreen.png", mainPane);
+            case "purple" -> showImagePopup("/Images/PleaseWait/waitPur.png", mainPane);
         }
     }
 
+    /**
+     * Displays the correct image pop-up indicating the player to choose based on the color of the player
+     *
+     * @param color the color of the player
+     */
     private void choosePopUp(String color) {
         switch (color) {
-            case "red" -> showImagePopup("/Images/YouChoose/youChoRe.png");
-            case "blue" -> showImagePopup("/Images/YouChoose/youChoBl.png");
-            case "green" -> showImagePopup("/Images/YouChoose/youChoGr.png");
-            case "purple" -> showImagePopup("/Images/YouChoose/youChoPu.png");
+            case "red" -> showImagePopup("/Images/YouChoose/youChoRe.png", mainPane);
+            case "blue" -> showImagePopup("/Images/YouChoose/youChoBl.png", mainPane);
+            case "green" -> showImagePopup("/Images/YouChoose/youChoGr.png", mainPane);
+            case "purple" -> showImagePopup("/Images/YouChoose/youChoPu.png", mainPane);
         }
     }
 
+    /**
+     * Displays the correct image pop-up indicating the player to retry based on the color of the player
+     *
+     * @param color the color of the player
+     */
     private void wrongPopUp(String color) {
         switch (color) {
-            case "red" -> showImagePopup("/Images/TryAgain/retryRed.png");
-            case "blue" -> showImagePopup("/Images/TryAgain/retryBlue.png");
-            case "green" -> showImagePopup("/Images/TryAgain/retryGreen.png");
-            case "purple" -> showImagePopup("/Images/TryAgain/retryPur.png");
+            case "red" -> showImagePopup("/Images/TryAgain/retryRed.png", mainPane);
+            case "blue" -> showImagePopup("/Images/TryAgain/retryBlue.png", mainPane);
+            case "green" -> showImagePopup("/Images/TryAgain/retryGreen.png", mainPane);
+            case "purple" -> showImagePopup("/Images/TryAgain/retryPur.png", mainPane);
         }
     }
 
@@ -610,7 +690,7 @@ public class GamePageController implements Initializable {
         setColorName(color);
 
         int next = clickCounter;
-        if(clickCounter == players.size() -1)
+        if (clickCounter == players.size() - 1)
             next = -1;
         else
             next++;
@@ -624,12 +704,12 @@ public class GamePageController implements Initializable {
                 addCardsToHand();
                 addMyObjective();
                 displayPlayerArea(myPlayerArea);
-                if((Objects.equals(currentState, "PlaceTurnState") && Objects.equals(myself.getNickname(), currentPlayerNickname) && !placeholdersVisible) || wrong)
+                if ((Objects.equals(currentState, "PlaceTurnState") && Objects.equals(myself.getNickname(), currentPlayerNickname) && !placeholdersVisible) || wrong)
                     displayPlaceHolders();
-                else if(placeholdersVisible)
+                else if (placeholdersVisible)
                     removeAllPlaceholders();
             } else {
-                if(placeholdersVisible)
+                if (placeholdersVisible)
                     removeAllPlaceholders();
                 addPlayerCardsToHand();
                 addPlayerObjective();
@@ -641,50 +721,50 @@ public class GamePageController implements Initializable {
     /**
      * Displays the commonArea
      */
-    public void addCardsToCommonArea() {
+    private void addCardsToCommonArea() {
 
         Platform.runLater(() -> {
             //Add the front up cards to commonArea
-            if(commonArea.getTableCards().getFirst() == null)
-                removeCardFromPosition(layoutXPick0, layoutYResource);
+            if (commonArea.getTableCards().getFirst() == null)
+                removeCardFromPosition(layoutXPick0, layoutYResource, mainPane);
             else
-                addNewCardToPane(mainPane, commonArea.getTableCards().getFirst().getID(), true,
+                addNewCardToPane(mainPane, mainPane, clickCounter, selectedCard, commonArea.getTableCards().getFirst().getID(), true,
                         commonArea.getTableCards().getFirst(), layoutXPick0, layoutYResource, fitHeightCommon, fitWidthCommon, this::pickCard);
             onTop.toFront();
 
-            if(commonArea.getTableCards().get(1) == null)
-                removeCardFromPosition(layoutXPick1, layoutYResource);
+            if (commonArea.getTableCards().get(1) == null)
+                removeCardFromPosition(layoutXPick1, layoutYResource, mainPane);
             else
-                addNewCardToPane(mainPane, commonArea.getTableCards().get(1).getID(), true,
+                addNewCardToPane(mainPane, mainPane, clickCounter, selectedCard, commonArea.getTableCards().get(1).getID(), true,
                         commonArea.getTableCards().get(1), layoutXPick1, layoutYResource, fitHeightCommon, fitWidthCommon, this::pickCard);
             onTop.toFront();
 
-            if(commonArea.getTableCards().get(2) == null)
-                removeCardFromPosition(layoutXPick0, layoutYGold);
+            if (commonArea.getTableCards().get(2) == null)
+                removeCardFromPosition(layoutXPick0, layoutYGold, mainPane);
             else
-                addNewCardToPane(mainPane, commonArea.getTableCards().get(2).getID(), true,
+                addNewCardToPane(mainPane, mainPane, clickCounter, selectedCard, commonArea.getTableCards().get(2).getID(), true,
                         commonArea.getTableCards().get(2), layoutXPick0, layoutYGold, fitHeightCommon, fitWidthCommon, this::pickCard);
             onTop.toFront();
 
-            if(commonArea.getTableCards().get(3) == null)
-                removeCardFromPosition(layoutXPick1, layoutYGold);
+            if (commonArea.getTableCards().get(3) == null)
+                removeCardFromPosition(layoutXPick1, layoutYGold, mainPane);
             else
-                addNewCardToPane(mainPane, commonArea.getTableCards().get(3).getID(), true,
+                addNewCardToPane(mainPane, mainPane, clickCounter, selectedCard, commonArea.getTableCards().get(3).getID(), true,
                         commonArea.getTableCards().get(3), layoutXPick1, layoutYGold, fitHeightCommon, fitWidthCommon, this::pickCard);
             onTop.toFront();
 
             //Add the cards to deck
-            if(commonArea.getD1().getList().getFirst() == null)
-                removeCardFromPosition(layoutXDeck, layoutYResource);
+            if (commonArea.getD1().getList().getFirst() == null)
+                removeCardFromPosition(layoutXDeck, layoutYResource, mainPane);
             else
-                addNewCardToPane(mainPane, commonArea.getD1().getList().getFirst().getID(), false,
+                addNewCardToPane(mainPane, mainPane, clickCounter, selectedCard, commonArea.getD1().getList().getFirst().getID(), false,
                         commonArea.getD1().getList().getFirst(), layoutXDeck, layoutYResource, fitHeightCommon, fitWidthCommon, this::pickCard);
             onTop.toFront();
 
-            if(commonArea.getD2().getList().getFirst() == null)
-                removeCardFromPosition(layoutXDeck, layoutYGold);
+            if (commonArea.getD2().getList().getFirst() == null)
+                removeCardFromPosition(layoutXDeck, layoutYGold, mainPane);
             else
-                addNewCardToPane(mainPane, commonArea.getD2().getList().getFirst().getID(), false,
+                addNewCardToPane(mainPane, mainPane, clickCounter, selectedCard, commonArea.getD2().getList().getFirst().getID(), false,
                         commonArea.getD2().getList().getFirst(), layoutXDeck, layoutYGold, fitHeightCommon, fitWidthCommon, this::pickCard);
             onTop.toFront();
         });
@@ -696,47 +776,56 @@ public class GamePageController implements Initializable {
     private void addCommonObjective() {
         Platform.runLater(() -> {
             if (commonObjectives != null && !commonObjectives.isEmpty()) {
-                addNewCardToPane(mainPane, commonObjectives.get(0).getID(), commonObjectives.get(0).isFront(), commonObjectives.get(0), layoutXObjective,
+                addNewCardToPane(mainPane, mainPane, clickCounter, selectedCard, commonObjectives.get(0).getID(), commonObjectives.get(0).isFront(), commonObjectives.get(0), layoutXObjective,
                         layoutYObj0, fitHeightCommon, fitWidthCommon, this::turnObjectives);
                 onTop.toFront();
-                addNewCardToPane(mainPane, commonObjectives.get(1).getID(), commonObjectives.get(1).isFront(), commonObjectives.get(1), layoutXObjective,
+                addNewCardToPane(mainPane, mainPane, clickCounter, selectedCard, commonObjectives.get(1).getID(), commonObjectives.get(1).isFront(), commonObjectives.get(1), layoutXObjective,
                         layoutYObj1, fitHeightCommon, fitWidthCommon, this::turnObjectives);
                 onTop.toFront();
             }
         });
     }
 
+    /**
+     * Displays the cards in the player's hand
+     */
     private void addCardsToHand() {
         Platform.runLater(() -> {
-            if(myHand.getPlaceableCards().size() < 3)
-                removeCardFromPosition(layoutXCard2, layoutYHand);
+            if (myHand.getPlaceableCards().size() < 3)
+                removeCardFromPosition(layoutXCard2, layoutYHand, mainPane);
 
-            for(int i = 0; myHand.getPlaceableCards().size() > i;  i++){
-                    addNewCardToPane(mainPane, myHand.getPlaceableCards().get(i).getID(), true,
-                            myHand.getPlaceableCards().get(i), layoutXCard0 + i * 246, layoutYHand, fitHeightCard, fitWidthCard, this::choseCardToPlace);
-                    onTop.toFront();
+            for (int i = 0; myHand.getPlaceableCards().size() > i; i++) {
+                addNewCardToPane(mainPane, mainPane, clickCounter, selectedCard, myHand.getPlaceableCards().get(i).getID(), true,
+                        myHand.getPlaceableCards().get(i), layoutXCard0 + i * 246, layoutYHand, fitHeightCard, fitWidthCard, this::choseCardToPlace);
+                onTop.toFront();
             }
         });
     }
 
-    public void addMyObjective() {
+    /**
+     * Displays the player's personal objective
+     */
+    private void addMyObjective() {
         Platform.runLater(() -> {
-            addNewCardToPane(mainPane, myObjective.getID(), myObjective.isFront(), myObjective, layoutXObjective, layoutYObjMy, fitHeightCommon, fitWidthCommon, this::turnObjectives);
+            addNewCardToPane(mainPane, mainPane, clickCounter, selectedCard, myObjective.getID(), myObjective.isFront(), myObjective, layoutXObjective, layoutYObjMy, fitHeightCommon, fitWidthCommon, this::turnObjectives);
             onTop.toFront();
         });
     }
 
+    /**
+     * Displays visualized player's cards in the player's hand back
+     */
     private void addPlayerCardsToHand() {
         if (players.get(clickCounter) != null) {
             PlayerHand playerHand = players.get(clickCounter).getPlayerHand();
             Platform.runLater(() -> {
-                if(playerHand.getPlaceableCards().size() < 3)
-                    removeCardFromPosition(layoutXCard2, layoutYHand);
+                if (playerHand.getPlaceableCards().size() < 3)
+                    removeCardFromPosition(layoutXCard2, layoutYHand, mainPane);
 
-                for(int i = 0; i < playerHand.getPlaceableCards().size(); i++) {
-                        addNewCardToPane(mainPane, playerHand.getPlaceableCards().get(i).getID(), false,
-                                playerHand.getPlaceableCards().get(i), layoutXCard0 + i * 246, layoutYHand, fitHeightCard, fitWidthCard, null);
-                        onTop.toFront();
+                for (int i = 0; i < playerHand.getPlaceableCards().size(); i++) {
+                    addNewCardToPane(mainPane, mainPane, clickCounter, selectedCard, playerHand.getPlaceableCards().get(i).getID(), false,
+                            playerHand.getPlaceableCards().get(i), layoutXCard0 + i * 246, layoutYHand, fitHeightCard, fitWidthCard, null);
+                    onTop.toFront();
                 }
             });
         }
@@ -745,10 +834,10 @@ public class GamePageController implements Initializable {
     /**
      * Displays the visualized player's secret objective back
      */
-    public void addPlayerObjective() {
+    private void addPlayerObjective() {
         if (players.size() > clickCounter && players.get(clickCounter) != null) {
             Platform.runLater(() -> {
-                addNewCardToPane(mainPane, players.get(clickCounter).getObjective().getID(), false, players.get(clickCounter).getObjective(),
+                addNewCardToPane(mainPane, mainPane, clickCounter, selectedCard, players.get(clickCounter).getObjective().getID(), false, players.get(clickCounter).getObjective(),
                         layoutXObjective, layoutYObjMy, fitHeightCommon, fitWidthCommon, null);
                 onTop.toFront();
             });
@@ -760,7 +849,7 @@ public class GamePageController implements Initializable {
      */
     private void addStarterCardsToPane() {
         Platform.runLater(() -> {
-            addNewCardToPane(mainPane, myself.getPlayerHand().getPlaceableCards().getFirst().getID(), true,
+            addNewCardToPane(mainPane, mainPane, clickCounter, selectedCard, myself.getPlayerHand().getPlaceableCards().getFirst().getID(), true,
                     myself.getPlayerHand().getPlaceableCards().getFirst(), layoutXCard1, layoutYHand, fitHeightCard, fitWidthCard, this::placeStarter);
             onTop.toFront();
         });
@@ -769,65 +858,15 @@ public class GamePageController implements Initializable {
     /**
      * Displays the two objectives from which the player can choose
      */
-    public void setObjectives() {
+    private void setObjectives() {
         Platform.runLater(() -> {
-            addNewCardToPane(mainPane, objectivesToChose.get(0).getID(), true, objectivesToChose.get(0), layoutXChoiceObjective1, layoutYHand, fitHeightCard,
+            addNewCardToPane(mainPane, mainPane, clickCounter, selectedCard, objectivesToChose.get(0).getID(), true, objectivesToChose.get(0), layoutXChoiceObjective1, layoutYHand, fitHeightCard,
                     fitWidthCard, this::chooseObjective);
             onTop.toFront();
-            addNewCardToPane(mainPane, objectivesToChose.get(1).getID(), true, objectivesToChose.get(1), layoutXChoiceObjective2, layoutYHand, fitHeightCard,
+            addNewCardToPane(mainPane, mainPane, clickCounter, selectedCard, objectivesToChose.get(1).getID(), true, objectivesToChose.get(1), layoutXChoiceObjective2, layoutYHand, fitHeightCard,
                     fitWidthCard, this::chooseObjective);
             onTop.toFront();
         });
-    }
-
-    /**
-     * Displays the cards placeholders that can be clicked to select the position where to place the card
-     * in the playground and to place the objective in the objective area
-     *
-     * @param pane         the pane where to display the placeholders
-     * @param layoutX      the x position of the placeholder
-     * @param layoutY      the y position of the placeholder
-     * @param fitHeight    the height of the placeholder
-     * @param fitWidth     the width of the placeholder
-     * @param eventHandler the event handler to call when the placeholder is clicked
-     */
-    private void addClickablePlaceholder(Pane pane, int layoutX, int layoutY, double fitHeight, double fitWidth, EventHandler<MouseEvent> eventHandler) {
-        Random random = new Random();
-        int color = random.nextInt(5);
-
-        Image image = switch (color) {
-            case 0 ->
-                    new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Placeholders/blue.png")));
-            case 1 ->
-                    new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Placeholders/green.png")));
-            case 2 -> new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Placeholders/red.png")));
-            case 3 ->
-                    new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Placeholders/yellow.png")));
-            case 4 ->
-                    new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Placeholders/purple.png")));
-            default -> null;
-        };
-
-        // Check if image with the same position and size already exists
-        boolean exists = pane.getChildren().stream()
-                .filter(node -> node instanceof ImageView)
-                .anyMatch(node -> {
-                    ImageView imageView = (ImageView) node;
-                    return (int) imageView.getLayoutX() == layoutX && (int) imageView.getLayoutY() == layoutY &&
-                            (int) imageView.getFitWidth() == fitWidth && (int) imageView.getFitHeight() == fitHeight;
-                });
-
-        if (!exists) {
-            ImageView imageView = new ImageView(image);
-            imageView.setLayoutX(layoutX);
-            imageView.setLayoutY(layoutY);
-            imageView.setFitHeight(fitHeight);
-            imageView.setFitWidth(fitWidth);
-            imageView.getStyleClass().add("placeholder");
-            imageView.setOnMouseClicked(eventHandler);
-            pane.getChildren().add(imageView);
-            fadeInTransition(imageView, 0.5);
-        }
     }
 
     /**
@@ -866,160 +905,15 @@ public class GamePageController implements Initializable {
         players.add(currentPlayer);
     }
 
-    /**
-     * Removes a card from the pane.
-     *
-     * @param layoutX the x position of the card
-     * @param layoutY the y position of the card
-     */
-    private void removeCardFromPosition(double layoutX, double layoutY) {
-        Platform.runLater(() -> {
-            List<Node> nodesToRemove = mainPane.getChildren().stream()
-                    .filter(node -> node instanceof ImageView)
-                    .filter(node -> {
-                        ImageView imageView = (ImageView) node;
-                        return imageView.getLayoutX() == layoutX && imageView.getLayoutY() == layoutY;
-                    })
-                    .toList();
-
-            // Remove nodes after iteration
-            for (Node node : nodesToRemove) {
-                ImageView imageView = (ImageView) node;
-//                imageView.toFront(); // Card to the front
-                onTop.toFront();
-                if(imageView.getUserData() instanceof Card)
-                    fadeOutTransition(mainPane, imageView, 1);
-                else
-                    fadeOutTransition(mainPane, imageView, 0.5);
-            }
-            onTop.toFront();
-        });
-    }
 
     /**
-     * Bind the image to the card and set the card to the imageView
-     *
-     * @param imageView the imageView to set the card to
-     * @param cardID    the ID of the card
-     * @param front     if the card is front up
-     * @param card      the card to set to the imageView
-     */
-    private void setupCard(ImageView imageView, int cardID, boolean front, Card card) {
-        ImageBinder imageBinder = new ImageBinder();
-        ImageView cardImageView = imageBinder.bindImage(cardID, front);
-        imageView.setImage(cardImageView.getImage());
-        imageView.setUserData(card); // Store card ID and state
-    }
-
-    /**
-     * Creates an imageView with the card and sets the card to the imageView
-     *
-     * @param cardID    the ID of the card
-     * @param front     if the card is front up
-     * @param card      the card to set to the imageView
-     * @param layoutX   the x position of the imageView
-     * @param layoutY   the y position of the imageView
-     * @param fitHeight the height of the imageView
-     * @param fitWidth  the width of the imageView
-     * @return the imageView with the card set
-     */
-    private ImageView createCardImageView(int cardID, boolean front, Card card, int layoutX, int layoutY, double fitHeight, double fitWidth) {
-        ImageView imageView = new ImageView();
-        imageView.setFitWidth(fitWidth);
-        imageView.setFitHeight(fitHeight);
-        imageView.setLayoutX(layoutX);
-        imageView.setLayoutY(layoutY);
-        imageView.setPreserveRatio(true);
-        setupCard(imageView, cardID, front, card);
-        return imageView;
-    }
-
-    /**
-     * Adds a new card to the pane if it doesn't exist already in the same position and with the same ID
-     *
-     * @param pane         the pane where to add the card
-     * @param cardID       the ID of the card
-     * @param front        if the card is front up
-     * @param card         the card to add
-     * @param layoutX      the x position of the card
-     * @param layoutY      the y position of the card
-     * @param fitHeight    the height of the card
-     * @param fitWidth     the width of the card
-     * @param eventHandler the event handler to call when the card is clicked
-     */
-    private void addNewCardToPane(Pane pane, int cardID, boolean front, Card card, int layoutX, int layoutY, int fitHeight, int fitWidth, EventHandler<MouseEvent> eventHandler) {
-        ImageView existingCard = pane.getChildren().stream()
-                .filter(node -> node instanceof ImageView)
-                .map(node -> (ImageView) node)
-                .filter(imageView -> {
-                    Card existing = (Card) imageView.getUserData();
-                    return existing != null && existing.getID() == cardID &&
-                            (int) imageView.getLayoutX() == layoutX && (int) imageView.getLayoutY() == layoutY;
-                })
-                .findFirst()
-                .orElse(null);
-
-        if (existingCard == null) {
-            // Card with the same ID and position doesn't exist, so remove the existing card and load the new one
-            removeCardFromPosition(layoutX, layoutY);
-            ImageView newCard = createCardImageView(cardID, front, card, layoutX, layoutY, fitHeight, fitWidth);
-            if (eventHandler != null) {
-                newCard.setOnMouseClicked(eventHandler);
-            }
-            if(card instanceof ObjectiveCard && pane == mainPane && clickCounter != -1)
-                hooverEffect(newCard);
-            else if (card instanceof ObjectiveCard || card instanceof PlaceableCard && pane == mainPane && clickCounter == -1)
-                hooverEffect(newCard);{
-            }
-
-            Platform.runLater(() -> {
-                pane.getChildren().add(newCard);
-                fadeInTransition(newCard, 1.0);
-                onTop.toFront();
-            });
-            // If Card with the same ID and position exists, do nothing
-        }
-    }
-
-    private void turnObjectives(MouseEvent event){
-         if (event.getClickCount() == 2)
-            turnAround(event);
-    }
-
-    /**
-     * Turns the card around when clicked
+     * Turns the card around when clicked twice
      *
      * @param event the mouse event
      */
-    private void turnAround(MouseEvent event) {
-        ImageView clickedCard = (ImageView) event.getSource();
-        Card card = (Card) clickedCard.getUserData();
-
-        if (card != null) {
-            clickedCard.setDisable(true);
-
-            FadeTransition fadeOut = new FadeTransition(Duration.seconds(0.5), clickedCard);
-            fadeOut.setFromValue(1.0);
-            fadeOut.setToValue(0.0);
-
-            fadeOut.setOnFinished(e -> {
-                ImageBinder imageBinder = new ImageBinder();
-                Image newImage = imageBinder.getOppositeImage(card.getID(), card.isFront());
-                clickedCard.setImage(newImage);
-
-                card.setFront(!card.isFront());
-
-                FadeTransition fadeIn = new FadeTransition(Duration.seconds(0.5), clickedCard);
-                fadeIn.setFromValue(0.0);
-                fadeIn.setToValue(1.0);
-
-                fadeIn.setOnFinished(e2 -> clickedCard.setDisable(false));
-
-                fadeIn.play();
-            });
-
-            fadeOut.play();
-        }
+    private void turnObjectives(MouseEvent event) {
+        if (event.getClickCount() == 2)
+            turnAround(event);
     }
 
     /**
@@ -1039,7 +933,7 @@ public class GamePageController implements Initializable {
                 if (selectedCard != null)
                     makeSmallerTransition(selectedCard);
 
-                makeBiggerTransition(clickedCard);
+                makeBiggerTransition(clickedCard, 1.05);
                 this.selectedCard = clickedCard;
 
                 this.selectedStarterFront = isFront ? 1 : 0;
@@ -1071,7 +965,7 @@ public class GamePageController implements Initializable {
                 makeSmallerTransition(selectedCard);
             }
 
-            makeBiggerTransition(clickedCard);
+            makeBiggerTransition(clickedCard, 1.05);
             this.selectedCard = clickedCard;
 
             if (cardID == objectivesToChose.get(0).getID()) {
@@ -1099,9 +993,9 @@ public class GamePageController implements Initializable {
         if (selectedCard != null) {
             ImageView image = (ImageView) event.getSource();
             fadeOutTransition(mainPane, image, 0.5);
-            removeCardFromPosition(layoutXCard1, layoutYHand);
+            removeCardFromPosition(layoutXCard1, layoutYHand, mainPane);
             StarterCard card = (StarterCard) selectedCard.getUserData();
-            addNewCardToPane(playground, card.getID(), card.isFront(), card, layoutPlacedStarterX, layoutPlacedStarterY,
+            addNewCardToPane(playground, mainPane, clickCounter, selectedCard, card.getID(), card.isFront(), card, layoutPlacedStarterX, layoutPlacedStarterY,
                     fitHeightPlaced, fitWidthPlaced, null);
             GUIMessages.writeToClient(selectedStarterFront);
             selectedCard = null;
@@ -1117,53 +1011,16 @@ public class GamePageController implements Initializable {
         if (selectedCard != null) {
             ImageView image = (ImageView) event.getSource();
             fadeOutTransition(mainPane, image, 0.5);
-            removeCardFromPosition(layoutXChoiceObjective1, layoutYHand);
-            removeCardFromPosition(layoutXChoiceObjective2, layoutYHand);
+            removeCardFromPosition(layoutXChoiceObjective1, layoutYHand, mainPane);
+            removeCardFromPosition(layoutXChoiceObjective2, layoutYHand, mainPane);
             ObjectiveCard card = (ObjectiveCard) selectedCard.getUserData();
-            addNewCardToPane(mainPane, card.getID(), true, card, layoutXObjective, layoutYObjMy, fitHeightCommon,
-                    fitWidthCommon, this::turnAround);
+            addNewCardToPane(mainPane, mainPane, clickCounter, selectedCard, card.getID(), true, card, layoutXObjective, layoutYObjMy, fitHeightCommon,
+                    fitWidthCommon, this::turnObjectives);
             GUIMessages.writeToClient(selectedObjective);
             selectedCard = null;
         }
     }
 
-    /**
-     * When the mouse enters the imageView, it makes it bigger
-     * When the mouse exits the imageView, it makes it smaller
-     *
-     * @param imageView the imageView to apply the effect to
-     */
-    private void hooverEffect(ImageView imageView) {
-        imageView.setOnMouseEntered(e -> makeBiggerTransition(imageView));
-        imageView.setOnMouseExited(e -> {
-            if (selectedCard != imageView)
-                makeSmallerTransition(imageView);
-        });
-    }
-
-    /**
-     * When the mouse enters the imageView, it makes it bigger
-     *
-     * @param imageView the imageView to apply the effect to
-     */
-    private void makeBiggerTransition(ImageView imageView) {
-        ScaleTransition makeBigger = new ScaleTransition(Duration.millis(200), imageView);
-        makeBigger.setToX(1.05);
-        makeBigger.setToY(1.05);
-        makeBigger.play();
-    }
-
-    /**
-     * When the mouse exits the imageView, it makes it smaller
-     *
-     * @param imageView the imageView to apply the effect to
-     */
-    private void makeSmallerTransition(ImageView imageView) {
-        ScaleTransition makeSmaller = new ScaleTransition(Duration.millis(200), imageView);
-        makeSmaller.setToX(1.0);
-        makeSmaller.setToY(1.0);
-        makeSmaller.play();
-    }
 
     /**
      * When the mouse is clicked once, and if the page visualized is the client's, it selects the card to place
@@ -1172,7 +1029,7 @@ public class GamePageController implements Initializable {
      * @param event the mouse event
      */
     private void choseCardToPlace(MouseEvent event) {
-        if (clickCounter == -1 ){
+        if (clickCounter == -1) {
             ImageView clickedCard = (ImageView) event.getSource();
             PlaceableCard card = (PlaceableCard) clickedCard.getUserData();
             int cardID = card.getID();
@@ -1182,7 +1039,7 @@ public class GamePageController implements Initializable {
                     makeSmallerTransition(selectedCard);
                 }
 
-                makeBiggerTransition(clickedCard);
+                makeBiggerTransition(clickedCard, 1.05);
                 this.selectedCard = clickedCard;
 
                 if (cardID == myHand.getPlaceableCards().getFirst().getID())
@@ -1196,7 +1053,7 @@ public class GamePageController implements Initializable {
             } else if (event.getClickCount() == 2) {
                 turnAround(event);
 
-                if(Objects.equals(currentState, "PlaceTurnState") && Objects.equals(currentPlayerNickname, myself.getNickname())) {
+                if (Objects.equals(currentState, "PlaceTurnState") && Objects.equals(currentPlayerNickname, myself.getNickname())) {
                     if (cardID == myHand.getPlaceableCards().getFirst().getID())
                         this.selectedToPlace[0] = 0;
                     else if (cardID == myHand.getPlaceableCards().get(1).getID())
@@ -1226,23 +1083,23 @@ public class GamePageController implements Initializable {
             makeSmallerTransition(selectedCard);
 
             ImageView clickedPlaceholder = (ImageView) event.getSource();
-            int placeholderX = (int) clickedPlaceholder.getLayoutX();
-            int placeholderY = (int) clickedPlaceholder.getLayoutY();
+            double placeholderX = clickedPlaceholder.getLayoutX();
+            double placeholderY = clickedPlaceholder.getLayoutY();
 
-            int relativePosX;
-            int relativePosY;
+            double relativePosX;
+            double relativePosY;
 
 
             if (centerXOffset < 0 || centerYOffset < 0) {
                 relativePosX = (placeholderX - layoutPlacedStarterX) / offsetAreaX;
                 relativePosY = (placeholderY - layoutPlacedStarterY) / offsetAreaY;
             } else {
-                relativePosX = (placeholderX - (int) centerXOffset) / offsetAreaX;
-                relativePosY = (placeholderY - (int) centerYOffset) / offsetAreaY;
+                relativePosX = (placeholderX - centerXOffset) / offsetAreaX;
+                relativePosY = (placeholderY - centerYOffset) / offsetAreaY;
             }
 
-            this.selectedToPlace[2] = relativePosY;
-            this.selectedToPlace[3] = relativePosX;
+            this.selectedToPlace[2] = (int) relativePosY;
+            this.selectedToPlace[3] = (int) relativePosX;
 
             wrong = false;
             GUIMessages.writeToClient(selectedToPlace);
@@ -1264,7 +1121,7 @@ public class GamePageController implements Initializable {
                 makeSmallerTransition(selectedCard);
             }
 
-            makeBiggerTransition(clickedCard);
+            makeBiggerTransition(clickedCard, 1.05);
             this.selectedCard = clickedCard;
             if (cardID == commonArea.getD1().getList().getFirst().getID())
                 this.selectedPick = 1;
@@ -1294,14 +1151,14 @@ public class GamePageController implements Initializable {
 
         if (!Objects.equals(currentState, "StarterCardState") && !Objects.equals(currentState, "ObjectiveState")) {
             clickCounter++;
-            if (clickCounter == players.size() ) {
+            if (clickCounter == players.size()) {
                 clickCounter = -1;
             }
             setPage();
             onTop.toFront();
         } else if ((Objects.equals(currentState, "StarterCardState") || Objects.equals(currentState, "ObjectiveState")) && Objects.equals(currentPlayerNickname, myself.getNickname())) {
             choosePopUp(myself.getColor());
-        }   else if(Objects.equals(currentState, "StarterCardState") || Objects.equals(currentState, "ObjectiveState")) {
+        } else if (Objects.equals(currentState, "StarterCardState") || Objects.equals(currentState, "ObjectiveState")) {
             waitPopUp(myself.getColor());
         }
 
@@ -1309,91 +1166,6 @@ public class GamePageController implements Initializable {
         pause.setOnFinished(event -> nextPlayer.setDisable(false));
         pause.play();
     }
-
-    /**
-     * Displays the popup with the image
-     *
-     * @param imagePath the path of the image
-     */
-    private void showImagePopup(String imagePath) {
-        Platform.runLater(() -> {
-            Image imageLoad = new Image(Objects.requireNonNull(getClass().getResourceAsStream(imagePath)));
-            ImageView image = new ImageView(imageLoad);
-
-            image.preserveRatioProperty().setValue(true);
-            image.setFitWidth(646);
-            image.setFitHeight(167);
-            image.setLayoutX(957);
-            image.setLayoutY(608);
-            image.setOpacity(0.0); // Initially invisible
-
-            mainPane.getChildren().add(image);
-
-            fadeTransitionForPopUP(image);
-        });
-    }
-
-    /**
-     * Fades in the image
-     *
-     * @param image      the image to fade in
-     * @param maxOpacity the maximum opacity
-     */
-    private void fadeInTransition(ImageView image, double maxOpacity) {
-        FadeTransition fadeTransitionIn = new FadeTransition(Duration.seconds(1), image);
-        fadeTransitionIn.setFromValue(0.0);
-        fadeTransitionIn.setToValue(maxOpacity);
-
-        fadeTransitionIn.play();
-    }
-
-    /**
-     * Fades out the image and removes it
-     *
-     * @param pane       the pane where the image is
-     * @param image      the image to fade out
-     * @param maxOpacity the maximum opacity
-     */
-    private void fadeOutTransition(Pane pane, ImageView image, double maxOpacity) {
-        FadeTransition fadeTransitionOut = new FadeTransition(Duration.seconds(1), image);
-        fadeTransitionOut.setFromValue(maxOpacity);
-        fadeTransitionOut.setToValue(0.0);
-
-        fadeTransitionOut.setOnFinished(event -> pane.getChildren().remove(image));
-
-        fadeTransitionOut.play();
-    }
-
-
-    /**
-     * Fades in the image and then fades it out
-     *
-     * @param image the image to fade in and out
-     */
-    private void fadeTransitionForPopUP(ImageView image) {
-        FadeTransition fadeTransitionIn = new FadeTransition(Duration.seconds(1), image);
-        fadeTransitionIn.setFromValue(0.0);
-        fadeTransitionIn.setToValue(1.0);
-
-        PauseTransition pauseTransition = new PauseTransition(Duration.seconds(2));
-
-        FadeTransition fadeTransitionOut = new FadeTransition(Duration.seconds(1), image);
-        fadeTransitionOut.setFromValue(1.0);
-        fadeTransitionOut.setToValue(0.0);
-
-        fadeTransitionOut.setOnFinished(event -> mainPane.getChildren().remove(image));
-
-        SequentialTransition sequentialTransition = new SequentialTransition(
-                fadeTransitionIn,
-                pauseTransition,
-                fadeTransitionOut
-        );
-
-        sequentialTransition.play();
-    }
-
-
-    //TODO try to see if the movement works
 
     /**
      * Displays the pions positions based on color
@@ -1444,7 +1216,7 @@ public class GamePageController implements Initializable {
      */
     private void setPionPosition(ImageView pion, int score, List<ImageView> allPions) {
 
-            System.out.println("Score: " + score);
+        System.out.println("Score: " + score);
 
         if (pion != null && score == 0 && !isPionAtDesiredPosition(pion, 0)) {
             double[] adjustedPosition = getAdjustedPosition(allPions, positions[0][0], positions[0][1], pion);
@@ -1507,15 +1279,15 @@ public class GamePageController implements Initializable {
      * @param targetY the y position of the pion
      * @return the adjusted position of the pion
      */
-    private double[] getAdjustedPosition(List<ImageView> pions, double targetX, double targetY,ImageView myPion) {
+    private double[] getAdjustedPosition(List<ImageView> pions, double targetX, double targetY, ImageView myPion) {
         double offsetY = 0;
 
         for (ImageView pion : pions) {
-            if(pion != myPion)
+            if (pion != myPion)
                 if (pion != null && pion.getLayoutX() == targetX && pion.getLayoutY() == targetY + offsetY) {
                     offsetY -= offsetPions;
                     pion.toFront();
-            }
+                }
         }
         return new double[]{targetX, targetY + offsetY};
     }
@@ -1529,13 +1301,10 @@ public class GamePageController implements Initializable {
      */
     private boolean isPionAtDesiredPosition(ImageView pion, int score) {
         double[] desiredPosition = positions[score];
-        if ((pion.getLayoutX() != desiredPosition[0] && pion.getLayoutY() != desiredPosition[1])
-                || (pion.getLayoutX() != desiredPosition[0] && pion.getLayoutY() != desiredPosition[1] - offsetPions)
-                || (pion.getLayoutX() != desiredPosition[0] && pion.getLayoutY() != desiredPosition[1] - 2 * offsetPions)
-                || (pion.getLayoutX() != desiredPosition[0] && pion.getLayoutY() != desiredPosition[1] - 3 * offsetPions))
-            return false;
-
-        return true;
+        return (pion.getLayoutX() == desiredPosition[0] || pion.getLayoutY() == desiredPosition[1])
+                && (pion.getLayoutX() == desiredPosition[0] || pion.getLayoutY() == desiredPosition[1] - offsetPions)
+                && (pion.getLayoutX() == desiredPosition[0] || pion.getLayoutY() == desiredPosition[1] - 2 * offsetPions)
+                && (pion.getLayoutX() == desiredPosition[0] || pion.getLayoutY() == desiredPosition[1] - 3 * offsetPions);
     }
 
     /**
@@ -1585,7 +1354,7 @@ public class GamePageController implements Initializable {
         ArrayList<Integer[]> availablePositions;
         availablePositions = myPlayerArea.getAvailablePosition();
 
-        if(boundingBox == null)
+        if (boundingBox == null)
             boundingBox = calculateBoundingBox(allCards);
 
         double totalWidth = boundingBox[2] - boundingBox[0];
@@ -1623,7 +1392,7 @@ public class GamePageController implements Initializable {
      *
      * @param playerArea the playerArea to display
      */
-    public void displayPlayerArea(PlayerArea playerArea) {
+    private void displayPlayerArea(PlayerArea playerArea) {
         Platform.runLater(() -> {
             // Remove all existing cards from the player area
             playground.getChildren().removeIf(node -> node instanceof ImageView && node.getUserData() instanceof PlaceableCard);
@@ -1643,7 +1412,7 @@ public class GamePageController implements Initializable {
                 int layoutX = (int) (calculateLayoutX(card) * scaleFactor + centerXOffset);
                 int layoutY = (int) (calculateLayoutY(card) * scaleFactor + centerYOffset);
 
-                ImageView cardImageView = createCardImageView(card.getID(), card.isFront(), card, layoutX, layoutY, fitHeightPlaced *  scaleFactor, fitWidthPlaced *  scaleFactor);
+                ImageView cardImageView = createCardImageView(card.getID(), card.isFront(), card, layoutX, layoutY, fitHeightPlaced * scaleFactor, fitWidthPlaced * scaleFactor);
                 playground.getChildren().add(cardImageView);
                 cardImageView.toFront();
 
@@ -1655,6 +1424,14 @@ public class GamePageController implements Initializable {
         });
     }
 
+    /**
+     * Calculates the scale factor based on the total dimensions of the cards and the available positions
+     *
+     * @param totalWidth         the total width of the cards
+     * @param totalHeight        the total height of the cards
+     * @param availablePositions the available positions in the playerArea
+     * @return the scale factor
+     */
     private double calculateScaleFactor(double totalWidth, double totalHeight, ArrayList<Integer[]> availablePositions) {
         double playgroundWidth = playground.getWidth();
         double playgroundHeight = playground.getHeight();
@@ -1682,14 +1459,32 @@ public class GamePageController implements Initializable {
         return Math.min(scaleFactor, 1.0);
     }
 
-    private int calculateLayoutX(PlaceableCard card) {
+    /**
+     * Calculates the layout position of the card based on the cell position
+     *
+     * @param card the card to calculate the layout position for
+     * @return the layout x position
+     */
+    private double calculateLayoutX(PlaceableCard card) {
         return card.getCells().getFirst().getColumn() * offsetAreaX;
     }
 
-    private int calculateLayoutY(PlaceableCard card) {
+    /**
+     * Calculates the layout position of the card based on the cell position
+     *
+     * @param card the card to calculate the layout position for
+     * @return the layout y position
+     */
+    private double calculateLayoutY(PlaceableCard card) {
         return card.getCells().getFirst().getRow() * offsetAreaY;
     }
 
+    /**
+     * Calculates the bounding box of the cards
+     *
+     * @param cards the cards to calculate the bounding box for
+     * @return the bounding box
+     */
     private double[] calculateBoundingBox(ArrayList<PlaceableCard> cards) {
         double minX = Double.MAX_VALUE, minY = Double.MAX_VALUE;
         double maxX = Double.MIN_VALUE, maxY = Double.MIN_VALUE;
@@ -1707,6 +1502,12 @@ public class GamePageController implements Initializable {
         return new double[]{minX, minY, maxX, maxY};
     }
 
+    /**
+     * Adjusts the z-order of the card based on its position relative to other cards
+     *
+     * @param cardImageView the card image view
+     * @param card          the card
+     */
     private void adjustCardZOrder(ImageView cardImageView, PlaceableCard card) {
         // Ensure proper layering based on card's position relative to other cards
         boolean isTop = card.getCells().stream().anyMatch(cell -> cell.getTopCard() == card);
@@ -1721,8 +1522,5 @@ public class GamePageController implements Initializable {
             playground.getChildren().add(cardImageView);
         }
     }
-
-
-
 
 }

@@ -1,17 +1,16 @@
 package it.polimi.ingsw.protocol.client.view.GUI.controller;
 
 import it.polimi.ingsw.protocol.client.view.GUI.message.GUIMessages;
-import javafx.animation.RotateTransition;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
-import javafx.util.Duration;
+
+import static it.polimi.ingsw.protocol.client.view.GUI.Utilities.rotateEffect;
 
 
 /**
  * This class is a controller for the GUI scene where the user enters the IP address.
- * It contains a TextField for the IP address and a Button to submit the IP address.
+ * It contains a TextField for the IP address and an image-button to submit the IP address.
  * When the submit button is clicked, it sends the IP address to the client.
  */
 public class InsertIPController {
@@ -37,17 +36,15 @@ public class InsertIPController {
     public ImageView rotate9;
     @FXML
     public ImageView rotate10;
-
     @FXML
     private TextField ip;
-
     @FXML
     private ImageView submit_ip;
 
     /**
      * This method is called when the scene is loaded.
-     * It sets the action for the submit button.
-     * When the submit button is clicked, it sends the IP address to the client.
+     * It sets the action for the image-button.
+     * When the button is clicked, it sends the IP address to the client.
      */
     @FXML
     private void initialize() {
@@ -69,13 +66,4 @@ public class InsertIPController {
         });
     }
 
-    public void rotateEffect(ImageView imageView, int seconds){
-        RotateTransition rotateTransition = new RotateTransition(Duration.seconds(seconds), imageView);
-        rotateTransition.setByAngle(360); // Rotate 360 degrees
-        rotateTransition.setCycleCount(RotateTransition.INDEFINITE); // Repeat indefinitely
-        rotateTransition.setAutoReverse(true); // Do not reverse the direction
-
-        // Start the rotation
-        rotateTransition.play();
-    }
 }

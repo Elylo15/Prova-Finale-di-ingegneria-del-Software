@@ -1,17 +1,14 @@
 package it.polimi.ingsw.protocol.client.view.GUI.controller;
 
 import it.polimi.ingsw.protocol.client.view.GUI.message.GUIMessages;
-import javafx.animation.ScaleTransition;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
-import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
-import javafx.util.Duration;
+
+import static it.polimi.ingsw.protocol.client.view.GUI.Utilities.hooverEffect;
 
 /**
  * This class is a controller for the GUI scene where the user chooses between Socket and RMI for communication.
- * It contains two buttons, one for Socket and one for RMI.
+ * It contains two image-buttons, one for Socket and one for RMI.
  * When a button is clicked, it sends the user's choice to the client and prints the choice to the console.
  */
 public class ChooseSocketRMIController {
@@ -22,14 +19,14 @@ public class ChooseSocketRMIController {
 
     /**
      * This method is called when the scene is loaded.
-     * It sets the action for each button.
+     * It sets the action for each image-button.
      * When the Socket button is clicked, it sends true to the client.
      * When the RMI button is clicked, it sends false to the client.
      */
     @FXML
     private void initialize() {
-        initializeHoverEffect(socketButton);
-        initializeHoverEffect(rmiButton);
+        hooverEffect(socketButton, null, 1.05);
+        hooverEffect(rmiButton, null, 1.05);
 
         socketButton.setOnMouseClicked(event -> {
             //System.out.println("Socket");
@@ -42,25 +39,5 @@ public class ChooseSocketRMIController {
         });
     }
 
-    @FXML
-    private void onHover(MouseEvent event) {
-        Node source = (Node) event.getSource();
 
-        ScaleTransition enlargeTransition = new ScaleTransition(Duration.millis(200), source);
-        enlargeTransition.setToX(1.05);
-        enlargeTransition.setToY(1.05);
-
-        ScaleTransition shrinkTransition = new ScaleTransition(Duration.millis(200), source);
-        shrinkTransition.setToX(1.0);
-        shrinkTransition.setToY(1.0);
-
-        source.setOnMouseEntered(e -> enlargeTransition.playFromStart());
-        source.setOnMouseExited(e -> shrinkTransition.playFromStart());
-    }
-
-
-    public void initializeHoverEffect(Node node) {
-        node.setOnMouseEntered(this::onHover);
-        node.setOnMouseExited(this::onHover);
-    }
 }
