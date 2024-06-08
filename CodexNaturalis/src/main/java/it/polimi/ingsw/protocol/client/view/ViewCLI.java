@@ -995,14 +995,14 @@ public class ViewCLI extends View {
      */
     public void answerToConnection(connectionResponseMessage message) {
         if (message.getCorrect())
-            System.out.println("the connection has been established");
+            System.out.println( GREEN_TEXT + "the connection has been established" + RESET);
     }
 
     /**
      * This method allow the client to choose if he wants to create a new match, join an existing one in waiting,
-     * load a saved Match or join a running match
+     *  load a saved Match or join a running match
      *
-     * @param message the message received from the server
+     * @param message a serverOption message received from the server
      * @return message with the values chosen by the user
      */
     public serverOptionMessage serverOptions(serverOptionMessage message) {
@@ -1070,7 +1070,7 @@ public class ViewCLI extends View {
 
 
         if (!newMatch) {
-
+             //if newMatch is false proceeds to ask if the user wants to join a running match
             boolean runMatch;
             while (true) {
                 System.out.print("Join a running match? [YES/no] ");
@@ -1121,6 +1121,7 @@ public class ViewCLI extends View {
                 }
 
             } else {
+                //if runMatch is false proceeds to ask if the user wants to join a saved match
                 while (true) {
                     System.out.print("Join a saved match? [YES/no] ");
                     String choice = scanner.nextLine().toLowerCase();
@@ -1252,10 +1253,10 @@ public class ViewCLI extends View {
             System.out.print("FRONT or BACK? ");
             String choice = scanner.nextLine().toLowerCase();
             switch (choice) {
-                case "front", "front side" -> {
+                case "f", "front", "front side" -> {
                     return 1;
                 }
-                case "back", "back side" -> {
+                case "b", "back", "back side" -> {
                     return 0;
                 }
             }
@@ -1336,7 +1337,8 @@ public class ViewCLI extends View {
     }
 
     /**
-     * This method allows the user to say what card he wants to play, front or back, and in which position
+     * This method allows the user to choose the card to place among the three cards in his hand,
+     * choose the side (front or back) and the position
      *
      * @return Array of int representing the card chosen by the user, side, and position
      */
@@ -1349,7 +1351,7 @@ public class ViewCLI extends View {
         Scanner scanner = new Scanner(System.in);
         while (true) {
             try {
-                System.out.print("Enter the NUMBER of the card you want to place: ");
+                System.out.print("Enter the NUMBER of the card you want to place (0) or (1) or (2): ");
                 chosenCard[0] = scanner.nextInt();
                 scanner.nextLine();
                 break;
@@ -1364,11 +1366,11 @@ public class ViewCLI extends View {
             System.out.print("FRONT or BACK?");
             String choice = scanner.nextLine().toLowerCase();
             switch (choice) {
-                case "front", "front side" -> {
+                case "f", "front", "front side" -> {
                     chosenCard[1] = 1;
                     correct = true;
                 }
-                case "back", "back side" -> {
+                case "b", "back", "back side" -> {
                     chosenCard[1] = 0;
                     correct = true;
                 }
@@ -1418,7 +1420,7 @@ public class ViewCLI extends View {
             scanner.nextLine();
         } catch (Exception e) {
             scanner.nextLine();
-            System.out.println("you didn't enter an integer value");
+            System.out.println("You didn't enter an integer value");
         }
         return choice;
     }
@@ -1435,8 +1437,8 @@ public class ViewCLI extends View {
 
         points = message.getPlayersPoints();
         numObjectives = message.getNumberOfObjects();
-
-        System.out.println("\n\nSCOREBOARD\n");
+        System.out.println("\nFINAL RESULTS:\n");
+        System.out.println("\nSCOREBOARD\n");
         for (String playerName : points.keySet()) {
             Integer playerPoints = points.get(playerName);
             Integer playerObjectives = numObjectives.get(playerName);
@@ -1460,6 +1462,7 @@ public class ViewCLI extends View {
 
     /**
      * This method allows the user to choose a nickname from the list of available names
+     * If the user wants to load a saved match, he will need this method to choose his name from the existing ones
      *
      * @param message the message containing the list of available names
      * @return the chosen nickname
@@ -1468,9 +1471,10 @@ public class ViewCLI extends View {
     public String pickNameFA(unavailableNamesMessage message) {
         System.out.println("Please choose a nickname: ");
         int i = 1;
+        //print the available names preceded by a number to identify them
         for (String name : message.getNames()) {
             System.out.println("(" + i + ") " + name);
-            i += 1;
+            i ++;
         }
         while (true) {
             Scanner scanner = new Scanner(System.in);
