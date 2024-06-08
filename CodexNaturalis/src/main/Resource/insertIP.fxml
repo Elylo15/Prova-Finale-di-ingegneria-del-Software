@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -10,79 +9,62 @@
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.protocol.client.view.GUI.controller.InsertIPController">
     <center>
-      <Pane BorderPane.alignment="CENTER">
-         <children>
-            <ImageView fitHeight="1080.0" fitWidth="1920.0" preserveRatio="true">
-               <image>
-                  <Image url="@Images/SocketRmi/GamePage.png" />
-               </image>
-            </ImageView>
-               <TextField fx:id="ip" layoutX="533.0" layoutY="414.0" prefHeight="101.0" prefWidth="437.0" promptText="Localhost">
-               <font>
-                  <Font name="Fantasy Script" size="45.0" />
-               </font>
-            </TextField>
-            <ImageView fx:id="rotate" fitHeight="197.0" fitWidth="200.0" layoutX="146.0" layoutY="670.0">
-               <image>
-                  <Image url="@Images/SocketRmi/rotate.png" />
-               </image>
-            </ImageView>
-              <Button fx:id="submit_ip" layoutX="1107.0" layoutY="414.0" mnemonicParsing="false" prefHeight="106.0" prefWidth="290.0" text="Submit">
-               <font>
-                  <Font name="Fantasy Script" size="45.0" />
-               </font>
-            </Button>
-            <ImageView fx:id="rotate1" fitHeight="197.0" fitWidth="200.0" layoutX="978.0" layoutY="809.0">
-               <image>
-                  <Image url="@Images/SocketRmi/rotate.png" />
-               </image>
-            </ImageView>
-            <ImageView fx:id="rotate2" fitHeight="197.0" fitWidth="200.0" layoutX="670.0" layoutY="642.0">
-               <image>
-                  <Image url="@Images/SocketRmi/rotate.png" />
-               </image>
-            </ImageView>
-            <ImageView fx:id="rotate3" fitHeight="197.0" fitWidth="200.0" layoutX="104.0" layoutY="103.0">
-               <image>
-                  <Image url="@Images/SocketRmi/rotate.png" />
-               </image>
-            </ImageView>
-            <ImageView fx:id="rotate4" fitHeight="197.0" fitWidth="200.0" layoutX="1562.0" layoutY="114.0">
-               <image>
-                  <Image url="@Images/SocketRmi/rotate.png" />
-               </image>
-            </ImageView>
-            <ImageView fx:id="rotate5" fitHeight="197.0" fitWidth="200.0" layoutX="1611.0" layoutY="458.0">
-               <image>
-                  <Image url="@Images/SocketRmi/rotate.png" />
-               </image>
-            </ImageView>
-            <ImageView fx:id="rotate6" fitHeight="153.0" fitWidth="157.0" layoutX="1545.0" layoutY="848.0" preserveRatio="true">
-               <image>
-                  <Image url="@Images/SocketRmi/rotate.png" />
-               </image>
-            </ImageView>
-            <ImageView fx:id="rotate7" fitHeight="153.0" fitWidth="157.0" layoutX="396.0" layoutY="862.0" preserveRatio="true">
-               <image>
-                  <Image url="@Images/SocketRmi/rotate.png" />
-               </image>
-            </ImageView>
-            <ImageView fx:id="rotate8" fitHeight="153.0" fitWidth="157.0" layoutX="254.0" layoutY="399.0" preserveRatio="true">
-               <image>
-                  <Image url="@Images/SocketRmi/rotate.png" />
-               </image>
-            </ImageView>
-            <ImageView fx:id="rotate9" fitHeight="153.0" fitWidth="157.0" layoutX="1042.0" layoutY="26.0" preserveRatio="true">
-               <image>
-                  <Image url="@Images/SocketRmi/rotate.png" />
-               </image>
-            </ImageView>
-            <ImageView fx:id="rotate10" fitHeight="153.0" fitWidth="157.0" layoutX="1287.0" layoutY="633.0" preserveRatio="true">
-               <image>
-                  <Image url="@Images/SocketRmi/rotate.png" />
-               </image>
-            </ImageView>
-         </children>
-      </Pane>
+       <Pane BorderPane.alignment="CENTER">
+          <ImageView fitHeight="1080.0" fitWidth="1920.0" preserveRatio="true">
+             <Image url="@Images/SocketRmi/GamePage.png"/>
+          </ImageView>
+          <TextField fx:id="ip" layoutX="506.0" layoutY="424.0" prefHeight="102.0" prefWidth="451.0"
+                     promptText="Localhost">
+             <font>
+                <Font name="Fantasy Script" size="38.0"/>
+             </font>
+          </TextField>
+          <ImageView id="field" fitHeight="329.0" fitWidth="644.0" layoutX="477.0" layoutY="399.0"
+                     mouseTransparent="true" preserveRatio="true">
+             <Image url="@Images/Background/field.png"/>
+          </ImageView>
+          <ImageView fx:id="rotate" fitHeight="197.0" fitWidth="200.0" layoutX="146.0" layoutY="670.0">
+             <Image url="@Images/SocketRmi/rotate.png"/>
+          </ImageView>
+          <ImageView fx:id="rotate1" fitHeight="197.0" fitWidth="200.0" layoutX="978.0" layoutY="809.0">
+             <Image url="@Images/SocketRmi/rotate.png"/>
+          </ImageView>
+          <ImageView id="submit" fx:id="submit_ip" fitHeight="329.0" fitWidth="640.0" layoutX="1031.0" layoutY="399.0"
+                     preserveRatio="true">
+             <Image url="@Images/Background/submit.png"/>
+          </ImageView>
+          <ImageView fx:id="rotate2" fitHeight="197.0" fitWidth="200.0" layoutX="670.0" layoutY="642.0">
+             <Image url="@Images/SocketRmi/rotate.png"/>
+          </ImageView>
+          <ImageView fx:id="rotate3" fitHeight="197.0" fitWidth="200.0" layoutX="104.0" layoutY="103.0">
+             <Image url="@Images/SocketRmi/rotate.png"/>
+          </ImageView>
+          <ImageView fx:id="rotate4" fitHeight="197.0" fitWidth="200.0" layoutX="1562.0" layoutY="114.0">
+             <Image url="@Images/SocketRmi/rotate.png"/>
+          </ImageView>
+          <ImageView fx:id="rotate5" fitHeight="197.0" fitWidth="200.0" layoutX="1611.0" layoutY="458.0">
+             <Image url="@Images/SocketRmi/rotate.png"/>
+          </ImageView>
+          <ImageView fx:id="rotate6" fitHeight="153.0" fitWidth="157.0" layoutX="1545.0" layoutY="848.0"
+                     preserveRatio="true">
+             <Image url="@Images/SocketRmi/rotate.png"/>
+          </ImageView>
+          <ImageView fx:id="rotate7" fitHeight="153.0" fitWidth="157.0" layoutX="396.0" layoutY="862.0"
+                     preserveRatio="true">
+             <Image url="@Images/SocketRmi/rotate.png"/>
+          </ImageView>
+          <ImageView fx:id="rotate8" fitHeight="153.0" fitWidth="157.0" layoutX="254.0" layoutY="399.0"
+                     preserveRatio="true">
+             <Image url="@Images/SocketRmi/rotate.png"/>
+          </ImageView>
+          <ImageView fx:id="rotate9" fitHeight="153.0" fitWidth="157.0" layoutX="1042.0" layoutY="26.0"
+                     preserveRatio="true">
+             <Image url="@Images/SocketRmi/rotate.png"/>
+          </ImageView>
+          <ImageView fx:id="rotate10" fitHeight="153.0" fitWidth="157.0" layoutX="1287.0" layoutY="633.0"
+                     preserveRatio="true">
+             <Image url="@Images/SocketRmi/rotate.png"/>
+          </ImageView>
+       </Pane>
     </center>
 </BorderPane>

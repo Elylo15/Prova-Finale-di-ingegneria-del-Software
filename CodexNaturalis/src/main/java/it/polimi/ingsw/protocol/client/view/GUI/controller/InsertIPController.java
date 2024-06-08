@@ -42,7 +42,7 @@ public class InsertIPController {
     private TextField ip;
 
     @FXML
-    private Button submit_ip;
+    private ImageView submit_ip;
 
     /**
      * This method is called when the scene is loaded.
@@ -63,7 +63,7 @@ public class InsertIPController {
         rotateEffect(rotate9, 3);
         rotateEffect(rotate10, 2);
 
-        submit_ip.setOnAction(event -> {
+        submit_ip.setOnMouseClicked(event -> {
 
             GUIMessages.writeToClient(ip.getText());// Send the IP to the client
         });

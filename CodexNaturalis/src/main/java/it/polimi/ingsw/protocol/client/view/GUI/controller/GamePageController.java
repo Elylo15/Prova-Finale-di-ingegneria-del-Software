@@ -993,8 +993,6 @@ public class GamePageController implements Initializable {
         makeSmaller.play();
     }
 
-    //TODO see if it works as expected
-
     /**
      * When the mouse is clicked once, and if the page visualized is the client's, it selects the card to place
      * When the mouse is clicked twice, it turns the card around
@@ -1284,6 +1282,7 @@ public class GamePageController implements Initializable {
             pion.setFitWidth(49);
             pion.setPreserveRatio(true);
             mainPane.getChildren().add(pion);
+            updatePionsPositions(allPions, pion);
         } else if (pion != null && !isPionAtDesiredPosition(pion, score)) {
             System.out.println("Moving to: " + score);
             addPoints(pion, score, allPions);
@@ -1343,6 +1342,7 @@ public class GamePageController implements Initializable {
             if(pion != myPion)
                 if (pion != null && pion.getLayoutX() == targetX && pion.getLayoutY() == targetY + offsetY) {
                     offsetY -= offsetPions;
+                    pion.toFront();
             }
         }
         return new double[]{targetX, targetY + offsetY};
@@ -1374,10 +1374,10 @@ public class GamePageController implements Initializable {
      */
     private void updatePionsPositions(List<ImageView> allPions, ImageView movedPion) {
         Platform.runLater(() -> {
-            double movedPionY = movedPion.getLayoutY();
             for (ImageView pion : allPions) {
-                if (pion != movedPion && pion != null && pion.getLayoutY() < movedPionY) {
-                    double[] adjustedPosition = getAdjustedPosition(allPions, pion.getLayoutX(), pion.getLayoutY(), pion);
+                if (pion != movedPion && pion != null) {
+                    int score = getScoreByPosition(pion.getLayoutX(), pion.getLayoutY());
+                    double[] adjustedPosition = getAdjustedPosition(allPions, positions[score][0], positions[score][1], pion);
                     pion.setLayoutX(adjustedPosition[0]);
                     pion.setLayoutY(adjustedPosition[1]);
                     pion.toFront();
@@ -1412,6 +1412,9 @@ public class GamePageController implements Initializable {
         placeholdersVisible = true;
         ArrayList<Integer[]> availablePositions;
         availablePositions = myPlayerArea.getAvailablePosition();
+
+        if(boundingBox == null)
+            boundingBox = calculateBoundingBox(allCards);
 
         double totalWidth = boundingBox[2] - boundingBox[0];
         double totalHeight = boundingBox[3] - boundingBox[1];

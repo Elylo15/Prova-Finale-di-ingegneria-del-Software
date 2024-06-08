@@ -3,7 +3,6 @@ package it.polimi.ingsw.protocol.client.view.GUI.controller;
 import it.polimi.ingsw.protocol.client.view.GUI.message.GUIMessages;
 import it.polimi.ingsw.protocol.messages.ConnectionState.unavailableNamesMessage;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -18,9 +17,11 @@ public class UnavailableNamesController {
     @FXML
     public TextField nameToChoose;
     @FXML
-    public Button submitButton;
+    public ImageView submitButton;
     @FXML
     public ImageView back;
+    @FXML
+    public ImageView field;
 
 
     /**
@@ -37,17 +38,19 @@ public class UnavailableNamesController {
 
         if(names.isEmpty()) {
             back.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/ChooseName/allName.png"))));
-            nameToChoose.setLayoutX(762);
-            nameToChoose.setLayoutY(534);
-            submitButton.setLayoutX(1499);
-            submitButton.setLayoutY(537);
+            nameToChoose.setLayoutX(753);
+            nameToChoose.setLayoutY(502);
+            submitButton.setLayoutX(1357);
+            submitButton.setLayoutY(496);
+            field.setLayoutX(725);
+            field.setLayoutY(475);
         } else {
             unavailableNames.setText("These nicknames are not available: ");
             for (int i = 0; i < names.size(); i++)
                 unavailableNames.setText(names.get(i) + "\n");
         }
 
-        submitButton.setOnAction(event -> {
+        submitButton.setOnMouseClicked(event -> {
             if (nameToChoose.getText().isEmpty()) {
                 return;
             }

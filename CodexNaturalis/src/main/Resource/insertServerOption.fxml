@@ -9,39 +9,38 @@
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.protocol.client.view.GUI.controller.InsertServerOptionController">
     <center>
-      <Pane BorderPane.alignment="CENTER">
-         <children>
-            <ImageView fitHeight="1080.0" fitWidth="1920.0" preserveRatio="true">
-               <image>
-                  <Image url="@Images/ServerOptions/options.png" />
-               </image>
-            </ImageView>
-            <Text fx:id="new_match" fill="#351f17" layoutX="202.0" layoutY="420.0" strokeType="OUTSIDE" strokeWidth="0.0" text="New Match" wrappingWidth="602.13671875">
-               <font>
-                  <Font name="Fantasy Script" size="96.0" />
-               </font>
-            </Text>
-            <Text fx:id="load_match" fill="#351f17" layoutX="1235.0" layoutY="158.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Load Match" wrappingWidth="618.13671875">
-               <font>
-                  <Font name="Fantasy Script" size="96.0" />
-               </font>
-            </Text>
-            <Text fx:id="join_match" fill="#351f17" layoutX="907.0" layoutY="324.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Join Match" wrappingWidth="696.13671875">
-               <font>
-                  <Font name="Fantasy Script" size="96.0" />
-               </font>
-            </Text>
-            <Text fx:id="join_running_match" fill="#351f17" layoutX="160.0" layoutY="172.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Started Match" wrappingWidth="802.13671875">
-               <font>
-                  <Font name="Fantasy Script" size="96.0" />
-               </font>
-            </Text>
-            <ImageView fx:id="rotate" fitHeight="331.0" fitWidth="331.0" layoutX="946.0" layoutY="584.0" preserveRatio="true">
-               <image>
-                  <Image url="@Images/SocketRmi/rotate.png" />
-               </image>
-            </ImageView>
-         </children>
-      </Pane>
+       <Pane BorderPane.alignment="CENTER">
+          <ImageView fitHeight="1080.0" fitWidth="1920.0" preserveRatio="true">
+             <Image url="@Images/ServerOptions/options.png"/>
+          </ImageView>
+          <Text fx:id="new_match" fill="#351f17" layoutX="202.0" layoutY="420.0" strokeType="OUTSIDE" strokeWidth="0.0"
+                text="New Match" wrappingWidth="602.13671875">
+             <font>
+                <Font name="Fantasy Script" size="96.0"/>
+             </font>
+          </Text>
+          <Text fx:id="load_match" fill="#351f17" layoutX="1235.0" layoutY="158.0" strokeType="OUTSIDE"
+                strokeWidth="0.0" text="Load Match" wrappingWidth="618.13671875">
+             <font>
+                <Font name="Fantasy Script" size="96.0"/>
+             </font>
+          </Text>
+          <Text fx:id="join_match" fill="#351f17" layoutX="907.0" layoutY="324.0" strokeType="OUTSIDE" strokeWidth="0.0"
+                text="Join Match" wrappingWidth="696.13671875">
+             <font>
+                <Font name="Fantasy Script" size="96.0"/>
+             </font>
+          </Text>
+          <Text fx:id="join_running_match" fill="#351f17" layoutX="160.0" layoutY="172.0" strokeType="OUTSIDE"
+                strokeWidth="0.0" text="Started Match" wrappingWidth="802.13671875">
+             <font>
+                <Font name="Fantasy Script" size="96.0"/>
+             </font>
+          </Text>
+          <ImageView fx:id="rotate" fitHeight="331.0" fitWidth="331.0" layoutX="946.0" layoutY="584.0"
+                     preserveRatio="true">
+             <Image url="@Images/SocketRmi/rotate.png"/>
+          </ImageView>
+       </Pane>
     </center>
 </BorderPane>

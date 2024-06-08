@@ -206,6 +206,15 @@ public class SceneManager {
         }
     }
 
+    public static void learToPlay() {
+        try {
+            Parent root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/learnToPlay.fxml")));
+            primaryStage.setScene(new Scene(root));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     /**
      * Load and view the scene to place the StarterCard
