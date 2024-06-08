@@ -93,7 +93,7 @@ public class ViewCLI extends View {
     }
 
     /**
-     * Method {@code askPortIP}: asks the user to enter the IP and the port of the server
+     * Method {@code askPortIP}: asks the user to enter the IP of the server
      *
      * @return String[]
      */
@@ -1231,7 +1231,22 @@ public class ViewCLI extends View {
      */
     public String availableColors(availableColorsMessage message) {
         //the client can call the method view.availableColors passing as a parameter the arraylist of available colors received from server
-        System.out.println("This are the colors that are available: " + message.toString());
+        System.out.print("These are the colors that ara avilable:  ");
+        for(int i=0; i<message.getColors().size(); i++) {
+            if(message.getColors().get(i).equals("red")){
+                System.out.print(RED_TEXT + message.getColors().get(i) + " " + RESET);
+            }
+            if(message.getColors().get(i).equals("blue")){
+                System.out.print(BLUE_TEXT + message.getColors().get(i) + " " + RESET);
+            }
+            if(message.getColors().get(i).equals("purple")){
+                System.out.print(PURPLE_TEXT + message.getColors().get(i) + " " + RESET);
+            }
+            if(message.getColors().get(i).equals("green")){
+                System.out.print(GREEN_TEXT + message.getColors().get(i) + " " + RESET);
+            }
+        }
+        System.out.print("\n");
 
         String color;
         Scanner scanner = new Scanner(System.in);
@@ -1274,7 +1289,7 @@ public class ViewCLI extends View {
         while (true) {
 
             try {
-                System.out.println("How many player do you want to be in the game");
+                System.out.println("How many player do you want to be in the game?");
                 numExpected = scanner.nextInt();
                 scanner.nextLine();
                 break;
@@ -1415,7 +1430,7 @@ public class ViewCLI extends View {
         int choice = 1000;
         Scanner scanner = new Scanner(System.in);
         try {
-            System.out.print("enter the NUMBER of the card you want to pick: ");
+            System.out.print("enter the NUMBER of the card you want to pick DECK (1),(2) or TABLE (3),(4),(5),(6): ");
             choice = scanner.nextInt();
             scanner.nextLine();
         } catch (Exception e) {
