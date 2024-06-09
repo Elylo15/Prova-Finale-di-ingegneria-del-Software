@@ -302,8 +302,13 @@ public class ViewGUI extends View {
     @Override
     public String pickNameFA(unavailableNamesMessage message) {
         //to avoid reading unexpected messages
-        GUIMessages.clearQueue();
-        return "";
+        GUIMessages.clearQueue();  //remove all elements that could be in the queue
+        String name;
+        GUIMessages.writeToGUI(message);  //serialize the message and send it to the gui
+        Platform.runLater(SceneManager::unavailableNames); //run the method unavailableNames in SceneManager
+        name = (String) GUIMessages.readToClient(); //deserialize the string the method must return
+        System.out.println(name);
+        return name;
     }
 
     /**
