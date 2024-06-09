@@ -323,4 +323,3 @@ public class ViewGUI extends View {
     }
 
 }
-
