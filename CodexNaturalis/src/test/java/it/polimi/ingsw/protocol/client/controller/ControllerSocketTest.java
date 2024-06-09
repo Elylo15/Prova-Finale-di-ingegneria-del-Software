@@ -7,6 +7,8 @@ import it.polimi.ingsw.model.cards.ObjectiveCard;
 import it.polimi.ingsw.protocol.messages.ConnectionState.connectionResponseMessage;
 import it.polimi.ingsw.protocol.messages.EndGameState.declareWinnerMessage;
 import it.polimi.ingsw.protocol.messages.ObjectiveState.objectiveCardMessage;
+import it.polimi.ingsw.protocol.messages.PlayerTurnState.PickCardMessageTest;
+import it.polimi.ingsw.protocol.messages.PlayerTurnState.pickCardMessage;
 import it.polimi.ingsw.protocol.messages.PlayerTurnState.placeCardMessage;
 import it.polimi.ingsw.protocol.messages.PlayerTurnState.updatePlayerMessage;
 import it.polimi.ingsw.protocol.messages.ServerOptionState.serverOptionMessage;
@@ -196,7 +198,7 @@ class ControllerSocketTest {
     @Test
     @DisplayName("Getting the objective cards and choosing one")
     void ObjectiveCardsTest() throws ExecutionException, InterruptedException {
-        //controller should correctly receive an objectiveCardMessage
+        //controller should correctly receive an objectiveCardMessage and send the objective chosen
         ArrayList<ObjectiveCard> cards = new ArrayList<>();
         CommonArea area = (new LoadDecks()).load();
         cards.add(area.drawObjectiveCard());
@@ -215,36 +217,46 @@ class ControllerSocketTest {
     @Test
     @DisplayName("Placing a card")
     void placeCardTest() {
-        controller.placeCard(0, 0, 0, 0, false);
-        placeCardMessage message = connection.getPlaceCard();
-        Assertions.assertEquals(0, message.getCard());
-        Assertions.assertEquals(0, message.getFront());
-        Assertions.assertEquals(0, message.getRow());
-        Assertions.assertEquals(0, message.getColumn());
+        //controller should correctly create and send a placeCardMessage
+        controller.placeCard(0, 0, -1, 1, false);
+        placeCardMessage messageReceived = connection.getPlaceCard();
+        Assertions.assertEquals(0,messageReceived.getCard());
+        Assertions.assertEquals(0,messageReceived.getFront());
+        Assertions.assertEquals(-1,messageReceived.getRow());
+        Assertions.assertEquals(1,messageReceived.getColumn());
+        Assertions.assertFalse(messageReceived.isNoResponse());
+
     }
 
     @Test
     @DisplayName("Picking a card")
     void pickCardTest() {
+        //controller should correctly create and send a pickCardMessage
         controller.pickCard(0, false);
-        Assertions.assertEquals(0, connection.getChosenPick().getCard());
+        pickCardMessage messageReceived = connection.getChosenPick();
+        Assertions.assertEquals(0, messageReceived.getCard());
+        Assertions.assertFalse(messageReceived.isNoResponse());
     }
 
     @Test
     @DisplayName("Updating the player")
     void updatePlayerTest() {
-        Player player = new Player("Alfa", "Red", null);
-        updatePlayerMessage message = new updatePlayerMessage(player, "Alfa");
+        //controller should correctly receive an updatePlayerMessage
+        CommonArea area = new CommonArea();
+        Player player = new Player("Alfa", "Red", area);
+        updatePlayerMessage message = new updatePlayerMessage(player, "viewer");
         connection.sendUpdatePlayer(message);
         updatePlayerMessage received = controller.updatePlayer();
         Assertions.assertEquals("Alfa", received.getPlayer().getNickname());
         Assertions.assertEquals("Red", received.getPlayer().getColor());
-        Assertions.assertNotNull(received.getPlayer().getCommonArea());
+        Assertions.assertEquals("viewer", received.getNicknameViewer());
+        Assertions.assertNotNull(received.getPlayer().getPlayerArea());
     }
 
     @Test
     @DisplayName("Ending the game")
     void endGameTest() {
+        //controller should correctly receive a declareWinner message
         HashMap<String, Integer> score = new HashMap<>();
         score.put("Alfa", 10);
         score.put("Beta", 20);
