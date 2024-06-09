@@ -88,15 +88,49 @@ class ViewCLITest {
 
     @Test
     @DisplayName("Scoreboard test")
-    void testEnd() {
+    void testEndOneWinner() {
+        Player alfa = new Player("alfa", "red", null);
+        Player beta = new Player("beta", "purple", null);
+        Player gamma = new Player("gamma", "blue", null);
+
+        viewCLI.savePlayerColor(alfa);
+        viewCLI.savePlayerColor(beta);
+        viewCLI.savePlayerColor(gamma);
+
         HashMap<String, Integer> scores = new HashMap<>();
-        scores.put("player1", 10);
-        scores.put("player2", 20);
-        scores.put("player3", 16);
+        scores.put(alfa.getNickname(), 10);
+        scores.put(beta.getNickname(), 20);
+        scores.put(gamma.getNickname(), 16);
         HashMap<String, Integer> objective = new HashMap<>();
-        objective.put("player1", 3);
-        objective.put("player2", 4);
-        objective.put("player3", 2);
+        objective.put("alfa", 3);
+        objective.put("beta", 4);
+        objective.put("gamma", 2);
+        declareWinnerMessage message = new declareWinnerMessage(scores, objective);
+        viewCLI.endGame(message);
+    }
+    @Test
+    @DisplayName("Scoreboard test")
+    void testEndTwoWinners() {
+        Player alfa = new Player("alfa", "red", null);
+        Player beta = new Player("beta", "purple", null);
+        Player gamma = new Player("gamma", "blue", null);
+        Player delta = new Player("delta", "green", null);
+
+        viewCLI.savePlayerColor(alfa);
+        viewCLI.savePlayerColor(beta);
+        viewCLI.savePlayerColor(gamma);
+        viewCLI.savePlayerColor(delta);
+
+        HashMap<String, Integer> scores = new HashMap<>();
+        scores.put(alfa.getNickname(), 10);
+        scores.put(beta.getNickname(), 21);
+        scores.put(gamma.getNickname(), 16);
+        scores.put(delta.getNickname(),21);
+        HashMap<String, Integer> objective = new HashMap<>();
+        objective.put(alfa.getNickname(), 3);
+        objective.put(beta.getNickname(), 4);
+        objective.put(gamma.getNickname(), 2);
+        objective.put(delta.getNickname(),7);
         declareWinnerMessage message = new declareWinnerMessage(scores, objective);
         viewCLI.endGame(message);
     }

@@ -28,6 +28,7 @@ public class ViewCLI extends View {
     //the purpose of ViewCLI is to handle the interaction with the user and
     // visualize what he needs to see in order to play the game
     // by printing it in the command line
+    private HashMap<String,String> playerColor = new HashMap<>();
 
     //COLORS
 
@@ -1452,12 +1453,112 @@ public class ViewCLI extends View {
 
         points = message.getPlayersPoints();
         numObjectives = message.getNumberOfObjects();
-        System.out.println("\nFINAL RESULTS:\n");
-        System.out.println("\nSCOREBOARD\n");
+
+        String[] win = new String[2];
+        win = this.findWinner(points);
+        System.out.print("FINAL RESULTS:");
+        System.out.println("\nSCOREBOARD");
         for (String playerName : points.keySet()) {
             Integer playerPoints = points.get(playerName);
             Integer playerObjectives = numObjectives.get(playerName);
-            System.out.println("Player Name: " + playerName + "  -  Points: " + playerPoints + "  -  Number of Objectives: " + playerObjectives);
+            String color = playerColor.get(playerName);
+            switch (color) {
+                case ("red") : {
+                    System.out.println(RED_TEXT + "Player Name: " + playerName + "  -  Points: " + playerPoints + "  -  Number of Objectives: " + playerObjectives +RESET);
+                    break;
+                }
+                case ("blue") : {
+                    System.out.println(BLUE_TEXT + "Player Name: " + playerName + "  -  Points: " + playerPoints + "  -  Number of Objectives: " + playerObjectives + RESET);
+                    break;
+                }case ("green") : {
+                    System.out.println(GREEN_TEXT + "Player Name: " + playerName + "  -  Points: " + playerPoints + "  -  Number of Objectives: " + playerObjectives + RESET);
+                    break;
+                }case ("purple") : {
+                    System.out.println(PURPLE_TEXT + "Player Name: " + playerName + "  -  Points: " + playerPoints + "  -  Number of Objectives: " + playerObjectives + RESET);
+                }
+            }
+        }
+
+           if(win[1].equals("")) {
+               String namePlayer = win[0];
+               if (playerColor.get(namePlayer).equals("red")) {
+                   System.out.println(RED_TEXT + "The winner is: " + namePlayer + RESET);
+               }
+               if (playerColor.get(namePlayer).equals("green")) {
+                   System.out.println(GREEN_TEXT + "The winner is: " + namePlayer + RESET);
+               }
+               if (playerColor.get(namePlayer).equals("purple")) {
+                   System.out.println(PURPLE_TEXT + "The winner is: " + namePlayer + RESET);
+               }
+               if (playerColor.get(namePlayer).equals("blue")) {
+                   System.out.println(BLUE_TEXT + "The winner is: " + namePlayer + RESET);
+               }
+           }
+           else {
+               String namePlayer1 = win[0];
+               String namePlayer2 = win[1];
+
+               System.out.print("THE WINNERS ARE:  ");
+               if (playerColor.get(namePlayer1).equals("red")) {
+                   System.out.print(RED_TEXT + namePlayer1 + " "+  RESET);
+               }
+               if (playerColor.get(namePlayer1).equals("green")) {
+                   System.out.print(GREEN_TEXT  + namePlayer1 +" "+ RESET);
+               }
+               if (playerColor.get(namePlayer1).equals("purple")) {
+                   System.out.print(PURPLE_TEXT + namePlayer1 +" "+ RESET);
+               }
+               if (playerColor.get(namePlayer1).equals("blue")) {
+                   System.out.print(BLUE_TEXT + namePlayer1 +" "+ RESET);
+               }
+               if (playerColor.get(namePlayer2).equals("red")) {
+                   System.out.print(RED_TEXT + namePlayer2 + " "+  RESET);
+               }
+               if (playerColor.get(namePlayer2).equals("green")) {
+                   System.out.print(GREEN_TEXT  + namePlayer2 +  " "+RESET);
+               }
+               if (playerColor.get(namePlayer2).equals("purple")) {
+                   System.out.print(PURPLE_TEXT + namePlayer2 +  " "+RESET);
+               }
+               if (playerColor.get(namePlayer2).equals("blue")) {
+                   System.out.print(BLUE_TEXT + namePlayer2 +  " "+RESET);
+               }
+           }
+
+
+
+
+    }
+    public String[] findWinner( HashMap<String, Integer> points){
+        Integer maxPoint1 = 0;
+
+        String winner1 = "";
+        String winner2 = "";
+
+        for (String playerName : points.keySet()) {
+            if(maxPoint1<points.get(playerName)){
+                maxPoint1 = points.get(playerName);
+                winner1 = playerName;
+
+            }
+            else if(maxPoint1.equals(points.get(playerName))){
+
+                winner2 = playerName;
+            }
+
+        }
+        //int size = maxPoint2==0 ? 1 : 2;
+        String[] winners = new String[2];
+        winners[0] = winner1;
+
+        winners[1] = winner2;
+
+        return winners;
+
+    }
+    public void savePlayerColor(Player player){
+        if(!playerColor.containsKey(player.getNickname())){
+            playerColor.put(player.getNickname(), player.getColor());
         }
     }
 
@@ -1472,6 +1573,7 @@ public class ViewCLI extends View {
         this.showCommonArea(player.getCommonArea());
         this.showPlayerArea(player.getPlayerArea());
         this.showPlayerHand(player, update.getNicknameViewer());
+        this.savePlayerColor(update.getPlayer());
     }
 
 
