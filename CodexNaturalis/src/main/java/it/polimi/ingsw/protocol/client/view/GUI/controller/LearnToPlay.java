@@ -7,6 +7,7 @@ import javafx.animation.FadeTransition;
 import javafx.animation.PauseTransition;
 import javafx.animation.SequentialTransition;
 import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
@@ -18,77 +19,72 @@ import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 
 import java.net.URL;
-import java.util.List;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
-import static it.polimi.ingsw.protocol.client.view.GUI.Utilities.addNewCardToPane;
-import static it.polimi.ingsw.protocol.client.view.GUI.Utilities.makeBiggerTransition;
-import static it.polimi.ingsw.protocol.client.view.GUI.Utilities.addClickablePlaceholder;
+import static it.polimi.ingsw.protocol.client.view.GUI.Utilities.*;
 
 public class LearnToPlay implements Initializable {
-
     @FXML
-    public ImageView nextPlayer;
+    private ImageView nextPlayer;
     @FXML
-    public ImageView state;
+    private ImageView state;
     @FXML
-    public Pane playground;
+    private Pane playground;
     @FXML
-    public ImageView onTop;
+    private ImageView onTop;
     @FXML
-    public ImageView colorName;
+    private ImageView colorName;
     @FXML
-    public Label playerName;
+    private Label playerName;
     @FXML
-    public Pane mainPane;
+    private Pane mainPane;
     @FXML
-    public ImageView explanation;
-
+    private ImageView explanation;
     private final ImageView explanation2 = new ImageView();
-    private ImageView selected;
+    private final double fitHeightCommon = 141;
+    private final double fitWidthCommon = 208;
+    private final double fitHeightCard = 157;
+    private final double fitWidthCard = 234;
+    private final double layoutYResource = 746;
+    private final double layoutXPick0 = 364;
+    private final double layoutXPick1 = 587;
+    private final double layoutYGold = 895;
+    private final double layoutXDeck = 56;
+    private final double layoutXObjective = 1659;
+    private final double layoutYHand = 814;
+    private final double layoutXCard0 = 864;
+    private final double layoutXCard1 = 1110;
+    private final double layoutXCard2 = 1356;
+    private double layoutYFree;
+    private double layoutXFree;
+    private Card replaceR;
+    private Card replaceG;
+    private ImageView selectedCard = null;
+    private ImageView clickedPlaceholder = null;
+    private ResourceCard d1;
+    private GoldCard d2;
+    private ResourceCard f1;
+    private ResourceCard f2;
+    private GoldCard f3;
+    private GoldCard f4;
+    private StarterCard myS;
+    private ObjectiveCard myO;
+    private ObjectiveCard myO1;
+    private ResourceCard my1;
+    private ResourceCard my2;
+    private GoldCard my3;
+    private ObjectiveCard common1;
+    private ObjectiveCard common2;
+    private final ImageBinder imageBinder = new ImageBinder();
+    private boolean block;
 
-    private final int layoutPlacedStarterX = 678;
-    private final int layoutPlacedStarterY = 203;
-    private final int fitHeightPlaced = 133;
-    private final int fitWidthPlaced = 200;
-    private final int fitHeightCommon = 141;
-    private final int fitWidthCommon = 208;
-    private final int fitHeightCard = 157;
-    private final int fitWidthCard = 234;
-    private final int layoutYResource = 746;
-    private final int layoutXPick0 = 364;
-    private final int layoutXPick1 = 587;
-    private final int layoutYGold = 895;
-    private final int layoutXDeck = 56;
-    private final int layoutYObjMy = 606;
-    private final int layoutYObj0 = 750;
-    private final int layoutYObj1 = 894;
-    private final int layoutXObjective = 1659;
-    private final int layoutXChoiceObjective1 = 949;
-    private final int layoutXChoiceObjective2 = 1279;
-    private final int layoutYHand = 814;
-    private final int layoutXCard0 = 864;
-    private final int layoutXCard1 = 1110;
-    private final int layoutXCard2 = 1356;
-
-    ResourceCard d1;
-    GoldCard d2;
-    ResourceCard f1;
-    ResourceCard f2;
-    GoldCard f3;
-    GoldCard f4;
-    StarterCard myS;
-    ObjectiveCard myO;
-    ObjectiveCard myO1;
-    ResourceCard my1;
-    ResourceCard my2;
-    GoldCard my3;
-    ObjectiveCard common1;
-    ObjectiveCard common2;
-    ImageBinder imageBinder = new ImageBinder();
-
-
+    /**
+     * This method is called when the FXML file is loaded, it initializes the player name, the images and the cards
+     * It also sets the click handler, which will be called when the user clicks on the screen to load the next explanation
+     * @param location not used
+     * @param resources not used
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
@@ -98,27 +94,32 @@ public class LearnToPlay implements Initializable {
         state.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/state.png"))));
 
         createCards();
-        addCommonArea();
 
         final int[] i = {0};
         playground.setOnMouseClicked(e -> {
-            if (i[0] < 60) {
+            if (i[0] < 60 && !block) {
                 clickHandler(i[0]);
                 i[0]++;
             }
         });
     }
 
-    //TODO add a block if the action I want is not performed
 
+    /**
+     * This method is called when the user clicks on the screen, it will load the next explanation
+     * @param i the index of the explanation to load
+     */
     private void clickHandler(int i) {
+        double fitHeightPlaced = 133;
+        double fitWidthPlaced = 200;
+
         if (i == 0){
             explanation2.setMouseTransparent(true);
             explanation2.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/2.png"))));
             onCLick(explanation, explanation2);
         } else if (i == 1){
             explanation.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/3.png"))));
-           onCLick(explanation2, explanation);
+            onCLick(explanation2, explanation);
         } else if (i == 2){
             explanation2.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/4.png"))));
             onCLick(explanation, explanation2);
@@ -151,7 +152,8 @@ public class LearnToPlay implements Initializable {
             explanation.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/13.png"))));
             onCLick(explanation2, explanation);
         } else if (i == 12){
-            turnStarter();
+            ImageView starterImg = getCardFromPosition(layoutXCard1, layoutYHand);
+            starterImg.setImage(imageBinder.getOppositeImage(myS.getID(), myS.isFront()));
             explanation2.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/14.png"))));
             onCLick(explanation, explanation2);
         } else if (i == 13){
@@ -161,13 +163,16 @@ public class LearnToPlay implements Initializable {
             explanation2.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/16.png"))));
             onCLick(explanation, explanation2);
         } else if (i == 15){
-            getCardFromPosition(layoutXCard1, layoutYHand).setOnMouseClicked(this::selectStarter);
+            getCardFromPosition(layoutXCard1, layoutYHand).setOnMouseClicked(this::selectCard);
             explanation.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/17.png"))));
             onCLick(explanation2, explanation);
         } else if (i == 16){
-            addClickablePlaceholder(playground, layoutPlacedStarterX, layoutPlacedStarterY, fitHeightPlaced, fitWidthPlaced, this::placeStarter);
             explanation2.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/18.png"))));
+            addClickablePlaceholder(678, 203, fitHeightPlaced, fitWidthPlaced, this::selectedPlaceHolder);
             onCLick(explanation, explanation2);
+            block = false;
+            while(!block)
+                block = waitForClick();
         }  else if (i == 17){
             addCommonObj();
             explanation.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/19.png"))));
@@ -189,8 +194,12 @@ public class LearnToPlay implements Initializable {
             explanation2.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/24.png"))));
             onCLick(explanation, explanation2);
         } else if (i == 23) {
-            addClickablePlaceholder(mainPane, layoutXObjective, layoutYObjMy, fitHeightCommon, fitWidthCommon, this::placeObj);
+            addClickablePlaceholder(layoutXObjective, 606, fitHeightCommon, fitWidthCommon, this::selectedPlaceHolder);
             explanation.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/25.png"))));
+            onCLick(explanation2, explanation);
+            block = false;
+            while(!block)
+                block = waitForClick();
         } else if (i == 24){
             explanation2.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/26.png"))));
             onCLick(explanation, explanation2);
@@ -217,7 +226,7 @@ public class LearnToPlay implements Initializable {
             explanation.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/33.png"))));
             onCLick(explanation2, explanation);
         } else if (i == 32){
-            turnAroundCards();
+            turnAroundCardsHand();
             explanation2.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/34.png"))));
             onCLick(explanation, explanation2);
         } else if (i == 33){
@@ -227,21 +236,27 @@ public class LearnToPlay implements Initializable {
             explanation2.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/36.png"))));
             onCLick(explanation, explanation2);
         } else if (i == 35){
-            // TODO seePlaceHolder(); of available positions
+            //TODO ADD REAL POSITIONS
+            addClickablePlaceholder(1110, 814, fitHeightPlaced, fitWidthPlaced, this::selectedPlaceHolder);
+            addClickablePlaceholder(1356, 814, fitHeightPlaced, fitWidthPlaced, this::selectedPlaceHolder);
             explanation.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/37.png"))));
             onCLick(explanation2, explanation);
         } else if (i == 36){
             explanation2.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/38.png"))));
             onCLick(explanation, explanation2);
         } else if (i == 37){
-            //TODO ADD select and turn around to card
+            getCardFromPosition(layoutXCard1, layoutYHand).setOnMouseClicked(this::selectCard);
+            getCardFromPosition(layoutXCard2, layoutYHand).setOnMouseClicked(this::selectCard);
+            getCardFromPosition(layoutXCard0, layoutYHand).setOnMouseClicked(this::selectCard);
             explanation.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/39.png"))));
             onCLick(explanation2, explanation);
         } else if (i == 38){
             explanation2.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/40.png"))));
             onCLick(explanation, explanation2);
         } else if (i == 39){
-            //TODO add click on placeholder
+            block = false;
+            while(!block)
+                block = waitForClick();
             explanation.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/41.png"))));
             onCLick(explanation2, explanation);
         } else if (i == 40){
@@ -266,7 +281,10 @@ public class LearnToPlay implements Initializable {
             explanation2.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/48.png"))));
             onCLick(explanation, explanation2);
         } else if (i == 47){
-            //TODO add pesco carta
+            selectFromDeck();
+            block = false;
+            while(!block)
+                block = waitForClickPick();
             explanation.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/49.png"))));
             onCLick(explanation2, explanation);
         } else if (i == 48){
@@ -301,85 +319,275 @@ public class LearnToPlay implements Initializable {
         }
     }
 
-    private void selectStarter(MouseEvent event) {
-            ImageView clickedCard = (ImageView) event.getSource();
+    /**
+     * This method blocks the execution until the user clicks on the card to pick
+     * @return true if the user has clicked on a card, false otherwise
+     */
+    private boolean waitForClickPick() {
+        if(selectedCard != null ) {
+            fadeOutTransition(mainPane, selectedCard, 1, false);
+            selectedCard.removeEventHandler(MouseEvent.MOUSE_CLICKED, this::selectPick);
 
-            if (event.getClickCount() == 1) {
-                makeBiggerTransition(clickedCard, 1.05);
+            Card card = (Card) selectedCard.getUserData();
 
-            } else if (event.getClickCount() == 2) {
-                turnStarter();
-            }
+            ImageView newInHand = selectedCard;
+            newInHand.setLayoutY(layoutYFree);
+            newInHand.setLayoutX(layoutXFree);
+            newInHand.setFitHeight(fitHeightCard);
+            newInHand.setFitWidth(fitWidthCard);
+            mainPane.getChildren().add(newInHand);
+            fadeInTransition(newInHand, 1);
+
+                if(selectedCard.getLayoutX() == layoutXPick0) { //resource
+                    ImageView cardD1 = getCardFromPosition(layoutXDeck, layoutYResource);
+                    if (card.getID() == f1.getID() || card.getID() == f2.getID()) {
+                        replaceCardPickedUp(cardD1, d1.getID(), d1.isFront(), replaceR, layoutYResource);
+                    } else if (card.getID() == d1.getID()) {
+                        fadeOutTransition(mainPane, cardD1, 1, false);
+                        ImageView replace = createCardImageView(replaceR.getID(), false, replaceR, layoutXDeck, layoutYResource, fitHeightCommon, fitWidthCommon);
+                        hooverEffect(replace, selectedCard, 1.05);
+                        mainPane.getChildren().add(replace);
+                        fadeInTransition(replace, 1);
+                        onTop.toFront();
+                    }
+                } else { //gold
+                    ImageView cardD2 = getCardFromPosition(layoutXDeck, layoutYGold);
+                    if (card.getID() == f3.getID() || card.getID() == f4.getID()) {
+                        replaceCardPickedUp(cardD2, d2.getID(), d2.isFront(), replaceG, layoutYGold);
+                    } else if (card.getID() == d2.getID()) {
+                        fadeOutTransition(mainPane, cardD2, 0.5, false);
+                        ImageView replace = createCardImageView(replaceG.getID(), false, replaceG, layoutXDeck, layoutYGold, fitHeightCommon, fitWidthCommon);
+                        hooverEffect(replace, selectedCard, 1.05);
+                        mainPane.getChildren().add(replace);
+                        fadeInTransition(replace, 1);
+                        onTop.toFront();
+                    }
+                }
+
+            this.selectedCard = null;
+            this.clickedPlaceholder = null;
+            return true;
+        }
+        return false;
     }
 
-    private void turnAround(int layoutXCard, int layoutYCard) {
-        ImageView card = getCardFromPosition(layoutXCard, layoutYCard);
+    /**
+     * This method replaces the card picked up with the card in the deck, and adds a new one to the deck
+     * @param cardD1 the card in the deck
+     * @param id the id of the card in the deck
+     * @param front the front of the card in the deck
+     * @param replaceR2 the card to replace the card in the deck
+     * @param layoutYResource the y position of the card in the deck
+     */
+    private void replaceCardPickedUp(ImageView cardD1, int id, boolean front, Card replaceR2, double layoutYResource) {
+        selectedCard.setImage(imageBinder.getOppositeImage(id, front)); //replace faceUp
+        fadeOutTransition(mainPane, cardD1, 1, false);
+        ImageView replace = createCardImageView(replaceR2.getID(), false, replaceR2, layoutXDeck, layoutYResource, fitHeightCommon, fitWidthCommon);
+        hooverEffect(replace, selectedCard, 1.05);
+        mainPane.getChildren().add(replace);
+        fadeInTransition(replace, 1);
+        onTop.toFront();
+    }
+
+    /**
+     * this method adds the selectPick event handler to the cards in the deck
+     */
+    private void selectFromDeck() {
+        getCardFromPosition(layoutXDeck, layoutYResource).setOnMouseClicked(this::selectPick);
+        getCardFromPosition(layoutXDeck, layoutYGold).setOnMouseClicked(this::selectPick);
+        getCardFromPosition(layoutXPick0, layoutYResource).setOnMouseClicked(this::selectPick);
+        getCardFromPosition(layoutXPick1, layoutYResource).setOnMouseClicked(this::selectPick);
+        getCardFromPosition(layoutXPick0, layoutYGold).setOnMouseClicked(this::selectPick);
+        getCardFromPosition(layoutXPick1, layoutYGold).setOnMouseClicked(this::selectPick);
+    }
+
+    /**
+     * This method is called when the user clicks on a card in the deck, it will save the card as selected
+     * @param mouseEvent the event triggered by the click
+     */
+    private void selectPick(MouseEvent mouseEvent) {
+        this.selectedCard = (ImageView) mouseEvent.getSource();
+    }
+
+    /**
+     * This method is called when the user clicks on a card, it will save the card as selected
+     * @param mouseEvent the event triggered by the click
+     */
+    private void selectCard(MouseEvent mouseEvent) {
+        ImageView clickedCard = (ImageView) mouseEvent.getSource();
+        if (mouseEvent.getClickCount() == 1) {
+            makeBiggerTransition(clickedCard, 1.05);
+            this.selectedCard = clickedCard;
+
+        } else if (mouseEvent.getClickCount() == 2) {
+            turnAround(mouseEvent);
+        }
+    }
+
+
+    /**
+     * This method blocks the execution until the user clicks on a card and a placeholder
+     * @return true if the user has clicked on a card and a placeholder, false otherwise
+     */
+    private boolean waitForClick() {
+        if(selectedCard != null && clickedPlaceholder != null) {
+            fadeOutTransition(mainPane, selectedCard, 1, true);
+            fadeOutTransition(mainPane, clickedPlaceholder, 0.5, false);
+            clickedPlaceholder.setImage(selectedCard.getImage());
+            fadeInTransition(clickedPlaceholder, 1);
+            clickedPlaceholder.removeEventHandler(MouseEvent.MOUSE_CLICKED, this::selectedPlaceHolder);
+            layoutYFree = clickedPlaceholder.getLayoutY();
+            layoutXFree = clickedPlaceholder.getLayoutX();
+            selectedCard.removeEventHandler(MouseEvent.MOUSE_CLICKED, this::selectCard);
+            this.selectedCard = null;
+            this.clickedPlaceholder = null;
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * This method is called when the user clicks on a placeholder, it will save the placeholder as clicked
+     * @param event the event triggered by the click
+     */
+    private void selectedPlaceHolder(MouseEvent event) {
+        this.clickedPlaceholder = (ImageView) event.getSource();
+    }
+
+    /**
+     * This method adds a clickable placeholder to the screen
+     * @param layoutX the x position of the placeholder
+     * @param layoutY the y position of the placeholder
+     * @param fitHeight the height of the placeholder
+     * @param fitWidth the width of the placeholder
+     * @param eventHandler the event handler that will be called when the user clicks on the placeholder
+     */
+    private void addClickablePlaceholder(double layoutX, double layoutY, double fitHeight, double fitWidth, EventHandler<MouseEvent> eventHandler) {
+        Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Placeholders/yellow.png")));
+        ImageView imageView = new ImageView(image);
+
+        imageView.setLayoutX(layoutX);
+        imageView.setLayoutY(layoutY);
+        imageView.setFitHeight(fitHeight);
+        imageView.setFitWidth(fitWidth);
+        imageView.setOnMouseClicked(eventHandler);
+
+        mainPane.getChildren().add(imageView);
+        fadeInTransition(imageView, 0.5);
+    }
+
+    /**
+     * This method is called when the user clicks on a card, it will turn the card around
+     * @param layoutXCard the x position of the card
+     */
+    private void turnAroundCards(double layoutXCard) {
+        ImageView card = getCardFromPosition(layoutXCard, 814.0);
         if (card != null) {
             Card cardData = (Card) card.getUserData();
             card.setImage(imageBinder.getOppositeImage(cardData.getID(), cardData.isFront()));
+            onTop.toFront();
         }
     }
 
-    private void turnAroundCards() {
-        turnAround(layoutXCard0, layoutYHand);
-        turnAround(layoutXCard1, layoutYHand);
-        turnAround(layoutXCard2, layoutYHand);
+    /**
+     * This method turns around all the cards in the hand
+     */
+    private void turnAroundCardsHand() {
+        turnAroundCards(layoutXCard0);
+        turnAroundCards(layoutXCard1);
+        turnAroundCards(layoutXCard2);
     }
 
+    /**
+     * This method adds the card to the player's hand
+     */
     private void addCardsToHand() {
-        addNewCardToPane(mainPane, mainPane, -1, selected,  my1.getID(), true, my1, layoutXCard0, layoutYHand, fitHeightCard, fitWidthCard, null);
-        addNewCardToPane(mainPane, mainPane, -1, selected, my2.getID(), true, my2, layoutXCard1, layoutYHand, fitHeightCard, fitWidthCard, null);
-        addNewCardToPane(mainPane, mainPane, -1, selected, my3.getID(), true, my3, layoutXCard2, layoutYHand, fitHeightCard, fitWidthCard, null);
+        ImageView image1 = createCardImageView(my1.getID(), my1.isFront(), my1, layoutXCard0, layoutYHand, fitHeightCard, fitWidthCard);
+        ImageView image2 = createCardImageView(my2.getID(), my2.isFront(), my2, layoutXCard2, layoutYHand, fitHeightCard, fitWidthCard);
+        ImageView image3 = createCardImageView(my3.getID(), my3.isFront(), my3, layoutXCard1, layoutYHand, fitHeightCard, fitWidthCard);
+
+        mainPane.getChildren().add(image1);
+        mainPane.getChildren().add(image2);
+        mainPane.getChildren().add(image3);
+
+        fadeInTransition(image1, 1);
+        fadeInTransition(image2, 1);
+        fadeInTransition(image3, 1);
+
+        hooverEffect(image1, selectedCard, 1.05);
+        hooverEffect(image2, selectedCard, 1.05);
+        hooverEffect(image3, selectedCard, 1.05);
+        onTop.toFront();
     }
 
+    /**
+     * This method is called when the user clicks on a card, it will save the card as selected
+     * @param event the event triggered by the click
+     */
     private void chooseObj(MouseEvent event) {
         ImageView clickedCard = (ImageView) event.getSource();
         makeBiggerTransition(clickedCard, 1.05);
-        selected = clickedCard;
+        this.selectedCard = clickedCard;
     }
 
-    private void placeStarter(MouseEvent event) {
-        ImageView image = (ImageView) event.getSource();
-        fadeOutTransition(mainPane, image, 0.5);
-        removeCardFromPosition();
-        addNewCardToPane(playground,mainPane, -1, selected, myS.getID(), myS.isFront(), myS, layoutPlacedStarterX, layoutPlacedStarterY,
-                fitHeightPlaced, fitWidthPlaced, null);
-    }
-
-    public void placeObj(MouseEvent event){
-        ImageView image = (ImageView) event.getSource();
-        if(selected != null) {
-            fadeOutTransition(mainPane, image, 0.5);
-            ObjectiveCard obj = (ObjectiveCard) selected.getUserData();
-
-            removeCardFromPosition();
-            addNewCardToPane(playground, mainPane, -1, selected, obj.getID(), true, obj, layoutXObjective, layoutYObjMy,
-                    fitHeightPlaced, fitWidthPlaced, null);
-        }
-    }
-
+    /**
+     * This method adds the cards to the objective area
+     */
     public void addCommonObj(){
-        addNewCardToPane(mainPane, mainPane, -1, selected, common1.getID(), true, common1, layoutXObjective, layoutYObj0, fitHeightCommon, fitWidthCommon, null);
-        addNewCardToPane(mainPane, mainPane, -1, selected, common2.getID(), true, common2, layoutXObjective, layoutYObj1, fitHeightCommon, fitWidthCommon, null);
+        ImageView obj1 = createCardImageView(common1.getID(),true, common1, layoutXObjective, 750, fitHeightCommon, fitWidthCommon);
+        ImageView obj2 = createCardImageView(common2.getID(), true, common2, layoutXObjective, 894, fitHeightCommon, fitWidthCommon);
+
+        mainPane.getChildren().add(obj1);
+        mainPane.getChildren().add(obj2);
+
+        fadeInTransition(obj1, 1);
+        fadeInTransition(obj2, 1);
+
+        hooverEffect(obj1, selectedCard, 1.05);
+        hooverEffect(obj2, selectedCard, 1.05);
+        onTop.toFront();
     }
 
+    /**
+     * This method adds the two objective cards to the player's hand
+     */
     public void adMyObj(){
-        addNewCardToPane(mainPane, mainPane, -1, selected, myO.getID(), true, myO, layoutXChoiceObjective1, layoutYHand, fitHeightCard, fitWidthCard, this::chooseObj);
-        addNewCardToPane(mainPane, mainPane, -1, selected, myO1.getID(), true, myO1, layoutXChoiceObjective2, layoutYHand, fitHeightCard, fitWidthCard, this::chooseObj);
+        ImageView obj1 = createCardImageView(myO.getID(), true, myO, 949, layoutYHand, fitHeightCard, fitWidthCard);
+        ImageView obj2 = createCardImageView(myO1.getID(), true, myO1, 1279, layoutYHand, fitHeightCard, fitWidthCard);
+
+        mainPane.getChildren().add(obj1);
+        mainPane.getChildren().add(obj2);
+
+        obj1.onMouseClickedProperty().set(this::chooseObj);
+        obj2.onMouseClickedProperty().set(this::chooseObj);
+
+        fadeInTransition(obj1, 1);
+        fadeInTransition(obj2, 1);
+
+        hooverEffect(obj1, selectedCard, 1.05);
+        hooverEffect(obj2, selectedCard, 1.05);
+        onTop.toFront();
     }
 
 
+    /**
+     * This method adds the starter card to the player's hand
+     */
     public void addStarter(){
         myS.setFront(true);
-        addNewCardToPane(mainPane, mainPane, -1, selected, myS.getID(), true, myS, layoutXCard1, layoutYHand, fitHeightCard, fitWidthCard, null);
+        ImageView starter = createCardImageView(myS.getID(), myS.isFront(), myS, layoutXCard1, layoutYHand, fitHeightCard, fitWidthCard);
+        mainPane.getChildren().add(starter);
+        fadeInTransition(starter, 1);
+        hooverEffect(starter, selectedCard, 1.05);
+        onTop.toFront();
     }
 
-    private void turnStarter(){
-        Image newImage = imageBinder.getOppositeImage(myS.getID(), myS.isFront());
-        getCardFromPosition(layoutXCard1, layoutYHand).setImage(newImage);
-    }
-
-
+    /**
+     * This method gets the card from the position
+     * @param layoutX the x position of the card
+     * @param layoutY the y position of the card
+     * @return the card at the position
+     */
     private ImageView getCardFromPosition(double layoutX, double layoutY) {
         ImageView imageView = null;
 
@@ -391,11 +599,15 @@ public class LearnToPlay implements Initializable {
                 }
             }
         }
-
         return imageView;
     }
 
 
+    /**
+     * This method is called to make the previous explanation disappear and the new one appear
+     * @param previous the previous explanation
+     * @param image the new explanation
+     */
     private void onCLick(ImageView previous, ImageView image){
         FadeTransition fadeTransitionOut = new FadeTransition(Duration.seconds(1), previous);
         fadeTransitionOut.setFromValue(1);
@@ -419,15 +631,17 @@ public class LearnToPlay implements Initializable {
         );
 
         sequentialTransition.play();
-
     }
 
+    /**
+     * This method creates the cards
+     */
     private void createCards() {
         try {
-            d1 = new ResourceCard(32);
+            d1 = new ResourceCard(32); //deckResource
             f1 = new ResourceCard(26); //front up
             f2 = new ResourceCard(14); //front up
-            d2 = new GoldCard(74);
+            d2 = new GoldCard(74); //deckGold
             f3 = new GoldCard(68); //front up
             f4 = new GoldCard(56); //front up
 
@@ -438,6 +652,9 @@ public class LearnToPlay implements Initializable {
             my2 = new ResourceCard(2); //hand 2
             my3 = new GoldCard(50); //hand 3
 
+            replaceR = new ResourceCard(20); //replaceResource
+            replaceG = new GoldCard(62); //replaceGold
+
             common1 = new ObjectiveCard(100); //CommonObjective
             common2 = new ObjectiveCard(92); //CommonObjective
         } catch (InvalidIdException e) {
@@ -447,70 +664,41 @@ public class LearnToPlay implements Initializable {
         addCommonArea();
     }
 
+    /**
+     * This method adds the common area
+     */
     private void addCommonArea() {
-        addNewCardToPane(mainPane, mainPane, -1, selected, d1.getID(), false, d1, layoutXDeck, layoutYResource, fitHeightCommon, fitWidthCommon, this::pickCard);
-        onTop.toFront();
-        addNewCardToPane(mainPane, mainPane, -1, selected, d2.getID(), false, d2, layoutXDeck, layoutYGold, fitHeightCommon, fitWidthCommon, this::pickCard);
-        onTop.toFront();
-        addNewCardToPane(mainPane, mainPane, -1, selected, f1.getID(), true, f1, layoutXPick0, layoutYResource, fitHeightCommon, fitWidthCommon, this::pickCard);
-        onTop.toFront();
-        addNewCardToPane(mainPane, mainPane, -1, selected, f2.getID(), true, f2, layoutXPick1, layoutYResource, fitHeightCommon, fitWidthCommon, this::pickCard);
-        onTop.toFront();
-        addNewCardToPane(mainPane, mainPane, -1, selected, f3.getID(), true, f3, layoutXPick0, layoutYGold, fitHeightCommon, fitWidthCommon, this::pickCard);
-        onTop.toFront();
-        addNewCardToPane(mainPane, mainPane, -1, selected, f4.getID(), true, f4, layoutXPick1, layoutYGold, fitHeightCommon, fitWidthCommon, this::pickCard);
+        ImageView d1 = createCardImageView(this.d1.getID(), false, this.d1, layoutXDeck, layoutYResource, fitHeightCommon, fitWidthCommon);
+        ImageView d2 = createCardImageView(this.d2.getID(), false, this.d2, layoutXDeck, layoutYGold, fitHeightCommon, fitWidthCommon);
+        ImageView f1 = createCardImageView(this.f1.getID(), true, this.f1, layoutXPick0, layoutYResource, fitHeightCommon, fitWidthCommon);
+        ImageView f2 = createCardImageView(this.f2.getID(), true, this.f2, layoutXPick1, layoutYResource, fitHeightCommon, fitWidthCommon);
+        ImageView f3 = createCardImageView(this.f3.getID(), true, this.f3, layoutXPick0, layoutYGold, fitHeightCommon, fitWidthCommon);
+        ImageView f4 = createCardImageView(this.f4.getID(), true, this.f4, layoutXPick1, layoutYGold, fitHeightCommon, fitWidthCommon);
+
+        mainPane.getChildren().add(d1);
+        mainPane.getChildren().add(d2);
+        mainPane.getChildren().add(f1);
+        mainPane.getChildren().add(f2);
+        mainPane.getChildren().add(f3);
+        mainPane.getChildren().add(f4);
+
+        fadeInTransition(d1, 1);
+        fadeInTransition(d2, 1);
+        fadeInTransition(f1, 1);
+        fadeInTransition(f2, 1);
+        fadeInTransition(f3, 1);
+        fadeInTransition(f4, 1);
+
+        hooverEffect(d1, selectedCard, 1.05);
+        hooverEffect(d2, selectedCard, 1.05);
+
         onTop.toFront();
     }
 
-    private void pickCard(MouseEvent event) {
-    }
-
-    private void fadeInTransition(Node node, double maxOpacity) {
-        if (!mainPane.getChildren().contains(node)) { // Check if the node is not already a child
-            FadeTransition fadeTransitionIn = new FadeTransition(Duration.seconds(1), node);
-            fadeTransitionIn.setFromValue(0.0);
-            fadeTransitionIn.setToValue(maxOpacity);
-            mainPane.getChildren().add(node); // Add the node to the pane
-            fadeTransitionIn.play();
-        }
-    }
-
-    private void removeCardFromPosition() {
-        Platform.runLater(() -> {
-            List<Node> nodesToRemove = mainPane.getChildren().stream()
-                    .filter(node -> node instanceof ImageView)
-                    .filter(node -> {
-                        ImageView imageView = (ImageView) node;
-                        return imageView.getLayoutX() == (double) 1110 && imageView.getLayoutY() == (double) 814;
-                    })
-                    .toList();
-
-            // Remove nodes after iteration
-            for (Node node : nodesToRemove) {
-                ImageView imageView = (ImageView) node;
-//                imageView.toFront(); // Card to the front
-                onTop.toFront();
-                if (imageView.getUserData() instanceof Card)
-                    fadeOutTransition(mainPane, imageView, 1);
-                else
-                    fadeOutTransition(mainPane, imageView, 0.5);
-            }
-            onTop.toFront();
-        });
-    }
-
-
-    private void fadeOutTransition(Pane pane, Node node, double maxOpacity) {
-        FadeTransition fadeTransitionOut = new FadeTransition(Duration.seconds(1), node);
-        fadeTransitionOut.setFromValue(maxOpacity);
-        fadeTransitionOut.setToValue(0.0);
-
-        fadeTransitionOut.setOnFinished(event -> pane.getChildren().remove(node));
-
-        fadeTransitionOut.play();
-    }
-
-
+    /**
+     * This method is called when the user clicks on the back button
+     * It will go back to the main view
+     */
     @FXML
     public void back() {
         Platform.runLater(SceneManager::MainView);
