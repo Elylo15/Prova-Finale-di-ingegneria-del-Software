@@ -88,7 +88,7 @@ class ViewCLITest {
 
     @Test
     @DisplayName("Scoreboard test")
-    void testEndOneWinner() {
+    void testEndOneWinnerPurple() {
         Player alfa = new Player("alfa", "red", null);
         Player beta = new Player("beta", "purple", null);
         Player gamma = new Player("gamma", "blue", null);
@@ -101,6 +101,73 @@ class ViewCLITest {
         scores.put(alfa.getNickname(), 10);
         scores.put(beta.getNickname(), 20);
         scores.put(gamma.getNickname(), 16);
+        HashMap<String, Integer> objective = new HashMap<>();
+        objective.put("alfa", 3);
+        objective.put("beta", 4);
+        objective.put("gamma", 2);
+        declareWinnerMessage message = new declareWinnerMessage(scores, objective);
+        viewCLI.endGame(message);
+    }
+    @Test
+    @DisplayName("Scoreboard test")
+    void testEndOneWinnerBlue() {
+        Player alfa = new Player("alfa", "red", null);
+        Player beta = new Player("beta", "blue", null);
+        Player gamma = new Player("gamma", "green", null);
+
+        viewCLI.savePlayerColor(alfa);
+        viewCLI.savePlayerColor(beta);
+        viewCLI.savePlayerColor(gamma);
+
+        HashMap<String, Integer> scores = new HashMap<>();
+        scores.put(alfa.getNickname(), 10);
+        scores.put(beta.getNickname(), 20);
+        scores.put(gamma.getNickname(), 16);
+        HashMap<String, Integer> objective = new HashMap<>();
+        objective.put("alfa", 3);
+        objective.put("beta", 4);
+        objective.put("gamma", 2);
+        declareWinnerMessage message = new declareWinnerMessage(scores, objective);
+        viewCLI.endGame(message);
+
+    }
+    @Test
+    @DisplayName("Scoreboard test")
+    void testEndOneWinnerGreen() {
+        Player alfa = new Player("alfa", "red", null);
+        Player beta = new Player("beta", "blue", null);
+        Player gamma = new Player("gamma", "green", null);
+
+        viewCLI.savePlayerColor(alfa);
+        viewCLI.savePlayerColor(beta);
+        viewCLI.savePlayerColor(gamma);
+
+        HashMap<String, Integer> scores = new HashMap<>();
+        scores.put(alfa.getNickname(), 10);
+        scores.put(beta.getNickname(), 12);
+        scores.put(gamma.getNickname(), 21);
+        HashMap<String, Integer> objective = new HashMap<>();
+        objective.put("alfa", 3);
+        objective.put("beta", 4);
+        objective.put("gamma", 2);
+        declareWinnerMessage message = new declareWinnerMessage(scores, objective);
+        viewCLI.endGame(message);
+    }
+    @Test
+    @DisplayName("Scoreboard test")
+    void testEndOneWinnerRed() {
+        Player alfa = new Player("alfa", "red", null);
+        Player beta = new Player("beta", "blue", null);
+        Player gamma = new Player("gamma", "green", null);
+
+        viewCLI.savePlayerColor(alfa);
+        viewCLI.savePlayerColor(beta);
+        viewCLI.savePlayerColor(gamma);
+
+        HashMap<String, Integer> scores = new HashMap<>();
+        scores.put(alfa.getNickname(), 22);
+        scores.put(beta.getNickname(), 12);
+        scores.put(gamma.getNickname(), 14);
         HashMap<String, Integer> objective = new HashMap<>();
         objective.put("alfa", 3);
         objective.put("beta", 4);

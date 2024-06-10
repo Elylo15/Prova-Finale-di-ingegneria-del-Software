@@ -1475,15 +1475,21 @@ public class ViewCLI extends View {
             String namePlayer = win[0];
             if (playerColor.get(namePlayer).equals("red")) {
                 System.out.println(RED_TEXT + "The winner is: " + namePlayer + RESET);
+                this.printWinner("red");
             }
             if (playerColor.get(namePlayer).equals("green")) {
                 System.out.println(GREEN_TEXT + "The winner is: " + namePlayer + RESET);
+                this.printWinner("green");
             }
             if (playerColor.get(namePlayer).equals("purple")) {
                 System.out.println(PURPLE_TEXT + "The winner is: " + namePlayer + RESET);
+                this.printWinner("purple");
+
             }
             if (playerColor.get(namePlayer).equals("blue")) {
                 System.out.println(BLUE_TEXT + "The winner is: " + namePlayer + RESET);
+                this.printWinner("blue");
+
             }
         } else {
             String namePlayer1 = win[0];
@@ -1608,5 +1614,59 @@ public class ViewCLI extends View {
             }
         }
 
+    }
+
+    /**
+     * print a colored background containing the symbol of the reign corresponding to the color of the winner
+     * @param color
+     */
+    private void printWinner(String color){
+        String cell1;
+        String cell2;
+        String cell3;
+        String cell4;
+        String cell5;
+        String cell6;
+        if(color.equals("red")){
+            cell1 = "              ";
+            cell2 = "      __      ";
+            cell3 = "     /  \\     ";
+            cell4 = "    /____\\    ";
+            cell5 = "      ||      ";
+            cell6 = "     WON!     ";
+
+            System.out.println(cell1 +"\n" + RED_BACKGROUND + cell2 + RESET +"\n" + RED_BACKGROUND + cell3 + RESET + "\n" + RED_BACKGROUND + cell4  +RESET+ "\n" + RED_BACKGROUND + cell5 + RESET +"\n"+ RED_BACKGROUND + cell6 + RESET +"\n");
+
+        }
+        if(color.equals("blue")){
+            cell1 = "              ";
+            cell2 = "              ";
+            cell3 = "    /\\__/\\    ";
+            cell4 = "    \\    /    ";
+            cell5 = "     \\__/     ";
+            cell6 = "     WON!     ";
+            System.out.println(cell1 +"\n" + CYAN_BACKGROUND + cell2 + RESET +"\n" + CYAN_BACKGROUND + cell3 + RESET + "\n" + CYAN_BACKGROUND + cell4  +RESET+ "\n" + CYAN_BACKGROUND + cell5 + RESET +"\n"+ CYAN_BACKGROUND + cell6 + RESET +"\n");
+
+        }
+        if(color.equals("green")){
+            cell1 = "              ";
+            cell2 = "     /|\\      ";
+            cell3 = "    |\\|/|     ";
+            cell4 = "     \\|/      ";
+            cell5 = "      |       ";
+            cell6 = "     WON!     ";
+            System.out.println(cell1 +"\n" + GREEN_BACKGROUND + cell2 + RESET +"\n" + GREEN_BACKGROUND + cell3 + RESET + "\n" + GREEN_BACKGROUND + cell4  +RESET+ "\n" + GREEN_BACKGROUND + cell5 + RESET +"\n"+ GREEN_BACKGROUND + cell6 + RESET +"\n");
+
+        }
+        if(color.equals("purple")){
+            cell1 = "              ";
+            cell2 = "    |\\  /|    ";
+            cell3 = "    | \\/ |    ";
+            cell4 = "    | /\\ |    ";
+            cell5 = "    |/  \\|    ";
+            cell6  = "     WON!     ";
+            System.out.println(cell1 +"\n" + PURPLE_BACKGROUND + cell2 + RESET +"\n" + PURPLE_BACKGROUND + cell3 + RESET + "\n" + PURPLE_BACKGROUND + cell4  +RESET+ "\n" + PURPLE_BACKGROUND + cell5 + RESET +"\n"+ PURPLE_BACKGROUND + cell6 + RESET +"\n");
+
+        }
     }
 }
