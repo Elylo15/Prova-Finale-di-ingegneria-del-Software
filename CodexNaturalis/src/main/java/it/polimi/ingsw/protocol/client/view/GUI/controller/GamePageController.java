@@ -9,6 +9,7 @@ import it.polimi.ingsw.protocol.messages.EndGameState.declareWinnerMessage;
 import it.polimi.ingsw.protocol.messages.PlayerTurnState.updatePlayerMessage;
 import it.polimi.ingsw.protocol.messages.currentStateMessage;
 import it.polimi.ingsw.protocol.messages.responseMessage;
+import javafx.animation.FadeTransition;
 import javafx.animation.KeyFrame;
 import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
@@ -33,6 +34,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import static it.polimi.ingsw.protocol.client.view.GUI.Utilities.*;
+import static it.polimi.ingsw.protocol.client.view.GUI.Utilities.fadeOutTransition;
 import static it.polimi.ingsw.protocol.client.view.GUI.controller.SceneManager.playSoundEffect;
 
 public class GamePageController implements Initializable {
@@ -79,7 +81,7 @@ public class GamePageController implements Initializable {
     private final BlockingQueue<Object> messageQueue = new LinkedBlockingQueue<>();
     private final ArrayList<Player> players = new ArrayList<>();
     private final ArrayList<ObjectiveCard> objectivesToChose = new ArrayList<>();
-    private final int[] selectedToPlace = new int[4];
+    private int[] selectedToPlace = new int[4];
     @FXML
     private Pane mainPane;
     @FXML
@@ -139,6 +141,9 @@ public class GamePageController implements Initializable {
         startMessageProcessor();
     }
 
+    //TODO maybe I could not use this internal thread, and make a while true that just reads with GUIMessages.readToGUI() and then process the message
+    //TODO check if to front of on top and of pions works as expected
+    //TODO check if fade effect works on playerArea - name - state - colorName - winner
     /**
      * Starts a new internal thread to listen for messages
      */
@@ -231,24 +236,24 @@ public class GamePageController implements Initializable {
     private void seeWinner() {
         mainPane.setOnMouseClicked(event -> {
             if (winner.isVisible()) {
-                winner.setVisible(false);
-                winnerLabel.setVisible(false);
-                back.setVisible(false);
-                playerInfoLabel.setVisible(false);
+                fadeOutTransition(mainPane, winner, 1.0, false);
+                fadeOutTransition(mainPane, winnerLabel, 1.0, false);
+                fadeOutTransition(mainPane, back, 1.0, false);
+                fadeOutTransition(mainPane, playerInfoLabel, 1.0, false);
             }
         });
 
         display.setOnMouseClicked(event -> {
             if (winner.isVisible()) {
-                winner.setVisible(false);
-                winnerLabel.setVisible(false);
-                back.setVisible(false);
-                playerInfoLabel.setVisible(false);
+                fadeOutTransition(mainPane, winner, 1.0, false);
+                fadeOutTransition(mainPane, winnerLabel, 1.0, false);
+                fadeOutTransition(mainPane, back, 1.0, false);
+                fadeOutTransition(mainPane, playerInfoLabel, 1.0, false);
             } else {
-                winner.setVisible(true);
-                winnerLabel.setVisible(true);
-                back.setVisible(true);
-                playerInfoLabel.setVisible(true);
+                fadeInTransition(winner, 1.0);
+                fadeInTransition(winnerLabel, 1.0);
+                fadeInTransition(back, 1.0);
+                fadeInTransition(playerInfoLabel, 1.0);
             }
         });
 
@@ -265,37 +270,28 @@ public class GamePageController implements Initializable {
 
         List<String> winners = getWinners(objectives, scores);
 
-        if (winners.size() == 1) {
-            String color = Objects.requireNonNull(findPlayerByName(winners.getFirst())).getColor();
-            if (Objects.equals(color, "red"))
-                Platform.runLater(() -> {
-                    winner = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Winner/winRed.png"))));
-                    mainPane.getChildren().add(winner);
-                });
-            else if (Objects.equals(color, "blue"))
-                Platform.runLater(() -> {
-                    winner = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Winner/winBlue.png"))));
-                    mainPane.getChildren().add(winner);
-                });
-            else if (Objects.equals(color, "green"))
-                Platform.runLater(() -> {
-                    winner = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Winner/winGreen.png"))));
-                    mainPane.getChildren().add(winner);
-                });
-            else if (Objects.equals(color, "purple"))
-                Platform.runLater(() -> {
-                    winner = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Winner/winPur.png"))));
-                    mainPane.getChildren().add(winner);
-                });
+        Platform.runLater(() -> {
+            if (winners.size() == 1) {
+                String color = Objects.requireNonNull(findPlayerByName(winners.getFirst())).getColor();
 
-            winnerLabel.setText(winners.getFirst());
-        } else {
-            Platform.runLater(() -> {
+                if (Objects.equals(color, "red"))
+                    winner = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Winner/winRed.png"))));
+                else if (Objects.equals(color, "blue"))
+                    winner = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Winner/winBlue.png"))));
+                else if (Objects.equals(color, "green"))
+                    winner = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Winner/winGreen.png"))));
+                else if (Objects.equals(color, "purple"))
+                    winner = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Winner/winPur.png"))));
+
+                winnerLabel.setText(winners.getFirst());
+            } else {
                 winner = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Winner/winTwo.png"))));
-                mainPane.getChildren().add(winner);
-            });
-            winnerLabel.setText(winners.get(0) + "\n" + winners.get(1));
-        }
+                winnerLabel.setText(winners.get(0) + "\n" + winners.get(1));
+
+            }
+            mainPane.getChildren().add(winner);
+            fadeInTransition(winner, 1.0);
+        });
 
         winnerLabel.setFont(Font.loadFont(getClass().getResourceAsStream("/Fonts/FantasyScript.ttf"), 60));
         winnerLabel.setTextFill(Color.rgb(30, 30, 30));
@@ -305,6 +301,7 @@ public class GamePageController implements Initializable {
         winnerLabel.setPrefHeight(120);
         winnerLabel.setAlignment(Pos.CENTER);
         mainPane.getChildren().add(winnerLabel);
+        fadeInTransition(winnerLabel, 1.0);
         displayPlayerInfo(scores, objectives);
 
         Platform.runLater(() -> {
@@ -315,6 +312,7 @@ public class GamePageController implements Initializable {
             back.setLayoutX(1038);
             back.setLayoutY(882);
             mainPane.getChildren().add(back);
+            fadeInTransition(back, 1.0);
         });
 
     }
@@ -383,6 +381,7 @@ public class GamePageController implements Initializable {
             i++;
 
             mainPane.getChildren().add(playerInfoLabel);
+            fadeInTransition(playerInfoLabel, 1.0);
         }
     }
 
@@ -436,7 +435,6 @@ public class GamePageController implements Initializable {
                     MediaPlayer mediaPlayer = new MediaPlayer(media);
                     mediaPlayer.play();
                     setState(currentStateMessage.getPlayer().getColor());
-                    //add sound to tell u turn
                 }
 
                 if (firstTimePlace) {
@@ -454,17 +452,20 @@ public class GamePageController implements Initializable {
      * @param color the color of the player
      */
     private void setState(String color) {
+        ImageView newStateImage = new ImageView();
 
         switch (color) {
             case "red" ->
-                    state.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/YourTurn/youRed.png"))));
+                    newStateImage.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/YourTurn/youRed.png"))));
             case "blue" ->
-                    state.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/YourTurn/youBlue.png"))));
+                    newStateImage.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/YourTurn/youBlue.png"))));
             case "green" ->
-                    state.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/YourTurn/youGreen.png"))));
+                    newStateImage.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/YourTurn/youGreen.png"))));
             case "purple" ->
-                    state.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/YourTurn/youPur.png"))));
+                    newStateImage.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/YourTurn/youPur.png"))));
         }
+
+        state = setNewImage(state, newStateImage);
     }
 
     /**
@@ -473,29 +474,33 @@ public class GamePageController implements Initializable {
      * @param color the color of the player
      */
     private void setStateNotPlaying(String color) {
+        ImageView newStateImage = new ImageView();
+
         if (Objects.equals(currentState, "StarterCardState") || Objects.equals(currentState, "ObjectiveState")) {
             switch (color) {
                 case "red" ->
-                        state.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Choosing/choosingRed.png"))));
+                        newStateImage.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Choosing/choosingRed.png"))));
                 case "blue" ->
-                        state.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Choosing/choosingBlue.png"))));
+                        newStateImage.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Choosing/choosingBlue.png"))));
                 case "green" ->
-                        state.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Choosing/choosingGreen.png"))));
+                        newStateImage.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Choosing/choosingGreen.png"))));
                 case "purple" ->
-                        state.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Background/ChoosingPur.png"))));
+                        newStateImage.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Background/ChoosingPur.png"))));
             }
         } else {
             switch (color) {
                 case "red" ->
-                        state.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/IsPlaying/redPlaying.png"))));
+                        newStateImage.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/IsPlaying/redPlaying.png"))));
                 case "blue" ->
-                        state.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/IsPlaying/bluePlaying.png"))));
+                        newStateImage.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/IsPlaying/bluePlaying.png"))));
                 case "green" ->
-                        state.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/IsPlaying/greenPlaying.png"))));
+                        newStateImage.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/IsPlaying/greenPlaying.png"))));
                 case "purple" ->
-                        state.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/IsPlaying/purPlaying.png"))));
+                        newStateImage.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/IsPlaying/purPlaying.png"))));
             }
         }
+
+        state = setNewImage(state, newStateImage);
     }
 
     /**
@@ -504,16 +509,20 @@ public class GamePageController implements Initializable {
      * @param color the color of the player
      */
     private void setLastTurn(String color) {
+        ImageView newStateImage = new ImageView();
+
         switch (color) {
             case "red" ->
-                    state.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/LastTurn/lastRed.png"))));
+                    newStateImage.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/LastTurn/lastRed.png"))));
             case "blue" ->
-                    state.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/LastTurn/lastBlue.png"))));
+                    newStateImage.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/LastTurn/lastBlue.png"))));
             case "green" ->
-                    state.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/LastTurn/lastGreen.png"))));
+                    newStateImage.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/LastTurn/lastGreen.png"))));
             case "purple" ->
-                    state.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/LastTurn/lastPur.png"))));
+                    newStateImage.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/LastTurn/lastPur.png"))));
         }
+
+        state = setNewImage(state, newStateImage);
     }
 
     /**
@@ -540,16 +549,42 @@ public class GamePageController implements Initializable {
      * @param color the color of the player
      */
     private void setColorName(String color) {
+        ImageView newColor = new ImageView();
+
         switch (color) {
             case "red" ->
-                    colorName.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/NameTemplate/redName.png"))));
+                    newColor.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/NameTemplate/redName.png"))));
             case "blue" ->
-                    colorName.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/NameTemplate/blueName.png"))));
+                    newColor.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/NameTemplate/blueName.png"))));
             case "green" ->
-                    colorName.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/NameTemplate/greenName.png"))));
+                    newColor.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/NameTemplate/greenName.png"))));
             case "purple" ->
-                    colorName.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/NameTemplate/purpleName.png"))));
+                    newColor.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/NameTemplate/purpleName.png"))));
         }
+
+        colorName = setNewImage(colorName, newColor);
+    }
+
+    /**
+     * Displays the correct image for the player using a fade in/fade out transition
+     *
+     * @param oldImage the old image to fade out
+     * @param newImage the new image to fade in
+     */
+    private ImageView setNewImage(ImageView oldImage, ImageView newImage) {
+        if (oldImage != null) {
+            newImage.setLayoutX(oldImage.getLayoutX());
+            newImage.setLayoutY(oldImage.getLayoutY());
+            newImage.setFitHeight(oldImage.getFitHeight());
+            newImage.setFitWidth(oldImage.getFitWidth());
+            newImage.setPreserveRatio(oldImage.isPreserveRatio());
+
+            fadeOutTransition(mainPane, oldImage, 1.0, true);
+        }
+
+        mainPane.getChildren().add(newImage);
+        fadeInTransition(newImage, 1.0);
+        return newImage;
     }
 
     /**
@@ -619,13 +654,9 @@ public class GamePageController implements Initializable {
         }
 
         addCardsToCommonArea();
-        onTop.toFront();
         addCommonObjective();
-        onTop.toFront();
         setPage();
-        onTop.toFront();
         setPions(myself);
-        onTop.toFront();
 
     }
 
@@ -674,17 +705,37 @@ public class GamePageController implements Initializable {
 
         this.commonArea = update.getPlayer().getCommonArea();
         addCardsToCommonArea();
-        onTop.toFront();
         setPage();
-        onTop.toFront();
     }
+
+    /**
+     * Display the new visualized player's nickname with a fade out of the previous one, and a fade in of the new one
+     * @param newNickname the new nickname to display
+     */
+    private void setPlayerNameWithFade(String newNickname) {
+        String currentNickname = playerName.getText();
+        if (!currentNickname.equals(newNickname)) {
+
+            FadeTransition fadeOut = new FadeTransition(Duration.seconds(1), playerName);
+            fadeOut.setFromValue(1.0);
+            fadeOut.setToValue(0.0);
+            fadeOut.setOnFinished(event -> {
+                // Change the text after fade out is finished
+                playerName.setText(newNickname);
+
+                // Fade in the new text
+                fadeInTransition(playerName, 1.0);
+            });
+        }
+    }
+
 
     /**
      * Sets the visualized page with the cards of the page's player
      */
     private void setPage() {
         String nickname = (clickCounter == -1) ? myself.getNickname() : players.get(clickCounter).getNickname();
-        playerName.setText(nickname);
+        setPlayerNameWithFade(nickname);
 
         String color = (clickCounter == -1) ? myself.getColor() : players.get(clickCounter).getColor();
         setColorName(color);
@@ -697,7 +748,6 @@ public class GamePageController implements Initializable {
 
         String nextColor = (next == -1) ? myself.getColor() : players.get(next).getColor();
         setNextButton(nextColor);
-
 
         if (!currentState.equals("StarterCardState") && !currentState.equals("ObjectiveState")) {
             if (clickCounter == -1) {
@@ -791,8 +841,10 @@ public class GamePageController implements Initializable {
      */
     private void addCardsToHand() {
         Platform.runLater(() -> {
-            if (myHand.getPlaceableCards().size() < 3)
+            if (myHand.getPlaceableCards().size() < 3) {
                 removeCardFromPosition(layoutXCard2, layoutYHand, mainPane);
+                onTop.toFront();
+            }
 
             for (int i = 0; myHand.getPlaceableCards().size() > i; i++) {
                 addNewCardToPane(mainPane, mainPane, clickCounter, selectedCard, myHand.getPlaceableCards().get(i).getID(), true,
@@ -819,8 +871,10 @@ public class GamePageController implements Initializable {
         if (players.get(clickCounter) != null) {
             PlayerHand playerHand = players.get(clickCounter).getPlayerHand();
             Platform.runLater(() -> {
-                if (playerHand.getPlaceableCards().size() < 3)
+                if (playerHand.getPlaceableCards().size() < 3) {
                     removeCardFromPosition(layoutXCard2, layoutYHand, mainPane);
+                    onTop.toFront();
+                }
 
                 for (int i = 0; i < playerHand.getPlaceableCards().size(); i++) {
                     addNewCardToPane(mainPane, mainPane, clickCounter, selectedCard, playerHand.getPlaceableCards().get(i).getID(), false,
@@ -912,8 +966,10 @@ public class GamePageController implements Initializable {
      * @param event the mouse event
      */
     private void turnObjectives(MouseEvent event) {
-        if (event.getClickCount() == 2)
+        if (event.getClickCount() == 2) {
             turnAround(event);
+            onTop.toFront();
+        }
     }
 
     /**
@@ -940,6 +996,7 @@ public class GamePageController implements Initializable {
 
             } else if (event.getClickCount() == 2) {
                 turnAround(event);
+                onTop.toFront();
                 if (selectedStarterFront == 1)
                     selectedStarterFront = 0;
                 else
@@ -975,6 +1032,7 @@ public class GamePageController implements Initializable {
             }
         } else if (event.getClickCount() == 2) {
             turnAround(event);
+            onTop.toFront();
             if (cardID == objectivesToChose.get(0).getID()) {
                 this.selectedObjective = 1;
             } else if (cardID == objectivesToChose.get(1).getID()) {
@@ -991,14 +1049,15 @@ public class GamePageController implements Initializable {
      */
     private void confirmPlaceStarter(MouseEvent event) {
         if (selectedCard != null) {
+            makeSmallerTransition(selectedCard);
             ImageView image = (ImageView) event.getSource();
-            fadeOutTransition(mainPane, image, 0.5);
+            fadeOutTransition(mainPane, image, 0.5, true);
             removeCardFromPosition(layoutXCard1, layoutYHand, mainPane);
             StarterCard card = (StarterCard) selectedCard.getUserData();
             addNewCardToPane(playground, mainPane, clickCounter, selectedCard, card.getID(), card.isFront(), card, layoutPlacedStarterX, layoutPlacedStarterY,
                     fitHeightPlaced, fitWidthPlaced, null);
             GUIMessages.writeToClient(selectedStarterFront);
-            selectedCard = null;
+            this.selectedCard = null;
         }
     }
 
@@ -1009,18 +1068,19 @@ public class GamePageController implements Initializable {
      */
     private void confirmPlaceObjective(MouseEvent event) {
         if (selectedCard != null) {
+            makeSmallerTransition(selectedCard);
             ImageView image = (ImageView) event.getSource();
-            fadeOutTransition(mainPane, image, 0.5);
+            fadeOutTransition(mainPane, image, 0.5, true);
             removeCardFromPosition(layoutXChoiceObjective1, layoutYHand, mainPane);
             removeCardFromPosition(layoutXChoiceObjective2, layoutYHand, mainPane);
             ObjectiveCard card = (ObjectiveCard) selectedCard.getUserData();
             addNewCardToPane(mainPane, mainPane, clickCounter, selectedCard, card.getID(), true, card, layoutXObjective, layoutYObjMy, fitHeightCommon,
                     fitWidthCommon, this::turnObjectives);
+            onTop.toFront();
             GUIMessages.writeToClient(selectedObjective);
-            selectedCard = null;
+            this.selectedCard = null;
         }
     }
-
 
     /**
      * When the mouse is clicked once, and if the page visualized is the client's, it selects the card to place
@@ -1052,6 +1112,7 @@ public class GamePageController implements Initializable {
                 this.selectedToPlace[1] = card.isFront() ? 1 : 0;
             } else if (event.getClickCount() == 2) {
                 turnAround(event);
+                onTop.toFront();
 
                 if (Objects.equals(currentState, "PlaceTurnState") && Objects.equals(currentPlayerNickname, myself.getNickname())) {
                     if (cardID == myHand.getPlaceableCards().getFirst().getID())
@@ -1070,7 +1131,6 @@ public class GamePageController implements Initializable {
         }
 
     }
-
 
     /**
      * When the mouse is clicked, it selects the position where to place the card
@@ -1103,6 +1163,7 @@ public class GamePageController implements Initializable {
 
             wrong = false;
             GUIMessages.writeToClient(selectedToPlace);
+            this.selectedToPlace = null;
         }
     }
 
@@ -1137,7 +1198,7 @@ public class GamePageController implements Initializable {
                 this.selectedPick = 6;
 
             GUIMessages.writeToClient(selectedPick);
-
+            this.selectedCard = null;
         }
     }
 
@@ -1155,7 +1216,6 @@ public class GamePageController implements Initializable {
                 clickCounter = -1;
             }
             setPage();
-            onTop.toFront();
         } else if ((Objects.equals(currentState, "StarterCardState") || Objects.equals(currentState, "ObjectiveState")) && Objects.equals(currentPlayerNickname, myself.getNickname())) {
             choosePopUp(myself.getColor());
         } else if (Objects.equals(currentState, "StarterCardState") || Objects.equals(currentState, "ObjectiveState")) {
@@ -1216,8 +1276,6 @@ public class GamePageController implements Initializable {
      */
     private void setPionPosition(ImageView pion, int score, List<ImageView> allPions) {
 
-        System.out.println("Score: " + score);
-
         if (pion != null && score == 0 && !isPionAtDesiredPosition(pion, 0)) {
             double[] adjustedPosition = getAdjustedPosition(allPions, positions[0][0], positions[0][1], pion);
             pion.setLayoutX(adjustedPosition[0]);
@@ -1228,7 +1286,6 @@ public class GamePageController implements Initializable {
             mainPane.getChildren().add(pion);
             updatePionsPositions(allPions, pion);
         } else if (pion != null && !isPionAtDesiredPosition(pion, score)) {
-            System.out.println("Moving to: " + score);
             addPoints(pion, score, allPions);
             updatePionsPositions(allPions, pion);
         }
@@ -1244,7 +1301,7 @@ public class GamePageController implements Initializable {
     private void addPoints(ImageView pion, int score, List<ImageView> allPions) {
         Platform.runLater(() -> {
             if (score < 0 || score > 29) {
-                // Invalid score ?? count from 1??
+                //TODO Invalid score ?? count from 1??
                 return;
             }
 
@@ -1261,13 +1318,13 @@ public class GamePageController implements Initializable {
                 KeyFrame keyFrame = new KeyFrame(Duration.millis((i - start) * 200), e -> {
                     pion.setLayoutX(adjustedPosition[0]);
                     pion.setLayoutY(adjustedPosition[1]);
+                    pion.toFront();
                 });
 
                 timeline.getKeyFrames().add(keyFrame);
             }
 
             timeline.play();
-            pion.toFront();
         });
     }
 
@@ -1286,7 +1343,6 @@ public class GamePageController implements Initializable {
             if (pion != myPion)
                 if (pion != null && pion.getLayoutX() == targetX && pion.getLayoutY() == targetY + offsetY) {
                     offsetY -= offsetPions;
-                    pion.toFront();
                 }
         }
         return new double[]{targetX, targetY + offsetY};
@@ -1383,7 +1439,7 @@ public class GamePageController implements Initializable {
                 .toList();
 
         for (ImageView placeholder : placeholders) {
-            fadeOutTransition(playground, placeholder, 0.5);
+            fadeOutTransition(playground, placeholder, 0.5, true);
         }
     }
 
@@ -1395,32 +1451,41 @@ public class GamePageController implements Initializable {
     private void displayPlayerArea(PlayerArea playerArea) {
         Platform.runLater(() -> {
             // Remove all existing cards from the player area
-            playground.getChildren().removeIf(node -> node instanceof ImageView && node.getUserData() instanceof PlaceableCard);
+            playground.getChildren().forEach(node -> {
+                if (node instanceof ImageView && node.getUserData() instanceof PlaceableCard) {
+                    fadeOutTransition(playground, node, 1.0, true); // fade out but keep the node
+                }
+            });
 
-            allCards = playerArea.getAllCards();
+            FadeTransition delayTransition = new FadeTransition(Duration.seconds(1));
+            delayTransition.setOnFinished(event -> {
+                allCards = playerArea.getAllCards();
 
-            boundingBox = calculateBoundingBox(allCards);
-            double totalWidth = boundingBox[2] - boundingBox[0];
-            double totalHeight = boundingBox[3] - boundingBox[1];
+                boundingBox = calculateBoundingBox(allCards);
+                double totalWidth = boundingBox[2] - boundingBox[0];
+                double totalHeight = boundingBox[3] - boundingBox[1];
 
-            scaleFactor = calculateScaleFactor(totalWidth, totalHeight, playerArea.getAvailablePosition());
+                scaleFactor = calculateScaleFactor(totalWidth, totalHeight, playerArea.getAvailablePosition());
 
-            centerXOffset = (playground.getWidth() - (totalWidth * scaleFactor)) / 2 - boundingBox[0] * scaleFactor;
-            centerYOffset = (playground.getHeight() - (totalHeight * scaleFactor)) / 2 - boundingBox[1] * scaleFactor;
+                centerXOffset = (playground.getWidth() - (totalWidth * scaleFactor)) / 2 - boundingBox[0] * scaleFactor;
+                centerYOffset = (playground.getHeight() - (totalHeight * scaleFactor)) / 2 - boundingBox[1] * scaleFactor;
 
-            for (PlaceableCard card : allCards) {
-                int layoutX = (int) (calculateLayoutX(card) * scaleFactor + centerXOffset);
-                int layoutY = (int) (calculateLayoutY(card) * scaleFactor + centerYOffset);
+                for (PlaceableCard card : allCards) {
+                    int layoutX = (int) (calculateLayoutX(card) * scaleFactor + centerXOffset);
+                    int layoutY = (int) (calculateLayoutY(card) * scaleFactor + centerYOffset);
 
-                ImageView cardImageView = createCardImageView(card.getID(), card.isFront(), card, layoutX, layoutY, fitHeightPlaced * scaleFactor, fitWidthPlaced * scaleFactor);
-                playground.getChildren().add(cardImageView);
-                cardImageView.toFront();
+                    ImageView cardImageView = createCardImageView(card.getID(), card.isFront(), card, layoutX, layoutY, fitHeightPlaced * scaleFactor, fitWidthPlaced * scaleFactor);
+                    cardImageView.setOpacity(0.0);
+                    playground.getChildren().add(cardImageView);
+                    fadeInTransition(cardImageView, 1.0);
 
-                // Adjust z-order
-                adjustCardZOrder(cardImageView, card);
-            }
+                    // Adjust z-order
+                    adjustCardZOrder(cardImageView, card);
+                }
 
-            onTop.toFront();
+                onTop.toFront();
+            });
+            delayTransition.play();
         });
     }
 
@@ -1513,14 +1578,23 @@ public class GamePageController implements Initializable {
         boolean isTop = card.getCells().stream().anyMatch(cell -> cell.getTopCard() == card);
         boolean isBottom = card.getCells().stream().anyMatch(cell -> cell.getBottomCard() == card);
 
+//        if (isTop) {
+//            cardImageView.toFront();
+//        } else if (isBottom) {
+//            cardImageView.toBack();
+//        } else {
+//            playground.getChildren().remove(cardImageView);
+//            playground.getChildren().add(cardImageView);
+//        }
+
         if (isTop) {
-            cardImageView.toFront();
+            cardImageView.setViewOrder(-1); // Negative value brings it to the front
         } else if (isBottom) {
-            cardImageView.toBack();
+            cardImageView.setViewOrder(1); // Positive value sends it to the back
         } else {
-            playground.getChildren().remove(cardImageView);
-            playground.getChildren().add(cardImageView);
+            cardImageView.setViewOrder(0); // Default value for middle z-order
         }
+
     }
 
 }

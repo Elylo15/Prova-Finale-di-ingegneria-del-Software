@@ -229,7 +229,6 @@ public class Utilities {
             // Remove nodes after iteration
             for (Node node : nodesToRemove) {
                 ImageView imageView = (ImageView) node;
-//                imageView.toFront(); // Card to the front
                 if (imageView.getUserData() instanceof Card)
                     fadeOutTransition(mainPane, imageView, 1);
                 else
@@ -306,11 +305,11 @@ public class Utilities {
     /**
      * Fades in the image
      *
-     * @param image      the image to fade in
+     * @param node      the node to fade in (image, or label)
      * @param maxOpacity the maximum opacity
      */
-    public static void fadeInTransition(ImageView image, double maxOpacity) {
-        FadeTransition fadeTransitionIn = new FadeTransition(Duration.seconds(1), image);
+    public static void fadeInTransition(Node node, double maxOpacity) {
+        FadeTransition fadeTransitionIn = new FadeTransition(Duration.seconds(1), node);
         fadeTransitionIn.setFromValue(0.0);
         fadeTransitionIn.setToValue(maxOpacity);
 
@@ -321,15 +320,16 @@ public class Utilities {
      * Fades out the image and removes it
      *
      * @param pane       the pane where the image is
-     * @param image      the image to fade out
+     * @param node      the node to fade out (image, or label)
      * @param maxOpacity the maximum opacity
+     * @param removeAfterFade if true, remove the node after the fade out
      */
-    public static void fadeOutTransition(Pane pane, ImageView image, double maxOpacity) {
-        FadeTransition fadeTransitionOut = new FadeTransition(Duration.seconds(1), image);
+    public static void fadeOutTransition(Pane pane, Node node, double maxOpacity, boolean removeAfterFade) {
+        FadeTransition fadeTransitionOut = new FadeTransition(Duration.seconds(1), node);
         fadeTransitionOut.setFromValue(maxOpacity);
         fadeTransitionOut.setToValue(0.0);
-
-        fadeTransitionOut.setOnFinished(event -> pane.getChildren().remove(image));
+        if( removeAfterFade)
+            fadeTransitionOut.setOnFinished(event -> pane.getChildren().remove(node));
 
         fadeTransitionOut.play();
     }
