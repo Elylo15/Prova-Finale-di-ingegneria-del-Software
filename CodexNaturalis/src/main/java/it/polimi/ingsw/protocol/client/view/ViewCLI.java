@@ -28,6 +28,7 @@ public class ViewCLI extends View {
     //the purpose of ViewCLI is to handle the interaction with the user and
     // visualize what he needs to see in order to play the game
     // by printing it in the command line
+    private HashMap<String,String> playerColor = new HashMap<>();
 
     //COLORS
 
@@ -93,7 +94,7 @@ public class ViewCLI extends View {
     }
 
     /**
-     * Method {@code askPortIP}: asks the user to enter the IP and the port of the server
+     * Method {@code askPortIP}: asks the user to enter the IP of the server
      *
      * @return String[]
      */
@@ -995,14 +996,14 @@ public class ViewCLI extends View {
      */
     public void answerToConnection(connectionResponseMessage message) {
         if (message.getCorrect())
-            System.out.println("the connection has been established");
+            System.out.println( GREEN_TEXT + "the connection has been established" + RESET);
     }
 
     /**
      * This method allow the client to choose if he wants to create a new match, join an existing one in waiting,
-     * load a saved Match or join a running match
+     *  load a saved Match or join a running match
      *
-     * @param message the message received from the server
+     * @param message a serverOption message received from the server
      * @return message with the values chosen by the user
      */
     public serverOptionMessage serverOptions(serverOptionMessage message) {
@@ -1070,7 +1071,7 @@ public class ViewCLI extends View {
 
 
         if (!newMatch) {
-
+             //if newMatch is false proceeds to ask if the user wants to join a running match
             boolean runMatch;
             while (true) {
                 System.out.print("Join a running match? [YES/no] ");
@@ -1121,6 +1122,7 @@ public class ViewCLI extends View {
                 }
 
             } else {
+                //if runMatch is false proceeds to ask if the user wants to join a saved match
                 while (true) {
                     System.out.print("Join a saved match? [YES/no] ");
                     String choice = scanner.nextLine().toLowerCase();
@@ -1230,7 +1232,22 @@ public class ViewCLI extends View {
      */
     public String availableColors(availableColorsMessage message) {
         //the client can call the method view.availableColors passing as a parameter the arraylist of available colors received from server
-        System.out.println("This are the colors that are available: " + message.toString());
+        System.out.print("These are the colors that ara avilable:  ");
+        for(int i=0; i<message.getColors().size(); i++) {
+            if(message.getColors().get(i).equals("red")){
+                System.out.print(RED_TEXT + message.getColors().get(i) + " " + RESET);
+            }
+            if(message.getColors().get(i).equals("blue")){
+                System.out.print(BLUE_TEXT + message.getColors().get(i) + " " + RESET);
+            }
+            if(message.getColors().get(i).equals("purple")){
+                System.out.print(PURPLE_TEXT + message.getColors().get(i) + " " + RESET);
+            }
+            if(message.getColors().get(i).equals("green")){
+                System.out.print(GREEN_TEXT + message.getColors().get(i) + " " + RESET);
+            }
+        }
+        System.out.print("\n");
 
         String color;
         Scanner scanner = new Scanner(System.in);
@@ -1252,10 +1269,10 @@ public class ViewCLI extends View {
             System.out.print("FRONT or BACK? ");
             String choice = scanner.nextLine().toLowerCase();
             switch (choice) {
-                case "front", "front side" -> {
+                case "f", "front", "front side" -> {
                     return 1;
                 }
-                case "back", "back side" -> {
+                case "b", "back", "back side" -> {
                     return 0;
                 }
             }
@@ -1273,7 +1290,7 @@ public class ViewCLI extends View {
         while (true) {
 
             try {
-                System.out.println("How many player do you want to be in the game");
+                System.out.println("How many player do you want to be in the game?");
                 numExpected = scanner.nextInt();
                 scanner.nextLine();
                 break;
@@ -1336,7 +1353,8 @@ public class ViewCLI extends View {
     }
 
     /**
-     * This method allows the user to say what card he wants to play, front or back, and in which position
+     * This method allows the user to choose the card to place among the three cards in his hand,
+     * choose the side (front or back) and the position
      *
      * @return Array of int representing the card chosen by the user, side, and position
      */
@@ -1349,7 +1367,7 @@ public class ViewCLI extends View {
         Scanner scanner = new Scanner(System.in);
         while (true) {
             try {
-                System.out.print("Enter the NUMBER of the card you want to place: ");
+                System.out.print("Enter the NUMBER of the card you want to place (0) or (1) or (2): ");
                 chosenCard[0] = scanner.nextInt();
                 scanner.nextLine();
                 break;
@@ -1364,11 +1382,11 @@ public class ViewCLI extends View {
             System.out.print("FRONT or BACK?");
             String choice = scanner.nextLine().toLowerCase();
             switch (choice) {
-                case "front", "front side" -> {
+                case "f", "front", "front side" -> {
                     chosenCard[1] = 1;
                     correct = true;
                 }
-                case "back", "back side" -> {
+                case "b", "back", "back side" -> {
                     chosenCard[1] = 0;
                     correct = true;
                 }
@@ -1413,12 +1431,12 @@ public class ViewCLI extends View {
         int choice = 1000;
         Scanner scanner = new Scanner(System.in);
         try {
-            System.out.print("enter the NUMBER of the card you want to pick: ");
+            System.out.print("enter the NUMBER of the card you want to pick DECK (1),(2) or TABLE (3),(4),(5),(6): ");
             choice = scanner.nextInt();
             scanner.nextLine();
         } catch (Exception e) {
             scanner.nextLine();
-            System.out.println("you didn't enter an integer value");
+            System.out.println("You didn't enter an integer value");
         }
         return choice;
     }
@@ -1436,11 +1454,111 @@ public class ViewCLI extends View {
         points = message.getPlayersPoints();
         numObjectives = message.getNumberOfObjects();
 
-        System.out.println("\n\nSCOREBOARD\n");
+        String[] win = new String[2];
+        win = this.findWinner(points);
+        System.out.print("FINAL RESULTS:");
+        System.out.println("\nSCOREBOARD");
         for (String playerName : points.keySet()) {
             Integer playerPoints = points.get(playerName);
             Integer playerObjectives = numObjectives.get(playerName);
-            System.out.println("Player Name: " + playerName + "  -  Points: " + playerPoints + "  -  Number of Objectives: " + playerObjectives);
+            String color = playerColor.get(playerName);
+            switch (color) {
+                case ("red") : {
+                    System.out.println(RED_TEXT + "Player Name: " + playerName + "  -  Points: " + playerPoints + "  -  Number of Objectives: " + playerObjectives +RESET);
+                    break;
+                }
+                case ("blue") : {
+                    System.out.println(BLUE_TEXT + "Player Name: " + playerName + "  -  Points: " + playerPoints + "  -  Number of Objectives: " + playerObjectives + RESET);
+                    break;
+                }case ("green") : {
+                    System.out.println(GREEN_TEXT + "Player Name: " + playerName + "  -  Points: " + playerPoints + "  -  Number of Objectives: " + playerObjectives + RESET);
+                    break;
+                }case ("purple") : {
+                    System.out.println(PURPLE_TEXT + "Player Name: " + playerName + "  -  Points: " + playerPoints + "  -  Number of Objectives: " + playerObjectives + RESET);
+                }
+            }
+        }
+
+           if(win[1].equals("")) {
+               String namePlayer = win[0];
+               if (playerColor.get(namePlayer).equals("red")) {
+                   System.out.println(RED_TEXT + "The winner is: " + namePlayer + RESET);
+               }
+               if (playerColor.get(namePlayer).equals("green")) {
+                   System.out.println(GREEN_TEXT + "The winner is: " + namePlayer + RESET);
+               }
+               if (playerColor.get(namePlayer).equals("purple")) {
+                   System.out.println(PURPLE_TEXT + "The winner is: " + namePlayer + RESET);
+               }
+               if (playerColor.get(namePlayer).equals("blue")) {
+                   System.out.println(BLUE_TEXT + "The winner is: " + namePlayer + RESET);
+               }
+           }
+           else {
+               String namePlayer1 = win[0];
+               String namePlayer2 = win[1];
+
+               System.out.print("THE WINNERS ARE:  ");
+               if (playerColor.get(namePlayer1).equals("red")) {
+                   System.out.print(RED_TEXT + namePlayer1 + " "+  RESET);
+               }
+               if (playerColor.get(namePlayer1).equals("green")) {
+                   System.out.print(GREEN_TEXT  + namePlayer1 +" "+ RESET);
+               }
+               if (playerColor.get(namePlayer1).equals("purple")) {
+                   System.out.print(PURPLE_TEXT + namePlayer1 +" "+ RESET);
+               }
+               if (playerColor.get(namePlayer1).equals("blue")) {
+                   System.out.print(BLUE_TEXT + namePlayer1 +" "+ RESET);
+               }
+               if (playerColor.get(namePlayer2).equals("red")) {
+                   System.out.print(RED_TEXT + namePlayer2 + " "+  RESET);
+               }
+               if (playerColor.get(namePlayer2).equals("green")) {
+                   System.out.print(GREEN_TEXT  + namePlayer2 +  " "+RESET);
+               }
+               if (playerColor.get(namePlayer2).equals("purple")) {
+                   System.out.print(PURPLE_TEXT + namePlayer2 +  " "+RESET);
+               }
+               if (playerColor.get(namePlayer2).equals("blue")) {
+                   System.out.print(BLUE_TEXT + namePlayer2 +  " "+RESET);
+               }
+           }
+
+
+
+
+    }
+    public String[] findWinner( HashMap<String, Integer> points){
+        Integer maxPoint1 = 0;
+
+        String winner1 = "";
+        String winner2 = "";
+
+        for (String playerName : points.keySet()) {
+            if(maxPoint1<points.get(playerName)){
+                maxPoint1 = points.get(playerName);
+                winner1 = playerName;
+
+            }
+            else if(maxPoint1.equals(points.get(playerName))){
+
+                winner2 = playerName;
+            }
+
+        }
+        //int size = maxPoint2==0 ? 1 : 2;
+        String[] winners = new String[2];
+        winners[0] = winner1;
+
+        winners[1] = winner2;
+
+        return winners;
+
+    }
+    public void savePlayerColor(Player player){
+        if(!playerColor.containsKey(player.getNickname())){
+            playerColor.put(player.getNickname(), player.getColor());
         }
     }
 
@@ -1455,11 +1573,13 @@ public class ViewCLI extends View {
         this.showCommonArea(player.getCommonArea());
         this.showPlayerArea(player.getPlayerArea());
         this.showPlayerHand(player, update.getNicknameViewer());
+        this.savePlayerColor(update.getPlayer());
     }
 
 
     /**
      * This method allows the user to choose a nickname from the list of available names
+     * If the user wants to load a saved match, he will need this method to choose his name from the existing ones
      *
      * @param message the message containing the list of available names
      * @return the chosen nickname
@@ -1468,9 +1588,10 @@ public class ViewCLI extends View {
     public String pickNameFA(unavailableNamesMessage message) {
         System.out.println("Please choose a nickname: ");
         int i = 1;
+        //print the available names preceded by a number to identify them
         for (String name : message.getNames()) {
             System.out.println("(" + i + ") " + name);
-            i += 1;
+            i ++;
         }
         while (true) {
             Scanner scanner = new Scanner(System.in);

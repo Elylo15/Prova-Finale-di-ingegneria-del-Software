@@ -7,11 +7,29 @@
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.protocol.client.view.GUI.controller.AvailableColorsController">
    <center>
-      <Pane id="mainPane" fx:id="mainPane" prefHeight="1080.0" prefWidth="1920.0" BorderPane.alignment="CENTER">
-         <ImageView id="chose" fitHeight="1108.0" fitWidth="2008.0" focusTraversable="true" layoutX="-25.0" layoutY="-71.0" mouseTransparent="true" preserveRatio="true">
-            <image>
-               <Image url="@Images/Colors/Choose.png" />
-            </image>
+      <Pane prefHeight="1080.0" prefWidth="1920.0" BorderPane.alignment="CENTER">
+         <ImageView fitHeight="1080.0" fitWidth="1920.0" preserveRatio="true">
+            <Image url="@Images/Background/goldBg.png"/>
+         </ImageView>
+         <ImageView id="chose" fitHeight="1108.0" fitWidth="2008.0" focusTraversable="true" layoutX="-25.0"
+                    layoutY="-71.0" mouseTransparent="true" preserveRatio="true">
+            <Image url="@Images/Colors/Choose.png"/>
+         </ImageView>
+         <ImageView id="red" fx:id="red" fitHeight="540.0" fitWidth="701.0" focusTraversable="true" layoutX="1434.0"
+                    layoutY="543.0" preserveRatio="true">
+            <Image url="@Images/Colors/redNo.png"/>
+         </ImageView>
+         <ImageView id="purple" fx:id="purple" fitHeight="540.0" fitWidth="701.0" focusTraversable="true"
+                    layoutX="496.0" layoutY="543.0" preserveRatio="true">
+            <Image url="@Images/Colors/purpleNo.png"/>
+         </ImageView>
+         <ImageView id="blue" fx:id="blue" fitHeight="540.0" fitWidth="701.0" focusTraversable="true" layoutX="922.0"
+                    layoutY="545.0" preserveRatio="true">
+            <Image url="@Images/Colors/blueNo.png"/>
+         </ImageView>
+         <ImageView id="green" fx:id="green" fitHeight="540.0" fitWidth="701.0" focusTraversable="true" layoutX="-18.0"
+                    layoutY="543.0" preserveRatio="true">
+            <Image url="@Images/Colors/greenNo.png"/>
          </ImageView>
       </Pane>
    </center>

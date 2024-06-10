@@ -29,6 +29,7 @@ import java.util.Objects;
  */
 public class ViewGUI extends View {
     private boolean firstTime = true;
+    private String state;
     private String color;
 
 
@@ -161,7 +162,10 @@ public class ViewGUI extends View {
         //to avoid reading unexpected messages
         GUIMessages.clearQueue();
         if (!message.getCorrect())
-            Platform.runLater(SceneManager::answer);
+            if(Objects.equals(state, "PlaceTurnState"))
+                GUIMessages.writeToGUI(message);
+            else
+                Platform.runLater(SceneManager::answer);
 
     }
 
@@ -222,6 +226,7 @@ public class ViewGUI extends View {
     public void updatePlayer(currentStateMessage message) {
         GUIMessages.clearQueue();
         System.out.println(message.getStateName());
+        state = message.getStateName();
         GUIMessages.writeToGUI(message);
         if (firstTime) {
             firstTime = false; //Load this page only the first time the method is called
@@ -297,8 +302,13 @@ public class ViewGUI extends View {
     @Override
     public String pickNameFA(unavailableNamesMessage message) {
         //to avoid reading unexpected messages
-        GUIMessages.clearQueue();
-        return "";
+        GUIMessages.clearQueue();  //remove all elements that could be in the queue
+        String name;
+        GUIMessages.writeToGUI(message);  //serialize the message and send it to the gui
+        Platform.runLater(SceneManager::unavailableNames); //run the method unavailableNames in SceneManager
+        name = (String) GUIMessages.readToClient(); //deserialize the string the method must return
+        System.out.println(name);
+        return name;
     }
 
     /**
@@ -309,10 +319,7 @@ public class ViewGUI extends View {
      */
     @Override
     public void endGame(declareWinnerMessage message) {
-        //to avoid reading unexpected messages
-        GUIMessages.clearQueue();
-
+        GUIMessages.writeToGUI(message);
     }
 
 }
-

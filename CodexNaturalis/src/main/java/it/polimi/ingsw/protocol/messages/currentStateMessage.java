@@ -8,10 +8,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
- * Message used to send the current state of the game contains all the necessary information
+ * Message used to send the current state of the game contains all the necessary information about the match
  */
 public class currentStateMessage implements Message, Serializable {
-    private final Player currentPlayer; // player who is gaming
+    private final Player currentPlayer; // player who is playing turn
     private final Player player;        // player who receives the message
     private final String stateName;
     private final boolean lastTurn;
@@ -22,7 +22,7 @@ public class currentStateMessage implements Message, Serializable {
     /**
      * Constructor for the currentStateMessage class
      *
-     * @param currentPlayer        player who is gaming
+     * @param currentPlayer        player who is playing turn
      * @param player               player who receives the message
      * @param stateName            name of the state
      * @param lastTurn             true if it is the last turn

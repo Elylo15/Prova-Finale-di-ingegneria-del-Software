@@ -1,3 +1,7 @@
 /* styles.css */
 .placeholder {
 }
+
+.button {
+    -fx-background-color: derive(-fx-base, 20%);
+}

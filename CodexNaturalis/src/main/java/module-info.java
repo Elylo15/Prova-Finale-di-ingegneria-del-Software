@@ -5,6 +5,7 @@ module CodexNaturalis {
     requires java.rmi;
     requires com.fasterxml.jackson.core;
     requires com.fasterxml.jackson.databind;
+    requires java.desktop;
 
     opens it.polimi.ingsw.app to javafx.fxml;
     exports it.polimi.ingsw.app;

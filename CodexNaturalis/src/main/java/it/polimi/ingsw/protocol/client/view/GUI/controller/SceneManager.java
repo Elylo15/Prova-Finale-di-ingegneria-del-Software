@@ -11,6 +11,8 @@ import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
+import java.time.Duration;
 import java.util.Objects;
 
 /**
@@ -29,6 +31,27 @@ public class SceneManager {
      */
     public static void setPrimaryStage(Stage stage) {
         primaryStage = stage;
+    }
+
+    public static void initializeBackgroundMusic() {
+        String audioFile = Objects.requireNonNull(SceneManager.class.getResource("/Audio/song.mp3")).toString();
+        Media media = new Media(audioFile);
+        MediaPlayer backgroundMediaPlayer = new MediaPlayer(media);
+
+        backgroundMediaPlayer.setOnEndOfMedia(() -> {
+            backgroundMediaPlayer.seek(backgroundMediaPlayer.getStartTime()); // Restart from the beginning
+            backgroundMediaPlayer.play();
+        });
+
+        backgroundMediaPlayer.play();
+    }
+
+
+    public static void playSoundEffect(String soundFile) {
+        String audioFile = Objects.requireNonNull(SceneManager.class.getResource(soundFile)).toString();
+        Media media = new Media(audioFile);
+        MediaPlayer mediaPlayer = new MediaPlayer(media);
+        mediaPlayer.play();
     }
 
     /**
@@ -173,8 +196,20 @@ public class SceneManager {
     public static void MainView() {
         try {
             Parent root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/mainView.fxml")));
-            primaryStage.setScene(new Scene(root));
+            Scene scene = new Scene(root);
+            primaryStage.setScene(scene);
+
+            scene.getStylesheets().add(Objects.requireNonNull(SceneManager.class.getResource("/styles.css")).toExternalForm());
             primaryStage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void learToPlay() {
+        try {
+            Parent root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/learnToPlay.fxml")));
+            primaryStage.setScene(new Scene(root));
         } catch (IOException e) {
             e.printStackTrace();
         }

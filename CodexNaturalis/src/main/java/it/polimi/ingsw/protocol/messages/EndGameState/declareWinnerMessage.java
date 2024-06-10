@@ -9,8 +9,8 @@ import java.util.HashMap;
  * Message that contains the winner of the game
  */
 public class declareWinnerMessage implements Message, Serializable {
-    private final HashMap<String, Integer> scores;
-    private final HashMap<String, Integer> numberOfObjects;
+    private final HashMap<String, Integer> scores;   //final score of each player
+    private final HashMap<String, Integer> numberOfObjects;  //number of objectives achieved by each player
 
     /**
      * Constructor for declareWinnerMessage

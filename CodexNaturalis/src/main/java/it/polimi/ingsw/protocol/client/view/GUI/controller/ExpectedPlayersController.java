@@ -2,30 +2,34 @@ package it.polimi.ingsw.protocol.client.view.GUI.controller;
 
 import it.polimi.ingsw.protocol.client.view.GUI.message.GUIMessages;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
+import javafx.scene.image.ImageView;
+
+import static it.polimi.ingsw.protocol.client.view.GUI.Utilities.hooverEffect;
 
 public class ExpectedPlayersController {
-
     @FXML
-    private Button two;
-
+    private ImageView two;
     @FXML
-    private Button three;
-
+    private ImageView three;
     @FXML
-    private Button four;
+    private ImageView four;
 
     /**
      * This method is called when the scene is loaded.
-     * It sets the action for each button.
+     * It sets the action for each image-button.
      * When a button is clicked, it sends the number of expected players to the client.
      */
     @FXML
     private void initialize() {
+
+        hooverEffect(two, null, 1.1);
+        hooverEffect(three, null, 1.1);
+        hooverEffect(four, null, 1.1);
+
         //serialize the number to send corresponding on the button clicked
-        two.setOnAction(event -> GUIMessages.writeToClient(2));
-        three.setOnAction(event -> GUIMessages.writeToClient(3));
-        four.setOnAction(event -> GUIMessages.writeToClient(4));
+        two.setOnMouseClicked(event -> GUIMessages.writeToClient(2));
+        three.setOnMouseClicked(event -> GUIMessages.writeToClient(3));
+        four.setOnMouseClicked(event -> GUIMessages.writeToClient(4));
     }
 
 }
