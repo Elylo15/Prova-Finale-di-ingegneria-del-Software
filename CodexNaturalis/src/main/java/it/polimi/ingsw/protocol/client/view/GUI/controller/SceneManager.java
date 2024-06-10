@@ -4,15 +4,11 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCombination;
-import javafx.scene.text.Font;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.URL;
-import java.time.Duration;
 import java.util.Objects;
 
 /**
@@ -61,8 +57,7 @@ public class SceneManager {
         try {
             Parent root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/availableColors.fxml")));
             primaryStage.setScene(new Scene(root));
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ignore) {
         }
     }
 
@@ -73,8 +68,8 @@ public class SceneManager {
         try {
             Parent root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/answer.fxml")));
             primaryStage.setScene(new Scene(root));
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ignore) {
+
         }
     }
 
@@ -85,8 +80,7 @@ public class SceneManager {
         try {
             Parent root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/choose_Socket_RMI.fxml")));
             primaryStage.setScene(new Scene(root));
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ignore) {
         }
     }
 
@@ -97,20 +91,7 @@ public class SceneManager {
         try {
             Parent root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/disconnect.fxml")));
             primaryStage.setScene(new Scene(root));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Load and view the scene for ending the game
-     */
-    public static void EndGame() {
-        try {
-            Parent root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/endGame.fxml")));
-            primaryStage.setScene(new Scene(root));
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ignore) {
         }
     }
 
@@ -121,8 +102,18 @@ public class SceneManager {
         try {
             Parent root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/expectedPlayers.fxml")));
             primaryStage.setScene(new Scene(root));
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ignore) {
+        }
+    }
+
+    /**
+     * Load and view the scene for picking the name
+     */
+    public static void pickNameFA() {
+        try {
+            Parent root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/pickNameFA.fxml")));
+            primaryStage.setScene(new Scene(root));
+        } catch (IOException ignore) {
         }
     }
 
@@ -133,8 +124,7 @@ public class SceneManager {
         try {
             Parent root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/insertIP.fxml")));
             primaryStage.setScene(new Scene(root));
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ignore) {
         }
     }
 
@@ -149,8 +139,7 @@ public class SceneManager {
                 primaryStage.setFullScreen(true);
             }
             primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ignore) {
         }
     }
 
@@ -161,8 +150,7 @@ public class SceneManager {
         try {
             Parent root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/joinMatch.fxml")));
             primaryStage.setScene(new Scene(root));
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ignore) {
         }
     }
 
@@ -173,8 +161,7 @@ public class SceneManager {
         try {
             Parent root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/joinRunningMatch.fxml")));
             primaryStage.setScene(new Scene(root));
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ignore) {
         }
     }
 
@@ -185,8 +172,7 @@ public class SceneManager {
         try {
             Parent root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/loadMatch.fxml")));
             primaryStage.setScene(new Scene(root));
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ignore) {
         }
     }
 
@@ -201,8 +187,7 @@ public class SceneManager {
 
             scene.getStylesheets().add(Objects.requireNonNull(SceneManager.class.getResource("/styles.css")).toExternalForm());
             primaryStage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ignore) {
         }
     }
 
@@ -210,8 +195,7 @@ public class SceneManager {
         try {
             Parent root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/learnToPlay.fxml")));
             primaryStage.setScene(new Scene(root));
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ignore) {
         }
     }
 
@@ -225,8 +209,7 @@ public class SceneManager {
             Scene scene = new Scene(root);
             primaryStage.setScene(scene);
             scene.getStylesheets().add(Objects.requireNonNull(SceneManager.class.getResource("/styles.css")).toExternalForm());
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ignore) {
         }
     }
 
@@ -237,8 +220,7 @@ public class SceneManager {
         try {
             Parent root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/unavailableNames.fxml")));
             primaryStage.setScene(new Scene(root));
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ignore) {
         }
     }
 
@@ -249,8 +231,7 @@ public class SceneManager {
         try {
             Parent root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/waiting.fxml")));
             primaryStage.setScene(new Scene(root));
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ignore) {
         }
     }
 

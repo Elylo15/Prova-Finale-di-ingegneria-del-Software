@@ -5,6 +5,7 @@ import it.polimi.ingsw.protocol.client.controller.Controller;
 import it.polimi.ingsw.protocol.client.controller.ControllerRMI;
 import it.polimi.ingsw.protocol.client.controller.ControllerSocket;
 import it.polimi.ingsw.protocol.client.view.View;
+import it.polimi.ingsw.protocol.client.view.ViewCLI;
 import it.polimi.ingsw.protocol.client.view.ViewGUI;
 import it.polimi.ingsw.protocol.messages.ConnectionState.availableColorsMessage;
 import it.polimi.ingsw.protocol.messages.ConnectionState.connectionResponseMessage;
@@ -45,15 +46,6 @@ public class Client implements Runnable {
     }
 
     /**
-     * method {@code getServerIP}:Getter for the serverIP
-     *
-     * @return the serverIP
-     */
-    public String getServerIP() {
-        return serverIP;
-    }
-
-    /**
      * method {@code getController}: Getter for the controller
      *
      * @return the controller
@@ -81,9 +73,9 @@ public class Client implements Runnable {
             try {
                 controller.connectToServer(serverIP, "1024");
                 connectionResponseMessage answer = controller.answerConnection();
-                view.answerToConnection(answer);
+                if (view instanceof ViewCLI)
+                    ((ViewCLI) view).answerToConnection(answer);
             } catch (Exception e) {
-                e.printStackTrace();
                 view.playerDisconnected();
                 throw new RuntimeException();
             }
@@ -91,9 +83,9 @@ public class Client implements Runnable {
             try {
                 controller.connectToServer(serverIP, "1099");
                 connectionResponseMessage answer = controller.answerConnection();
-                view.answerToConnection(answer);
+                if (view instanceof ViewCLI)
+                    ((ViewCLI) view).answerToConnection(answer);
             } catch (Exception e) {
-                e.printStackTrace();
                 view.playerDisconnected();
                 throw new RuntimeException();
             }
@@ -111,7 +103,11 @@ public class Client implements Runnable {
             options = view.serverOptions(options);
             controller.sendOptions(options);
             responseMessage answer = controller.correctAnswer();
-            view.answer(answer);
+
+            boolean ok = false;
+            while (!ok)
+                ok = view.answer(answer);
+
             if (answer.getCorrect())
                 break;
         }
@@ -129,7 +125,11 @@ public class Client implements Runnable {
             String name = view.unavailableNames(unavailableName);
             controller.chooseName(name);
             responseMessage answer = controller.correctAnswer();
-            view.answer(answer);
+
+            boolean ok = false;
+            while (!ok)
+                ok = view.answer(answer);
+
             if (answer.getCorrect())
                 break;
         }
@@ -147,7 +147,11 @@ public class Client implements Runnable {
             String color = view.availableColors(availableColor);
             controller.chooseColor(color);
             responseMessage answer = controller.correctAnswer();
-            view.answer(answer);
+
+            boolean ok = false;
+            while (!ok)
+                ok = view.answer(answer);
+
             if (answer.getCorrect())
                 break;
         }
@@ -170,7 +174,11 @@ public class Client implements Runnable {
 
             controller.expectedPlayers(expected, noResponse.get());
             responseMessage answer = controller.correctAnswer();
-            view.answer(answer);
+
+            boolean ok = false;
+            while (!ok)
+                ok = view.answer(answer);
+
             if (answer.getCorrect()) {
                 view.waiting();
                 break;
@@ -195,7 +203,11 @@ public class Client implements Runnable {
             controller.placeStarter(side, noResponse.get());
             responseMessage answer = controller.correctAnswer();
 
-            view.answer(answer);
+
+            boolean ok = false;
+            while (!ok)
+                ok = view.answer(answer);
+
             if (answer.getCorrect())
                 break;
         }
@@ -228,7 +240,11 @@ public class Client implements Runnable {
 
             controller.chooseObjective(pick, noResponse);
             responseMessage answer = controller.correctAnswer();
-            view.answer(answer);
+
+            boolean ok = false;
+            while (!ok)
+                ok = view.answer(answer);
+
             if (answer.getCorrect())
                 break;
         }
@@ -252,7 +268,11 @@ public class Client implements Runnable {
 
             controller.pickCard(card, noResponse.get());
             responseMessage answer = controller.correctAnswer();
-            view.answer(answer);
+
+            boolean ok = false;
+            while (!ok)
+                ok = view.answer(answer);
+
             if (answer.getCorrect())
                 break;
         }
@@ -307,7 +327,11 @@ public class Client implements Runnable {
 
             controller.placeCard(card.get(0), card.get(1), card.get(2), card.get(3), noResponse);
             responseMessage answer = controller.correctAnswer();
-            view.answer(answer);
+
+            boolean ok = false;
+            while (!ok)
+                ok = view.answer(answer);
+
             if (answer.getCorrect())
                 break;
         }
@@ -366,7 +390,11 @@ public class Client implements Runnable {
 
             controller.chooseName(name);
             responseMessage answer = controller.correctAnswer();
-            view.answer(answer);
+
+            boolean ok = false;
+            while (!ok)
+                ok = view.answer(answer);
+
             if (answer.getCorrect())
                 break;
         }
@@ -381,13 +409,8 @@ public class Client implements Runnable {
     public void run() {
         if (getView() instanceof ViewGUI) {
             boolean ok = false;
-            while(!ok)
+            while (!ok)
                 ok = ((ViewGUI) getView()).startMain();
-//            try {
-//                Thread.sleep(2000);
-//            } catch (InterruptedException ignore) {
-//
-//            } TODO remove this
         }
 
         while (true) {
@@ -474,8 +497,6 @@ public class Client implements Runnable {
                     }
                 }
             } catch (Exception e) {
-                System.out.println("Error: " + e.getMessage());
-                e.printStackTrace();
                 getView().playerDisconnected();
             }
         }

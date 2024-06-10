@@ -2,7 +2,6 @@ package it.polimi.ingsw.protocol.client.view;
 
 import it.polimi.ingsw.model.cards.ObjectiveCard;
 import it.polimi.ingsw.protocol.messages.ConnectionState.availableColorsMessage;
-import it.polimi.ingsw.protocol.messages.ConnectionState.connectionResponseMessage;
 import it.polimi.ingsw.protocol.messages.ConnectionState.unavailableNamesMessage;
 import it.polimi.ingsw.protocol.messages.EndGameState.declareWinnerMessage;
 import it.polimi.ingsw.protocol.messages.PlayerTurnState.updatePlayerMessage;
@@ -31,13 +30,11 @@ public abstract class View {
 
     public abstract void updatePlayer(currentStateMessage message);
 
-    public abstract void answerToConnection(connectionResponseMessage message);
-
     public abstract serverOptionMessage serverOptions(serverOptionMessage message);
 
     public abstract String unavailableNames(unavailableNamesMessage message);
 
-    public abstract void answer(responseMessage message);
+    public abstract boolean answer(responseMessage message);
 
     public abstract String availableColors(availableColorsMessage message);
 

@@ -53,7 +53,7 @@ public class GamePageController implements Initializable {
             {1726, 108}
     };
     private final double offsetAreaX = 156;
-    private final int offsetAreaY = 79;
+    private final double offsetAreaY = 79;
     private final double layoutPlacedStarterX = 678;
     private final double layoutPlacedStarterY = 203;
     private final double fitHeightPlaced = 133;
@@ -81,7 +81,7 @@ public class GamePageController implements Initializable {
     private final BlockingQueue<Object> messageQueue = new LinkedBlockingQueue<>();
     private final ArrayList<Player> players = new ArrayList<>();
     private final ArrayList<ObjectiveCard> objectivesToChose = new ArrayList<>();
-    private int[] selectedToPlace = new int[4];
+    private final int[] selectedToPlace = new int[4];
     @FXML
     private Pane mainPane;
     @FXML
@@ -144,6 +144,9 @@ public class GamePageController implements Initializable {
     //TODO maybe I could not use this internal thread, and make a while true that just reads with GUIMessages.readToGUI() and then process the message
     //TODO check if to front of on top and of pions works as expected
     //TODO check if fade effect works on playerArea - name - state - colorName - winner
+    //TODo check if errors image page handeled correctly
+
+
     /**
      * Starts a new internal thread to listen for messages
      */
@@ -654,8 +657,11 @@ public class GamePageController implements Initializable {
         }
 
         addCardsToCommonArea();
+        onTop.toFront();
         addCommonObjective();
+        onTop.toFront();
         setPage();
+        onTop.toFront();
         setPions(myself);
 
     }
@@ -705,6 +711,7 @@ public class GamePageController implements Initializable {
 
         this.commonArea = update.getPlayer().getCommonArea();
         addCardsToCommonArea();
+        onTop.toFront();
         setPage();
     }
 
@@ -851,6 +858,7 @@ public class GamePageController implements Initializable {
                         myHand.getPlaceableCards().get(i), layoutXCard0 + i * 246, layoutYHand, fitHeightCard, fitWidthCard, this::choseCardToPlace);
                 onTop.toFront();
             }
+            onTop.toFront();
         });
     }
 
@@ -881,6 +889,7 @@ public class GamePageController implements Initializable {
                             playerHand.getPlaceableCards().get(i), layoutXCard0 + i * 246, layoutYHand, fitHeightCard, fitWidthCard, null);
                     onTop.toFront();
                 }
+                onTop.toFront();
             });
         }
     }
@@ -1057,7 +1066,6 @@ public class GamePageController implements Initializable {
             addNewCardToPane(playground, mainPane, clickCounter, selectedCard, card.getID(), card.isFront(), card, layoutPlacedStarterX, layoutPlacedStarterY,
                     fitHeightPlaced, fitWidthPlaced, null);
             GUIMessages.writeToClient(selectedStarterFront);
-            this.selectedCard = null;
         }
     }
 
@@ -1078,7 +1086,6 @@ public class GamePageController implements Initializable {
                     fitWidthCommon, this::turnObjectives);
             onTop.toFront();
             GUIMessages.writeToClient(selectedObjective);
-            this.selectedCard = null;
         }
     }
 
@@ -1163,7 +1170,6 @@ public class GamePageController implements Initializable {
 
             wrong = false;
             GUIMessages.writeToClient(selectedToPlace);
-            this.selectedToPlace = null;
         }
     }
 
@@ -1377,7 +1383,6 @@ public class GamePageController implements Initializable {
                     double[] adjustedPosition = getAdjustedPosition(allPions, positions[score][0], positions[score][1], pion);
                     pion.setLayoutX(adjustedPosition[0]);
                     pion.setLayoutY(adjustedPosition[1]);
-                    pion.toFront();
                 }
             }
         });
@@ -1406,6 +1411,7 @@ public class GamePageController implements Initializable {
      * Displays the placeholders of the available positions in the playerArea
      */
     private void displayPlaceHolders() {
+        System.out.println("Displaying placeholders");
         placeholdersVisible = true;
         ArrayList<Integer[]> availablePositions;
         availablePositions = myPlayerArea.getAvailablePosition();
@@ -1416,14 +1422,20 @@ public class GamePageController implements Initializable {
         double totalWidth = boundingBox[2] - boundingBox[0];
         double totalHeight = boundingBox[3] - boundingBox[1];
 
+        scaleFactor = calculateScaleFactor(totalWidth, totalHeight, availablePositions);
+
+
+
         centerXOffset = (playground.getWidth() - (totalWidth * scaleFactor)) / 2 - boundingBox[0] * scaleFactor;
         centerYOffset = (playground.getHeight() - (totalHeight * scaleFactor)) / 2 - boundingBox[1] * scaleFactor;
+
+
 
         for (Integer[] pos : availablePositions) {
             // Calculate the new layout position of the placeholder
             int newLayoutX = (int) (centerXOffset + pos[1] * offsetAreaX * scaleFactor);
             int newLayoutY = (int) (centerYOffset + pos[0] * offsetAreaY * scaleFactor);
-
+            System.out.println("New layout x: " + newLayoutX + " New layout y: " + newLayoutY);
             addClickablePlaceholder(playground, newLayoutX, newLayoutY, fitHeightPlaced * scaleFactor, fitWidthPlaced * scaleFactor, this::confirmPlaceCard);
         }
     }
@@ -1465,7 +1477,12 @@ public class GamePageController implements Initializable {
                 double totalWidth = boundingBox[2] - boundingBox[0];
                 double totalHeight = boundingBox[3] - boundingBox[1];
 
+                System.out.println("Total width: " + totalWidth + " Total height: " + totalHeight);
+                System.out.println("Widht: " + playground.getWidth() + " Height: " + playground.getHeight());
+
                 scaleFactor = calculateScaleFactor(totalWidth, totalHeight, playerArea.getAvailablePosition());
+
+                System.out.println("Scale factor: " + scaleFactor);
 
                 centerXOffset = (playground.getWidth() - (totalWidth * scaleFactor)) / 2 - boundingBox[0] * scaleFactor;
                 centerYOffset = (playground.getHeight() - (totalHeight * scaleFactor)) / 2 - boundingBox[1] * scaleFactor;
@@ -1520,6 +1537,9 @@ public class GamePageController implements Initializable {
         if (totalWithPlaceholdersWidth > playgroundWidth || totalWithPlaceholdersHeight > playgroundHeight) {
             scaleFactor = Math.min(widthScaleFactor, heightScaleFactor);
         }
+
+        if(scaleFactor < 0)
+            return 1;
 
         return Math.min(scaleFactor, 1.0);
     }

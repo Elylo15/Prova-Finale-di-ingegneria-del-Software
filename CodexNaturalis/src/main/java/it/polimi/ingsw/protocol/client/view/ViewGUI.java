@@ -4,7 +4,6 @@ import it.polimi.ingsw.model.cards.ObjectiveCard;
 import it.polimi.ingsw.protocol.client.view.GUI.controller.SceneManager;
 import it.polimi.ingsw.protocol.client.view.GUI.message.GUIMessages;
 import it.polimi.ingsw.protocol.messages.ConnectionState.availableColorsMessage;
-import it.polimi.ingsw.protocol.messages.ConnectionState.connectionResponseMessage;
 import it.polimi.ingsw.protocol.messages.ConnectionState.unavailableNamesMessage;
 import it.polimi.ingsw.protocol.messages.EndGameState.declareWinnerMessage;
 import it.polimi.ingsw.protocol.messages.PlayerTurnState.updatePlayerMessage;
@@ -12,11 +11,6 @@ import it.polimi.ingsw.protocol.messages.ServerOptionState.serverOptionMessage;
 import it.polimi.ingsw.protocol.messages.currentStateMessage;
 import it.polimi.ingsw.protocol.messages.responseMessage;
 import javafx.application.Platform;
-import javafx.scene.input.KeyCombination;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
-import javafx.scene.text.Font;
-import javafx.stage.Stage;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -38,7 +32,7 @@ public class ViewGUI extends View {
      * It initializes a new GUIMessages object.
      */
     public ViewGUI() {
-        new GUIMessages();
+        GUIMessages.initialize();
     }
 
     /**
@@ -71,9 +65,6 @@ public class ViewGUI extends View {
         // Read the IP address entered by the user from the client
         ip = (String) GUIMessages.readToClient();
 
-        // Print the IP address to the console
-        System.out.println(ip);
-
         // Return the IP address
         return ip;
     }
@@ -90,7 +81,6 @@ public class ViewGUI extends View {
         boolean useSocket;
         Platform.runLater(SceneManager::Choose_Socket_RMI);
         useSocket = (boolean) GUIMessages.readToClient();
-        System.out.println(useSocket);
         return useSocket;
     }
 
@@ -108,7 +98,6 @@ public class ViewGUI extends View {
         GUIMessages.writeToGUI(message);
         Platform.runLater(SceneManager::InsertServerOption);
         newMessage = (serverOptionMessage) GUIMessages.readToClient();
-        System.out.println(newMessage);
         return newMessage;
     }
 
@@ -122,16 +111,8 @@ public class ViewGUI extends View {
         Platform.runLater(SceneManager::Disconnect);
         try {
             Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        } catch (InterruptedException ignore) {
         }
-    }
-
-    @Override
-    public void answerToConnection(connectionResponseMessage message) {
-        //to avoid reading unexpected messages
-        //GUIMessages.clearQueue();
-        //da vedere poi
     }
 
     /**
@@ -148,7 +129,6 @@ public class ViewGUI extends View {
         GUIMessages.writeToGUI(message);  //serialize the message and send it to the gui
         Platform.runLater(SceneManager::unavailableNames); //run the method unavailableNames in SceneManager
         name = (String) GUIMessages.readToClient(); //deserialize the string the method must return
-        System.out.println(name);
         return name;
     }
 
@@ -158,15 +138,22 @@ public class ViewGUI extends View {
      * @param message: responseMessage
      */
     @Override
-    public void answer(responseMessage message) {
+    public boolean answer(responseMessage message) {
         //to avoid reading unexpected messages
+        boolean ok;
         GUIMessages.clearQueue();
-        if (!message.getCorrect())
-            if(Objects.equals(state, "PlaceTurnState"))
+        if (!message.getCorrect()) {
+            if (Objects.equals(state, "PlaceTurnState") || Objects.equals(state, "PickTurnState") ||
+                    Objects.equals(state, "ObjectiveState") || Objects.equals(state, "StarterCardState") || Objects.equals(state, "EndGameState")) {
                 GUIMessages.writeToGUI(message);
-            else
-                Platform.runLater(SceneManager::answer);
-
+                return true;
+            } else {
+                Platform.runLater(SceneManager::answer); //make an image -> something went wrong, try again
+                ok = (boolean) GUIMessages.readToClient();
+                return ok;
+            }
+        }
+        return true;
     }
 
     /**
@@ -182,7 +169,6 @@ public class ViewGUI extends View {
         GUIMessages.writeToGUI(message); //in AvailableColorsController we call GUIMessages.readToGui() to receive this message
         Platform.runLater(SceneManager::availableColors); //run the method availableColors in SceneManager
         color = (String) GUIMessages.readToClient(); //read the object we sent calling GUIMessages.writeToClient() in AvailableColorsController
-        System.out.println(color);
         return color;
     }
 
@@ -198,7 +184,6 @@ public class ViewGUI extends View {
         int number;
         Platform.runLater(SceneManager::expectedPlayers); //run the method expectedPlayers in SceneManager
         number = (int) GUIMessages.readToClient();
-        System.out.println(number);
 
         return number;
     }
@@ -241,9 +226,7 @@ public class ViewGUI extends View {
      */
     @Override
     public int placeStarter() {
-        int side = (int) GUIMessages.readToClient();
-        System.out.println(side);
-        return side;
+        return (int) GUIMessages.readToClient();
 
     }
 
@@ -257,9 +240,7 @@ public class ViewGUI extends View {
     public int chooseObjective(ArrayList<ObjectiveCard> objectives) {
 
         GUIMessages.writeToGUI(objectives);
-        int card = (int) GUIMessages.readToClient();
-        System.out.println(card);
-        return card;
+        return (int) GUIMessages.readToClient();
 
     }
 
@@ -305,7 +286,7 @@ public class ViewGUI extends View {
         GUIMessages.clearQueue();  //remove all elements that could be in the queue
         String name;
         GUIMessages.writeToGUI(message);  //serialize the message and send it to the gui
-        Platform.runLater(SceneManager::unavailableNames); //run the method unavailableNames in SceneManager
+        Platform.runLater(SceneManager::pickNameFA); //run the method unavailableNames in SceneManager
         name = (String) GUIMessages.readToClient(); //deserialize the string the method must return
         System.out.println(name);
         return name;

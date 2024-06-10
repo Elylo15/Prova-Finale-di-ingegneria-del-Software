@@ -25,15 +25,9 @@ import java.util.stream.Collectors;
  * This class is the view of the client, it is used to visualize the game in the command line
  */
 public class ViewCLI extends View {
-    //the purpose of ViewCLI is to handle the interaction with the user and
-    // visualize what he needs to see in order to play the game
-    // by printing it in the command line
-    private HashMap<String,String> playerColor = new HashMap<>();
-
-    //COLORS
-
     // ANSI escape code constants for text color
     private static final String RESET = "\033[0m";  // Reset to default color
+    //COLORS
     private static final String BLACK_TEXT = "\033[0;30m";
     private static final String RED_TEXT = "\033[0;31m";
     private static final String GREEN_TEXT = "\033[0;32m";
@@ -42,25 +36,20 @@ public class ViewCLI extends View {
     private static final String PURPLE_TEXT = "\033[0;35m";
     private static final String CYAN_TEXT = "\033[0;36m";
     private static final String WHITE_TEXT = "\033[0;37m";
-
     // ANSI escape code constants for background color
     private static final String BLACK_BACKGROUND = "\033[40m";
     private static final String RED_BACKGROUND = "\033[41m";
     private static final String GREEN_BACKGROUND = "\033[42m";
     private static final String YELLOW_BACKGROUND = "\033[43m";
-    private static final String BLUE_BACKGROUND = "\033[44m";
     private static final String PURPLE_BACKGROUND = "\033[45m";
     private static final String CYAN_BACKGROUND = "\033[46m";
-    private static final String WHITE_BACKGROUND = "\033[47m";
-
-    private static final String BRIGHT_BLACK_BACKGROUND = "\033[100m";
-    private static final String BRIGHT_RED_BACKGROUND = "\033[101m";
-    private static final String BRIGHT_GREEN_BACKGROUND = "\033[102m";
-    private static final String BRIGHT_YELLOW_BACKGROUND = "\033[103m";
-    private static final String BRIGHT_BLUE_BACKGROUND = "\033[104m";
-    private static final String BRIGHT_PURPLE_BACKGROUND = "\033[105m";
-    private static final String BRIGHT_CYAN_BACKGROUND = "\033[106m";
     private static final String BRIGHT_WHITE_BACKGROUND = "\033[107m";
+
+    //the purpose of ViewCLI is to handle the interaction with the user and
+    // visualize what he needs to see in order to play the game
+    // by printing it in the command line
+
+    private final HashMap<String, String> playerColor = new HashMap<>();
 
     /**
      * Method {@code ViewCLI}: constructs a new ViewCLI
@@ -996,12 +985,12 @@ public class ViewCLI extends View {
      */
     public void answerToConnection(connectionResponseMessage message) {
         if (message.getCorrect())
-            System.out.println( GREEN_TEXT + "the connection has been established" + RESET);
+            System.out.println(GREEN_TEXT + "the connection has been established" + RESET);
     }
 
     /**
      * This method allow the client to choose if he wants to create a new match, join an existing one in waiting,
-     *  load a saved Match or join a running match
+     * load a saved Match or join a running match
      *
      * @param message a serverOption message received from the server
      * @return message with the values chosen by the user
@@ -1071,7 +1060,7 @@ public class ViewCLI extends View {
 
 
         if (!newMatch) {
-             //if newMatch is false proceeds to ask if the user wants to join a running match
+            //if newMatch is false proceeds to ask if the user wants to join a running match
             boolean runMatch;
             while (true) {
                 System.out.print("Join a running match? [YES/no] ");
@@ -1212,9 +1201,10 @@ public class ViewCLI extends View {
      *
      * @param message the message received from the server
      */
-    public void answer(responseMessage message) {
+    public boolean answer(responseMessage message) {
         if (!message.getCorrect())
             System.out.println("You didn't entered a valid value, please try again");
+        return true;
     }
 
     /**
@@ -1232,18 +1222,18 @@ public class ViewCLI extends View {
      */
     public String availableColors(availableColorsMessage message) {
         //the client can call the method view.availableColors passing as a parameter the arraylist of available colors received from server
-        System.out.print("These are the colors that ara avilable:  ");
-        for(int i=0; i<message.getColors().size(); i++) {
-            if(message.getColors().get(i).equals("red")){
+        System.out.print("These are the colors that ara available:  ");
+        for (int i = 0; i < message.getColors().size(); i++) {
+            if (message.getColors().get(i).equals("red")) {
                 System.out.print(RED_TEXT + message.getColors().get(i) + " " + RESET);
             }
-            if(message.getColors().get(i).equals("blue")){
+            if (message.getColors().get(i).equals("blue")) {
                 System.out.print(BLUE_TEXT + message.getColors().get(i) + " " + RESET);
             }
-            if(message.getColors().get(i).equals("purple")){
+            if (message.getColors().get(i).equals("purple")) {
                 System.out.print(PURPLE_TEXT + message.getColors().get(i) + " " + RESET);
             }
-            if(message.getColors().get(i).equals("green")){
+            if (message.getColors().get(i).equals("green")) {
                 System.out.print(GREEN_TEXT + message.getColors().get(i) + " " + RESET);
             }
         }
@@ -1463,85 +1453,88 @@ public class ViewCLI extends View {
             Integer playerObjectives = numObjectives.get(playerName);
             String color = playerColor.get(playerName);
             switch (color) {
-                case ("red") : {
-                    System.out.println(RED_TEXT + "Player Name: " + playerName + "  -  Points: " + playerPoints + "  -  Number of Objectives: " + playerObjectives +RESET);
+                case ("red"): {
+                    System.out.println(RED_TEXT + "Player Name: " + playerName + "  -  Points: " + playerPoints + "  -  Number of Objectives: " + playerObjectives + RESET);
                     break;
                 }
-                case ("blue") : {
+                case ("blue"): {
                     System.out.println(BLUE_TEXT + "Player Name: " + playerName + "  -  Points: " + playerPoints + "  -  Number of Objectives: " + playerObjectives + RESET);
                     break;
-                }case ("green") : {
+                }
+                case ("green"): {
                     System.out.println(GREEN_TEXT + "Player Name: " + playerName + "  -  Points: " + playerPoints + "  -  Number of Objectives: " + playerObjectives + RESET);
                     break;
-                }case ("purple") : {
+                }
+                case ("purple"): {
                     System.out.println(PURPLE_TEXT + "Player Name: " + playerName + "  -  Points: " + playerPoints + "  -  Number of Objectives: " + playerObjectives + RESET);
                 }
             }
         }
 
-           if(win[1].equals("")) {
-               String namePlayer = win[0];
-               if (playerColor.get(namePlayer).equals("red")) {
-                   System.out.println(RED_TEXT + "The winner is: " + namePlayer + RESET);
-               }
-               if (playerColor.get(namePlayer).equals("green")) {
-                   System.out.println(GREEN_TEXT + "The winner is: " + namePlayer + RESET);
-               }
-               if (playerColor.get(namePlayer).equals("purple")) {
-                   System.out.println(PURPLE_TEXT + "The winner is: " + namePlayer + RESET);
-               }
-               if (playerColor.get(namePlayer).equals("blue")) {
-                   System.out.println(BLUE_TEXT + "The winner is: " + namePlayer + RESET);
-               }
-           }
-           else {
-               String namePlayer1 = win[0];
-               String namePlayer2 = win[1];
+        if (win[1].equals("")) {
+            String namePlayer = win[0];
+            if (playerColor.get(namePlayer).equals("red")) {
+                System.out.println(RED_TEXT + "The winner is: " + namePlayer + RESET);
+            }
+            if (playerColor.get(namePlayer).equals("green")) {
+                System.out.println(GREEN_TEXT + "The winner is: " + namePlayer + RESET);
+            }
+            if (playerColor.get(namePlayer).equals("purple")) {
+                System.out.println(PURPLE_TEXT + "The winner is: " + namePlayer + RESET);
+            }
+            if (playerColor.get(namePlayer).equals("blue")) {
+                System.out.println(BLUE_TEXT + "The winner is: " + namePlayer + RESET);
+            }
+        } else {
+            String namePlayer1 = win[0];
+            String namePlayer2 = win[1];
 
-               System.out.print("THE WINNERS ARE:  ");
-               if (playerColor.get(namePlayer1).equals("red")) {
-                   System.out.print(RED_TEXT + namePlayer1 + " "+  RESET);
-               }
-               if (playerColor.get(namePlayer1).equals("green")) {
-                   System.out.print(GREEN_TEXT  + namePlayer1 +" "+ RESET);
-               }
-               if (playerColor.get(namePlayer1).equals("purple")) {
-                   System.out.print(PURPLE_TEXT + namePlayer1 +" "+ RESET);
-               }
-               if (playerColor.get(namePlayer1).equals("blue")) {
-                   System.out.print(BLUE_TEXT + namePlayer1 +" "+ RESET);
-               }
-               if (playerColor.get(namePlayer2).equals("red")) {
-                   System.out.print(RED_TEXT + namePlayer2 + " "+  RESET);
-               }
-               if (playerColor.get(namePlayer2).equals("green")) {
-                   System.out.print(GREEN_TEXT  + namePlayer2 +  " "+RESET);
-               }
-               if (playerColor.get(namePlayer2).equals("purple")) {
-                   System.out.print(PURPLE_TEXT + namePlayer2 +  " "+RESET);
-               }
-               if (playerColor.get(namePlayer2).equals("blue")) {
-                   System.out.print(BLUE_TEXT + namePlayer2 +  " "+RESET);
-               }
-           }
-
-
+            System.out.print("THE WINNERS ARE:  ");
+            winnerPlayer(namePlayer1);
+            winnerPlayer(namePlayer2);
+        }
 
 
     }
-    public String[] findWinner( HashMap<String, Integer> points){
+
+    /**
+     * This method visualizes the winner of the game
+     *
+     * @param namePlayer the name of the winner
+     */
+    private void winnerPlayer(String namePlayer) {
+        if (playerColor.get(namePlayer).equals("red")) {
+            System.out.print(RED_TEXT + namePlayer + " " + RESET);
+        }
+        if (playerColor.get(namePlayer).equals("green")) {
+            System.out.print(GREEN_TEXT + namePlayer + " " + RESET);
+        }
+        if (playerColor.get(namePlayer).equals("purple")) {
+            System.out.print(PURPLE_TEXT + namePlayer + " " + RESET);
+        }
+        if (playerColor.get(namePlayer).equals("blue")) {
+            System.out.print(BLUE_TEXT + namePlayer + " " + RESET);
+        }
+    }
+
+    /**
+     * This method finds the winner of the game
+     *
+     * @param points the points of the players related to their nickname
+     * @return the name of the winner
+     */
+    public String[] findWinner(HashMap<String, Integer> points) {
         Integer maxPoint1 = 0;
 
         String winner1 = "";
         String winner2 = "";
 
         for (String playerName : points.keySet()) {
-            if(maxPoint1<points.get(playerName)){
+            if (maxPoint1 < points.get(playerName)) {
                 maxPoint1 = points.get(playerName);
                 winner1 = playerName;
 
-            }
-            else if(maxPoint1.equals(points.get(playerName))){
+            } else if (maxPoint1.equals(points.get(playerName))) {
 
                 winner2 = playerName;
             }
@@ -1556,8 +1549,14 @@ public class ViewCLI extends View {
         return winners;
 
     }
-    public void savePlayerColor(Player player){
-        if(!playerColor.containsKey(player.getNickname())){
+
+    /**
+     * This method saves the color of the player
+     *
+     * @param player the player whose color has to be saved
+     */
+    public void savePlayerColor(Player player) {
+        if (!playerColor.containsKey(player.getNickname())) {
             playerColor.put(player.getNickname(), player.getColor());
         }
     }
@@ -1591,7 +1590,7 @@ public class ViewCLI extends View {
         //print the available names preceded by a number to identify them
         for (String name : message.getNames()) {
             System.out.println("(" + i + ") " + name);
-            i ++;
+            i++;
         }
         while (true) {
             Scanner scanner = new Scanner(System.in);

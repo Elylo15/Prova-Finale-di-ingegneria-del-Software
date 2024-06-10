@@ -3,10 +3,13 @@ package it.polimi.ingsw.protocol.client.view.GUI;
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.cards.ObjectiveCard;
 import it.polimi.ingsw.model.cards.PlaceableCard;
+import it.polimi.ingsw.protocol.client.view.GUI.message.GUIMessages;
 import javafx.animation.*;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -230,9 +233,9 @@ public class Utilities {
             for (Node node : nodesToRemove) {
                 ImageView imageView = (ImageView) node;
                 if (imageView.getUserData() instanceof Card)
-                    fadeOutTransition(mainPane, imageView, 1);
+                    fadeOutTransition(mainPane, imageView, 1, true);
                 else
-                    fadeOutTransition(mainPane, imageView, 0.5);
+                    fadeOutTransition(mainPane, imageView, 0.5, true);
             }
         });
     }
@@ -305,7 +308,7 @@ public class Utilities {
     /**
      * Fades in the image
      *
-     * @param node      the node to fade in (image, or label)
+     * @param node       the node to fade in (image, or label)
      * @param maxOpacity the maximum opacity
      */
     public static void fadeInTransition(Node node, double maxOpacity) {
@@ -319,16 +322,16 @@ public class Utilities {
     /**
      * Fades out the image and removes it
      *
-     * @param pane       the pane where the image is
-     * @param node      the node to fade out (image, or label)
-     * @param maxOpacity the maximum opacity
+     * @param pane            the pane where the image is
+     * @param node            the node to fade out (image, or label)
+     * @param maxOpacity      the maximum opacity
      * @param removeAfterFade if true, remove the node after the fade out
      */
     public static void fadeOutTransition(Pane pane, Node node, double maxOpacity, boolean removeAfterFade) {
         FadeTransition fadeTransitionOut = new FadeTransition(Duration.seconds(1), node);
         fadeTransitionOut.setFromValue(maxOpacity);
         fadeTransitionOut.setToValue(0.0);
-        if( removeAfterFade)
+        if (removeAfterFade)
             fadeTransitionOut.setOnFinished(event -> pane.getChildren().remove(node));
 
         fadeTransitionOut.play();
@@ -360,6 +363,31 @@ public class Utilities {
         );
 
         sequentialTransition.play();
+    }
+
+    public static void submitName(ImageView submitButton, TextField nameToChoose) {
+        submitButton.setOnMouseClicked(event -> {
+            if (nameToChoose.getText().isEmpty()) {
+                Label errorLabel = new Label();
+                errorLabel.setStyle("-fx-text-fill: #351f17;");
+                errorLabel.setText("You have to choose!");
+                errorLabel.setPrefWidth(874);
+                errorLabel.setPrefHeight(217);
+                errorLabel.setLayoutX(859);
+                errorLabel.setLayoutY(740);
+                errorLabel.setVisible(true);
+            } else if (nameToChoose.getText().length() >= 10) {
+                Label errorLabel = new Label();
+                errorLabel.setStyle("-fx-text-fill: #351f17;");
+                errorLabel.setText("Your name is too long!");
+                errorLabel.setPrefWidth(874);
+                errorLabel.setPrefHeight(217);
+                errorLabel.setLayoutX(859);
+                errorLabel.setLayoutY(740);
+                errorLabel.setVisible(true);
+            } else
+                GUIMessages.writeToClient(nameToChoose.getText());
+        });
     }
 
 }
