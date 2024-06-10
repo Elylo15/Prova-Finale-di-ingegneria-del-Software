@@ -481,7 +481,7 @@ public class Client implements Runnable {
                         case "EndGameState": {
                             declareWinnerMessage end = getController().endGame();
                             getView().endGame(end);
-                            throw new Exception("Game ended.");
+//                            throw new Exception("Game ended.");
                         }
 
                         case "ConnectionFAState": {

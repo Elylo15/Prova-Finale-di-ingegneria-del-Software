@@ -22,9 +22,9 @@ public class ExpectedPlayersController {
     @FXML
     private void initialize() {
 
-        hooverEffect(two, null, 1.1);
-        hooverEffect(three, null, 1.1);
-        hooverEffect(four, null, 1.1);
+        hooverEffect(two, 1.1);
+        hooverEffect(three, 1.1);
+        hooverEffect(four, 1.1);
 
         //serialize the number to send corresponding on the button clicked
         two.setOnMouseClicked(event -> GUIMessages.writeToClient(2));

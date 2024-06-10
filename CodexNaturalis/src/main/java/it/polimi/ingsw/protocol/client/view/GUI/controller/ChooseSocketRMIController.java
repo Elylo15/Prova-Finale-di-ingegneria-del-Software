@@ -25,8 +25,8 @@ public class ChooseSocketRMIController {
      */
     @FXML
     private void initialize() {
-        hooverEffect(socketButton, null, 1.05);
-        hooverEffect(rmiButton, null, 1.05);
+        hooverEffect(socketButton, 1.05);
+        hooverEffect(rmiButton, 1.05);
 
         socketButton.setOnMouseClicked(event -> {
             //System.out.println("Socket");

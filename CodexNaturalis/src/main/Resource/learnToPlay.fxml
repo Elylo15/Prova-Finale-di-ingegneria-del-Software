@@ -8,6 +8,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 
+<?import javafx.scene.control.Button?>
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.protocol.client.view.GUI.controller.LearnToPlay">
     <BorderPane prefHeight="1080.0" prefWidth="1920.0">
         <center>
@@ -47,6 +48,8 @@
                         <Font name="Fantasy Script" size="54.0" />
                     </font>
                 </Label>
+                <Button fx:id="mainPane2" prefHeight="1080.0" prefWidth="1920.0" BorderPane.alignment="CENTER" >
+                </Button>
             </Pane>
         </center>
     </BorderPane>

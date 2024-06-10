@@ -39,19 +39,19 @@ public class AvailableColorsController {
             if (message.getColors().get(i).equalsIgnoreCase("red")) {
                 red.setDisable(false);
                 red.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Colors/red.png"))));
-                hooverEffect(red, null, 1.2);
+                hooverEffect(red, 1.2);
             } else if (message.getColors().get(i).equalsIgnoreCase("green")) {
                 green.setDisable(false);
                 green.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Colors/green.png"))));
-                hooverEffect(green, null, 1.2);
+                hooverEffect(green, 1.2);
             } else if (message.getColors().get(i).equalsIgnoreCase("blue")) {
                 blue.setDisable(false);
                 blue.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Colors/blue.png"))));
-                hooverEffect(blue, null, 1.2);
+                hooverEffect(blue, 1.2);
             } else if (message.getColors().get(i).equalsIgnoreCase("purple")) {
                 purple.setDisable(false);
                 purple.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Colors/purple.png"))));
-                hooverEffect(purple, null, 1.2);
+                hooverEffect(purple, 1.2);
             }
         }
         //send the result

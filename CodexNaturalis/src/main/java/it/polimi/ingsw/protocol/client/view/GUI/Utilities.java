@@ -112,15 +112,20 @@ public class Utilities {
      * When the mouse exits the imageView, it makes it smaller
      *
      * @param node         the node to apply the effect to
-     * @param selectedCard the card previously selected
      * @param scale        the scale factor
      */
-    public static void hooverEffect(Node node, Node selectedCard, double scale) {
+    public static void hooverEffect(Node node, double scale) {
         node.setOnMouseEntered(e -> makeBiggerTransition(node, scale));
-        node.setOnMouseExited(e -> {
-            if (selectedCard != node)
-                makeSmallerTransition(node);
-        });
+        node.setOnMouseExited(e -> makeSmallerTransition(node));
+    }
+
+    /**
+     * Removes the hoover effect from the node
+     * @param node the node to remove the effect from
+     */
+    public static void removeHooverEffect(Node node) {
+        node.setOnMouseEntered(null);
+        node.setOnMouseExited(null);
     }
 
     /**

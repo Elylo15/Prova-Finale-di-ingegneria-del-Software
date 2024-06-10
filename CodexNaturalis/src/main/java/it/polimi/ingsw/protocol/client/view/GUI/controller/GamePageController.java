@@ -129,6 +129,7 @@ public class GamePageController implements Initializable {
     private boolean placeholdersVisible = false;
     private currentStateMessage currentStateMessageSaved;
     private boolean wrong = false;
+    private boolean first = true;
 
 
     /**
@@ -198,42 +199,44 @@ public class GamePageController implements Initializable {
                 currentStateMessageSaved = currentStateMessage;
                 caseCurrentStateMessage(currentStateMessageSaved);
             }
-            case ArrayList<?> list -> {
-                if (Objects.equals(currentState, "ObjectiveState") && !list.isEmpty() && list.getFirst() instanceof ObjectiveCard) {
-                    playSoundEffect("/Audio/you.mp3");
-
-                    objectivesToChose.add((ObjectiveCard) list.get(0));
-                    objectivesToChose.add((ObjectiveCard) list.get(1));
-                    objectiveCase();
-                    setState(currentStateMessageSaved.getPlayer().getColor());
-                    choosePopUp(currentStateMessageSaved.getPlayer().getColor());
-                }
-            }
-            case updatePlayerMessage update -> updatePlayerCase(update);
-            case responseMessage responseMessage -> {
-                if (!responseMessage.getCorrect()) {
-                    wrong = true;
-                    wrongPopUp(currentStateMessageSaved.getPlayer().getColor());
-
-                    playSoundEffect("/Audio/wrong.mp3");
-
-                    caseCurrentStateMessage(currentStateMessageSaved);
-                }
-            }
-            case declareWinnerMessage declareWinnerMessage -> {
-                display = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/SocketRmi/rotate.png"))));
-                display.setFitWidth(124);
-                display.setFitHeight(106);
-                display.setLayoutX(1473);
-                display.setLayoutY(108);
-                mainPane.getChildren().add(display);
-                rotateEffect(display, 3);
-
-                winner(declareWinnerMessage);
-                seeWinner();
-            }
-            default -> throw new IllegalStateException("Unexpected value: " + message);
+            case ArrayList<?> objects -> handleObjectiveMessage(objects);
+            case updatePlayerMessage updatePlayerMessage -> updatePlayerCase(updatePlayerMessage);
+            case responseMessage responseMessage -> handleResponseMessage(responseMessage);
+            case declareWinnerMessage declareWinnerMessage -> displayWinner(declareWinnerMessage);
+            case null, default -> throw new IllegalStateException("Unexpected message type: " + message.getClass());
         }
+    }
+
+    private void handleObjectiveMessage(ArrayList<?> list) {
+        if (Objects.equals(currentState, "ObjectiveState") && !list.isEmpty() && list.get(0) instanceof ObjectiveCard) {
+            playSoundEffect("/Audio/you.mp3");
+            objectivesToChose.add((ObjectiveCard) list.get(0));
+            objectivesToChose.add((ObjectiveCard) list.get(1));
+            objectiveCase();
+            setState(currentStateMessageSaved.getPlayer().getColor());
+            choosePopUp(currentStateMessageSaved.getPlayer().getColor());
+        }
+    }
+
+    private void handleResponseMessage(responseMessage responseMessage) {
+        if (!responseMessage.getCorrect()) {
+            wrong = true;
+            wrongPopUp(currentStateMessageSaved.getPlayer().getColor());
+            playSoundEffect("/Audio/wrong.mp3");
+            caseCurrentStateMessage(currentStateMessageSaved);
+        }
+    }
+
+    private void displayWinner(declareWinnerMessage declareWinnerMessage) {
+        display = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/SocketRmi/rotate.png"))));
+        display.setFitWidth(124);
+        display.setFitHeight(106);
+        display.setLayoutX(1473);
+        display.setLayoutY(108);
+        mainPane.getChildren().add(display);
+        rotateEffect(display, 3);
+        winner(declareWinnerMessage);
+        seeWinner();
     }
 
     /**
@@ -291,9 +294,8 @@ public class GamePageController implements Initializable {
 
                 winnerLabel.setText(winners.getFirst());
             } else {
-                winner = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Winner/winTwo.png"))));
-                winnerLabel.setText(winners.get(0) + "\n" + winners.get(1));
-
+                winner.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Winner/winTwo.png"))));
+                winnerLabel.setText(winners.getFirst() + "\n" + winners.get(1));
             }
             mainPane.getChildren().add(winner);
             fadeInTransition(winner, 1.0);
@@ -430,7 +432,6 @@ public class GamePageController implements Initializable {
                 Media media = new Media(audioFile);
                 MediaPlayer mediaPlayer = new MediaPlayer(media);
                 mediaPlayer.play();
-
                 setState(currentStateMessage.getPlayer().getColor());
                 starterCase();
                 choosePopUp(currentStateMessage.getPlayer().getColor());
@@ -450,6 +451,8 @@ public class GamePageController implements Initializable {
         } else {
             setStateNotPlaying(currentStateMessage.getCurrentPlayer().getColor());
         }
+
+
     }
 
     /**
@@ -659,7 +662,13 @@ public class GamePageController implements Initializable {
             setPions(currentPlayer);
         }
 
-        addCardsToCommonArea();
+        if(!Objects.equals(currentState, "ObjectiveState") && !Objects.equals(currentState, "StarterCardState") || first) {
+            addCardsToCommonArea();
+            first = false;
+        } else if (Objects.equals(currentState, "PlaceTurnState") || Objects.equals(currentState, "PickTurnState")) {
+           addCardsToCommonArea();
+        }
+
         addCommonObjective();
         setPage();
         setPions(myself);
@@ -710,7 +719,8 @@ public class GamePageController implements Initializable {
         }
 
         this.commonArea = update.getPlayer().getCommonArea();
-        addCardsToCommonArea();
+        if(!Objects.equals(currentState, "ObjectiveState") && !Objects.equals(currentState, "StarterCardState"))
+            addCardsToCommonArea();
         setPage();
     }
 
@@ -826,10 +836,12 @@ public class GamePageController implements Initializable {
     private void addCommonObjective() {
         Platform.runLater(() -> {
             if (commonObjectives != null && !commonObjectives.isEmpty()) {
-                addNewCardToPane(mainPane, commonObjectives.get(0).getID(), commonObjectives.get(0).isFront(), commonObjectives.get(0), layoutXObjective,
+                addNewCardToPane(mainPane, commonObjectives.get(0).getID(), true, commonObjectives.get(0), layoutXObjective,
                         layoutYObj0, fitHeightCommon, fitWidthCommon, this::turnObjectives);
-                addNewCardToPane(mainPane, commonObjectives.get(1).getID(), commonObjectives.get(1).isFront(), commonObjectives.get(1), layoutXObjective,
+                commonObjectives.get(0).setFront(true);
+                addNewCardToPane(mainPane, commonObjectives.get(1).getID(), true, commonObjectives.get(1), layoutXObjective,
                         layoutYObj1, fitHeightCommon, fitWidthCommon, this::turnObjectives);
+                commonObjectives.get(1).setFront(true);
             }
         });
     }
@@ -839,8 +851,11 @@ public class GamePageController implements Initializable {
      */
     private void addCardsToHand() {
         Platform.runLater(() -> {
-            if (myHand.getPlaceableCards().size() < 3)
-                removeCardFromPosition(layoutXCard2, layoutYHand);
+            if (myHand.getPlaceableCards().size() < 3) {
+//                removeCardFromPosition(layoutXCard2, layoutYHand);
+                ImageView card = getCardFromPosition(layoutXCard2, layoutYHand);
+                fadeOutTransition(mainPane, card, 1.0, true);
+            }
 
             for (int i = 0; myHand.getPlaceableCards().size() > i; i++) {
                 addNewCardToPane(mainPane, myHand.getPlaceableCards().get(i).getID(), true,
@@ -848,6 +863,8 @@ public class GamePageController implements Initializable {
             }
         });
     }
+
+
 
     /**
      * Displays the player's personal objective
@@ -863,8 +880,11 @@ public class GamePageController implements Initializable {
         if (players.get(clickCounter) != null) {
             PlayerHand playerHand = players.get(clickCounter).getPlayerHand();
             Platform.runLater(() -> {
-                if (playerHand.getPlaceableCards().size() < 3)
-                    removeCardFromPosition(layoutXCard2, layoutYHand);
+                if (playerHand.getPlaceableCards().size() < 3) {
+//                    removeCardFromPosition(layoutXCard2, layoutYHand);
+                    ImageView card = getCardFromPosition(layoutXCard2, layoutYHand);
+                    fadeOutTransition(mainPane, card, 1.0, true);
+                }
 
                 for (int i = 0; i < playerHand.getPlaceableCards().size(); i++) {
                     addNewCardToPane(mainPane, playerHand.getPlaceableCards().get(i).getID(), false,
@@ -899,8 +919,10 @@ public class GamePageController implements Initializable {
         Platform.runLater(() -> {
             addNewCardToPane(mainPane, objectivesToChose.get(0).getID(), true, objectivesToChose.get(0), layoutXChoiceObjective1, layoutYHand, fitHeightCard,
                     fitWidthCard, this::chooseObjective);
+            objectivesToChose.get(0).setFront(true);
             addNewCardToPane(mainPane, objectivesToChose.get(1).getID(), true, objectivesToChose.get(1), layoutXChoiceObjective2, layoutYHand, fitHeightCard,
                     fitWidthCard, this::chooseObjective);
+            objectivesToChose.get(1).setFront(true);
         });
     }
 
@@ -952,6 +974,19 @@ public class GamePageController implements Initializable {
             pane.getChildren().add(imageView);
             fadeInTransition(imageView, 0.5);
         }
+    }
+
+    private ImageView getCardFromPosition(double layoutX, double layoutY) {
+        ImageView imageView = null;
+        for (Node node : mainPane.getChildren()) {
+            if (node instanceof ImageView currentImageView) {
+                if (currentImageView.getLayoutX() == layoutX && currentImageView.getLayoutY() == layoutY) {
+                    imageView = currentImageView;
+                    break;
+                }
+            }
+        }
+        return imageView;
     }
 
     /**
@@ -1050,9 +1085,9 @@ public class GamePageController implements Initializable {
                 newCard.setOnMouseClicked(eventHandler);
             }
             if(card instanceof ObjectiveCard && pane == mainPane && clickCounter != -1)
-                hooverEffect(newCard, selectedCard, 1.05 );
+                hooverEffect(newCard,1.05 );
             else if (card instanceof ObjectiveCard || card instanceof PlaceableCard && pane == mainPane && clickCounter == -1)
-                hooverEffect(newCard, selectedCard, 1.05);
+                hooverEffect(newCard, 1.05);
 
             Platform.runLater(() -> {
                 pane.getChildren().add(newCard);
@@ -1084,9 +1119,12 @@ public class GamePageController implements Initializable {
 
             if (event.getClickCount() == 1) {
 
-                if (selectedCard != null)
+                if (selectedCard != null) {
                     makeSmallerTransition(selectedCard);
+                    hooverEffect(selectedCard, 1.05);
+                }
 
+                removeHooverEffect(clickedCard);
                 makeBiggerTransition(clickedCard, 1.05);
                 this.selectedCard = clickedCard;
 
@@ -1118,8 +1156,10 @@ public class GamePageController implements Initializable {
         if (event.getClickCount() == 1) {
             if (selectedCard != null) {
                 makeSmallerTransition(selectedCard);
+                hooverEffect(selectedCard, 1.05);
             }
 
+            removeHooverEffect(clickedCard);
             makeBiggerTransition(clickedCard, 1.05);
             this.selectedCard = clickedCard;
 
@@ -1166,11 +1206,13 @@ public class GamePageController implements Initializable {
     private void confirmPlaceObjective(MouseEvent event) {
         if (selectedCard != null) {
             ImageView image = (ImageView) event.getSource();
-            fadeOutTransition(mainPane, image, 0.5, true);
-            removeCardFromPosition(layoutXChoiceObjective1, layoutYHand);
-            removeCardFromPosition(layoutXChoiceObjective2, layoutYHand);
             ObjectiveCard card = (ObjectiveCard) selectedCard.getUserData();
-            addNewCardToPane(mainPane, card.getID(), true, card, layoutXObjective, layoutYObjMy, fitHeightCommon,
+            fadeOutTransition(mainPane, image, 0.5, true);
+            ImageView obj1 = getCardFromPosition(layoutXChoiceObjective1, layoutYHand);
+            ImageView obj2 = getCardFromPosition(layoutXChoiceObjective2, layoutYHand);
+            fadeOutTransition(mainPane, obj1, 1, true);
+            fadeOutTransition(mainPane, obj2, 1, true);
+            addNewCardToPane(mainPane, card.getID(), card.isFront(), card, layoutXObjective, layoutYObjMy, fitHeightCommon,
                     fitWidthCommon, this::turnObjectives);
             GUIMessages.writeToClient(selectedObjective);
             this.selectedCard = null;
@@ -1192,8 +1234,10 @@ public class GamePageController implements Initializable {
             if (event.getClickCount() == 1 && Objects.equals(currentState, "PlaceTurnState") && Objects.equals(currentPlayerNickname, myself.getNickname())) {
                 if (selectedCard != null) {
                     makeSmallerTransition(selectedCard);
+                    hooverEffect(selectedCard, 1.05);
                 }
 
+                removeHooverEffect(clickedCard);
                 makeBiggerTransition(clickedCard, 1.05);
                 this.selectedCard = clickedCard;
 
@@ -1277,7 +1321,6 @@ public class GamePageController implements Initializable {
                 makeSmallerTransition(selectedCard);
             }
 
-            makeBiggerTransition(clickedCard, 1.05);
             this.selectedCard = clickedCard;
             if (cardID == commonArea.getD1().getList().getFirst().getID())
                 this.selectedPick = 1;
@@ -1504,7 +1547,7 @@ public class GamePageController implements Initializable {
         ArrayList<Integer[]> availablePositions;
         availablePositions = myPlayerArea.getAvailablePosition();
 
-        if (boundingBox == null)
+        if(boundingBox == null)
             boundingBox = calculateBoundingBox(allCards);
 
         double totalWidth = boundingBox[2] - boundingBox[0];
@@ -1519,7 +1562,7 @@ public class GamePageController implements Initializable {
             // Calculate the new layout position of the placeholder
             double newLayoutX =  (centerXOffset + pos[1] * offsetAreaX * scaleFactor);
             double newLayoutY = (centerYOffset + pos[0] * offsetAreaY * scaleFactor);
-            System.out.println("New layout x: " + newLayoutX + " New layout y: " + newLayoutY);
+
             addClickablePlaceholder(playground, newLayoutX, newLayoutY, fitHeightPlaced * scaleFactor, fitWidthPlaced * scaleFactor, this::confirmPlaceCard);
         }
     }
@@ -1546,50 +1589,30 @@ public class GamePageController implements Initializable {
      */
     private void displayPlayerArea(PlayerArea playerArea) {
         Platform.runLater(() -> {
-            // Remove all existing cards from the player area
-            playground.getChildren().forEach(node -> {
-                if (node instanceof ImageView && node.getUserData() instanceof PlaceableCard) {
-                    fadeOutTransition(playground, node, 1.0, true); // fade out but keep the node
-                }
-            });
 
-            FadeTransition delayTransition = new FadeTransition(Duration.seconds(1));
-            delayTransition.setOnFinished(event -> {
-                allCards = playerArea.getAllCards();
+            playground.getChildren().removeIf(node -> node instanceof ImageView && node.getUserData() instanceof PlaceableCard);
 
-                boundingBox = calculateBoundingBox(allCards);
-                double totalWidth = boundingBox[2] - boundingBox[0];
-                double totalHeight = boundingBox[3] - boundingBox[1];
+            allCards = playerArea.getAllCards();
 
-                System.out.println("Total width: " + totalWidth + " Total height: " + totalHeight);
-                System.out.println("Width: " + playground.getWidth() + " Height: " + playground.getHeight());
+            boundingBox = calculateBoundingBox(allCards);
+            double totalWidth = boundingBox[2] - boundingBox[0];
+            double totalHeight = boundingBox[3] - boundingBox[1];
+            scaleFactor = calculateScaleFactor(totalWidth, totalHeight, playerArea.getAvailablePosition());
+            centerXOffset = (playground.getWidth() - (totalWidth * scaleFactor)) / 2 - boundingBox[0] * scaleFactor;
+            centerYOffset = (playground.getHeight() - (totalHeight * scaleFactor)) / 2 - boundingBox[1] * scaleFactor;
 
-                scaleFactor = calculateScaleFactor(totalWidth, totalHeight, playerArea.getAvailablePosition());
+            for (PlaceableCard card : allCards) {
+                double layoutX = (calculateLayoutX(card) * scaleFactor + centerXOffset);
+                double layoutY = (calculateLayoutY(card) * scaleFactor + centerYOffset);
 
-                System.out.println("Scale factor: " + scaleFactor);
-
-                centerXOffset = (playground.getWidth() - (totalWidth * scaleFactor)) / 2 - boundingBox[0] * scaleFactor;
-                centerYOffset = (playground.getHeight() - (totalHeight * scaleFactor)) / 2 - boundingBox[1] * scaleFactor;
-
-                for (PlaceableCard card : allCards) {
-                    double layoutX = (calculateLayoutX(card) * scaleFactor + centerXOffset);
-                    double layoutY = (calculateLayoutY(card) * scaleFactor + centerYOffset);
-
-                    ImageView cardImageView = createCardImageView(card.getID(), card.isFront(), card, layoutX, layoutY, fitHeightPlaced * scaleFactor, fitWidthPlaced * scaleFactor);
-                    cardImageView.setOpacity(0.0);
-                    playground.getChildren().add(cardImageView);
-                    adjustCardZOrder(cardImageView, card);
-
-                    fadeInTransition(cardImageView, 1.0);
-
-                    // Adjust z-order
-
-                }
-
-            });
-            delayTransition.play();
+                ImageView cardImageView = createCardImageView(card.getID(), card.isFront(), card, layoutX, layoutY, fitHeightPlaced, fitWidthPlaced);
+                playground.getChildren().add(cardImageView);
+                cardImageView.toFront();
+                adjustCardZOrder(cardImageView, card);
+            }
         });
     }
+
 
     /**
      * Calculates the scale factor based on the total dimensions of the cards and the available positions
@@ -1622,10 +1645,6 @@ public class GamePageController implements Initializable {
         if (totalWithPlaceholdersWidth > playgroundWidth || totalWithPlaceholdersHeight > playgroundHeight) {
             scaleFactor = Math.min(widthScaleFactor, heightScaleFactor);
         }
-
-        //impossible, just debugging
-        if(scaleFactor < 0)
-            return 1;
 
         return Math.min(scaleFactor, 1.0);
     }
@@ -1664,10 +1683,20 @@ public class GamePageController implements Initializable {
             double posX = calculateLayoutX(card);
             double posY = calculateLayoutY(card);
 
-            if (posX < minX) minX = posX;
-            if (posY < minY) minY = posY;
-            if (posX + fitWidthPlaced > maxX) maxX = posX + fitWidthPlaced;
-            if (posY + fitHeightPlaced > maxY) maxY = posY + fitHeightPlaced;
+            // Update minX, minY, maxX, maxY based on the card's position and size
+            minX = Math.min(minX, posX);
+            minY = Math.min(minY, posY);
+            maxX = Math.max(maxX, posX + fitWidthPlaced); // Consider the width of the card
+            maxY = Math.max(maxY, posY + fitHeightPlaced); // Consider the height of the card
+        }
+
+        // If no cards are present, set default values
+        if (minX == Double.MAX_VALUE || minY == Double.MAX_VALUE || maxX == Double.MIN_VALUE || maxY == Double.MIN_VALUE) {
+            minX = minY = 0.0;
+            maxX = 200.0;
+            maxY = 133.0;
+//            maxX = 0.0;
+//            maxY = 0.0;
         }
 
         return new double[]{minX, minY, maxX, maxY};

@@ -39,10 +39,10 @@ public class InsertServerOptionController {
     private void initialize() {
         this.serverOptionMessage = (serverOptionMessage) GUIMessages.readToGUI();
 
-        hooverEffect(new_match, null, 1.05);
-        hooverEffect(join_match, null, 1.05);
-        hooverEffect(load_match, null, 1.05);
-        hooverEffect(join_running_match, null, 1.05);
+        hooverEffect(new_match, 1.05);
+        hooverEffect(join_match, 1.05);
+        hooverEffect(load_match, 1.05);
+        hooverEffect(join_running_match, 1.05);
 
         rotateEffect(rotate, 3);
 
