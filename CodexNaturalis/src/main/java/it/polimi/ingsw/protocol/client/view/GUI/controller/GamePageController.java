@@ -36,7 +36,6 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import static it.polimi.ingsw.protocol.client.view.GUI.Utilities.*;
-import static it.polimi.ingsw.protocol.client.view.GUI.Utilities.fadeOutTransition;
 import static it.polimi.ingsw.protocol.client.view.GUI.controller.SceneManager.playSoundEffect;
 
 public class GamePageController implements Initializable {
@@ -110,10 +109,6 @@ public class GamePageController implements Initializable {
     private ImageView nextPlayer;
     @FXML
     private ImageView colorName;
-    private double scaleFactor = 1.0;
-    private double[] boundingBox;
-    private double centerXOffset = 0;
-    private double centerYOffset = 0;
     private ImageView winner;
     private ImageView red;
     private ImageView blue;
@@ -130,17 +125,16 @@ public class GamePageController implements Initializable {
     private CommonArea commonArea;
     private ArrayList<ObjectiveCard> commonObjectives;
     private String currentState;
-    private ArrayList<PlaceableCard> allCards = new ArrayList<>();
     private int clickCounter = -1;
     private boolean isLastTurn = false;
     private boolean firstTimePlace = true;
     private int selectedStarterFront;
     private int selectedPick;
     private int selectedObjective;
-    private boolean placeholdersVisible = false;
     private currentStateMessage currentStateMessageSaved;
     private boolean wrong = false;
     private boolean first = true;
+    private boolean isUpdate;
 
 
     /**
@@ -157,13 +151,6 @@ public class GamePageController implements Initializable {
         startMessageListener();
         startMessageProcessor();
     }
-
-    //TODO maybe I could not use this internal thread, and make a while true that just reads with GUIMessages.readToGUI() and then process the message
-    //TODO check if to front of on top and of pions works as expected
-    //TODO check if fade effect works on playerArea - name - state - colorName - winner
-    //TODo check if errors image page handled correctly
-    //TODO check if placeholders
-    //TODO check if learnToPlay Works
 
     /**
      * Starts a new internal thread to listen for messages
@@ -217,7 +204,7 @@ public class GamePageController implements Initializable {
             case updatePlayerMessage updatePlayerMessage -> updatePlayerCase(updatePlayerMessage);
             case responseMessage responseMessage -> handleResponseMessage(responseMessage);
             case declareWinnerMessage declareWinnerMessage -> displayWinner(declareWinnerMessage);
-            default -> throw new IllegalStateException("Unexpected message");
+            default -> System.out.println("Unknown message received");
         }
     }
 
@@ -232,6 +219,12 @@ public class GamePageController implements Initializable {
         }
     }
 
+    /**
+     * Handles the responseMessage received from the server
+     * Displays a pop-up indicating the player to retry if the response is incorrect
+     *
+     * @param responseMessage the responseMessage received from the server
+     */
     private void handleResponseMessage(responseMessage responseMessage) {
         if (!responseMessage.getCorrect()) {
             wrong = true;
@@ -241,6 +234,11 @@ public class GamePageController implements Initializable {
         }
     }
 
+    /**
+     * Displays the winner of the game
+     *
+     * @param declareWinnerMessage the message containing the winner
+     */
     private void displayWinner(declareWinnerMessage declareWinnerMessage) {
         rotate.removeEventHandler(MouseEvent.MOUSE_CLICKED, this::openOnline);
         rotate.addEventHandler(MouseEvent.MOUSE_CLICKED, this::hideSeeWinner);
@@ -264,8 +262,6 @@ public class GamePageController implements Initializable {
             fadeInTransition(playerInfoLabel, 0.8);
         }
     }
-
-
 
     /**
      * Displays the winner of the game and the player info
@@ -417,6 +413,7 @@ public class GamePageController implements Initializable {
      * @param currentStateMessage the currentStateMessage received from the server
      */
     private void caseCurrentStateMessage(currentStateMessage currentStateMessage) {
+        isUpdate = false;
         this.currentState = currentStateMessage.getStateName();
         isLastTurn = currentStateMessage.isLastTurn();
         currentStateCase(currentStateMessage);
@@ -661,11 +658,11 @@ public class GamePageController implements Initializable {
             setPions(currentPlayer);
         }
 
-        if(!Objects.equals(currentState, "ObjectiveState") && !Objects.equals(currentState, "StarterCardState") || first) {
+        if (!Objects.equals(currentState, "ObjectiveState") && !Objects.equals(currentState, "StarterCardState") || first) {
             addCardsToCommonArea();
             first = false;
         } else if (Objects.equals(currentState, "PlaceTurnState") || Objects.equals(currentState, "PickTurnState")) {
-           addCardsToCommonArea();
+            addCardsToCommonArea();
         }
 
         addCommonObjective();
@@ -701,7 +698,7 @@ public class GamePageController implements Initializable {
      * @param update updatePlayerMessage received from the server
      */
     private void updatePlayerCase(updatePlayerMessage update) {
-
+        isUpdate = true;
         Player currentPlayer = update.getPlayer();
         if (!Objects.equals(myself.getNickname(), currentPlayer.getNickname())) {
             if (existentPlayer(currentPlayer.getNickname()))
@@ -718,13 +715,14 @@ public class GamePageController implements Initializable {
         }
 
         this.commonArea = update.getPlayer().getCommonArea();
-        if(!Objects.equals(currentState, "ObjectiveState") && !Objects.equals(currentState, "StarterCardState"))
+        if (!Objects.equals(currentState, "ObjectiveState") && !Objects.equals(currentState, "StarterCardState"))
             addCardsToCommonArea();
         setPage();
     }
 
     /**
      * Display the new visualized player's nickname with a fade out of the previous one, and a fade in of the new one
+     *
      * @param newNickname the new nickname to display
      */
     private void setPlayerNameWithFade(String newNickname) {
@@ -766,14 +764,11 @@ public class GamePageController implements Initializable {
             if (clickCounter == -1) {
                 addCardsToHand();
                 addMyObjective();
-                displayPlayerArea(myPlayerArea);
-                if ((Objects.equals(currentState, "PlaceTurnState") && Objects.equals(myself.getNickname(), currentPlayerNickname) && !placeholdersVisible) || wrong)
-                    displayPlaceHolders();
-                else if (placeholdersVisible)
-                    removeAllPlaceholders();
+                if (Objects.equals(currentState, "PlaceTurnState") && Objects.equals(myself.getNickname(), currentPlayerNickname) || wrong && !isUpdate)
+                    displayPlayerAreaAndPlaceholders(myPlayerArea);
+                else
+                    displayPlayerArea(myPlayerArea);
             } else {
-                if (placeholdersVisible)
-                    removeAllPlaceholders();
                 addPlayerCardsToHand();
                 addPlayerObjective();
                 displayPlayerArea(players.get(clickCounter).getPlayerArea());
@@ -861,8 +856,6 @@ public class GamePageController implements Initializable {
         });
     }
 
-
-
     /**
      * Displays the player's personal objective
      */
@@ -935,28 +928,14 @@ public class GamePageController implements Initializable {
      * @param eventHandler the event handler to call when the placeholder is clicked
      */
     private void addClickablePlaceholder(Pane pane, double layoutX, double layoutY, double fitHeight, double fitWidth, EventHandler<MouseEvent> eventHandler) {
-        Random random = new Random();
-        int color = random.nextInt(5);
-
-        Image image = switch (color) {
-            case 0 ->
-                    new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Placeholders/blue.png")));
-            case 1 ->
-                    new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Placeholders/green.png")));
-            case 2 -> new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Placeholders/red.png")));
-            case 3 ->
-                    new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Placeholders/yellow.png")));
-            case 4 ->
-                    new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Placeholders/purple.png")));
-            default -> null;
-        };
+        Image image = randomColorForPlaceholder();
 
         // Check if image with the same position and size already exists
         boolean exists = pane.getChildren().stream()
                 .filter(node -> node instanceof ImageView)
                 .anyMatch(node -> {
                     ImageView imageView = (ImageView) node;
-                    return  imageView.getLayoutX() == layoutX && imageView.getLayoutY() == layoutY &&
+                    return imageView.getLayoutX() == layoutX && imageView.getLayoutY() == layoutY &&
                             imageView.getFitWidth() == fitWidth && imageView.getFitHeight() == fitHeight;
                 });
 
@@ -973,6 +952,23 @@ public class GamePageController implements Initializable {
         }
     }
 
+    private Image randomColorForPlaceholder() {
+        Random random = new Random();
+        int color = random.nextInt(5);
+
+        return switch (color) {
+            case 0 ->
+                    new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Placeholders/blue.png")));
+            case 1 ->
+                    new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Placeholders/green.png")));
+            case 2 -> new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Placeholders/red.png")));
+            case 3 ->
+                    new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Placeholders/yellow.png")));
+            case 4 ->
+                    new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Placeholders/purple.png")));
+            default -> null;
+        };
+    }
 
 
     /**
@@ -1030,7 +1026,7 @@ public class GamePageController implements Initializable {
             // Remove nodes after iteration
             for (Node node : nodesToRemove) {
                 ImageView imageView = (ImageView) node;
-                if(imageView.getUserData() instanceof Card)
+                if (imageView.getUserData() instanceof Card)
                     fadeOutTransition(mainPane, imageView, 1, true);
                 else
                     fadeOutTransition(mainPane, imageView, 0.5, true);
@@ -1058,7 +1054,7 @@ public class GamePageController implements Initializable {
                 .filter(imageView -> {
                     Card existing = (Card) imageView.getUserData();
                     return existing != null && existing.getID() == cardID &&
-                             imageView.getLayoutX() == layoutX && imageView.getLayoutY() == layoutY;
+                            imageView.getLayoutX() == layoutX && imageView.getLayoutY() == layoutY;
                 })
                 .findFirst()
                 .orElse(null);
@@ -1070,8 +1066,8 @@ public class GamePageController implements Initializable {
             if (eventHandler != null) {
                 newCard.setOnMouseClicked(eventHandler);
             }
-            if(card instanceof ObjectiveCard && pane == mainPane && clickCounter != -1)
-                hooverEffect(newCard,1.05 );
+            if (card instanceof ObjectiveCard && pane == mainPane && clickCounter != -1)
+                hooverEffect(newCard, 1.05);
             else if (card instanceof ObjectiveCard || card instanceof PlaceableCard && pane == mainPane && clickCounter == -1)
                 hooverEffect(newCard, 1.05);
 
@@ -1084,8 +1080,8 @@ public class GamePageController implements Initializable {
         }
     }
 
-    private void turnObjectives(MouseEvent event){
-         if (event.getClickCount() == 2){
+    private void turnObjectives(MouseEvent event) {
+        if (event.getClickCount() == 2) {
             turnAround(event);
             onTop.toFront();
         }
@@ -1267,27 +1263,20 @@ public class GamePageController implements Initializable {
         if (selectedCard != null) {
             makeSmallerTransition(selectedCard);
 
+            // Get the placeholder that was clicked
             ImageView clickedPlaceholder = (ImageView) event.getSource();
-            double placeholderX = clickedPlaceholder.getLayoutX();
-            double placeholderY = clickedPlaceholder.getLayoutY();
 
-            double relativePosX;
-            double relativePosY;
+            // Retrieve the original row and column from the ImageView properties
+            int originalRow = (int) clickedPlaceholder.getProperties().get("originalRow");
+            int originalColumn = (int) clickedPlaceholder.getProperties().get("originalColumn");
 
-
-            if (centerXOffset < 0 || centerYOffset < 0) {
-                relativePosX = (placeholderX - layoutPlacedStarterX) / offsetAreaX;
-                relativePosY = (placeholderY - layoutPlacedStarterY) / offsetAreaY;
-            } else {
-                relativePosX = (placeholderX - centerXOffset) / offsetAreaX;
-                relativePosY = (placeholderY - centerYOffset) / offsetAreaY;
-            }
-
-            this.selectedToPlace[2] = (int) relativePosY;
-            this.selectedToPlace[3] = (int) relativePosX;
+            // Update the selectedToPlace array with the original positions
+            this.selectedToPlace[2] = originalRow;
+            this.selectedToPlace[3] = originalColumn;
 
             wrong = false;
             GUIMessages.writeToClient(selectedToPlace);
+            displayPlayerArea(myPlayerArea);
             this.selectedCard = null;
         }
     }
@@ -1532,176 +1521,88 @@ public class GamePageController implements Initializable {
     }
 
     /**
-     * Displays the placeholders of the available positions in the playerArea
-     */
-    private void displayPlaceHolders() {
-        placeholdersVisible = true;
-        ArrayList<Integer[]> availablePositions;
-        availablePositions = myPlayerArea.getAvailablePosition();
-
-        if(boundingBox == null)
-            boundingBox = calculateBoundingBox(allCards);
-
-        double totalWidth = boundingBox[2] - boundingBox[0];
-        double totalHeight = boundingBox[3] - boundingBox[1];
-
-        double playgroundWidth = playground.getWidth();
-        double playgroundHeight = playground.getHeight();
-
-        scaleFactor = calculateScaleFactor(totalWidth, totalHeight, availablePositions, playgroundWidth, playgroundHeight);
-
-        centerXOffset = (playground.getWidth() - (totalWidth * scaleFactor)) / 2 - boundingBox[0] * scaleFactor;
-        centerYOffset = (playground.getHeight() - (totalHeight * scaleFactor)) / 2 - boundingBox[1] * scaleFactor;
-
-        for (Integer[] pos : availablePositions) {
-            // Calculate the new layout position of the placeholder
-            double newLayoutX =  (centerXOffset + pos[1] * offsetAreaX * scaleFactor);
-            double newLayoutY = (centerYOffset + pos[0] * offsetAreaY * scaleFactor);
-
-            addClickablePlaceholder(playground, newLayoutX, newLayoutY, fitHeightPlaced * scaleFactor, fitWidthPlaced * scaleFactor, this::confirmPlaceCard);
-        }
-    }
-
-    /**
-     * Removes all the placeholders from the playerArea
-     */
-    private void removeAllPlaceholders() {
-        placeholdersVisible = false;
-        List<ImageView> placeholders = playground.getChildren().stream()
-                .filter(node -> node instanceof ImageView && node.getStyleClass().contains("placeholder"))
-                .map(node -> (ImageView) node)
-                .toList();
-
-        for (ImageView placeholder : placeholders) {
-            fadeOutTransition(playground, placeholder, 0.5, true);
-        }
-    }
-
-    /**
-     * Displays the cards in the playerArea
+     * Displays the player area
      *
-     * @param playerArea the playerArea to display
+     * @param playerArea the player area to display
      */
-    private void displayPlayerArea(PlayerArea playerArea) {
-        Platform.runLater(() -> {
-            playground.getChildren().removeIf(node -> node instanceof ImageView && node.getUserData() instanceof PlaceableCard);
+    public void displayPlayerArea(PlayerArea playerArea) {
+        playground.getChildren().clear();
 
-            allCards = playerArea.getAllCards();
-
-            boundingBox = calculateBoundingBox(allCards);
-            double totalWidth = boundingBox[2] - boundingBox[0];
-            double totalHeight = boundingBox[3] - boundingBox[1];
-
-            double playgroundWidth = playground.getWidth();
-            double playgroundHeight = playground.getHeight();
-
-            scaleFactor = calculateScaleFactor(totalWidth, totalHeight, playerArea.getAvailablePosition(), playgroundWidth, playgroundHeight);
-            centerXOffset = (playgroundWidth - (totalWidth * scaleFactor)) / 2 - boundingBox[0] * scaleFactor;
-            centerYOffset = (playgroundHeight - (totalHeight * scaleFactor)) / 2 - boundingBox[1] * scaleFactor;
-
-            for (PlaceableCard card : allCards) {
-                double layoutX = (calculateLayoutX(card) * scaleFactor + centerXOffset);
-                double layoutY = (calculateLayoutY(card) * scaleFactor + centerYOffset);
-
-                ImageView cardImageView = createCardImageView(card.getID(), card.isFront(), card, layoutX, layoutY, fitHeightPlaced, fitWidthPlaced);
-                playground.getChildren().add(cardImageView);
-                cardImageView.toFront();
-                adjustCardZOrder(cardImageView, card);
-            }
-        });
-    }
-
-
-    /**
-     * Calculates the scale factor based on the total dimensions of the cards and the available positions
-     *
-     * @param totalWidth         the total width of the cards
-     * @param totalHeight        the total height of the cards
-     * @param availablePositions the available positions in the playerArea
-     * @return the scale factor
-     */
-    private double calculateScaleFactor(double totalWidth, double totalHeight, ArrayList<Integer[]> availablePositions, double playgroundWidth, double playgroundHeight) {
-        // Calculate the total dimensions including placeholders
-        double totalWithPlaceholdersWidth = totalWidth;
-        double totalWithPlaceholdersHeight = totalHeight;
-
-        for (Integer[] pos : availablePositions) {
-            double placeholderX = pos[1] * offsetAreaX;
-            double placeholderY = pos[0] * offsetAreaY;
-            totalWithPlaceholdersWidth = Math.max(totalWithPlaceholdersWidth, placeholderX + fitWidthPlaced);
-            totalWithPlaceholdersHeight = Math.max(totalWithPlaceholdersHeight, placeholderY + fitHeightPlaced);
-        }
-
-        // Calculate the scale factors
-        double widthScaleFactor = playgroundWidth / totalWithPlaceholdersWidth;
-        double heightScaleFactor = playgroundHeight / totalWithPlaceholdersHeight;
-        double scaleFactor = 1.0;
-
-        if (totalWithPlaceholdersWidth > playgroundWidth || totalWithPlaceholdersHeight > playgroundHeight) {
-            scaleFactor = Math.min(widthScaleFactor, heightScaleFactor);
-        }
-
-        // Only scale down if both width and height are at least as large as the playground
-        if (totalWithPlaceholdersWidth >= playgroundWidth && totalWithPlaceholdersHeight >= playgroundHeight) {
-            scaleFactor = Math.min(scaleFactor, 1.0);
-        } else {
-            scaleFactor = 1.0;
-        }
-
-        return scaleFactor;
-    }
-
-    /**
-     * Calculates the layout position of the card based on the cell position
-     *
-     * @param card the card to calculate the layout position for
-     * @return the layout x position
-     */
-    private double calculateLayoutX(PlaceableCard card) {
-        return card.getCells().getFirst().getColumn() * offsetAreaX;
-    }
-
-    /**
-     * Calculates the layout position of the card based on the cell position
-     *
-     * @param card the card to calculate the layout position for
-     * @return the layout y position
-     */
-    private double calculateLayoutY(PlaceableCard card) {
-        return card.getCells().getFirst().getRow() * offsetAreaY;
-    }
-
-    /**
-     * Calculates the bounding box of the cards
-     *
-     * @param cards the cards to calculate the bounding box for
-     * @return the bounding box
-     */
-    private double[] calculateBoundingBox(ArrayList<PlaceableCard> cards) {
-        double minX = Double.MAX_VALUE, minY = Double.MAX_VALUE;
-        double maxX = Double.MIN_VALUE, maxY = Double.MIN_VALUE;
+        ArrayList<PlaceableCard> cards = playerArea.getAllCards();
+        ArrayList<ImageView> cardImageViews = new ArrayList<>();
 
         for (PlaceableCard card : cards) {
-            double posX = calculateLayoutX(card);
-            double posY = calculateLayoutY(card);
+            ImageView cardImageView = createCardImageView(
+                    card.getID(), card.isFront(), card,
+                    card.getCells().getFirst().getColumn() * offsetAreaX,
+                    card.getCells().getFirst().getRow() * offsetAreaY,
+                    fitHeightPlaced, fitWidthPlaced
+            );
 
-            // Update minX, minY, maxX, maxY based on the card's position and size
-            minX = Math.min(minX, posX);
-            minY = Math.min(minY, posY);
-            maxX = Math.max(maxX, posX + fitWidthPlaced); // Consider the width of the card
-            maxY = Math.max(maxY, posY + fitHeightPlaced); // Consider the height of the card
+            cardImageViews.add(cardImageView);
         }
 
-        // If no cards are present, set default values
-        if (minX == Double.MAX_VALUE || minY == Double.MAX_VALUE || maxX == Double.MIN_VALUE || maxY == Double.MIN_VALUE) {
-            minX = minY = 0.0;
-            maxX = 200.0;
-            maxY = 133.0;
-//            maxX = 0.0;
-//            maxY = 0.0;
+        // Add all card image views to playground
+        playground.getChildren().addAll(cardImageViews);
+
+        // Adjust z-order of the cards based on their positions relative to other cards
+        for (ImageView cardImageView : cardImageViews) {
+            PlaceableCard card = getCardFromImageView(cardImageView, cards);
+            adjustCardZOrder(cardImageView, Objects.requireNonNull(card));
         }
 
-        return new double[]{minX, minY, maxX, maxY};
+        // Adjust size and position to fit within the playground
+        adjustSizeAndPosition(playground, cardImageViews);
+    }
+
+    /**
+     * Displays the player area and placeholders for placing cards
+     *
+     * @param playerArea the player area to display
+     */
+    public void displayPlayerAreaAndPlaceholders(PlayerArea playerArea) {
+        playground.getChildren().clear();
+
+        ArrayList<PlaceableCard> cards = playerArea.getAllCards();
+        ArrayList<ImageView> cardImageViews = new ArrayList<>();
+
+        for (PlaceableCard card : cards) {
+            // Create ImageView for the card
+            ImageView cardImageView = createCardImageView(
+                    card.getID(), card.isFront(), card,
+                    card.getCells().getFirst().getColumn() * offsetAreaX,
+                    card.getCells().getFirst().getRow() * offsetAreaY,
+                    fitHeightPlaced, fitWidthPlaced
+            );
+
+            cardImageViews.add(cardImageView);
+        }
+
+        ArrayList<Integer[]> availablePositions = playerArea.getAvailablePosition();
+        ArrayList<ImageView> placeholderImageViews = new ArrayList<>();
+
+        for (Integer[] pos : availablePositions) {
+            double layoutX = pos[1] * offsetAreaX;  // Inverted x and y
+            double layoutY = pos[0] * offsetAreaY;
+            ImageView placeholderImageView = createPlaceholderImageView(
+                    layoutX, layoutY,
+                    this::confirmPlaceCard, pos[0], pos[1]
+            );
+            placeholderImageViews.add(placeholderImageView);
+        }
+
+        ArrayList<ImageView> allImageViews = new ArrayList<>();
+        allImageViews.addAll(placeholderImageViews);
+        allImageViews.addAll(cardImageViews);
+
+        playground.getChildren().addAll(allImageViews);
+
+        for (ImageView cardImageView : cardImageViews) {
+            PlaceableCard card = getCardFromImageView(cardImageView, cards);
+            adjustCardZOrder(cardImageView, Objects.requireNonNull(card));
+        }
+
+        adjustSizeAndPosition(playground, allImageViews);
     }
 
     /**
@@ -1711,7 +1612,6 @@ public class GamePageController implements Initializable {
      * @param card          the card
      */
     private void adjustCardZOrder(ImageView cardImageView, PlaceableCard card) {
-        // Ensure proper layering based on card's position relative to other cards
         boolean isTop = card.getCells().stream().anyMatch(cell -> cell.getTopCard() == card);
         boolean isBottom = card.getCells().stream().anyMatch(cell -> cell.getBottomCard() == card);
 
@@ -1725,28 +1625,110 @@ public class GamePageController implements Initializable {
         }
     }
 
+    /**
+     * Get the PlaceableCard associated with a given ImageView
+     *
+     * @param imageView the ImageView
+     * @param cards     list of all PlaceableCards
+     * @return the PlaceableCard associated with the ImageView
+     */
+    private PlaceableCard getCardFromImageView(ImageView imageView, List<PlaceableCard> cards) {
+        for (PlaceableCard card : cards) {
+            PlaceableCard cardImage = (PlaceableCard) imageView.getUserData();
+            if (card.getID() == cardImage.getID()) {
+                return card;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Creates an ImageView for a placeholder at the specified position
+     *
+     * @param layoutX        the x position of the placeholder
+     * @param layoutY        the y position of the placeholder
+     * @param eventHandler   the event handler to call when the placeholder is clicked
+     * @param originalRow    the original row of the placeholder
+     * @param originalColumn the original column of the placeholder
+     * @return the ImageView for the placeholder
+     */
+    private ImageView createPlaceholderImageView(double layoutX, double layoutY, EventHandler<MouseEvent> eventHandler, int originalRow, int originalColumn) {
+        Image image = randomColorForPlaceholder();
+
+        ImageView imageView = new ImageView(image);
+        imageView.setLayoutX(layoutX);
+        imageView.setLayoutY(layoutY);
+        imageView.setFitHeight(133.0);
+        imageView.setFitWidth(200.0);
+        imageView.setOpacity(0.5);
+
+        // Store the original row and column in the ImageView properties
+        imageView.getProperties().put("originalRow", originalRow);
+        imageView.getProperties().put("originalColumn", originalColumn);
+
+        imageView.setOnMouseClicked(eventHandler);
+
+        System.out.println("Placeholder created with original position: row = " + originalRow + ", column = " + originalColumn);
+        return imageView;
+    }
+
+    /**
+     * Adjusts the size and position of all image views to fit within the playground
+     *
+     * @param playground the playground pane
+     * @param imageViews the list of image views
+     */
+    private void adjustSizeAndPosition(Pane playground, ArrayList<ImageView> imageViews) {
+        // Calculate bounding box of all elements
+        double minX = Double.MAX_VALUE, minY = Double.MAX_VALUE, maxX = Double.MIN_VALUE, maxY = Double.MIN_VALUE;
+
+        for (ImageView imageView : imageViews) {
+            minX = Math.min(minX, imageView.getLayoutX());
+            minY = Math.min(minY, imageView.getLayoutY());
+            maxX = Math.max(maxX, imageView.getLayoutX() + imageView.getFitWidth());
+            maxY = Math.max(maxY, imageView.getLayoutY() + imageView.getFitHeight());
+        }
+
+        double scaleX = playground.getWidth() / (maxX - minX);
+        double scaleY = playground.getHeight() / (maxY - minY);
+        double scale = Math.min(scaleX, scaleY);
+        if (scale > 1.0) scale = 1.0; //No scale up!
+
+        for (ImageView imageView : imageViews) {
+            imageView.setScaleX(scale);
+            imageView.setScaleY(scale);
+            imageView.setLayoutX((imageView.getLayoutX() - minX) * scale + (playground.getWidth() - (maxX - minX) * scale) / 2);
+            imageView.setLayoutY((imageView.getLayoutY() - minY) * scale + (playground.getHeight() - (maxY - minY) * scale) / 2);
+        }
+    }
+
+    /**
+     * Displays the online players
+     *
+     * @param event the mouse event
+     */
     @FXML
     public void openOnline(MouseEvent event) {
-        if(!online.isVisible()){
+        if (!online.isVisible()) {
             online.setVisible(true);
             ArrayList<String> onlinePLayers = currentStateMessageSaved.getOnlinePlayers();
-                Platform.runLater(() -> {
-                    for(int i = 0; i<onlinePLayers.size(); i++){
-                        if(i == 0) {
-                            player1.setText(onlinePLayers.get(i));
-                            player1.setVisible(true);
-                        } else if(i == 1) {
-                            player2.setText(onlinePLayers.get(i));
-                            player2.setVisible(true);
-                        }else if(i == 2) {
-                            player3.setText(onlinePLayers.get(i));
-                            player3.setVisible(true);
-                        }else if(i == 3) {
-                            player4.setText(onlinePLayers.get(i));
-                            player4.setVisible(true);
-                        }
+            Platform.runLater(() -> {
+                for (int i = 0; i < onlinePLayers.size(); i++) {
+                    if (i == 0) {
+                        player1.setText(onlinePLayers.get(i));
+                        player1.setVisible(true);
+                    } else if (i == 1) {
+                        player2.setText(onlinePLayers.get(i));
+                        player2.setVisible(true);
+                    } else if (i == 2) {
+                        player3.setText(onlinePLayers.get(i));
+                        player3.setVisible(true);
+                    } else if (i == 3) {
+                        player4.setText(onlinePLayers.get(i));
+                        player4.setVisible(true);
                     }
-                });
+                }
+            });
         } else {
             online.setVisible(false);
             player1.setVisible(false);

@@ -69,8 +69,8 @@ public class InsertIPController {
         rotateEffect(rotate10, 2);
         hooverEffect(rotate10, 1.1);
 
-        hooverEffect(submit_ip, 1.1);
-        hooverEffect(backBtn, 1.1);
+        hooverEffect(submit_ip, 1.05);
+        hooverEffect(backBtn, 1.05);
 
         submit_ip.setOnMouseClicked(event -> {
             GUIMessages.writeToClient(ip.getText());// Send the IP to the client

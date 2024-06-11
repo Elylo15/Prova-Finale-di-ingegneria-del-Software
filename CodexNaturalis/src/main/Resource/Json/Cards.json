@@ -1312,19 +1312,19 @@
       "front": true,
       "cells": [],
       "resources": [
-        "Empty",
+        "Fungus",
         "Plant",
         "Insect",
-        "Empty"
+        "Animal"
       ],
       "permanentResource": [
         "Insect"
       ],
       "bottomResource": [
-        "Fungus",
+        "Empty",
         "Plant",
         "Insect",
-        "Animal"
+        "Empty"
       ]
     },
     {
@@ -1335,19 +1335,19 @@
       "front": true,
       "cells": [],
       "resources": [
+        "Plant",
         "Animal",
-        "Empty",
-        "Empty",
-        "Fungus"
+        "Fungus",
+        "Insect"
       ],
       "permanentResource": [
         "Fungus"
       ],
       "bottomResource": [
-        "Plant",
         "Animal",
-        "Fungus",
-        "Insect"
+        "Empty",
+        "Empty",
+        "Fungus"
       ]
     },
     {
@@ -1358,20 +1358,20 @@
       "front": true,
       "cells": [],
       "resources": [
-        "Empty",
-        "Empty",
-        "Empty",
-        "Empty"
+        "Insect",
+        "Animal",
+        "Fungus",
+        "Plant"
       ],
       "permanentResource": [
         "Plant",
         "Fungus"
       ],
       "bottomResource": [
-        "Insect",
-        "Animal",
-        "Fungus",
-        "Plant"
+        "Empty",
+        "Empty",
+        "Empty",
+        "Empty"
       ]
     },
     {
@@ -1382,20 +1382,20 @@
       "front": true,
       "cells": [],
       "resources": [
-        "Empty",
-        "Empty",
-        "Empty",
-        "Empty"
+        "Plant",
+        "Insect",
+        "Animal",
+        "Fungus"
       ],
       "permanentResource": [
         "Animal",
         "Insect"
       ],
       "bottomResource": [
-        "Plant",
-        "Insect",
-        "Animal",
-        "Fungus"
+        "Empty",
+        "Empty",
+        "Empty",
+        "Empty"
       ]
     },
     {
@@ -1406,10 +1406,10 @@
       "front": true,
       "cells": [],
       "resources": [
-        "Empty",
-        "Empty",
-        "Blocked",
-        "Blocked"
+        "Insect",
+        "Fungus",
+        "Plant",
+        "Animal"
       ],
       "permanentResource": [
         "Animal",
@@ -1417,10 +1417,10 @@
         "Plant"
       ],
       "bottomResource": [
-        "Insect",
-        "Fungus",
-        "Plant",
-        "Animal"
+        "Empty",
+        "Empty",
+        "Blocked",
+        "Blocked"
       ]
     },
     {
@@ -1431,10 +1431,10 @@
       "front": true,
       "cells": [],
       "resources": [
-        "Empty",
-        "Empty",
-        "Blocked",
-        "Blocked"
+        "Fungus",
+        "Animal",
+        "Plant",
+        "Insect"
       ],
       "permanentResource": [
         "Plant",
@@ -1442,10 +1442,10 @@
         "Fungus"
       ],
       "bottomResource": [
-        "Fungus",
-        "Animal",
-        "Plant",
-        "Insect"
+        "Empty",
+        "Empty",
+        "Blocked",
+        "Blocked"
       ]
     }
   ],

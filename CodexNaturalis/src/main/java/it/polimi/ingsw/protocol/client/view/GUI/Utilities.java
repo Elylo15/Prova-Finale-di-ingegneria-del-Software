@@ -103,16 +103,19 @@ public class Utilities {
         imageView.setLayoutX(layoutX);
         imageView.setLayoutY(layoutY);
         imageView.setPreserveRatio(true);
+
+
         setupCard(imageView, cardID, front, card);
         return imageView;
     }
+
 
     /**
      * When the mouse enters the imageView, it makes it bigger
      * When the mouse exits the imageView, it makes it smaller
      *
-     * @param node         the node to apply the effect to
-     * @param scale        the scale factor
+     * @param node  the node to apply the effect to
+     * @param scale the scale factor
      */
     public static void hooverEffect(Node node, double scale) {
         node.setOnMouseEntered(e -> makeBiggerTransition(node, scale));
@@ -121,6 +124,7 @@ public class Utilities {
 
     /**
      * Removes the hoover effect from the node
+     *
      * @param node the node to remove the effect from
      */
     public static void removeHooverEffect(Node node) {
@@ -177,6 +181,14 @@ public class Utilities {
         });
     }
 
+    /**
+     * Gets the card from the position
+     *
+     * @param layoutX  the x position of the card
+     * @param layoutY  the y position of the card
+     * @param mainPane the main pane
+     * @return the imageView of the card
+     */
     public static ImageView getCardFromPosition(double layoutX, double layoutY, Pane mainPane) {
         ImageView imageView = null;
         for (Node node : mainPane.getChildren()) {
@@ -250,6 +262,12 @@ public class Utilities {
         sequentialTransition.play();
     }
 
+    /**
+     * Submits the name chosen by the player
+     *
+     * @param submitButton the submit button
+     * @param nameToChoose the text field where the player writes the name
+     */
     public static void submitName(ImageView submitButton, TextField nameToChoose) {
         submitButton.setOnMouseClicked(event -> {
             if (nameToChoose.getText().isEmpty()) {
