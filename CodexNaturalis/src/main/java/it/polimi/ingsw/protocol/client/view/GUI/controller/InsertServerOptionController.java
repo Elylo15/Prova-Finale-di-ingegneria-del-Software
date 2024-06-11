@@ -18,15 +18,17 @@ import static it.polimi.ingsw.protocol.client.view.GUI.Utilities.rotateEffect;
  */
 public class InsertServerOptionController {
     @FXML
-    public Text new_match;// Button to start a new match
+    private Text new_match;// Button to start a new match
     @FXML
-    public Text join_match;// Button to join a match
+    private Text join_match;// Button to join a match
     @FXML
-    public Text load_match;// Button to load a match
+    private Text load_match;// Button to load a match
     @FXML
-    public Text join_running_match;// Button to join a running match
-    public ImageView rotate;
+    private Text join_running_match;// Button to join a running match
+    @FXML
+    private ImageView rotate;
 
+    private static boolean read = true;
     private serverOptionMessage serverOptionMessage;// Message to be sent to the client
 
     /**
@@ -37,7 +39,12 @@ public class InsertServerOptionController {
      */
     @FXML
     private void initialize() {
-        this.serverOptionMessage = (serverOptionMessage) GUIMessages.readToGUI();
+        if(!read) {
+            this.serverOptionMessage = (serverOptionMessage) GUIMessages.readToGUI();
+            read = false;
+        } else {
+            serverOptionMessage = new serverOptionMessage(true, null, null, false, null);
+        }
 
         hooverEffect(new_match, 1.05);
         hooverEffect(join_match, 1.05);

@@ -84,17 +84,17 @@ public class GamePageController implements Initializable {
     private final ArrayList<ObjectiveCard> objectivesToChose = new ArrayList<>();
     private final int[] selectedToPlace = new int[4];
     @FXML
-    public ImageView online;
+    private ImageView online;
     @FXML
-    public ImageView rotate;
+    private ImageView rotate;
     @FXML
-    public Label player1;
+    private Label player1;
     @FXML
-    public Label player2;
+    private Label player2;
     @FXML
-    public Label player3;
+    private Label player3;
     @FXML
-    public Label player4;
+    private Label player4;
     @FXML
     private Pane mainPane;
     @FXML
@@ -945,7 +945,6 @@ public class GamePageController implements Initializable {
             imageView.setLayoutY(layoutY);
             imageView.setFitHeight(fitHeight);
             imageView.setFitWidth(fitWidth);
-            imageView.getStyleClass().add("placeholder");
             imageView.setOnMouseClicked(eventHandler);
             pane.getChildren().add(imageView);
             fadeInTransition(imageView, 0.5);
@@ -1525,7 +1524,7 @@ public class GamePageController implements Initializable {
      *
      * @param playerArea the player area to display
      */
-    public void displayPlayerArea(PlayerArea playerArea) {
+    private void displayPlayerArea(PlayerArea playerArea) {
         playground.getChildren().clear();
 
         ArrayList<PlaceableCard> cards = playerArea.getAllCards();
@@ -1560,7 +1559,7 @@ public class GamePageController implements Initializable {
      *
      * @param playerArea the player area to display
      */
-    public void displayPlayerAreaAndPlaceholders(PlayerArea playerArea) {
+    private void displayPlayerAreaAndPlaceholders(PlayerArea playerArea) {
         playground.getChildren().clear();
 
         ArrayList<PlaceableCard> cards = playerArea.getAllCards();
@@ -1708,7 +1707,7 @@ public class GamePageController implements Initializable {
      * @param event the mouse event
      */
     @FXML
-    public void openOnline(MouseEvent event) {
+    private void openOnline(MouseEvent event) {
         if (!online.isVisible()) {
             online.setVisible(true);
             ArrayList<String> onlinePLayers = currentStateMessageSaved.getOnlinePlayers();

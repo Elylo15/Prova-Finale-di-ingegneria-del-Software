@@ -11,22 +11,21 @@ import javafx.scene.text.Font;
 
 import java.util.ArrayList;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import static it.polimi.ingsw.protocol.client.view.GUI.Utilities.hooverEffect;
 import static it.polimi.ingsw.protocol.client.view.GUI.Utilities.submitName;
 
 public class UnavailableNamesController {
     @FXML
-    public Label unavailableNames;
+    private Label unavailableNames;
     @FXML
-    public TextField nameToChoose;
+    private TextField nameToChoose;
     @FXML
-    public ImageView submitButton;
+    private ImageView submitButton;
     @FXML
-    public ImageView back;
+    private ImageView back;
     @FXML
-    public ImageView field;
+    private ImageView field;
 
 
     /**

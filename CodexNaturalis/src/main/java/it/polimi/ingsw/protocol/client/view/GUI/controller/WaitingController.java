@@ -14,7 +14,7 @@ import java.util.ResourceBundle;
 public class WaitingController implements Initializable {
 
     @FXML
-    public BorderPane pane;
+    private BorderPane pane;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {

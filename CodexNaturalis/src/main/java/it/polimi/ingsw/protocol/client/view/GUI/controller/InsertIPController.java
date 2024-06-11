@@ -17,29 +17,29 @@ import static it.polimi.ingsw.protocol.client.view.GUI.Utilities.rotateEffect;
  */
 public class InsertIPController {
     @FXML
-    public ImageView rotate;
+    private ImageView rotate;
     @FXML
-    public ImageView rotate1;
+    private ImageView rotate1;
     @FXML
-    public ImageView rotate2;
+    private ImageView rotate2;
     @FXML
-    public ImageView rotate3;
+    private ImageView rotate3;
     @FXML
-    public ImageView rotate4;
+    private ImageView rotate4;
     @FXML
-    public ImageView rotate5;
+    private ImageView rotate5;
     @FXML
-    public ImageView rotate6;
+    private ImageView rotate6;
     @FXML
-    public ImageView rotate7;
+    private ImageView rotate7;
     @FXML
-    public ImageView rotate8;
+    private ImageView rotate8;
     @FXML
-    public ImageView rotate9;
+    private ImageView rotate9;
     @FXML
-    public ImageView rotate10;
+    private ImageView rotate10;
     @FXML
-    public ImageView backBtn;
+    private ImageView backBtn;
     @FXML
     private TextField ip;
     @FXML
@@ -82,7 +82,7 @@ public class InsertIPController {
      * It will go back to the main view
      */
     @FXML
-    public void back() {
+    private void back() {
         Platform.runLater(SceneManager::MainView);
     }
 

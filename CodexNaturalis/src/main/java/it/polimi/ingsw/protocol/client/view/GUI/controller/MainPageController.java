@@ -15,13 +15,13 @@ import static it.polimi.ingsw.protocol.client.view.GUI.Utilities.hooverEffect;
 
 public class MainPageController implements Initializable {
     @FXML
-    public ImageView playBtn;
+    private ImageView playBtn;
     @FXML
-    public ImageView rulesBtn;
+    private ImageView rulesBtn;
     @FXML
-    public Pane pane;
+    private Pane pane;
     @FXML
-    public ImageView image;
+    private ImageView image;
 
 
     /**
@@ -29,7 +29,7 @@ public class MainPageController implements Initializable {
      * It sends a message to start the game.
      */
     @FXML
-    public void start() {
+    private void start() {
         GUIMessages.writeToClient(true);
     }
 
@@ -38,7 +38,7 @@ public class MainPageController implements Initializable {
      * It loads the rules that teaches the player how to play.
      */
     @FXML
-    public void loadRules() {
+    private void loadRules() {
         Platform.runLater(SceneManager::learToPlay);
     }
 

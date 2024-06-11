@@ -614,7 +614,7 @@ public class LearnToPlay implements Initializable {
     /**
      * This method adds the cards to the objective area
      */
-    public void addCommonObj() {
+    private void addCommonObj() {
         ImageView obj1 = createCardImageView(common1.getID(), true, common1, layoutXObjective, 750, fitHeightCommon, fitWidthCommon);
         ImageView obj2 = createCardImageView(common2.getID(), true, common2, layoutXObjective, 894, fitHeightCommon, fitWidthCommon);
 
@@ -632,7 +632,7 @@ public class LearnToPlay implements Initializable {
     /**
      * This method adds the two objective cards to the player's hand
      */
-    public void adMyObj() {
+    private void adMyObj() {
         ImageView obj1 = createCardImageView(myO.getID(), true, myO, 949, layoutYHand, fitHeightCard, fitWidthCard);
         ImageView obj2 = createCardImageView(myO1.getID(), true, myO1, 1279, layoutYHand, fitHeightCard, fitWidthCard);
 
@@ -654,7 +654,7 @@ public class LearnToPlay implements Initializable {
     /**
      * This method adds the starter card to the player's hand
      */
-    public void addStarter() {
+    private void addStarter() {
         myS.setFront(true);
         ImageView starter = createCardImageView(myS.getID(), true, myS, layoutXCard1, layoutYHand, fitHeightCard, fitWidthCard);
         mainPane.getChildren().add(starter);
@@ -770,7 +770,7 @@ public class LearnToPlay implements Initializable {
      * It will go back to the main view
      */
     @FXML
-    public void back() {
+    private void back() {
         Platform.runLater(SceneManager::MainView);
     }
 

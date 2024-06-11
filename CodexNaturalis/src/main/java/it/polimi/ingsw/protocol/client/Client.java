@@ -50,7 +50,7 @@ public class Client implements Runnable {
      *
      * @return the controller
      */
-    public Controller getController() {
+    private Controller getController() {
         return controller;
     }
 
@@ -59,7 +59,7 @@ public class Client implements Runnable {
      *
      * @return the view
      */
-    public View getView() {
+    private View getView() {
         return view;
     }
 
@@ -67,7 +67,7 @@ public class Client implements Runnable {
      * method {@code connection}: sets socket or rmi. Enables GUI or CLI.
      * Connects to a socket server or rmi server.
      */
-    public void connection(boolean isSocket) {
+    private void connection(boolean isSocket) {
 
         if (isSocket) {
             try {
@@ -97,7 +97,7 @@ public class Client implements Runnable {
      * Invocations of view methods to display and receive player's info.
      * invocations of controller methods to receive responseMessage. If responseMessage is correct, the loop ends.
      */
-    public void serverOptions() {
+    private void serverOptions() {
         while (true) {
             serverOptionMessage options = controller.serverOptions();
             options = view.serverOptions(options);
@@ -119,7 +119,7 @@ public class Client implements Runnable {
      * invocations of controller methods to send received info.
      * invocations of controller methods to receive responseMessage. If responseMessage is correct, the loop ends.
      */
-    public void name() {
+    private void name() {
         while (true) {
             unavailableNamesMessage unavailableName = controller.getUnavailableName();
             String name = view.unavailableNames(unavailableName);
@@ -141,7 +141,7 @@ public class Client implements Runnable {
      * invocations of controller methods to send received info.
      * invocations of controller methods to receive responseMessage. If responseMessage is correct, the loop ends.
      */
-    public void color() {
+    private void color() {
         while (true) {
             availableColorsMessage availableColor = controller.getAvailableColor();
             String color = view.availableColors(availableColor);
@@ -163,7 +163,7 @@ public class Client implements Runnable {
      * invocations of controller methods to send received info.
      * invocations of controller methods to receive responseMessage. If responseMessage is correct, the loop ends.
      */
-    public void waitingPlayer(currentStateMessage current) {
+    private void waitingPlayer(currentStateMessage current) {
         Integer expected;
         AtomicBoolean noResponse = new AtomicBoolean(false);
 
@@ -193,7 +193,7 @@ public class Client implements Runnable {
      * invocations of controller methods to send received info.
      * invocations of controller methods to receive responseMessage. If responseMessage is correct, the loop ends.
      */
-    public void starter() {
+    private void starter() {
         Integer side;
         AtomicBoolean noResponse = new AtomicBoolean(false);
 
@@ -220,7 +220,7 @@ public class Client implements Runnable {
      * invocations of controller methods to send received info.
      * invocations of controller methods to receive responseMessage. If responseMessage is correct, the loop ends.
      */
-    public void pickObjective() {
+    private void pickObjective() {
         Integer pick;
         boolean noResponse = false;
 
@@ -258,7 +258,7 @@ public class Client implements Runnable {
      * invocations of controller methods to send received info.
      * invocations of controller methods to receive responseMessage. If responseMessage is correct, the loop ends.
      */
-    public void pickCard() {
+    private void pickCard() {
         Integer card;
         AtomicBoolean noResponse = new AtomicBoolean(false);
 
@@ -303,7 +303,7 @@ public class Client implements Runnable {
      * invocations of controller methods to send received info.
      * invocations of controller methods to receive responseMessage. If responseMessage is correct, the loop ends.
      */
-    public void placeCard() {
+    private void placeCard() {
         AtomicIntegerArray card = new AtomicIntegerArray(4);
         boolean noResponse = false;
 
@@ -342,7 +342,7 @@ public class Client implements Runnable {
      *
      * @param serverIP: String
      */
-    public void setIP(String serverIP) {
+    private void setIP(String serverIP) {
         this.serverIP = serverIP;
     }
 
@@ -352,7 +352,7 @@ public class Client implements Runnable {
      * @param server:   String[]
      * @param isSocket: boolean
      */
-    public void setController(String server, boolean isSocket) {
+    private void setController(String server, boolean isSocket) {
         if (isSocket) {
             try {
                 this.controller = new ControllerSocket(server, "1024");
@@ -374,7 +374,7 @@ public class Client implements Runnable {
      * Invocations of view methods to display and receive player's info.
      * Asks the player to pick a name between the available ones.
      */
-    public void pickNameFA() {
+    private void pickNameFA() {
         String name;
 
         while (true) {

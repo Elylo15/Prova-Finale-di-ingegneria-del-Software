@@ -6,29 +6,36 @@ import it.polimi.ingsw.protocol.messages.ServerOptionState.serverOptionMessage;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
-import javafx.util.Callback;
+import javafx.scene.image.ImageView;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Objects;
+
+import static it.polimi.ingsw.protocol.client.view.GUI.Utilities.hooverEffect;
+import static it.polimi.ingsw.protocol.client.view.GUI.Utilities.rotateEffect;
 
 /**
  * This class is a controller for the GUI scene where the user joins a match.
- * It contains a ListView for the matches and a list of buttons for each match.
+ * It contains a ListView for the matches.
  * The ListView is populated with the matches waiting for players.
- * Each match in the ListView is represented by a button.
- * When a button is clicked, it sends a message to the client with the match ID and disables all other buttons.
+ * When a cell is clicked, it sends a message to the client with the match ID.
  */
 public class JoinMatchController {
-    private final List<Button> buttons = new ArrayList<>();// List of buttons for each match
+    @FXML
+    private ImageView back;
+    @FXML
+    private ImageView rotate1;
+    @FXML
+    private ImageView rotate2;
+    @FXML
+    private ImageView rotate3;
+    @FXML
+    private ImageView rotate4;
     @FXML
     private ListView<String> JoinMatchList; // ListView for the matches
-    private serverOptionMessage serverOptionMessage;// Message to be sent to the client
-    private ArrayList<Integer> MatchList;// List of matches waiting for players
 
     /**
      * This method is called when the scene is loaded.
@@ -37,57 +44,67 @@ public class JoinMatchController {
      */
     @FXML
     private void initialize() {
-        // Read the serverOptionMessage from the GUI and get the list of matches
-        serverOptionMessage = (serverOptionMessage) GUIMessages.readToGUI();
-        MatchList = serverOptionMessage.getWaitingMatches();
+        JoinMatchList.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/styles.css")).toExternalForm());
 
+        rotateEffect(rotate1, 3);
+        rotateEffect(rotate2, 2);
+        rotateEffect(rotate3, 4);
+        rotateEffect(rotate4, 5);
+        hooverEffect(back, 1.05);
+        hooverEffect(rotate1, 1.2);
+        hooverEffect(rotate2, 1.2);
+        hooverEffect(rotate3, 1.2);
+        hooverEffect(rotate4, 1.2);
+
+
+        // Read the serverOptionMessage from the GUI and get the list of matches
+        // Message to be sent to the client
+        serverOptionMessage serverOptionMessage = (serverOptionMessage) GUIMessages.readToGUI();
+        // List of matches waiting for players
+        ArrayList<Integer> matchList = serverOptionMessage.getWaitingMatches();
 
         // Convert the integers to strings and add them to the ListView
         ObservableList<String> items = FXCollections.observableArrayList();
-        for (Integer match : MatchList) {
+        for (Integer match : matchList) {
             items.add(match.toString());
         }
         JoinMatchList.setItems(items);
 
-        // Set the cell factory to use buttons as cells
-        JoinMatchList.setCellFactory(new Callback<ListView<String>, ListCell<String>>() {
-            @Override
-            public ListCell<String> call(ListView<String> listView) {
-                return new ButtonListCell();
-            }
-        });
+        JoinMatchList.setCellFactory(listView -> new ClickableListCell());
     }
+
     /**
      * This method is called when the user clicks the "Back" button.
      * It goes back to the server option scene.
-     * @param actionEvent The event triggered by the user
      */
-    public void goBack(ActionEvent actionEvent) {
+    @FXML
+    private void goBack() {
         Platform.runLater(SceneManager::InsertServerOption);
     }
 
     /**
-     * This class is a custom cell for the ListView that uses buttons.
-     * Each button represents a match.
-     * When a button is clicked, it sends a message to the client with the match ID and disables all other buttons.
+     * This class is a custom cell for the ListView that handles clicks on the cell values.
+     * Each cell represents a match ID.
+     * When a cell is clicked, it sends a message to the client with the match ID.
      */
-    class ButtonListCell extends ListCell<String> {
-        private final Button button;// Button for the match
-
-        public ButtonListCell() {
-            button = new Button();
-            button.setOnAction(event -> {
+    class ClickableListCell extends ListCell<String> {
+        public ClickableListCell() {
+            setOnMouseClicked(event -> {
                 String item = getItem();
                 if (item != null) {
-                    // Send a message to the client with the match ID and disable all other buttons
                     GUIMessages.writeToClient(new serverOptionMessage(true, Integer.parseInt(item), null, false, null));
-                    disableOtherButtons(button);
-                    //Platform.runLater(SceneManager::waiting);
+                    JoinMatchList.setDisable(true);
                 }
             });
-            buttons.add(button);
         }
 
+        /**
+         * This method is called when the cell is updated.
+         * It sets the text of the cell to the match ID.
+         *
+         * @param item  the match ID
+         * @param empty true if the cell is empty, false otherwise
+         */
         @Override
         protected void updateItem(String item, boolean empty) {
             super.updateItem(item, empty);
@@ -96,20 +113,9 @@ public class JoinMatchController {
                 setText(null);
                 setGraphic(null);
             } else {
-                // Set the text of the button to the match ID and set the graphic of the cell to the button
-                button.setText(item);
-                setGraphic(button);
-            }
-        }
-
-        /**
-         * This method disables all buttons except the one that was clicked.
-         *
-         * @param clickedButton The button that was clicked.
-         */
-        private void disableOtherButtons(Button clickedButton) {
-            for (Button btn : buttons) {
-                btn.setDisable(btn != clickedButton);
+                // Set the text of the cell to the match ID
+                setText(item);
+                setGraphic(null);
             }
         }
     }

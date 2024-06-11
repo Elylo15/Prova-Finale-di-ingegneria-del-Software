@@ -15,15 +15,15 @@ import static it.polimi.ingsw.protocol.client.view.GUI.Utilities.submitName;
 
 public class PickNameFAController {
     @FXML
-    public Label unavailableNames;
+    private Label unavailableNames;
     @FXML
-    public TextField nameToChoose;
+    private TextField nameToChoose;
     @FXML
-    public ImageView submitButton;
+    private ImageView submitButton;
     @FXML
-    public ImageView back;
+    private ImageView back;
     @FXML
-    public ImageView field;
+    private ImageView field;
 
 
     /**

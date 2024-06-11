@@ -1,7 +1,26 @@
 /* styles.css */
-.placeholder {
+.list-cell {
+    -fx-font-family: "Fantasy Script";
+    -fx-font-size: 30px;
+    -fx-alignment: center;
+    -fx-padding: 10px;
+    -fx-border-width: 2px;
+    -fx-border-color: #b7a850;
+    -fx-border-style: solid;
 }
 
-.button {
-    -fx-background-color: derive(-fx-base, 20%);
+.list-cell:filled:selected {
+    -fx-background-color: #d0d0d0;
+    -fx-border-color: #b7a850;
+}
+
+.list-cell:focused {
+    -fx-border-color: #b7a850;
+    -fx-border-width: 2px;
+}
+
+.list-cell:hover {
+    -fx-background-color: #b7a850;
+    -fx-border-color: #b7a850;
+    -fx-border-width: 2px;
 }
