@@ -177,6 +177,19 @@ public class Utilities {
         });
     }
 
+    public static ImageView getCardFromPosition(double layoutX, double layoutY, Pane mainPane) {
+        ImageView imageView = null;
+        for (Node node : mainPane.getChildren()) {
+            if (node instanceof ImageView currentImageView) {
+                if (currentImageView.getLayoutX() == layoutX && currentImageView.getLayoutY() == layoutY) {
+                    imageView = currentImageView;
+                    break;
+                }
+            }
+        }
+        return imageView;
+    }
+
     /**
      * Fades in the image
      *

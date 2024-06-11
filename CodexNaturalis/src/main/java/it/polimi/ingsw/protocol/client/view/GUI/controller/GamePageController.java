@@ -217,7 +217,7 @@ public class GamePageController implements Initializable {
             case updatePlayerMessage updatePlayerMessage -> updatePlayerCase(updatePlayerMessage);
             case responseMessage responseMessage -> handleResponseMessage(responseMessage);
             case declareWinnerMessage declareWinnerMessage -> displayWinner(declareWinnerMessage);
-            case null, default -> throw new IllegalStateException("Unexpected message type: " + message.getClass());
+            default -> throw new IllegalStateException("Unexpected message");
         }
     }
 
@@ -850,7 +850,7 @@ public class GamePageController implements Initializable {
         Platform.runLater(() -> {
             if (myHand.getPlaceableCards().size() < 3) {
 //                removeCardFromPosition(layoutXCard2, layoutYHand);
-                ImageView card = getCardFromPosition(layoutXCard2, layoutYHand);
+                ImageView card = getCardFromPosition(layoutXCard2, layoutYHand, mainPane);
                 fadeOutTransition(mainPane, card, 1.0, true);
             }
 
@@ -879,7 +879,7 @@ public class GamePageController implements Initializable {
             Platform.runLater(() -> {
                 if (playerHand.getPlaceableCards().size() < 3) {
 //                    removeCardFromPosition(layoutXCard2, layoutYHand);
-                    ImageView card = getCardFromPosition(layoutXCard2, layoutYHand);
+                    ImageView card = getCardFromPosition(layoutXCard2, layoutYHand, mainPane);
                     fadeOutTransition(mainPane, card, 1.0, true);
                 }
 
@@ -973,18 +973,7 @@ public class GamePageController implements Initializable {
         }
     }
 
-    private ImageView getCardFromPosition(double layoutX, double layoutY) {
-        ImageView imageView = null;
-        for (Node node : mainPane.getChildren()) {
-            if (node instanceof ImageView currentImageView) {
-                if (currentImageView.getLayoutX() == layoutX && currentImageView.getLayoutY() == layoutY) {
-                    imageView = currentImageView;
-                    break;
-                }
-            }
-        }
-        return imageView;
-    }
+
 
     /**
      * Checks if the currentPlayer is already in the list of players
@@ -1205,8 +1194,8 @@ public class GamePageController implements Initializable {
             ImageView image = (ImageView) event.getSource();
             ObjectiveCard card = (ObjectiveCard) selectedCard.getUserData();
             fadeOutTransition(mainPane, image, 0.5, true);
-            ImageView obj1 = getCardFromPosition(layoutXChoiceObjective1, layoutYHand);
-            ImageView obj2 = getCardFromPosition(layoutXChoiceObjective2, layoutYHand);
+            ImageView obj1 = getCardFromPosition(layoutXChoiceObjective1, layoutYHand, mainPane);
+            ImageView obj2 = getCardFromPosition(layoutXChoiceObjective2, layoutYHand, mainPane);
             fadeOutTransition(mainPane, obj1, 1, true);
             fadeOutTransition(mainPane, obj2, 1, true);
             addNewCardToPane(mainPane, card.getID(), card.isFront(), card, layoutXObjective, layoutYObjMy, fitHeightCommon,
