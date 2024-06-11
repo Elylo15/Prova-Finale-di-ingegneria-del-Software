@@ -1410,7 +1410,6 @@ public class GamePageController implements Initializable {
      * @param allPions the list of all pions
      */
     private void setPionPosition(ImageView pion, int score, List<ImageView> allPions) {
-
         if (pion != null && score == 0 && !isPionAtDesiredPosition(pion, 0)) {
             double[] adjustedPosition = getAdjustedPosition(allPions, positions[0][0], positions[0][1], pion);
             pion.setLayoutX(adjustedPosition[0]);
@@ -1436,8 +1435,7 @@ public class GamePageController implements Initializable {
     private void addPoints(ImageView pion, int score, List<ImageView> allPions) {
         Platform.runLater(() -> {
             if (score < 0 || score > 29) {
-                //TODO Invalid score ?? count from 1??
-                return;
+                return;  // Invalid score
             }
 
             double startX = pion.getLayoutX();
@@ -1445,7 +1443,13 @@ public class GamePageController implements Initializable {
 
             Timeline timeline = new Timeline();
 
-            int start = getScoreByPosition(startX, startY);
+            int start = getScoreByPosition(startX, startY) + 1;
+            fadeOutTransition(mainPane, pion, 1, false);
+            double[] adjustedPositionStart = getAdjustedPosition(allPions, positions[start][0], positions[start][1], pion);
+            pion.setLayoutX(adjustedPositionStart[0]);
+            pion.setLayoutY(adjustedPositionStart[1]);
+            pion.toFront();
+            fadeInTransition(pion, 1);
 
             for (int i = start; i <= score; i++) {
                 double[] adjustedPosition = getAdjustedPosition(allPions, positions[i][0], positions[i][1], pion);
@@ -1459,6 +1463,7 @@ public class GamePageController implements Initializable {
                 timeline.getKeyFrames().add(keyFrame);
             }
 
+            timeline.setOnFinished(event -> updatePionsPositions(allPions, pion)); // Ensure positions are updated after animation
             timeline.play();
         });
     }
@@ -1475,10 +1480,11 @@ public class GamePageController implements Initializable {
         double offsetY = 0;
 
         for (ImageView pion : pions) {
-            if (pion != myPion)
+            if (pion != myPion) {
                 if (pion != null && pion.getLayoutX() == targetX && pion.getLayoutY() == targetY + offsetY) {
                     offsetY -= offsetPions;
                 }
+            }
         }
         return new double[]{targetX, targetY + offsetY};
     }
@@ -1524,16 +1530,16 @@ public class GamePageController implements Initializable {
      * @param y the y position
      */
     private int getScoreByPosition(double x, double y) {
-
         for (int score = 0; score < positions.length; score++) {
             double[] position = positions[score];
-            if (position[0] == x && position[1] == y || position[0] == x && position[1] == y + offsetPions
-                    || position[0] == x && position[1] == y + 2 * offsetPions || position[0] == x && position[1] == y + 3 * offsetPions) {
+            if ((position[0] == x && position[1] == y)
+                    || (position[0] == x && position[1] == y + offsetPions)
+                    || (position[0] == x && position[1] == y + 2 * offsetPions)
+                    || (position[0] == x && position[1] == y + 3 * offsetPions)) {
                 return score;
             }
         }
-
-        return -1; //not found
+        return -1; // Not found
     }
 
     /**
