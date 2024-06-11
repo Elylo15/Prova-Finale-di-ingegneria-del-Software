@@ -39,7 +39,7 @@
           </Text>
           <ImageView fx:id="rotate" fitHeight="331.0" fitWidth="331.0" layoutX="946.0" layoutY="584.0"
                      preserveRatio="true">
-             <Image url="@Images/SocketRmi/rotate.png"/>
+             <Image url="@Images/Background/rotate.png"/>
           </ImageView>
        </Pane>
     </center>

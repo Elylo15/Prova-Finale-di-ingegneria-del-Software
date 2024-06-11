@@ -108,10 +108,11 @@ public class ViewGUI extends View {
     public void playerDisconnected() {
         //to avoid reading unexpected messages
         GUIMessages.clearQueue();
-        Platform.runLater(SceneManager::Disconnect);
+        Platform.runLater(SceneManager::disconnect);
         try {
             Thread.sleep(2000);
         } catch (InterruptedException ignore) {
+
         }
     }
 
@@ -148,7 +149,7 @@ public class ViewGUI extends View {
                 GUIMessages.writeToGUI(message);
                 return true;
             } else {
-                Platform.runLater(SceneManager::answer); //make an image -> something went wrong, try again
+                Platform.runLater(SceneManager::disconnect);
                 ok = (boolean) GUIMessages.readToClient();
                 return ok;
             }

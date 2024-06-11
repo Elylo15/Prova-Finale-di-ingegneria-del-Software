@@ -7,9 +7,11 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.text.Font;
 
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static it.polimi.ingsw.protocol.client.view.GUI.Utilities.submitName;
 
@@ -38,17 +40,22 @@ public class UnavailableNamesController {
         // set the label to the unavailable names
         ArrayList<String> names = message.getNames();
 
+        Font font = Font.loadFont(getClass().getResourceAsStream("/Fonts/FantasyScript.ttf"), 42);
+        unavailableNames.setFont(font);
+
         if (names.isEmpty()) {
             back.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/ChooseName/allName.png"))));
             nameToChoose.setLayoutX(753);
             nameToChoose.setLayoutY(502);
+            nameToChoose.setFont(font);
             submitButton.setLayoutX(1357);
             submitButton.setLayoutY(496);
             field.setLayoutX(725);
             field.setLayoutY(475);
         } else {
-            unavailableNames.setText("These nicknames are not available: ");
-            for (String name : names) unavailableNames.setText(name + "\n");
+            String namesWithNewLines = String.join("\n", names);
+            unavailableNames.setFont(font);
+            unavailableNames.setText(namesWithNewLines);
         }
 
         submitName(submitButton, nameToChoose);

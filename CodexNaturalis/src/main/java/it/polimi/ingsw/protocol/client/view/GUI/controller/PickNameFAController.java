@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
+import javafx.scene.text.Font;
 
 import java.util.ArrayList;
 
@@ -34,8 +35,10 @@ public class PickNameFAController {
         unavailableNamesMessage message = (unavailableNamesMessage) GUIMessages.readToGUI();
         ArrayList<String> names = message.getNames();
 
-        unavailableNames.setText("Choose your nickname: ");
-        for (String name : names) unavailableNames.setText(name + "\n");
+        Font font = Font.loadFont(getClass().getResourceAsStream("/Fonts/FantasyScript.ttf"), 42);
+        String namesWithNewLines = String.join("\n", names);
+        unavailableNames.setFont(font);
+        unavailableNames.setText(namesWithNewLines);
 
         submitName(submitButton, nameToChoose);
     }

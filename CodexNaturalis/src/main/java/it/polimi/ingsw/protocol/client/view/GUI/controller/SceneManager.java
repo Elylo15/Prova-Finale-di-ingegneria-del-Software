@@ -62,18 +62,6 @@ public class SceneManager {
     }
 
     /**
-     * Load and view the scene to see message after color choice
-     */
-    public static void answer() {
-        try {
-            Parent root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/answer.fxml")));
-            primaryStage.setScene(new Scene(root));
-        } catch (IOException ignore) {
-
-        }
-    }
-
-    /**
      * Load and view the scene to choose the socket type
      */
     public static void Choose_Socket_RMI() {
@@ -87,7 +75,7 @@ public class SceneManager {
     /**
      * Load and view the scene for logging out
      */
-    public static void Disconnect() {
+    public static void disconnect() {
         try {
             Parent root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/disconnect.fxml")));
             primaryStage.setScene(new Scene(root));

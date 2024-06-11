@@ -85,6 +85,18 @@ public class GamePageController implements Initializable {
     private final ArrayList<ObjectiveCard> objectivesToChose = new ArrayList<>();
     private final int[] selectedToPlace = new int[4];
     @FXML
+    public ImageView online;
+    @FXML
+    public ImageView rotate;
+    @FXML
+    public Label player1;
+    @FXML
+    public Label player2;
+    @FXML
+    public Label player3;
+    @FXML
+    public Label player4;
+    @FXML
     private Pane mainPane;
     @FXML
     private Label playerName;
@@ -109,7 +121,6 @@ public class GamePageController implements Initializable {
     private ImageView green;
     private ImageView back;
     private Label playerInfoLabel;
-    private ImageView display;
     private ImageView selectedCard;
     private Player myself;
     private PlayerHand myHand;
@@ -140,6 +151,9 @@ public class GamePageController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        playerName.setFont(Font.loadFont(getClass().getResourceAsStream("/Fonts/FantasyScript.ttf"), 54));
+
+        rotateEffect(rotate, 2);
         startMessageListener();
         startMessageProcessor();
     }
@@ -228,45 +242,30 @@ public class GamePageController implements Initializable {
     }
 
     private void displayWinner(declareWinnerMessage declareWinnerMessage) {
-        display = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/SocketRmi/rotate.png"))));
-        display.setFitWidth(124);
-        display.setFitHeight(106);
-        display.setLayoutX(1473);
-        display.setLayoutY(108);
-        mainPane.getChildren().add(display);
-        rotateEffect(display, 3);
+        rotate.removeEventHandler(MouseEvent.MOUSE_CLICKED, this::openOnline);
+        rotate.addEventHandler(MouseEvent.MOUSE_CLICKED, this::hideSeeWinner);
         winner(declareWinnerMessage);
-        seeWinner();
     }
 
     /**
      * Displays or hides the winner, and player info
      */
-    private void seeWinner() {
-        mainPane.setOnMouseClicked(event -> {
-            if (winner.isVisible()) {
-                fadeOutTransition(mainPane, winner, 1.0, false);
-                fadeOutTransition(mainPane, winnerLabel, 1.0, false);
-                fadeOutTransition(mainPane, back, 1.0, false);
-                fadeOutTransition(mainPane, playerInfoLabel, 1.0, false);
-            }
-        });
 
-        display.setOnMouseClicked(event -> {
-            if (winner.isVisible()) {
-                fadeOutTransition(mainPane, winner, 1.0, false);
-                fadeOutTransition(mainPane, winnerLabel, 1.0, false);
-                fadeOutTransition(mainPane, back, 1.0, false);
-                fadeOutTransition(mainPane, playerInfoLabel, 1.0, false);
-            } else {
-                fadeInTransition(winner, 1.0);
-                fadeInTransition(winnerLabel, 1.0);
-                fadeInTransition(back, 1.0);
-                fadeInTransition(playerInfoLabel, 1.0);
-            }
-        });
-
+    private void hideSeeWinner(MouseEvent event) {
+        if (winner.isVisible()) {
+            fadeOutTransition(mainPane, winner, 1, false);
+            fadeOutTransition(mainPane, winnerLabel, 0.8, false);
+            fadeOutTransition(mainPane, back, 1.0, false);
+            fadeOutTransition(mainPane, playerInfoLabel, 0.8, false);
+        } else {
+            fadeInTransition(winner, 1);
+            fadeInTransition(winnerLabel, 0.8);
+            fadeInTransition(back, 1.0);
+            fadeInTransition(playerInfoLabel, 0.8);
+        }
     }
+
+
 
     /**
      * Displays the winner of the game and the player info
@@ -302,14 +301,14 @@ public class GamePageController implements Initializable {
         });
 
         winnerLabel.setFont(Font.loadFont(getClass().getResourceAsStream("/Fonts/FantasyScript.ttf"), 60));
-        winnerLabel.setTextFill(Color.rgb(30, 30, 30));
+        winnerLabel.setTextFill(Color.rgb(53, 31, 23));
         winnerLabel.setLayoutX(980);
         winnerLabel.setLayoutY(555);
         winnerLabel.setPrefWidth(440);
         winnerLabel.setPrefHeight(120);
         winnerLabel.setAlignment(Pos.CENTER);
         mainPane.getChildren().add(winnerLabel);
-        fadeInTransition(winnerLabel, 1.0);
+        fadeInTransition(winnerLabel, 0.8);
         displayPlayerInfo(scores, objectives);
 
         Platform.runLater(() -> {
@@ -380,7 +379,7 @@ public class GamePageController implements Initializable {
             playerInfoLabel = new Label(playerName + " - " + playerScore + " Points - " + playerObjectives + " Objectives");
 
             playerInfoLabel.setFont(Font.loadFont(getClass().getResourceAsStream("/Fonts/FantasyScript.ttf"), 37));
-            playerInfoLabel.setTextFill(Color.rgb(30, 30, 30));
+            playerInfoLabel.setTextFill(Color.rgb(53, 31, 23));
             playerInfoLabel.setLayoutX(497);
             playerInfoLabel.setLayoutY(198 + 79 * i);
             playerInfoLabel.setPrefWidth(916);
@@ -732,15 +731,13 @@ public class GamePageController implements Initializable {
         String currentNickname = playerName.getText();
         if (!currentNickname.equals(newNickname)) {
 
-            FadeTransition fadeOut = new FadeTransition(Duration.seconds(1), playerName);
-            fadeOut.setFromValue(1.0);
+            FadeTransition fadeOut = new FadeTransition(Duration.seconds(0.5), playerName);
+            fadeOut.setFromValue(0.79);
             fadeOut.setToValue(0.0);
+            fadeOut.play();
             fadeOut.setOnFinished(event -> {
-                // Change the text after fade out is finished
                 playerName.setText(newNickname);
-
-                // Fade in the new text
-                fadeInTransition(playerName, 1.0);
+                fadeInTransition(playerName, 0.79);
             });
         }
     }
@@ -1553,7 +1550,10 @@ public class GamePageController implements Initializable {
         double totalWidth = boundingBox[2] - boundingBox[0];
         double totalHeight = boundingBox[3] - boundingBox[1];
 
-        scaleFactor = calculateScaleFactor(totalWidth, totalHeight, availablePositions);
+        double playgroundWidth = playground.getWidth();
+        double playgroundHeight = playground.getHeight();
+
+        scaleFactor = calculateScaleFactor(totalWidth, totalHeight, availablePositions, playgroundWidth, playgroundHeight);
 
         centerXOffset = (playground.getWidth() - (totalWidth * scaleFactor)) / 2 - boundingBox[0] * scaleFactor;
         centerYOffset = (playground.getHeight() - (totalHeight * scaleFactor)) / 2 - boundingBox[1] * scaleFactor;
@@ -1589,7 +1589,6 @@ public class GamePageController implements Initializable {
      */
     private void displayPlayerArea(PlayerArea playerArea) {
         Platform.runLater(() -> {
-
             playground.getChildren().removeIf(node -> node instanceof ImageView && node.getUserData() instanceof PlaceableCard);
 
             allCards = playerArea.getAllCards();
@@ -1597,9 +1596,13 @@ public class GamePageController implements Initializable {
             boundingBox = calculateBoundingBox(allCards);
             double totalWidth = boundingBox[2] - boundingBox[0];
             double totalHeight = boundingBox[3] - boundingBox[1];
-            scaleFactor = calculateScaleFactor(totalWidth, totalHeight, playerArea.getAvailablePosition());
-            centerXOffset = (playground.getWidth() - (totalWidth * scaleFactor)) / 2 - boundingBox[0] * scaleFactor;
-            centerYOffset = (playground.getHeight() - (totalHeight * scaleFactor)) / 2 - boundingBox[1] * scaleFactor;
+
+            double playgroundWidth = playground.getWidth();
+            double playgroundHeight = playground.getHeight();
+
+            scaleFactor = calculateScaleFactor(totalWidth, totalHeight, playerArea.getAvailablePosition(), playgroundWidth, playgroundHeight);
+            centerXOffset = (playgroundWidth - (totalWidth * scaleFactor)) / 2 - boundingBox[0] * scaleFactor;
+            centerYOffset = (playgroundHeight - (totalHeight * scaleFactor)) / 2 - boundingBox[1] * scaleFactor;
 
             for (PlaceableCard card : allCards) {
                 double layoutX = (calculateLayoutX(card) * scaleFactor + centerXOffset);
@@ -1622,10 +1625,7 @@ public class GamePageController implements Initializable {
      * @param availablePositions the available positions in the playerArea
      * @return the scale factor
      */
-    private double calculateScaleFactor(double totalWidth, double totalHeight, ArrayList<Integer[]> availablePositions) {
-        double playgroundWidth = playground.getWidth();
-        double playgroundHeight = playground.getHeight();
-
+    private double calculateScaleFactor(double totalWidth, double totalHeight, ArrayList<Integer[]> availablePositions, double playgroundWidth, double playgroundHeight) {
         // Calculate the total dimensions including placeholders
         double totalWithPlaceholdersWidth = totalWidth;
         double totalWithPlaceholdersHeight = totalHeight;
@@ -1646,7 +1646,14 @@ public class GamePageController implements Initializable {
             scaleFactor = Math.min(widthScaleFactor, heightScaleFactor);
         }
 
-        return Math.min(scaleFactor, 1.0);
+        // Only scale down if both width and height are at least as large as the playground
+        if (totalWithPlaceholdersWidth >= playgroundWidth && totalWithPlaceholdersHeight >= playgroundHeight) {
+            scaleFactor = Math.min(scaleFactor, 1.0);
+        } else {
+            scaleFactor = 1.0;
+        }
+
+        return scaleFactor;
     }
 
     /**
@@ -1723,4 +1730,34 @@ public class GamePageController implements Initializable {
         }
     }
 
+    @FXML
+    public void openOnline(MouseEvent event) {
+        if(!online.isVisible()){
+            online.setVisible(true);
+            ArrayList<String> onlinePLayers = currentStateMessageSaved.getOnlinePlayers();
+                Platform.runLater(() -> {
+                    for(int i = 0; i<onlinePLayers.size(); i++){
+                        if(i == 0) {
+                            player1.setText(onlinePLayers.get(i));
+                            player1.setVisible(true);
+                        } else if(i == 1) {
+                            player2.setText(onlinePLayers.get(i));
+                            player2.setVisible(true);
+                        }else if(i == 2) {
+                            player3.setText(onlinePLayers.get(i));
+                            player3.setVisible(true);
+                        }else if(i == 3) {
+                            player4.setText(onlinePLayers.get(i));
+                            player4.setVisible(true);
+                        }
+                    }
+                });
+        } else {
+            online.setVisible(false);
+            player1.setVisible(false);
+            player2.setVisible(false);
+            player3.setVisible(false);
+            player4.setVisible(false);
+        }
+    }
 }

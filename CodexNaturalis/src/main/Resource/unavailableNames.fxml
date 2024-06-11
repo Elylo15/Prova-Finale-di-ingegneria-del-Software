@@ -15,7 +15,7 @@
              <Image url="@Images/ChooseName/choseName.png"/>
           </ImageView>
           <Label fx:id="unavailableNames" layoutX="933.0" layoutY="338.0" prefHeight="313.0" prefWidth="642.0"
-                 textAlignment="CENTER" textOverrun="CENTER_ELLIPSIS">
+                 textAlignment="CENTER" textOverrun="CENTER_ELLIPSIS" textFill="#351f17">
              <font>
                 <Font name="Fantasy Script" size="42.0"/>
              </font>
