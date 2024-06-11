@@ -10,6 +10,7 @@ import javafx.scene.text.Font;
 
 import java.util.ArrayList;
 
+import static it.polimi.ingsw.protocol.client.view.GUI.Utilities.hooverEffect;
 import static it.polimi.ingsw.protocol.client.view.GUI.Utilities.submitName;
 
 public class PickNameFAController {
@@ -39,6 +40,8 @@ public class PickNameFAController {
         String namesWithNewLines = String.join("\n", names);
         unavailableNames.setFont(font);
         unavailableNames.setText(namesWithNewLines);
+
+        hooverEffect(submitButton, 1.05);
 
         submitName(submitButton, nameToChoose);
     }

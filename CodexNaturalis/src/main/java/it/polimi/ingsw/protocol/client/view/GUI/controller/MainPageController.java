@@ -3,11 +3,17 @@ package it.polimi.ingsw.protocol.client.view.GUI.controller;
 import it.polimi.ingsw.protocol.client.view.GUI.message.GUIMessages;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 
+import java.net.URL;
+import java.util.ResourceBundle;
 
-public class MainPageController {
+import static it.polimi.ingsw.protocol.client.view.GUI.Utilities.hooverEffect;
+
+
+public class MainPageController implements Initializable {
     @FXML
     public ImageView playBtn;
     @FXML
@@ -36,4 +42,13 @@ public class MainPageController {
         Platform.runLater(SceneManager::learToPlay);
     }
 
+    /**
+     * This method is called when the scene is loaded.
+     * It sets the hoover effect for the play and rules image-buttons.
+     */
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+       hooverEffect(playBtn, 1.05);
+       hooverEffect(rulesBtn, 1.05);
+    }
 }

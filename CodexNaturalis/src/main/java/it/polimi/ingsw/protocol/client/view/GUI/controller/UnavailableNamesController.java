@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static it.polimi.ingsw.protocol.client.view.GUI.Utilities.hooverEffect;
 import static it.polimi.ingsw.protocol.client.view.GUI.Utilities.submitName;
 
 public class UnavailableNamesController {
@@ -42,6 +43,8 @@ public class UnavailableNamesController {
 
         Font font = Font.loadFont(getClass().getResourceAsStream("/Fonts/FantasyScript.ttf"), 42);
         unavailableNames.setFont(font);
+
+        hooverEffect(submitButton, 1.05);
 
         if (names.isEmpty()) {
             back.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/ChooseName/allName.png"))));
