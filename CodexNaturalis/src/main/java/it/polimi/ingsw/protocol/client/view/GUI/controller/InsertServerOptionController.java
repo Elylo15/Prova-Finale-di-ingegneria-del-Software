@@ -28,7 +28,7 @@ public class InsertServerOptionController {
     @FXML
     private ImageView rotate;
 
-    private static boolean read = true;
+    private static boolean read = false;
     private serverOptionMessage serverOptionMessage;// Message to be sent to the client
 
     /**
@@ -39,12 +39,9 @@ public class InsertServerOptionController {
      */
     @FXML
     private void initialize() {
-        if(!read) {
-            this.serverOptionMessage = (serverOptionMessage) GUIMessages.readToGUI();
-            read = false;
-        } else {
-            serverOptionMessage = new serverOptionMessage(true, null, null, false, null);
-        }
+       //legge il messaggio dalla gui
+        this.serverOptionMessage = (serverOptionMessage) GUIMessages.readToGUI();
+        GUIMessages.writeToGUI(serverOptionMessage);
 
         hooverEffect(new_match, 1.05);
         hooverEffect(join_match, 1.05);

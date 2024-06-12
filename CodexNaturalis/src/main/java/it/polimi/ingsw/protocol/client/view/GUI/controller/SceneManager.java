@@ -31,15 +31,15 @@ public class SceneManager {
 
     public static void initializeBackgroundMusic() {
         String audioFile = Objects.requireNonNull(SceneManager.class.getResource("/Audio/song.mp3")).toString();
-        Media media = new Media(audioFile);
-        MediaPlayer backgroundMediaPlayer = new MediaPlayer(media);
-
-        backgroundMediaPlayer.setOnEndOfMedia(() -> {
-            backgroundMediaPlayer.seek(backgroundMediaPlayer.getStartTime()); // Restart from the beginning
-            backgroundMediaPlayer.play();
-        });
-
-        backgroundMediaPlayer.play();
+//        Media media = new Media(audioFile);
+//        MediaPlayer backgroundMediaPlayer = new MediaPlayer(media);
+//
+////        backgroundMediaPlayer.setOnEndOfMedia(() -> {
+//            backgroundMediaPlayer.seek(backgroundMediaPlayer.getStartTime()); // Restart from the beginning
+////            backgroundMediaPlayer.play();
+////        });
+//
+//        backgroundMediaPlayer.play();
     }
 
 
