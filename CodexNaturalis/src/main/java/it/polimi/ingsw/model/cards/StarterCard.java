@@ -10,7 +10,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class StarterCard extends PlaceableCard implements Serializable {
+public class
+StarterCard extends PlaceableCard implements Serializable {
     private ArrayList<Resource> permanentResource;
     private ArrayList<Resource> bottomResource;
 
@@ -118,11 +119,11 @@ public class StarterCard extends PlaceableCard implements Serializable {
     }
 
     /**
-     * @return the permanent resources
+     * @return the permanent resources in the back of the card
      */
     @Override
     public ArrayList<Resource> getPermanentResource() {
-        if (this.isFront()) {
+        if (!this.isFront()) {
             return permanentResource;
         } else {
             return new ArrayList<>();
