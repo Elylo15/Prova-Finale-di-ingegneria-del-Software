@@ -34,6 +34,7 @@ import java.net.URL;
 import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static it.polimi.ingsw.protocol.client.view.GUI.Utilities.*;
 import static it.polimi.ingsw.protocol.client.view.GUI.controller.SceneManager.playSoundEffect;
@@ -78,6 +79,7 @@ public class GamePageController implements Initializable {
     private final double layoutXCard0 = 864;
     private final double layoutXCard1 = 1110;
     private final double layoutXCard2 = 1356;
+    private double layoutXSaved = 0;
     private final Label winnerLabel = new Label();
     private final BlockingQueue<Object> messageQueue = new LinkedBlockingQueue<>();
     private final ArrayList<Player> players = new ArrayList<>();
@@ -127,7 +129,6 @@ public class GamePageController implements Initializable {
     private String currentState;
     private int clickCounter = -1;
     private boolean isLastTurn = false;
-    private boolean firstTimePlace = true;
     private int selectedStarterFront;
     private int selectedPick;
     private int selectedObjective;
@@ -438,10 +439,6 @@ public class GamePageController implements Initializable {
                     MediaPlayer mediaPlayer = new MediaPlayer(media);
                     mediaPlayer.play();
                     setState(currentStateMessage.getPlayer().getColor());
-                }
-
-                if (firstTimePlace) {
-                    firstTimePlace = false;
                 }
             }
         } else {
@@ -764,7 +761,7 @@ public class GamePageController implements Initializable {
             if (clickCounter == -1) {
                 addCardsToHand();
                 addMyObjective();
-                if (Objects.equals(currentState, "PlaceTurnState") && Objects.equals(myself.getNickname(), currentPlayerNickname) || wrong && !isUpdate)
+                if ((Objects.equals(currentState, "PlaceTurnState") && Objects.equals(myself.getNickname(), currentPlayerNickname) && !isUpdate) || wrong)
                     displayPlayerAreaAndPlaceholders(myPlayerArea);
                 else
                     displayPlayerArea(myPlayerArea);
@@ -775,6 +772,7 @@ public class GamePageController implements Initializable {
             }
         }
     }
+
 
     /**
      * Displays the commonArea
@@ -842,55 +840,205 @@ public class GamePageController implements Initializable {
      * Displays the cards in the player's hand
      */
     private void addCardsToHand() {
-        Platform.runLater(() -> {
-            if (myHand.getPlaceableCards().size() < 3) {
-//                removeCardFromPosition(layoutXCard2, layoutYHand);
-                ImageView card = getCardFromPosition(layoutXCard2, layoutYHand, mainPane);
-                fadeOutTransition(mainPane, card, 1.0, true);
-            }
+        if(clickCounter != -1)
+            addPlayerCardsToHand();
+        else {
+            Platform.runLater(() -> {
+                ImageView card0 = getCardFromPosition(layoutXCard0, layoutYHand, mainPane);
+                ImageView card1 = getCardFromPosition(layoutXCard1, layoutYHand, mainPane);
+                ImageView card2 = getCardFromPosition(layoutXCard2, layoutYHand, mainPane);
+                if (myHand.getPlaceableCards().size() == 3) {
+                    //first time add all
+                    if ((card0 == null && card1 == null && card2 == null)) {
+                        for (int i = 0; i < 3; i++) {
+                            addNewCardToPane(mainPane, myHand.getPlaceableCards().get(i).getID(), myHand.getPlaceableCards().get(i).isFront(),
+                                    myHand.getPlaceableCards().get(i), layoutXCard0 + i * 246, layoutYHand, fitHeightCard, fitWidthCard, this::choseCardToPlace);
+                        }
+                    } else if(wrong){
+                        for (int i = 0; i < 3; i++) {
+                            addNewCardToPane(mainPane, myHand.getPlaceableCards().get(i).getID(), myHand.getPlaceableCards().get(i).isFront(),
+                                    myHand.getPlaceableCards().get(i), layoutXCard0 + i * 246, layoutYHand, fitHeightCard, fitWidthCard, this::choseCardToPlace);
+                        }
+                    } else if (card0 == null && ((PlaceableCard) Objects.requireNonNull(card1).getUserData()).getID() != myHand.getPlaceableCards().get(1).getID()) {
+                        for (int i = 0; i < 3; i++) {
+                            addNewCardToPane(mainPane, myHand.getPlaceableCards().get(i).getID(), myHand.getPlaceableCards().get(i).isFront(),
+                                    myHand.getPlaceableCards().get(i), layoutXCard0 + i * 246, layoutYHand, fitHeightCard, fitWidthCard, this::choseCardToPlace);
+                        }
+                    } else if (card1 == null && ((PlaceableCard) Objects.requireNonNull(card2).getUserData()).getID() != myHand.getPlaceableCards().get(2).getID()) {
+                        for (int i = 0; i < 3; i++) {
+                            addNewCardToPane(mainPane, myHand.getPlaceableCards().get(i).getID(), myHand.getPlaceableCards().get(i).isFront(),
+                                    myHand.getPlaceableCards().get(i), layoutXCard0 + i * 246, layoutYHand, fitHeightCard, fitWidthCard, this::choseCardToPlace);
+                        }
+                    } else if (card2 == null && ((PlaceableCard) Objects.requireNonNull(card1).getUserData()).getID() != myHand.getPlaceableCards().get(1).getID()) {
+                        for (int i = 0; i < 3; i++) {
+                            addNewCardToPane(mainPane, myHand.getPlaceableCards().get(i).getID(), myHand.getPlaceableCards().get(i).isFront(),
+                                    myHand.getPlaceableCards().get(i), layoutXCard0 + i * 246, layoutYHand, fitHeightCard, fitWidthCard, this::choseCardToPlace);
+                        }
+                    } else if (card0 == null){
+                        addNewCardToPane(mainPane, myHand.getPlaceableCards().get(2).getID(), myHand.getPlaceableCards().get(2).isFront(),
+                                myHand.getPlaceableCards().get(2), layoutXCard0, layoutYHand, fitHeightCard, fitWidthCard, this::choseCardToPlace);
+                    } else if(card1 == null) {
+                        addNewCardToPane(mainPane, myHand.getPlaceableCards().get(2).getID(), myHand.getPlaceableCards().get(2).isFront(),
+                                myHand.getPlaceableCards().get(2), layoutXCard1, layoutYHand, fitHeightCard, fitWidthCard, this::choseCardToPlace);
+                    } else if(card2 == null) {
+                        addNewCardToPane(mainPane, myHand.getPlaceableCards().get(2).getID(), myHand.getPlaceableCards().get(2).isFront(),
+                                myHand.getPlaceableCards().get(2), layoutXCard2, layoutYHand, fitHeightCard, fitWidthCard, this::choseCardToPlace);
+                    } else if (((PlaceableCard) Objects.requireNonNull(card0).getUserData()).getID() != myHand.getPlaceableCards().getFirst().getID() ||
+                            ((PlaceableCard) Objects.requireNonNull(card0).getUserData()).getID() != myHand.getPlaceableCards().get(1).getID() ||
+                            ((PlaceableCard) Objects.requireNonNull(card0).getUserData()).getID() != myHand.getPlaceableCards().get(2).getID()){
+                        for (int i = 0; i < 3; i++) {
+                            addNewCardToPane(mainPane, myHand.getPlaceableCards().get(i).getID(), myHand.getPlaceableCards().get(i).isFront(),
+                                    myHand.getPlaceableCards().get(i), layoutXCard0 + i * 246, layoutYHand, fitHeightCard, fitWidthCard, this::choseCardToPlace);
+                        }
+                    } else {
+                        for (int i = 0; i < 3; i++) {
+                            addNewCardToPane(mainPane, myHand.getPlaceableCards().get(i).getID(), myHand.getPlaceableCards().get(i).isFront(),
+                                    myHand.getPlaceableCards().get(i), layoutXCard0 + i * 246, layoutYHand, fitHeightCard, fitWidthCard, this::choseCardToPlace);
+                        }
+                    }
+                } else {
+                    //if you have 2 cards
+                    if(card0 == null)
+                        layoutXSaved = layoutXCard0;
+                    else if(card1 == null)
+                        layoutXSaved = layoutXCard1;
+                    else if(card2 == null)
+                        layoutXSaved = layoutXCard2;
+                    else if(layoutXSaved == 0)
+                        layoutXSaved = layoutXCard2;
 
-            for (int i = 0; myHand.getPlaceableCards().size() > i; i++) {
-                addNewCardToPane(mainPane, myHand.getPlaceableCards().get(i).getID(), true,
-                        myHand.getPlaceableCards().get(i), layoutXCard0 + i * 246, layoutYHand, fitHeightCard, fitWidthCard, this::choseCardToPlace);
-            }
-        });
+                    removeCardFromPosition(layoutXSaved, layoutYHand);
+
+                    if (layoutXSaved == layoutXCard0) {
+                        addNewCardToPane(mainPane, myHand.getPlaceableCards().getFirst().getID(), myHand.getPlaceableCards().getFirst().isFront(), myHand.getPlaceableCards().getFirst(),
+                                layoutXCard1, layoutYHand, fitHeightCard, fitWidthCard, this::choseCardToPlace);
+                        addNewCardToPane(mainPane, myHand.getPlaceableCards().get(1).getID(), myHand.getPlaceableCards().get(1).isFront(), myHand.getPlaceableCards().get(1),
+                                layoutXCard2, layoutYHand, fitHeightCard, fitWidthCard, this::choseCardToPlace);
+                    } else if (layoutXSaved == layoutXCard1) {
+                        addNewCardToPane(mainPane, myHand.getPlaceableCards().getFirst().getID(), myHand.getPlaceableCards().getFirst().isFront(), myHand.getPlaceableCards().getFirst(),
+                                layoutXCard0, layoutYHand, fitHeightCard, fitWidthCard, this::choseCardToPlace);
+                        addNewCardToPane(mainPane, myHand.getPlaceableCards().get(1).getID(), myHand.getPlaceableCards().get(1).isFront(), myHand.getPlaceableCards().get(1),
+                                layoutXCard2, layoutYHand, fitHeightCard, fitWidthCard, this::choseCardToPlace);
+                    } else {
+                        addNewCardToPane(mainPane, myHand.getPlaceableCards().getFirst().getID(), myHand.getPlaceableCards().getFirst().isFront(), myHand.getPlaceableCards().getFirst(),
+                                layoutXCard0, layoutYHand, fitHeightCard, fitWidthCard, this::choseCardToPlace);
+                        addNewCardToPane(mainPane, myHand.getPlaceableCards().get(1).getID(), myHand.getPlaceableCards().get(1).isFront(), myHand.getPlaceableCards().get(1),
+                                layoutXCard1, layoutYHand, fitHeightCard, fitWidthCard, this::choseCardToPlace);
+                    }
+
+                }
+            });
+        }
     }
 
-    /**
-     * Displays the player's personal objective
-     */
-    private void addMyObjective() {
-        Platform.runLater(() -> addNewCardToPane(mainPane, myObjective.getID(), myObjective.isFront(), myObjective, layoutXObjective, layoutYObjMy, fitHeightCommon, fitWidthCommon, this::turnObjectives));
-    }
 
     /**
      * Displays visualized player's cards in the player's hand back
      */
     private void addPlayerCardsToHand() {
-        if (players.get(clickCounter) != null) {
-            PlayerHand playerHand = players.get(clickCounter).getPlayerHand();
+        if(clickCounter == -1)
+            addCardsToHand();
+        else {
+            PlayerHand hand = players.get(clickCounter).getPlayerHand();
+            ImageView card0 = getCardFromPosition(layoutXCard0, layoutYHand, mainPane);
+            ImageView card1 = getCardFromPosition(layoutXCard1, layoutYHand, mainPane);
+            ImageView card2 = getCardFromPosition(layoutXCard2, layoutYHand, mainPane);
             Platform.runLater(() -> {
-                if (playerHand.getPlaceableCards().size() < 3) {
-//                    removeCardFromPosition(layoutXCard2, layoutYHand);
-                    ImageView card = getCardFromPosition(layoutXCard2, layoutYHand, mainPane);
-                    fadeOutTransition(mainPane, card, 1.0, true);
-                }
+                if(hand.getPlaceableCards().size() == 3) {
+                    if ((card0 == null && card1 == null && card2 == null)){
+                        for (int i = 0; i < 3; i++) {
+                            addNewCardToPane(mainPane, hand.getPlaceableCards().get(i).getID(), false,
+                                    hand.getPlaceableCards().get(i), layoutXCard0 + i * 246, layoutYHand, fitHeightCard, fitWidthCard, null);
+                        }
+                    } else if(card0 == null && ((PlaceableCard) Objects.requireNonNull(card1).getUserData()).getID() != hand.getPlaceableCards().get(1).getID()){
+                        for (int i = 0; i < 3; i++) {
+                            addNewCardToPane(mainPane, hand.getPlaceableCards().get(i).getID(), false,
+                                    hand.getPlaceableCards().get(i), layoutXCard0 + i * 246, layoutYHand, fitHeightCard, fitWidthCard, null);
+                        }
+                    }else if (card1 == null && ((PlaceableCard) Objects.requireNonNull(card2).getUserData()).getID() != hand.getPlaceableCards().get(2).getID()) {
+                        for (int i = 0; i < 3; i++) {
+                            addNewCardToPane(mainPane, hand.getPlaceableCards().get(i).getID(), false,
+                                    hand.getPlaceableCards().get(i), layoutXCard0 + i * 246, layoutYHand, fitHeightCard, fitWidthCard, null);
+                        }
+                    } else if (card2 == null && ((PlaceableCard) Objects.requireNonNull(card1).getUserData()).getID() != hand.getPlaceableCards().get(1).getID()) {
+                        for (int i = 0; i < 3; i++) {
+                            addNewCardToPane(mainPane, hand.getPlaceableCards().get(i).getID(), false,
+                                    hand.getPlaceableCards().get(i), layoutXCard0 + i * 246, layoutYHand, fitHeightCard, fitWidthCard, null);
+                        }
+                    } else if (card0 == null){
+                        addNewCardToPane(mainPane, hand.getPlaceableCards().get(2).getID(), false,
+                                hand.getPlaceableCards().get(2), layoutXCard0, layoutYHand, fitHeightCard, fitWidthCard, null);
+                    } else if(card1 == null) {
+                        addNewCardToPane(mainPane, hand.getPlaceableCards().get(2).getID(), false,
+                                hand.getPlaceableCards().get(2), layoutXCard1, layoutYHand, fitHeightCard, fitWidthCard, null);
+                    } else if(card2 == null) {
+                        addNewCardToPane(mainPane, hand.getPlaceableCards().get(2).getID(), false,
+                                hand.getPlaceableCards().get(2), layoutXCard2, layoutYHand, fitHeightCard, fitWidthCard, null);
+                    } else if (((PlaceableCard) Objects.requireNonNull(card0).getUserData()).getID() != hand.getPlaceableCards().getFirst().getID() ||
+                            ((PlaceableCard) Objects.requireNonNull(card0).getUserData()).getID() != hand.getPlaceableCards().get(1).getID() ||
+                            ((PlaceableCard) Objects.requireNonNull(card0).getUserData()).getID() != hand.getPlaceableCards().get(2).getID()){
+                        for (int i = 0; i < 3; i++) {
+                            addNewCardToPane(mainPane, hand.getPlaceableCards().get(i).getID(), false,
+                                    hand.getPlaceableCards().get(i), layoutXCard0 + i * 246, layoutYHand, fitHeightCard, fitWidthCard, null);
+                        }
+                    } else {
+                        for (int i = 0; i < 3; i++) {
+                            addNewCardToPane(mainPane, hand.getPlaceableCards().get(i).getID(), false,
+                                    hand.getPlaceableCards().get(i), layoutXCard0 + i * 246, layoutYHand, fitHeightCard, fitWidthCard, null);
+                        }
+                    }
+                } else {
+                    if(card0 == null)
+                        layoutXSaved = layoutXCard0;
+                    else if(card1 == null)
+                        layoutXSaved = layoutXCard1;
+                    else if(card2 == null)
+                        layoutXSaved = layoutXCard2;
+                    else if(layoutXSaved == 0)
+                        layoutXSaved = layoutXCard2;
 
-                for (int i = 0; i < playerHand.getPlaceableCards().size(); i++) {
-                    addNewCardToPane(mainPane, playerHand.getPlaceableCards().get(i).getID(), false,
-                            playerHand.getPlaceableCards().get(i), layoutXCard0 + i * 246, layoutYHand, fitHeightCard, fitWidthCard, null);
+                    removeCardFromPosition(layoutXSaved, layoutYHand);
+
+                    if(layoutXSaved == layoutXCard0) {
+                        addNewCardToPane(mainPane, hand.getPlaceableCards().getFirst().getID(), false, hand.getPlaceableCards().getFirst(),
+                                layoutXCard1, layoutYHand, fitHeightCard, fitWidthCard, null);
+                        addNewCardToPane(mainPane, hand.getPlaceableCards().get(1).getID(), false, hand.getPlaceableCards().get(1),
+                                layoutXCard2, layoutYHand, fitHeightCard, fitWidthCard, null);
+                    } else if(layoutXSaved == layoutXCard1) {
+                        addNewCardToPane(mainPane, hand.getPlaceableCards().getFirst().getID(), false, hand.getPlaceableCards().getFirst(),
+                                layoutXCard0, layoutYHand, fitHeightCard, fitWidthCard, null);
+                        addNewCardToPane(mainPane, hand.getPlaceableCards().get(1).getID(), false, hand.getPlaceableCards().get(1),
+                                layoutXCard2, layoutYHand, fitHeightCard, fitWidthCard, null);
+                    } else {
+                        addNewCardToPane(mainPane, hand.getPlaceableCards().getFirst().getID(), false, hand.getPlaceableCards().getFirst(),
+                                layoutXCard0, layoutYHand, fitHeightCard, fitWidthCard, null);
+                        addNewCardToPane(mainPane, hand.getPlaceableCards().get(1).getID(), false, hand.getPlaceableCards().get(1),
+                                layoutXCard1, layoutYHand, fitHeightCard, fitWidthCard, null);
+                    }
                 }
             });
         }
     }
 
     /**
+     * Displays the player's personal objective
+     */
+    private void addMyObjective() {
+        Platform.runLater(() -> addNewCardToPane(mainPane, myObjective.getID(), true, myObjective, layoutXObjective, layoutYObjMy, fitHeightCommon, fitWidthCommon, this::turnObjectives));
+    }
+
+
+    /**
      * Displays the visualized player's secret objective back
      */
     private void addPlayerObjective() {
-        if (players.size() > clickCounter && players.get(clickCounter) != null) {
-            Platform.runLater(() -> addNewCardToPane(mainPane, players.get(clickCounter).getObjective().getID(), false, players.get(clickCounter).getObjective(),
-                    layoutXObjective, layoutYObjMy, fitHeightCommon, fitWidthCommon, null));
+        if(clickCounter == -1)
+            addMyObjective();
+        else {
+            if (players.size() > clickCounter && players.get(clickCounter) != null) {
+                Platform.runLater(() -> addNewCardToPane(mainPane, players.get(clickCounter).getObjective().getID(), false, players.get(clickCounter).getObjective(),
+                        layoutXObjective, layoutYObjMy, fitHeightCommon, fitWidthCommon, null));
+            }
         }
     }
 
@@ -940,35 +1088,11 @@ public class GamePageController implements Initializable {
                 });
 
         if (!exists) {
-            ImageView imageView = new ImageView(image);
-            imageView.setLayoutX(layoutX);
-            imageView.setLayoutY(layoutY);
-            imageView.setFitHeight(fitHeight);
-            imageView.setFitWidth(fitWidth);
-            imageView.setOnMouseClicked(eventHandler);
-            pane.getChildren().add(imageView);
-            fadeInTransition(imageView, 0.5);
+
+
+            createClickablePane(pane, layoutX, layoutY, fitHeight, fitWidth, eventHandler, image);
         }
     }
-
-    private Image randomColorForPlaceholder() {
-        Random random = new Random();
-        int color = random.nextInt(5);
-
-        return switch (color) {
-            case 0 ->
-                    new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Placeholders/blue.png")));
-            case 1 ->
-                    new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Placeholders/green.png")));
-            case 2 -> new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Placeholders/red.png")));
-            case 3 ->
-                    new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Placeholders/yellow.png")));
-            case 4 ->
-                    new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Placeholders/purple.png")));
-            default -> null;
-        };
-    }
-
 
     /**
      * Checks if the currentPlayer is already in the list of players
@@ -1032,6 +1156,56 @@ public class GamePageController implements Initializable {
             }
         });
     }
+
+    private void removeCardFromPositionForHandCard(double layoutX, double layoutY, Runnable onFinish) {
+        Platform.runLater(() -> {
+            List<Node> nodesToRemove = mainPane.getChildren().stream()
+                    .filter(node -> node instanceof ImageView)
+                    .filter(node -> {
+                        ImageView imageView = (ImageView) node;
+                        return imageView.getLayoutX() == layoutX && imageView.getLayoutY() == layoutY;
+                    })
+                    .toList();
+
+            if (nodesToRemove.isEmpty()) {  //Nothing to remove
+                if (onFinish != null) {
+                    onFinish.run();
+                }
+                return;
+            }
+
+            AtomicInteger nodesRemovedCount = new AtomicInteger(0);
+            int totalNodesToRemove = nodesToRemove.size();
+
+            for (Node node : nodesToRemove) {
+                ImageView imageView = (ImageView) node;
+                Runnable nodeRemoveCallback = () -> {
+                    if (nodesRemovedCount.incrementAndGet() == totalNodesToRemove && onFinish != null) {
+                        onFinish.run();
+                    }
+                };
+
+                if (imageView.getUserData() instanceof Card)
+                    fadeOutTransitionForHandCard(mainPane, imageView, 1, nodeRemoveCallback);
+                else
+                    fadeOutTransitionForHandCard(mainPane, imageView, 0.5, nodeRemoveCallback);
+            }
+        });
+    }
+
+    private void fadeOutTransitionForHandCard(Pane pane, ImageView card, double duration, Runnable onFinish) {
+        FadeTransition fadeTransition = new FadeTransition(Duration.seconds(duration), card);
+        fadeTransition.setFromValue(1.0);
+        fadeTransition.setToValue(0.0);
+        fadeTransition.setOnFinished(event -> {
+            pane.getChildren().remove(card);
+            if (onFinish != null) {
+                onFinish.run();
+            }
+        });
+        fadeTransition.play();
+    }
+
 
     /**
      * Adds a new card to the pane if it doesn't exist already in the same position and with the same ID
@@ -1273,10 +1447,12 @@ public class GamePageController implements Initializable {
             this.selectedToPlace[2] = originalRow;
             this.selectedToPlace[3] = originalColumn;
 
-            wrong = false;
-            GUIMessages.writeToClient(selectedToPlace);
-            displayPlayerArea(myPlayerArea);
-            this.selectedCard = null;
+            removeCardFromPositionForHandCard(selectedCard.getLayoutX(), selectedCard.getLayoutY(), () -> {
+                GUIMessages.writeToClient(selectedToPlace);
+                wrong = false;
+                this.selectedCard = null;
+            });
+//
         }
     }
 
@@ -1333,6 +1509,14 @@ public class GamePageController implements Initializable {
         } else if (Objects.equals(currentState, "StarterCardState") || Objects.equals(currentState, "ObjectiveState")) {
             waitPopUp(myself.getColor());
         }
+
+
+        if(getCardFromPosition(layoutXCard0, layoutYHand, mainPane) == null )
+            layoutXSaved = layoutXCard0;
+        else if( getCardFromPosition(layoutXCard1, layoutYHand, mainPane) == null)
+            layoutXSaved = layoutXCard1;
+        else if( getCardFromPosition(layoutXCard2, layoutYHand, mainPane) == null)
+            layoutXSaved = layoutXCard2;
 
         PauseTransition pause = new PauseTransition(Duration.seconds(1));
         pause.setOnFinished(event -> nextPlayer.setDisable(false));
@@ -1667,7 +1851,6 @@ public class GamePageController implements Initializable {
 
         imageView.setOnMouseClicked(eventHandler);
 
-        System.out.println("Placeholder created with original position: row = " + originalRow + ", column = " + originalColumn);
         return imageView;
     }
 

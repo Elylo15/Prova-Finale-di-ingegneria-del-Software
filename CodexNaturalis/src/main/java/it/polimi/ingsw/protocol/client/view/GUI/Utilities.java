@@ -4,6 +4,7 @@ import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.protocol.client.view.GUI.message.GUIMessages;
 import javafx.animation.*;
 import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -14,6 +15,7 @@ import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 
 import java.util.Objects;
+import java.util.Random;
 
 public class Utilities {
 
@@ -291,6 +293,50 @@ public class Utilities {
             } else
                 GUIMessages.writeToClient(nameToChoose.getText());
         });
+    }
+
+    /**
+     * Creates a clickable pane
+     *
+     * @param pane         the pane to add the clickable pane to
+     * @param layoutX      the x position of the clickable pane
+     * @param layoutY      the y position of the clickable pane
+     * @param fitHeight    the height of the clickable pane
+     * @param fitWidth     the width of the clickable pane
+     * @param eventHandler the event handler to add to the clickable pane
+     * @param image        the image of the clickable pane
+     */
+    public static void createClickablePane(Pane pane, double layoutX, double layoutY, double fitHeight, double fitWidth, EventHandler<MouseEvent> eventHandler, Image image) {
+        ImageView imageView = new ImageView(image);
+        imageView.setLayoutX(layoutX);
+        imageView.setLayoutY(layoutY);
+        imageView.setFitHeight(fitHeight);
+        imageView.setFitWidth(fitWidth);
+        imageView.setOnMouseClicked(eventHandler);
+        pane.getChildren().add(imageView);
+        fadeInTransition(imageView, 0.5);
+    }
+
+    /**
+     * Creates a random color image for the placeholder
+     * @return the image with the random color
+     */
+    public static Image randomColorForPlaceholder() {
+        Random random = new Random();
+        int color = random.nextInt(5);
+
+        return switch (color) {
+            case 0 ->
+                    new Image(Objects.requireNonNull(Utilities.class.getResourceAsStream("/Images/Placeholders/blue.png")));
+            case 1 ->
+                    new Image(Objects.requireNonNull(Utilities.class.getResourceAsStream("/Images/Placeholders/green.png")));
+            case 2 -> new Image(Objects.requireNonNull(Utilities.class.getResourceAsStream("/Images/Placeholders/red.png")));
+            case 3 ->
+                    new Image(Objects.requireNonNull(Utilities.class.getResourceAsStream("/Images/Placeholders/yellow.png")));
+            case 4 ->
+                    new Image(Objects.requireNonNull(Utilities.class.getResourceAsStream("/Images/Placeholders/purple.png")));
+            default -> null;
+        };
     }
 
 }

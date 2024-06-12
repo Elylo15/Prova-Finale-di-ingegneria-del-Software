@@ -536,17 +536,21 @@ public class LearnToPlay implements Initializable {
      * @param eventHandler the event handler that will be called when the user clicks on the placeholder
      */
     private void addClickablePlaceholder(double layoutX, double layoutY, double fitHeight, double fitWidth, EventHandler<MouseEvent> eventHandler) {
-        Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Placeholders/yellow.png")));
-        ImageView imageView = new ImageView(image);
+        Image image = randomColorForPlaceholder();
+        createClickablePane(mainPane, layoutX, layoutY, fitHeight, fitWidth, eventHandler, image);
 
-        imageView.setLayoutX(layoutX);
-        imageView.setLayoutY(layoutY);
-        imageView.setFitHeight(fitHeight);
-        imageView.setFitWidth(fitWidth);
-        imageView.setOnMouseClicked(eventHandler);
+//        TODO delete this after checking if works
 
-        mainPane.getChildren().add(imageView);
-        fadeInTransition(imageView, 0.5);
+//        ImageView imageView = new ImageView(image);
+//
+//        imageView.setLayoutX(layoutX);
+//        imageView.setLayoutY(layoutY);
+//        imageView.setFitHeight(fitHeight);
+//        imageView.setFitWidth(fitWidth);
+//        imageView.setOnMouseClicked(eventHandler);
+//
+//        mainPane.getChildren().add(imageView);
+//        fadeInTransition(imageView, 0.5);
     }
 
     /**
