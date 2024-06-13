@@ -1,27 +1,18 @@
 package it.polimi.ingsw.protocol.client.view.GUI;
 
 import it.polimi.ingsw.model.cards.Card;
-import it.polimi.ingsw.protocol.client.view.GUI.controller.SceneManager;
 import it.polimi.ingsw.protocol.client.view.GUI.message.GUIMessages;
 import javafx.animation.*;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.StackPane;
-import javafx.stage.Stage;
 import javafx.util.Duration;
-
-import java.io.IOException;
 import java.util.Objects;
 import java.util.Random;
 
@@ -349,35 +340,4 @@ public class Utilities {
         };
     }
 
-    public static Scene loadScene(String pageName, Stage primaryStage ) throws IOException {
-        FXMLLoader loader = new FXMLLoader(SceneManager.class.getResource(pageName));
-        Region contentRootRegion = loader.load();
-
-        double origW = 1920;
-        double origH = 1080;
-
-        if ( contentRootRegion.getPrefWidth() == Region.USE_COMPUTED_SIZE )
-            contentRootRegion.setPrefWidth( origW );
-        else
-            origW = contentRootRegion.getPrefWidth();
-
-        if ( contentRootRegion.getPrefHeight() == Region.USE_COMPUTED_SIZE )
-            contentRootRegion.setPrefHeight( origH );
-        else
-            origH = contentRootRegion.getPrefHeight();
-
-        Group group = new Group( contentRootRegion );
-
-        StackPane rootPane = new StackPane();
-        rootPane.getChildren().add( group );
-
-        Scene scene = new Scene( rootPane, origW, origH );
-
-        group.scaleXProperty().bind( scene.widthProperty().divide( origW ) );
-        group.scaleYProperty().bind( scene.heightProperty().divide( origH ) );
-
-        primaryStage.setScene( scene );
-        primaryStage.show();
-        return scene;
-    }
 }

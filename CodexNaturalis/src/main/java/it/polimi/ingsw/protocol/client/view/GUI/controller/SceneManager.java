@@ -1,6 +1,6 @@
 package it.polimi.ingsw.protocol.client.view.GUI.controller;
 
-import javafx.scene.Scene;
+import it.polimi.ingsw.protocol.client.view.GUI.SceneSizeChangeListener;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
@@ -8,7 +8,6 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.Objects;
 
-import static it.polimi.ingsw.protocol.client.view.GUI.Utilities.loadScene;
 
 /**
  * SceneManager is a utility class that manages the different scenes in the JavaFX application.
@@ -54,7 +53,7 @@ public class SceneManager {
      */
     public static void availableColors() {
         try {
-            loadScene("/availableColors.fxml", primaryStage);
+           new SceneSizeChangeListener("/availableColors.fxml", primaryStage);
         } catch (IOException ignore) {
         }
     }
@@ -64,7 +63,7 @@ public class SceneManager {
      */
     public static void Choose_Socket_RMI() {
         try {
-            loadScene("/Choose_Socket_RMI.fxml", primaryStage);
+            new SceneSizeChangeListener("/Choose_Socket_RMI.fxml", primaryStage);
         } catch (IOException ignore) {
         }
     }
@@ -74,7 +73,7 @@ public class SceneManager {
      */
     public static void disconnect() {
         try {
-            loadScene("/disconnect.fxml", primaryStage);
+            new SceneSizeChangeListener("/disconnect.fxml", primaryStage);
         } catch (IOException ignore) {
         }
     }
@@ -84,7 +83,7 @@ public class SceneManager {
      */
     public static void expectedPlayers() {
         try {
-            loadScene("/expectedPlayers.fxml", primaryStage);
+            new SceneSizeChangeListener("/expectedPlayers.fxml", primaryStage);
         } catch (IOException ignore) {
         }
     }
@@ -94,7 +93,7 @@ public class SceneManager {
      */
     public static void pickNameFA() {
         try {
-            loadScene("/pickNameFA.fxml", primaryStage);
+            new SceneSizeChangeListener("/pickNameFA.fxml", primaryStage);
         } catch (IOException ignore) {
         }
     }
@@ -104,7 +103,7 @@ public class SceneManager {
      */
     public static void InsertIP() {
         try {
-            loadScene("/insertIP.fxml", primaryStage);
+           new SceneSizeChangeListener("/insertIP.fxml", primaryStage);
         } catch (IOException ignore) {
         }
     }
@@ -114,7 +113,7 @@ public class SceneManager {
      */
     public static void InsertServerOption() {
         try {
-            loadScene("/insertServerOption.fxml", primaryStage);
+            new SceneSizeChangeListener("/insertServerOption.fxml", primaryStage);
         } catch (IOException ignore) {
         }
     }
@@ -124,7 +123,7 @@ public class SceneManager {
      */
     public static void JoinMatch() {
         try {
-            loadScene("/joinMatch.fxml", primaryStage);
+            new SceneSizeChangeListener("/joinMatch.fxml", primaryStage);
         } catch (IOException ignore) {
         }
     }
@@ -134,7 +133,7 @@ public class SceneManager {
      */
     public static void JoinRunningMatch() {
         try {
-            loadScene("/joinRunningMatch.fxml", primaryStage);
+            new SceneSizeChangeListener("/joinRunningMatch.fxml", primaryStage);
         } catch (IOException ignore) {
         }
     }
@@ -144,7 +143,7 @@ public class SceneManager {
      */
     public static void LoadMatch() {
         try {
-            loadScene("/loadMatch.fxml", primaryStage);
+            new SceneSizeChangeListener("/loadMatch.fxml", primaryStage);
         } catch (IOException ignore) {
         }
     }
@@ -154,7 +153,7 @@ public class SceneManager {
      */
     public static void MainView() {
         try {
-            loadScene("/mainView.fxml", primaryStage);
+            new SceneSizeChangeListener("/MainView.fxml", primaryStage);
         } catch (IOException ignore) {
         }
     }
@@ -162,7 +161,7 @@ public class SceneManager {
 
     public static void learToPlay() {
         try {
-            loadScene("/learnToPlay.fxml", primaryStage);
+            new SceneSizeChangeListener("/learnToPlay.fxml", primaryStage);
         } catch (IOException ignore) {
         }
     }
@@ -172,8 +171,7 @@ public class SceneManager {
      */
     public static void starterPage() {
         try {
-            Scene scene = loadScene("/gamePage.fxml", primaryStage);
-            scene.getStylesheets().add(Objects.requireNonNull(SceneManager.class.getResource("/styles.css")).toExternalForm());
+            new SceneSizeChangeListener("/gamePage.fxml", primaryStage);
         } catch (IOException ignore) {
         }
     }
@@ -183,7 +181,7 @@ public class SceneManager {
      */
     public static void unavailableNames() {
         try {
-           loadScene("/unavailableNames.fxml", primaryStage);
+            new SceneSizeChangeListener("/unavailableNames.fxml", primaryStage);
         } catch (IOException ignore) {
         }
     }
@@ -193,7 +191,7 @@ public class SceneManager {
      */
     public static void waiting() {
         try {
-            loadScene("/waiting.fxml", primaryStage);
+            new SceneSizeChangeListener("/waiting.fxml", primaryStage);
         } catch (IOException ignore) {
         }
     }
