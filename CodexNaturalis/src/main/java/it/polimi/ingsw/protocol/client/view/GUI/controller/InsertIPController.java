@@ -1,5 +1,6 @@
 package it.polimi.ingsw.protocol.client.view.GUI.controller;
 
+import it.polimi.ingsw.protocol.client.view.GUI.SceneManager;
 import it.polimi.ingsw.protocol.client.view.GUI.message.GUIMessages;
 import javafx.application.Platform;
 import javafx.fxml.FXML;

@@ -1,7 +1,7 @@
 package it.polimi.ingsw.protocol.client.view;
 
 import it.polimi.ingsw.model.cards.ObjectiveCard;
-import it.polimi.ingsw.protocol.client.view.GUI.controller.SceneManager;
+import it.polimi.ingsw.protocol.client.view.GUI.SceneManager;
 import it.polimi.ingsw.protocol.client.view.GUI.message.GUIMessages;
 import it.polimi.ingsw.protocol.messages.ConnectionState.availableColorsMessage;
 import it.polimi.ingsw.protocol.messages.ConnectionState.unavailableNamesMessage;
@@ -13,7 +13,6 @@ import it.polimi.ingsw.protocol.messages.responseMessage;
 import javafx.application.Platform;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 /**
  * This class represents the GUI view of the game.
@@ -22,7 +21,8 @@ import java.util.Objects;
  * It uses the GUIMessages class to communicate with the client.
  */
 public class ViewGUI extends View {
-    private boolean firstTime = true;
+    private boolean firstTimeCurrent = true;
+    private boolean firstTimeName = true;
     private String state;
     private String color;
 
@@ -92,7 +92,6 @@ public class ViewGUI extends View {
      */
     @Override
     public serverOptionMessage serverOptions(serverOptionMessage message) {
-        //to avoid reading unexpected messages
         GUIMessages.clearQueue();
         serverOptionMessage newMessage;
         GUIMessages.writeToGUI(message);
@@ -106,7 +105,6 @@ public class ViewGUI extends View {
      */
     @Override
     public void playerDisconnected() {
-        //to avoid reading unexpected messages
         GUIMessages.clearQueue();
         Platform.runLater(SceneManager::disconnect);
         try {
@@ -124,13 +122,13 @@ public class ViewGUI extends View {
      */
     @Override
     public String unavailableNames(unavailableNamesMessage message) {
-        //to avoid reading unexpected messages
         GUIMessages.clearQueue();  //remove all elements that could be in the queue
-        String name;
-        GUIMessages.writeToGUI(message);  //serialize the message and send it to the gui
-        Platform.runLater(SceneManager::unavailableNames); //run the method unavailableNames in SceneManager
-        name = (String) GUIMessages.readToClient(); //deserialize the string the method must return
-        return name;
+        if(firstTimeName){
+            firstTimeName = false;
+            Platform.runLater(SceneManager::unavailableNames);
+        }
+        GUIMessages.writeToGUI(message);
+        return (String) GUIMessages.readToClient();
     }
 
     /**
@@ -144,16 +142,19 @@ public class ViewGUI extends View {
         boolean ok;
         GUIMessages.clearQueue();
         if (!message.getCorrect()) {
-            if (Objects.equals(state, "PlaceTurnState") || Objects.equals(state, "PickTurnState") ||
-                    Objects.equals(state, "ObjectiveState") || Objects.equals(state, "StarterCardState") || Objects.equals(state, "EndGameState")) {
-                GUIMessages.writeToGUI(message);
-                return true;
-            } else {
-                Platform.runLater(SceneManager::disconnect);
-                ok = (boolean) GUIMessages.readToClient();
-                return ok;
+            switch (state) {
+                case "PlaceTurnState", "PickTurnState", "ObjectiveState", "StarterCardState", "EndGameState" -> {
+                    GUIMessages.writeToGUI(message);
+                    return true;
+                }
+                default -> {
+                    Platform.runLater(SceneManager::disconnect);
+                    ok = (boolean) GUIMessages.readToClient();
+                    return ok;
+                }
             }
         }
+
         return true;
     }
 
@@ -211,11 +212,10 @@ public class ViewGUI extends View {
     @Override
     public void updatePlayer(currentStateMessage message) {
         GUIMessages.clearQueue();
-        System.out.println(message.getStateName());
         state = message.getStateName();
         GUIMessages.writeToGUI(message);
-        if (firstTime) {
-            firstTime = false; //Load this page only the first time the method is called
+        if (firstTimeCurrent) {
+            firstTimeCurrent = false; //Load this page only the first time the method is called
             Platform.runLater(SceneManager::starterPage);
         }
     }
@@ -239,7 +239,6 @@ public class ViewGUI extends View {
      */
     @Override
     public int chooseObjective(ArrayList<ObjectiveCard> objectives) {
-
         GUIMessages.writeToGUI(objectives);
         return (int) GUIMessages.readToClient();
 
@@ -289,7 +288,6 @@ public class ViewGUI extends View {
         GUIMessages.writeToGUI(message);  //serialize the message and send it to the gui
         Platform.runLater(SceneManager::pickNameFA); //run the method unavailableNames in SceneManager
         name = (String) GUIMessages.readToClient(); //deserialize the string the method must return
-        System.out.println(name);
         return name;
     }
 

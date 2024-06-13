@@ -1,11 +1,11 @@
 package it.polimi.ingsw.protocol.client.view.GUI.controller;
 
+import it.polimi.ingsw.protocol.client.view.GUI.SceneManager;
 import it.polimi.ingsw.protocol.client.view.GUI.message.GUIMessages;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.Pane;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -18,11 +18,6 @@ public class MainPageController implements Initializable {
     private ImageView playBtn;
     @FXML
     private ImageView rulesBtn;
-    @FXML
-    private Pane pane;
-    @FXML
-    private ImageView image;
-
 
     /**
      * This method is called when the player presses the play image-button.

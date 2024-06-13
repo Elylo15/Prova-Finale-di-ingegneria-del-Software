@@ -2,36 +2,22 @@ package it.polimi.ingsw.protocol.client.view.GUI.controller;
 
 import it.polimi.ingsw.protocol.client.view.GUI.message.GUIMessages;
 import it.polimi.ingsw.protocol.messages.ConnectionState.unavailableNamesMessage;
-import it.polimi.ingsw.protocol.messages.ServerOptionState.serverOptionMessage;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
-import javafx.scene.image.ImageView;
-import javafx.scene.text.Font;
-
+import javafx.scene.input.MouseEvent;
 import java.util.ArrayList;
 
 import static it.polimi.ingsw.protocol.client.view.GUI.Utilities.hooverEffect;
-import static it.polimi.ingsw.protocol.client.view.GUI.Utilities.submitName;
 
 public class PickNameFAController {
     @FXML
-    private Label unavailableNames;
+    private Label player1;
     @FXML
-    private TextField nameToChoose;
+    private Label player2;
     @FXML
-    private ImageView submitButton;
+    private Label player3;
     @FXML
-    private ImageView back;
-    @FXML
-    private ImageView field;
-
-    @FXML
-    private ListView<String> nameList; // ListView for the matches
+    private Label player4;
 
 
     /**
@@ -41,63 +27,33 @@ public class PickNameFAController {
      */
     @FXML
     public void initialize() {
-
-
-
-        Font font = Font.loadFont(getClass().getResourceAsStream("/Fonts/FantasyScript.ttf"), 42);
-        //String namesWithNewLines = String.join("\n", names);
-        //unavailableNames.setFont(font);
-        //unavailableNames.setText(namesWithNewLines);
-
-        hooverEffect(submitButton, 1.05);
-
-        //submitName(submitButton, nameToChoose);
-
-        // Read the serverOptionMessage from the GUI and get the list of matches
-        // Message to be sent to the client
         unavailableNamesMessage message = (unavailableNamesMessage) GUIMessages.readToGUI();
         // List of names
         ArrayList<String> names = message.getNames();
 
-        // Convert the integers to strings and add them to the ListView
-        ObservableList<String> items = FXCollections.observableArrayList();
-        items.addAll(names);
-        nameList.setItems(items);
+        if(!names.isEmpty())
+            player1.setText(names.getFirst());
 
-        nameList.setCellFactory(listView -> new PickNameFAController.ClickableListCell());
-    }
-
-
-    class ClickableListCell extends ListCell<String> {
-        public ClickableListCell() {
-            setOnMouseClicked(event -> {
-                String item = getItem();
-                if (item != null) {
-                    GUIMessages.writeToClient(item);
-                    nameList.setDisable(true);
-                }
-            });
+        if(names.size() > 1) {
+            player2.setText(names.get(1));
+        }
+        if(names.size() > 2) {
+            player3.setText(names.get(2));
+        }
+        if(names.size() > 3) {
+            player4.setText(names.get(3));
         }
 
-        /**
-         * This method is called when the cell is updated.
-         * It sets the text of the cell to the match ID.
-         *
-         * @param item  the match ID
-         * @param empty true if the cell is empty, false otherwise
-         */
-        @Override
-        protected void updateItem(String item, boolean empty) {
-            super.updateItem(item, empty);
-
-            if (empty || item == null) {
-                setText(null);
-                setGraphic(null);
-            } else {
-                // Set the text of the cell to the match ID
-                setText(item);
-                setGraphic(null);
-            }
-        }
+        hooverEffect(player1, 1.05);
+        hooverEffect(player2, 1.05);
+        hooverEffect(player3, 1.05);
+        hooverEffect(player4, 1.05);
     }
+
+    @FXML
+    public void onCLickSend(MouseEvent event) {
+        Label player = (Label) event.getSource();
+        GUIMessages.writeToClient(player.getText());
+    }
+
 }

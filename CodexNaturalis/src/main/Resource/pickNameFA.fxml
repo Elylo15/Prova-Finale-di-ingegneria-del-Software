@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.ListView?>
-<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
@@ -11,21 +10,29 @@
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="335.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.protocol.client.view.GUI.controller.PickNameFAController">
     <center>
        <Pane BorderPane.alignment="CENTER">
-          <ImageView fx:id="back" fitHeight="1080.0" fitWidth="1920.0" preserveRatio="true">
-             <Image url="@Images/ChooseName/choseName.png" />
+          <ImageView fitHeight="1080.0" fitWidth="1920.0" preserveRatio="true">
+             <Image url="@Images/ChooseName/allName.png"/>
           </ImageView>
-          <TextField fx:id="nameToChoose" layoutX="828.0" layoutY="894.0" prefHeight="112.0" prefWidth="507.0" promptText="Name">
-             <font>
-                <Font name="Fantasy Script" size="42.0" />
-             </font>
-          </TextField>
-          <ImageView fx:id="field" fitHeight="191.0" fitWidth="715.0" layoutX="800.0" layoutY="867.0" mouseTransparent="true" preserveRatio="true">
-             <Image url="@Images/Background/field.png" />
-          </ImageView>
-          <ImageView fx:id="submitButton" fitHeight="155.0" fitWidth="549.0" layoutX="1432.0" layoutY="888.0" preserveRatio="true">
-             <Image url="@Images/Background/submit.png" />
-          </ImageView>
-         <ListView fx:id="nameList" layoutX="1135.0" layoutY="370.0" prefHeight="200.0" prefWidth="200.0" />
+         <Label id="PLayer 1" fx:id="player1" layoutX="755.0" layoutY="508.0" onMouseClicked="#onCLickSend" textFill="#351f17">
+            <font>
+               <Font name="Fantasy Script" size="96.0" />
+            </font>
+         </Label>
+         <Label id="PLayer 2" fx:id="player2" layoutX="1478.0" layoutY="636.0" onMouseClicked="#onCLickSend" textFill="#351f17">
+            <font>
+               <Font name="Fantasy Script" size="96.0" />
+            </font>
+         </Label>
+         <Label id="PLayer 3" fx:id="player3" layoutX="1026.0" layoutY="760.0" onMouseClicked="#onCLickSend" textFill="#351f17">
+            <font>
+               <Font name="Fantasy Script" size="96.0" />
+            </font>
+         </Label>
+         <Label id="PLayer 4" fx:id="player4" layoutX="1270.0" layoutY="456.0" onMouseClicked="#onCLickSend" textFill="#351f17">
+            <font>
+               <Font name="Fantasy Script" size="96.0" />
+            </font>
+         </Label>
        </Pane>
     </center>
 </BorderPane>

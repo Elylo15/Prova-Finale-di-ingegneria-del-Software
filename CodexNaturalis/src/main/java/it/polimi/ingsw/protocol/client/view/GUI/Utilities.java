@@ -1,13 +1,10 @@
 package it.polimi.ingsw.protocol.client.view.GUI;
 
 import it.polimi.ingsw.model.cards.Card;
-import it.polimi.ingsw.protocol.client.view.GUI.message.GUIMessages;
 import javafx.animation.*;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -264,37 +261,6 @@ public class Utilities {
     }
 
     /**
-     * Submits the name chosen by the player
-     *
-     * @param submitButton the submit button
-     * @param nameToChoose the text field where the player writes the name
-     */
-    public static void submitName(ImageView submitButton, TextField nameToChoose) {
-        submitButton.setOnMouseClicked(event -> {
-            if (nameToChoose.getText().isEmpty()) {
-                Label errorLabel = new Label();
-                errorLabel.setStyle("-fx-text-fill: #351f17;");
-                errorLabel.setText("You have to choose!");
-                errorLabel.setPrefWidth(874);
-                errorLabel.setPrefHeight(217);
-                errorLabel.setLayoutX(859);
-                errorLabel.setLayoutY(740);
-                errorLabel.setVisible(true);
-            } else if (nameToChoose.getText().length() >= 10) {
-                Label errorLabel = new Label();
-                errorLabel.setStyle("-fx-text-fill: #351f17;");
-                errorLabel.setText("Your name is too long!");
-                errorLabel.setPrefWidth(874);
-                errorLabel.setPrefHeight(217);
-                errorLabel.setLayoutX(859);
-                errorLabel.setLayoutY(740);
-                errorLabel.setVisible(true);
-            } else
-                GUIMessages.writeToClient(nameToChoose.getText());
-        });
-    }
-
-    /**
      * Creates a clickable pane
      *
      * @param pane         the pane to add the clickable pane to
@@ -339,5 +305,7 @@ public class Utilities {
             default -> null;
         };
     }
+
+
 
 }

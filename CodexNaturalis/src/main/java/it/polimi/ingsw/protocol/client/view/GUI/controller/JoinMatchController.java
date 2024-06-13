@@ -1,6 +1,7 @@
 package it.polimi.ingsw.protocol.client.view.GUI.controller;
 
 
+import it.polimi.ingsw.protocol.client.view.GUI.SceneManager;
 import it.polimi.ingsw.protocol.client.view.GUI.message.GUIMessages;
 import it.polimi.ingsw.protocol.messages.ServerOptionState.serverOptionMessage;
 import javafx.application.Platform;
@@ -56,11 +57,7 @@ public class JoinMatchController {
         hooverEffect(rotate3, 1.2);
         hooverEffect(rotate4, 1.2);
 
-
-        // Read the serverOptionMessage from the GUI and get the list of matches
-        // Message to be sent to the client
         serverOptionMessage serverOptionMessage = (serverOptionMessage) GUIMessages.readToGUI();
-        // List of matches waiting for players
         ArrayList<Integer> matchList = serverOptionMessage.getWaitingMatches();
 
         // Convert the integers to strings and add them to the ListView

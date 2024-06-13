@@ -4,6 +4,7 @@ import it.polimi.ingsw.model.CommonArea;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.PlayerArea;
 import it.polimi.ingsw.model.cards.*;
+import it.polimi.ingsw.protocol.client.view.GUI.SceneManager;
 import it.polimi.ingsw.protocol.client.view.GUI.message.GUIMessages;
 import it.polimi.ingsw.protocol.messages.EndGameState.declareWinnerMessage;
 import it.polimi.ingsw.protocol.messages.PlayerTurnState.updatePlayerMessage;
@@ -37,7 +38,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static it.polimi.ingsw.protocol.client.view.GUI.Utilities.*;
-import static it.polimi.ingsw.protocol.client.view.GUI.controller.SceneManager.playSoundEffect;
+import static it.polimi.ingsw.protocol.client.view.GUI.SceneManager.playSoundEffect;
 
 public class GamePageController implements Initializable {
     private final double offsetPions = 5;
@@ -136,6 +137,7 @@ public class GamePageController implements Initializable {
     private boolean wrong = false;
     private boolean first = true;
     private boolean isUpdate;
+    private boolean endgame = false;
 
 
     /**
@@ -156,7 +158,7 @@ public class GamePageController implements Initializable {
      */
     private void startMessageListener() {
         new Thread(() -> {
-            while (true) {
+            while (!endgame) {
                 try {
                     Object message = GUIMessages.readToGUI();
                     if (message != null) {
@@ -175,7 +177,7 @@ public class GamePageController implements Initializable {
      */
     private void startMessageProcessor() {
         new Thread(() -> {
-            while (true) {
+            while (!endgame) {
                 try {
                     Object message = messageQueue.take();
 
@@ -239,6 +241,7 @@ public class GamePageController implements Initializable {
      * @param declareWinnerMessage the message containing the winner
      */
     private void displayWinner(declareWinnerMessage declareWinnerMessage) {
+        endgame = true;
         rotate.removeEventHandler(MouseEvent.MOUSE_CLICKED, this::openOnline);
         rotate.addEventHandler(MouseEvent.MOUSE_CLICKED, this::hideSeeWinner);
         winner(declareWinnerMessage);
@@ -419,6 +422,7 @@ public class GamePageController implements Initializable {
 
         if (isLastTurn) {
             setLastTurn(currentStateMessage.getCurrentPlayer().getColor());
+            playSoundEffect("/Audio/you.mp3");
         }
 
         if (currentStateMessage.getCurrentPlayer().getNickname().equals(myself.getNickname())) {
@@ -432,10 +436,7 @@ public class GamePageController implements Initializable {
                 choosePopUp(currentStateMessage.getPlayer().getColor());
             } else if (Objects.equals(currentState, "PlaceTurnState")) {
                 if (!isLastTurn && !wrong) {
-                    String audioFile = Objects.requireNonNull(SceneManager.class.getResource("/Audio/you.mp3")).toString();
-                    Media media = new Media(audioFile);
-                    MediaPlayer mediaPlayer = new MediaPlayer(media);
-                    mediaPlayer.play();
+                    playSoundEffect("/Audio/you.mp3");
                     setState(currentStateMessage.getPlayer().getColor());
                 }
             }
@@ -761,13 +762,12 @@ public class GamePageController implements Initializable {
                 addMyObjective();
                 if ((Objects.equals(currentState, "PlaceTurnState") && Objects.equals(myself.getNickname(), currentPlayerNickname) && !isUpdate) || wrong)
                     displayPlayerAreaAndPlaceholders(myPlayerArea);
-                else if(!isUpdate) //otherwise it will be displayed twice exactly the same (with also the next current)
+                else // if(!isUpdate) //otherwise it will be displayed twice exactly the same (with also the next current)
                     displayPlayerArea(myPlayerArea);
             } else {
-                System.out.println("clickCounter: " + clickCounter);
                 addPlayerCardsToHand();
                 addPlayerObjective();
-                if(!isUpdate)
+//                if(!isUpdate)
                     displayPlayerArea(players.get(clickCounter).getPlayerArea());
             }
         }
@@ -988,23 +988,23 @@ public class GamePageController implements Initializable {
                         }
                     }
                 } else {
-                    if(card0 == null)
+                    if (card0 == null)
                         layoutXSaved = layoutXCard0;
-                    else if(card1 == null)
+                    else if (card1 == null)
                         layoutXSaved = layoutXCard1;
-                    else if(card2 == null)
+                    else if (card2 == null)
                         layoutXSaved = layoutXCard2;
-                    else if(layoutXSaved == 0)
+                    else if (layoutXSaved == 0)
                         layoutXSaved = layoutXCard2;
 
                     removeCardFromPosition(layoutXSaved, layoutYHand);
 
-                    if(layoutXSaved == layoutXCard0) {
+                    if (layoutXSaved == layoutXCard0) {
                         addNewCardToPane(mainPane, hand.getPlaceableCards().getFirst().getID(), false, hand.getPlaceableCards().getFirst(),
                                 layoutXCard1, layoutYHand, fitHeightCard, fitWidthCard, null);
                         addNewCardToPane(mainPane, hand.getPlaceableCards().get(1).getID(), false, hand.getPlaceableCards().get(1),
                                 layoutXCard2, layoutYHand, fitHeightCard, fitWidthCard, null);
-                    } else if(layoutXSaved == layoutXCard1) {
+                    } else if (layoutXSaved == layoutXCard1) {
                         addNewCardToPane(mainPane, hand.getPlaceableCards().getFirst().getID(), false, hand.getPlaceableCards().getFirst(),
                                 layoutXCard0, layoutYHand, fitHeightCard, fitWidthCard, null);
                         addNewCardToPane(mainPane, hand.getPlaceableCards().get(1).getID(), false, hand.getPlaceableCards().get(1),
@@ -1747,8 +1747,6 @@ public class GamePageController implements Initializable {
             }
 
             if (needsUpdate) {
-                System.out.println("Needs update");
-
                 playground.getChildren().clear();
 
                 ArrayList<ImageView> cardImageViews = new ArrayList<>();

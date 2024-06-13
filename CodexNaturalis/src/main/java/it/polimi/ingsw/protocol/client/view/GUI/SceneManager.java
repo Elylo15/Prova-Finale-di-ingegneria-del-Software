@@ -1,6 +1,5 @@
-package it.polimi.ingsw.protocol.client.view.GUI.controller;
+package it.polimi.ingsw.protocol.client.view.GUI;
 
-import it.polimi.ingsw.protocol.client.view.GUI.SceneSizeChangeListener;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
@@ -29,15 +28,17 @@ public class SceneManager {
 
     public static void initializeBackgroundMusic() {
         String audioFile = Objects.requireNonNull(SceneManager.class.getResource("/Audio/song.mp3")).toString();
-//        Media media = new Media(audioFile);
-//        MediaPlayer backgroundMediaPlayer = new MediaPlayer(media);
-//
-////        backgroundMediaPlayer.setOnEndOfMedia(() -> {
-//            backgroundMediaPlayer.seek(backgroundMediaPlayer.getStartTime()); // Restart from the beginning
-////            backgroundMediaPlayer.play();
-////        });
-//
-//        backgroundMediaPlayer.play();
+        Media media = new Media(audioFile);
+        MediaPlayer backgroundMediaPlayer = new MediaPlayer(media);
+
+//        backgroundMediaPlayer.setOnEndOfMedia(() -> {
+            backgroundMediaPlayer.seek(backgroundMediaPlayer.getStartTime()); // Restart from the beginning
+//            backgroundMediaPlayer.play();
+//        });
+
+        backgroundMediaPlayer.setVolume(0.3);
+
+        backgroundMediaPlayer.play();
     }
 
 

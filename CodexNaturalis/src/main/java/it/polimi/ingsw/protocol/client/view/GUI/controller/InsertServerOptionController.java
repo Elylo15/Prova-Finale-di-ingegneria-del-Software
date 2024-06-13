@@ -1,5 +1,6 @@
 package it.polimi.ingsw.protocol.client.view.GUI.controller;
 
+import it.polimi.ingsw.protocol.client.view.GUI.SceneManager;
 import it.polimi.ingsw.protocol.client.view.GUI.message.GUIMessages;
 import it.polimi.ingsw.protocol.messages.ServerOptionState.serverOptionMessage;
 import javafx.application.Platform;
@@ -27,8 +28,6 @@ public class InsertServerOptionController {
     private Text join_running_match;// Button to join a running match
     @FXML
     private ImageView rotate;
-
-    private static boolean read = false;
     private serverOptionMessage serverOptionMessage;// Message to be sent to the client
 
     /**
@@ -39,7 +38,6 @@ public class InsertServerOptionController {
      */
     @FXML
     private void initialize() {
-       //legge il messaggio dalla gui
         this.serverOptionMessage = (serverOptionMessage) GUIMessages.readToGUI();
         GUIMessages.writeToGUI(serverOptionMessage);
 
