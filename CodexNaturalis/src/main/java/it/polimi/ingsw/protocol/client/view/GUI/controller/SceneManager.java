@@ -1,15 +1,17 @@
 package it.polimi.ingsw.protocol.client.view.GUI.controller;
 
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCombination;
+import javafx.scene.layout.Pane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.Objects;
+
+import static it.polimi.ingsw.protocol.client.view.GUI.Utilities.resize;
 
 /**
  * SceneManager is a utility class that manages the different scenes in the JavaFX application.
@@ -55,8 +57,10 @@ public class SceneManager {
      */
     public static void availableColors() {
         try {
-            Parent root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/availableColors.fxml")));
-            primaryStage.setScene(new Scene(root));
+            Pane root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/availableColors.fxml")));
+            Scene scene = new Scene(root);
+            primaryStage.setScene(scene);
+            resize(scene, root);
         } catch (IOException ignore) {
         }
     }
@@ -66,8 +70,10 @@ public class SceneManager {
      */
     public static void Choose_Socket_RMI() {
         try {
-            Parent root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/choose_Socket_RMI.fxml")));
-            primaryStage.setScene(new Scene(root));
+            Pane root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/choose_Socket_RMI.fxml")));
+            Scene scene = new Scene(root);
+            primaryStage.setScene(scene);
+            resize(scene, root);
         } catch (IOException ignore) {
         }
     }
@@ -77,8 +83,10 @@ public class SceneManager {
      */
     public static void disconnect() {
         try {
-            Parent root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/disconnect.fxml")));
-            primaryStage.setScene(new Scene(root));
+            Pane root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/disconnect.fxml")));
+            Scene scene = new Scene(root);
+            primaryStage.setScene(scene);
+            resize(scene, root);
         } catch (IOException ignore) {
         }
     }
@@ -88,8 +96,10 @@ public class SceneManager {
      */
     public static void expectedPlayers() {
         try {
-            Parent root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/expectedPlayers.fxml")));
-            primaryStage.setScene(new Scene(root));
+            Pane root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/expectedPlayers.fxml")));
+            Scene scene = new Scene(root);
+            primaryStage.setScene(scene);
+            resize(scene, root);
         } catch (IOException ignore) {
         }
     }
@@ -99,8 +109,10 @@ public class SceneManager {
      */
     public static void pickNameFA() {
         try {
-            Parent root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/pickNameFA.fxml")));
-            primaryStage.setScene(new Scene(root));
+            Pane root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/pickNameFA.fxml")));
+            Scene scene = new Scene(root);
+            primaryStage.setScene(scene);
+            resize(scene, root);
         } catch (IOException ignore) {
         }
     }
@@ -110,8 +122,10 @@ public class SceneManager {
      */
     public static void InsertIP() {
         try {
-            Parent root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/insertIP.fxml")));
-            primaryStage.setScene(new Scene(root));
+            Pane root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/insertIP.fxml")));
+            Scene scene = new Scene(root);
+            primaryStage.setScene(scene);
+            resize(scene, root);
         } catch (IOException ignore) {
         }
     }
@@ -121,12 +135,11 @@ public class SceneManager {
      */
     public static void InsertServerOption() {
         try {
-            Parent root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/insertServerOption.fxml")));
-            primaryStage.setScene(new Scene(root));
-            if (!primaryStage.isFullScreen()) {
-                primaryStage.setFullScreen(true);
-            }
+            Pane root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/insertServerOption.fxml")));
+            Scene scene = new Scene(root);
+            primaryStage.setScene(scene);
             primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
+            resize(scene, root);
         } catch (IOException ignore) {
         }
     }
@@ -136,8 +149,10 @@ public class SceneManager {
      */
     public static void JoinMatch() {
         try {
-            Parent root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/joinMatch.fxml")));
-            primaryStage.setScene(new Scene(root));
+            Pane root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/joinMatch.fxml")));
+            Scene scene = new Scene(root);
+            primaryStage.setScene(scene);
+            resize(scene, root);
         } catch (IOException ignore) {
         }
     }
@@ -147,8 +162,10 @@ public class SceneManager {
      */
     public static void JoinRunningMatch() {
         try {
-            Parent root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/joinRunningMatch.fxml")));
-            primaryStage.setScene(new Scene(root));
+            Pane root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/joinRunningMatch.fxml")));
+            Scene scene = new Scene(root);
+            primaryStage.setScene(scene);
+            resize(scene, root);
         } catch (IOException ignore) {
         }
     }
@@ -158,8 +175,10 @@ public class SceneManager {
      */
     public static void LoadMatch() {
         try {
-            Parent root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/loadMatch.fxml")));
-            primaryStage.setScene(new Scene(root));
+            Pane root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/loadMatch.fxml")));
+            Scene scene = new Scene(root);
+            primaryStage.setScene(scene);
+            resize(scene, root);
         } catch (IOException ignore) {
         }
     }
@@ -169,20 +188,30 @@ public class SceneManager {
      */
     public static void MainView() {
         try {
-            Parent root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/mainView.fxml")));
+
+            FXMLLoader loader = new FXMLLoader(SceneManager.class.getResource("/mainView.fxml"));
+            Pane root = loader.load();
+
             Scene scene = new Scene(root);
             primaryStage.setScene(scene);
 
             scene.getStylesheets().add(Objects.requireNonNull(SceneManager.class.getResource("/styles.css")).toExternalForm());
             primaryStage.show();
+
+            resize(scene, root);
+
         } catch (IOException ignore) {
         }
     }
 
+
+
     public static void learToPlay() {
         try {
-            Parent root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/learnToPlay.fxml")));
-            primaryStage.setScene(new Scene(root));
+            Pane root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/learnToPlay.fxml")));
+            Scene scene = new Scene(root);
+            primaryStage.setScene(scene);
+            resize(scene, root);
         } catch (IOException ignore) {
         }
     }
@@ -193,10 +222,11 @@ public class SceneManager {
      */
     public static void starterPage() {
         try {
-            Parent root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/gamePage.fxml")));
+            Pane root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/gamePage.fxml")));
             Scene scene = new Scene(root);
             primaryStage.setScene(scene);
             scene.getStylesheets().add(Objects.requireNonNull(SceneManager.class.getResource("/styles.css")).toExternalForm());
+            resize(scene, root);
         } catch (IOException ignore) {
         }
     }
@@ -206,8 +236,10 @@ public class SceneManager {
      */
     public static void unavailableNames() {
         try {
-            Parent root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/unavailableNames.fxml")));
-            primaryStage.setScene(new Scene(root));
+            Pane root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/unavailableNames.fxml")));
+            Scene scene = new Scene(root);
+            primaryStage.setScene(scene);
+            resize(scene, root);
         } catch (IOException ignore) {
         }
     }
@@ -217,8 +249,10 @@ public class SceneManager {
      */
     public static void waiting() {
         try {
-            Parent root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/waiting.fxml")));
-            primaryStage.setScene(new Scene(root));
+            Pane root = FXMLLoader.load(Objects.requireNonNull(SceneManager.class.getResource("/waiting.fxml")));
+            Scene scene = new Scene(root);
+            primaryStage.setScene(scene);
+            resize(scene, root);
         } catch (IOException ignore) {
         }
     }

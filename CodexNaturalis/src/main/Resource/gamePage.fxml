@@ -32,7 +32,7 @@
                 <ImageView id="colorName" fx:id="colorName" fitHeight="147.0" fitWidth="535.0" layoutX="523.0" layoutY="5.0" preserveRatio="true">
                     <Image url="@Images/NameTemplate/purpleName.png" />
                 </ImageView>
-                <Label id="playerName" fx:id="playerName" alignment="CENTER" contentDisplay="CENTER" layoutX="528.0" layoutY="-20.0" opacity="0.79" prefHeight="176.0" prefWidth="415.0" text="Bianca" textAlignment="CENTER" textFill="#32281a">
+                <Label id="playerName" fx:id="playerName" alignment="CENTER" contentDisplay="CENTER" layoutX="528.0" layoutY="-20.0" opacity="0.79" prefHeight="176.0" prefWidth="415.0" textAlignment="CENTER" textFill="#32281a">
                     <font>
                         <Font name="Fantasy Script" size="54.0" />
                     </font>

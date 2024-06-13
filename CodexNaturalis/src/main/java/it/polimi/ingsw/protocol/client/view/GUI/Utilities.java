@@ -6,6 +6,7 @@ import javafx.animation.*;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -337,6 +338,18 @@ public class Utilities {
                     new Image(Objects.requireNonNull(Utilities.class.getResourceAsStream("/Images/Placeholders/purple.png")));
             default -> null;
         };
+    }
+
+    public static void resize(final Scene scene, final Pane contentPane) {
+        scene.getWindow().setOnShown(windowEvent -> {
+            final double initWidth = scene.getWidth();
+            final double initHeight = scene.getHeight();
+            final double ratio = initWidth / initHeight;
+
+            SceneSizeChangeListener sizeListener = new SceneSizeChangeListener(scene, ratio, initHeight, initWidth, contentPane);
+            scene.widthProperty().addListener(sizeListener);
+            scene.heightProperty().addListener(sizeListener);
+        });
     }
 
 }

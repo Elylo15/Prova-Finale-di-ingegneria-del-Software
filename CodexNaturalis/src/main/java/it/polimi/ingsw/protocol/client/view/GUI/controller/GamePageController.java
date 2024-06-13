@@ -136,7 +136,6 @@ public class GamePageController implements Initializable {
     private boolean wrong = false;
     private boolean first = true;
     private boolean isUpdate;
-    private boolean firstPlace = true;
 
 
     /**
@@ -147,8 +146,6 @@ public class GamePageController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        playerName.setFont(Font.loadFont(getClass().getResourceAsStream("/Fonts/FantasyScript.ttf"), 54));
-
         rotateEffect(rotate, 2);
         startMessageListener();
         startMessageProcessor();
