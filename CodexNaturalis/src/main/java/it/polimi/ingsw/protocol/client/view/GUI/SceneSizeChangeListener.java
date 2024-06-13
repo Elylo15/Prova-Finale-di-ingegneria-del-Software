@@ -7,41 +7,31 @@ import javafx.scene.layout.Pane;
 import javafx.scene.transform.Scale;
 
 public class SceneSizeChangeListener implements ChangeListener<Number> {
-
     private final Scene scene;
-    private final double ratio;
-    private final double initHeight;
-    private final double initWidth;
+    final double initWidth = 1920;
+    final double initHeight = 1080;
     private final Pane contentPane;
-    private final Scale scale;
 
-    public SceneSizeChangeListener(Scene scene, double ratio, double initHeight, double initWidth, Pane contentPane) {
+    public SceneSizeChangeListener(Scene scene, Pane contentPane) {
         this.scene = scene;
-        this.ratio = ratio;
-        this.initHeight = initHeight;
-        this.initWidth = initWidth;
         this.contentPane = contentPane;
-        this.scale = new Scale(1, 1, 0, 0);
-        scene.getRoot().getTransforms().add(scale);
     }
 
     @Override
     public void changed(ObservableValue<? extends Number> observableValue, Number oldValue, Number newValue) {
         final double newWidth = scene.getWidth();
         final double newHeight = scene.getHeight();
+        double scaleFactor = newHeight / initHeight;
 
-        double scaleFactor = (newWidth / newHeight > ratio) ? newHeight / initHeight : newWidth / initWidth;
+        Scale scale = new Scale(scaleFactor, scaleFactor);
+        scale.setPivotX(0);
+        scale.setPivotY(0);
+        scene.getRoot().getTransforms().setAll(scale);
 
-        scale.setX(scaleFactor);
-        scale.setY(scaleFactor);
+        contentPane.setPrefWidth(initWidth * scaleFactor);
+        contentPane.setPrefHeight(initHeight * scaleFactor);
 
-        if (scaleFactor >= 1) {
-            contentPane.setPrefWidth(newWidth / scaleFactor);
-            contentPane.setPrefHeight(newHeight / scaleFactor);
-        } else {
-            contentPane.setPrefWidth(Math.max(initWidth, newWidth));
-            contentPane.setPrefHeight(Math.max(initHeight, newHeight));
-        }
+        System.out.println("Pane Width: " + contentPane.getPrefWidth() + " Pane Height: " + contentPane.getPrefHeight());
+        System.out.println("Scale: " + scaleFactor);
     }
 }
-

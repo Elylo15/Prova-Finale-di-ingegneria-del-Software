@@ -5,6 +5,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Pane;
 
 import static it.polimi.ingsw.protocol.client.view.GUI.Utilities.hooverEffect;
 import static it.polimi.ingsw.protocol.client.view.GUI.Utilities.rotateEffect;
@@ -44,6 +45,8 @@ public class InsertIPController {
     private TextField ip;
     @FXML
     private ImageView submit_ip;
+    @FXML
+    private Pane dynamicPane;
 
     /**
      * This method is called when the scene is loaded.
