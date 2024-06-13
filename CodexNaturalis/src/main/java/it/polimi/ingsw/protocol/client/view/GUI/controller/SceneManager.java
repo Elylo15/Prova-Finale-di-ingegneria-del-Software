@@ -63,7 +63,7 @@ public class SceneManager {
      */
     public static void Choose_Socket_RMI() {
         try {
-            new SceneSizeChangeListener("/Choose_Socket_RMI.fxml", primaryStage);
+            new SceneSizeChangeListener("/choose_Socket_RMI.fxml", primaryStage);
         } catch (IOException ignore) {
         }
     }
@@ -153,7 +153,7 @@ public class SceneManager {
      */
     public static void MainView() {
         try {
-            new SceneSizeChangeListener("/MainView.fxml", primaryStage);
+            new SceneSizeChangeListener("/mainView.fxml", primaryStage);
         } catch (IOException ignore) {
         }
     }
