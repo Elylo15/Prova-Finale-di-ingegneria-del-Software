@@ -1716,31 +1716,38 @@ public class GamePageController implements Initializable {
             ArrayList<PlaceableCard> newCards = playerArea.getAllCards();
             List<Node> currentNodes = new ArrayList<>(playground.getChildren());
 
-            boolean needsUpdate = false; //(potrei anche contaere quante immagini e quante carte)
+            boolean needsUpdate = false;
+            int countCard = 0;
 
-            for (Node node : currentNodes) {
-                if (node instanceof ImageView imageView) {
-                    PlaceableCard card = (PlaceableCard) imageView.getUserData();
-                    if (card != null) {
-                        boolean foundMatchingCard = false;
-                        for (PlaceableCard newCard : newCards) {
-                            if (card.getID() == newCard.getID()) {
-                                foundMatchingCard = true;
-                                break; // Exit inner loop if match is found
+            for(Node node: currentNodes)
+                if (node instanceof ImageView)
+                    countCard++;
+
+            if (newCards.size() != countCard) {
+                needsUpdate = true;
+            } else if(countCard > 0) {
+                for (Node node : currentNodes) {
+                    if (node instanceof ImageView imageView) {
+                        PlaceableCard card = (PlaceableCard) imageView.getUserData();
+                        if (card != null) {
+                            boolean foundMatchingCard = false;
+                            for (PlaceableCard newCard : newCards) {
+                                if (card.getID() == newCard.getID()) {
+                                    foundMatchingCard = true;
+                                    break; // Exit inner loop if match is found
+                                }
                             }
+                            if (!foundMatchingCard) {
+                                needsUpdate = true;
+                                break; // Exit outer loop if update
+                            }
+                        } else {
+                            needsUpdate = true; //ImageView.getUserData() is null
+                            break;
                         }
-                        if (!foundMatchingCard) {
-                            needsUpdate = true;
-                            break; // Exit outer loop if update
-                        }
-                    } else {
-                        needsUpdate = true; //mageView.getUserData() is null
-                        break;
                     }
                 }
             }
-
-
 
             if (needsUpdate) {
                 System.out.println("Needs update");
