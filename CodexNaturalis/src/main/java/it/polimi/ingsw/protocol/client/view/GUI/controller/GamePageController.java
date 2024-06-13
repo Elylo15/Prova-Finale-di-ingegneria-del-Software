@@ -136,6 +136,7 @@ public class GamePageController implements Initializable {
     private boolean wrong = false;
     private boolean first = true;
     private boolean isUpdate;
+    private boolean firstPlace = true;
 
 
     /**
@@ -763,12 +764,14 @@ public class GamePageController implements Initializable {
                 addMyObjective();
                 if ((Objects.equals(currentState, "PlaceTurnState") && Objects.equals(myself.getNickname(), currentPlayerNickname) && !isUpdate) || wrong)
                     displayPlayerAreaAndPlaceholders(myPlayerArea);
-                else
+                else if(!isUpdate) //otherwise it will be displayed twice exactly the same (with also the next current)
                     displayPlayerArea(myPlayerArea);
             } else {
+                System.out.println("clickCounter: " + clickCounter);
                 addPlayerCardsToHand();
                 addPlayerObjective();
-                displayPlayerArea(players.get(clickCounter).getPlayerArea());
+                if(!isUpdate)
+                    displayPlayerArea(players.get(clickCounter).getPlayerArea());
             }
         }
     }
@@ -1709,33 +1712,69 @@ public class GamePageController implements Initializable {
      * @param playerArea the player area to display
      */
     private void displayPlayerArea(PlayerArea playerArea) {
-        playground.getChildren().clear();
+        Platform.runLater(() -> {
+            ArrayList<PlaceableCard> newCards = playerArea.getAllCards();
+            List<Node> currentNodes = new ArrayList<>(playground.getChildren());
 
-        ArrayList<PlaceableCard> cards = playerArea.getAllCards();
-        ArrayList<ImageView> cardImageViews = new ArrayList<>();
+            boolean needsUpdate = false; //(potrei anche contaere quante immagini e quante carte)
 
-        for (PlaceableCard card : cards) {
-            ImageView cardImageView = createCardImageView(
-                    card.getID(), card.isFront(), card,
-                    card.getCells().getFirst().getColumn() * offsetAreaX,
-                    card.getCells().getFirst().getRow() * offsetAreaY,
-                    fitHeightPlaced, fitWidthPlaced
-            );
+            for (Node node : currentNodes) {
+                if (node instanceof ImageView imageView) {
+                    PlaceableCard card = (PlaceableCard) imageView.getUserData();
+                    if (card != null) {
+                        boolean foundMatchingCard = false;
+                        for (PlaceableCard newCard : newCards) {
+                            if (card.getID() == newCard.getID()) {
+                                foundMatchingCard = true;
+                                break; // Exit inner loop if match is found
+                            }
+                        }
+                        if (!foundMatchingCard) {
+                            needsUpdate = true;
+                            break; // Exit outer loop if update
+                        }
+                    } else {
+                        needsUpdate = true; //mageView.getUserData() is null
+                        break;
+                    }
+                }
+            }
 
-            cardImageViews.add(cardImageView);
-        }
 
-        // Add all card image views to playground
-        playground.getChildren().addAll(cardImageViews);
 
-        // Adjust z-order of the cards based on their positions relative to other cards
-        for (ImageView cardImageView : cardImageViews) {
-            PlaceableCard card = getCardFromImageView(cardImageView, cards);
-            adjustCardZOrder(cardImageView, Objects.requireNonNull(card));
-        }
+            if (needsUpdate) {
+                System.out.println("Needs update");
 
-        // Adjust size and position to fit within the playground
-        adjustSizeAndPosition(playground, cardImageViews);
+                playground.getChildren().clear();
+
+                ArrayList<ImageView> cardImageViews = new ArrayList<>();
+
+                for (PlaceableCard card : newCards) {
+                    ImageView cardImageView = createCardImageView(
+                            card.getID(), card.isFront(), card,
+                            card.getCells().getFirst().getColumn() * offsetAreaX,
+                            card.getCells().getFirst().getRow() * offsetAreaY,
+                            fitHeightPlaced, fitWidthPlaced
+                    );
+
+                    cardImageViews.add(cardImageView);
+                    fadeInTransition(cardImageView, 1.0);
+                }
+
+                playground.getChildren().addAll(cardImageViews);
+
+                // Adjust z-order of the cards
+                for (ImageView cardImageView : cardImageViews) {
+                    PlaceableCard card = getCardFromImageView(cardImageView, newCards);
+                    adjustCardZOrder(cardImageView, Objects.requireNonNull(card));
+                }
+
+                // Adjust size and position to fit
+                adjustSizeAndPosition(playground, cardImageViews);
+
+                fadeInTransition(playground, 1.0);
+            }
+        });
     }
 
     /**
@@ -1744,48 +1783,53 @@ public class GamePageController implements Initializable {
      * @param playerArea the player area to display
      */
     private void displayPlayerAreaAndPlaceholders(PlayerArea playerArea) {
-        playground.getChildren().clear();
+        Platform.runLater(() -> {
+            ArrayList<PlaceableCard> newCards = playerArea.getAllCards();
 
-        ArrayList<PlaceableCard> cards = playerArea.getAllCards();
-        ArrayList<ImageView> cardImageViews = new ArrayList<>();
+            playground.getChildren().clear();
 
-        for (PlaceableCard card : cards) {
-            // Create ImageView for the card
-            ImageView cardImageView = createCardImageView(
-                    card.getID(), card.isFront(), card,
-                    card.getCells().getFirst().getColumn() * offsetAreaX,
-                    card.getCells().getFirst().getRow() * offsetAreaY,
-                    fitHeightPlaced, fitWidthPlaced
-            );
+            ArrayList<ImageView> cardImageViews = new ArrayList<>();
 
-            cardImageViews.add(cardImageView);
-        }
+            for (PlaceableCard card : newCards) {
+                ImageView cardImageView = createCardImageView(
+                        card.getID(), card.isFront(), card,
+                        card.getCells().getFirst().getColumn() * offsetAreaX,
+                        card.getCells().getFirst().getRow() * offsetAreaY,
+                        fitHeightPlaced, fitWidthPlaced
+                );
 
-        ArrayList<Integer[]> availablePositions = playerArea.getAvailablePosition();
-        ArrayList<ImageView> placeholderImageViews = new ArrayList<>();
+                cardImageViews.add(cardImageView);
+                fadeInTransition(cardImageView, 1.0);
+            }
 
-        for (Integer[] pos : availablePositions) {
-            double layoutX = pos[1] * offsetAreaX;  // Inverted x and y
-            double layoutY = pos[0] * offsetAreaY;
-            ImageView placeholderImageView = createPlaceholderImageView(
-                    layoutX, layoutY,
-                    this::confirmPlaceCard, pos[0], pos[1]
-            );
-            placeholderImageViews.add(placeholderImageView);
-        }
+            ArrayList<ImageView> placeholderImageViews = new ArrayList<>();
 
-        ArrayList<ImageView> allImageViews = new ArrayList<>();
-        allImageViews.addAll(placeholderImageViews);
-        allImageViews.addAll(cardImageViews);
+            ArrayList<Integer[]> availablePositions = playerArea.getAvailablePosition();
+            for (Integer[] pos : availablePositions) {
+                double layoutX = pos[1] * offsetAreaX;  // Inverted x and y
+                double layoutY = pos[0] * offsetAreaY;
+                ImageView placeholderImageView = createPlaceholderImageView(
+                        layoutX, layoutY,
+                        this::confirmPlaceCard, pos[0], pos[1]
+                );
+                placeholderImageViews.add(placeholderImageView);
+                fadeInTransition(placeholderImageView, 0.5);
+            }
 
-        playground.getChildren().addAll(allImageViews);
+            ArrayList<ImageView> allImageViews = new ArrayList<>();
+            allImageViews.addAll(placeholderImageViews);
+            allImageViews.addAll(cardImageViews);
 
-        for (ImageView cardImageView : cardImageViews) {
-            PlaceableCard card = getCardFromImageView(cardImageView, cards);
-            adjustCardZOrder(cardImageView, Objects.requireNonNull(card));
-        }
+            playground.getChildren().addAll(allImageViews);
 
-        adjustSizeAndPosition(playground, allImageViews);
+            for (ImageView cardImageView : cardImageViews) {
+                PlaceableCard card = getCardFromImageView(cardImageView, newCards);
+                adjustCardZOrder(cardImageView, Objects.requireNonNull(card));
+            }
+
+            adjustSizeAndPosition(playground, allImageViews);
+            fadeInTransition(playground, 1.0);
+        });
     }
 
     /**
@@ -1816,10 +1860,12 @@ public class GamePageController implements Initializable {
      * @return the PlaceableCard associated with the ImageView
      */
     private PlaceableCard getCardFromImageView(ImageView imageView, List<PlaceableCard> cards) {
-        for (PlaceableCard card : cards) {
-            PlaceableCard cardImage = (PlaceableCard) imageView.getUserData();
-            if (card.getID() == cardImage.getID()) {
-                return card;
+        PlaceableCard cardImage = (PlaceableCard) imageView.getUserData();
+        if (cardImage != null) {
+            for (PlaceableCard card : cards) {
+                if (card.getID() == cardImage.getID()) {
+                    return card;
+                }
             }
         }
         return null;
