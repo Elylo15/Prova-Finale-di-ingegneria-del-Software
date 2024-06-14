@@ -1,13 +1,13 @@
 package it.polimi.ingsw.protocol.client.view;
 
 import it.polimi.ingsw.model.cards.ObjectiveCard;
-import it.polimi.ingsw.protocol.client.view.GUI.SceneManager;
-import it.polimi.ingsw.protocol.client.view.GUI.message.GUIMessages;
-import it.polimi.ingsw.protocol.messages.ConnectionState.availableColorsMessage;
-import it.polimi.ingsw.protocol.messages.ConnectionState.unavailableNamesMessage;
-import it.polimi.ingsw.protocol.messages.EndGameState.declareWinnerMessage;
-import it.polimi.ingsw.protocol.messages.PlayerTurnState.updatePlayerMessage;
-import it.polimi.ingsw.protocol.messages.ServerOptionState.serverOptionMessage;
+import it.polimi.ingsw.protocol.client.view.gui.SceneManager;
+import it.polimi.ingsw.protocol.client.view.gui.message.GUIMessages;
+import it.polimi.ingsw.protocol.messages.connectionState.availableColorsMessage;
+import it.polimi.ingsw.protocol.messages.connectionState.unavailableNamesMessage;
+import it.polimi.ingsw.protocol.messages.endGameState.declareWinnerMessage;
+import it.polimi.ingsw.protocol.messages.playerTurnState.updatePlayerMessage;
+import it.polimi.ingsw.protocol.messages.serverOptionState.serverOptionMessage;
 import it.polimi.ingsw.protocol.messages.currentStateMessage;
 import it.polimi.ingsw.protocol.messages.responseMessage;
 import javafx.application.Platform;
@@ -15,7 +15,7 @@ import javafx.application.Platform;
 import java.util.ArrayList;
 
 /**
- * This class represents the GUI view of the game.
+ * This class represents the gui view of the game.
  * It extends the View class and overrides its methods to provide a graphical user interface for the game.
  * It uses the SceneManager class to manage the different scenes of the game.
  * It uses the GUIMessages class to communicate with the client.
@@ -59,7 +59,7 @@ public class ViewGUI extends View {
         // Initialize the IP address
         String ip;
 
-        // Update the GUI scene to allow the user to enter the IP address
+        // Update the gui scene to allow the user to enter the IP address
         Platform.runLater(SceneManager::InsertIP);
 
         // Read the IP address entered by the user from the client
@@ -70,9 +70,9 @@ public class ViewGUI extends View {
     }
 
     /**
-     * This method is used to ask the user whether they want to use a socket or RMI for communication.
+     * This method is used to ask the user whether they want to use a socket or rmi for communication.
      *
-     * @return A boolean value representing the user's choice. True for socket, false for RMI.
+     * @return A boolean value representing the user's choice. True for socket, false for rmi.
      */
     @Override
     public boolean askSocket() {// true = socket, false = rmi
@@ -87,7 +87,7 @@ public class ViewGUI extends View {
     /**
      * This method handles the server options for the user.
      *
-     * @param message The server option message to be sent to the GUI.
+     * @param message The server option message to be sent to the gui.
      * @return The server option message received from the client.
      */
     @Override
@@ -143,7 +143,7 @@ public class ViewGUI extends View {
         GUIMessages.clearQueue();
         if (!message.getCorrect()) {
             switch (state) {
-                case "PlaceTurnState", "PickTurnState", "ObjectiveState", "StarterCardState", "EndGameState" -> {
+                case "PlaceTurnState", "PickTurnState", "objectiveState", "StarterCardState", "endGameState" -> {
                     GUIMessages.writeToGUI(message);
                     return true;
                 }

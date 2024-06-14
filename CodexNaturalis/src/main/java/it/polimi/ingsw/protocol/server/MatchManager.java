@@ -6,15 +6,15 @@ import it.polimi.ingsw.model.cards.ObjectiveCard;
 import it.polimi.ingsw.model.cards.PlaceableCard;
 import it.polimi.ingsw.model.cards.exceptions.InvalidIdException;
 import it.polimi.ingsw.model.cards.exceptions.noPlaceCardException;
-import it.polimi.ingsw.protocol.messages.ObjectiveState.objectiveCardMessage;
-import it.polimi.ingsw.protocol.messages.PlayerTurnState.pickCardMessage;
-import it.polimi.ingsw.protocol.messages.PlayerTurnState.placeCardMessage;
-import it.polimi.ingsw.protocol.messages.PlayerTurnState.updatePlayerMessage;
-import it.polimi.ingsw.protocol.messages.StaterCardState.starterCardMessage;
-import it.polimi.ingsw.protocol.messages.WaitingforPlayerState.expectedPlayersMessage;
+import it.polimi.ingsw.protocol.messages.objectiveState.objectiveCardMessage;
+import it.polimi.ingsw.protocol.messages.playerTurnState.pickCardMessage;
+import it.polimi.ingsw.protocol.messages.playerTurnState.placeCardMessage;
+import it.polimi.ingsw.protocol.messages.playerTurnState.updatePlayerMessage;
+import it.polimi.ingsw.protocol.messages.staterCardState.starterCardMessage;
+import it.polimi.ingsw.protocol.messages.waitingForPlayerState.expectedPlayersMessage;
 import it.polimi.ingsw.protocol.messages.currentStateMessage;
-import it.polimi.ingsw.protocol.server.FSM.MatchState;
-import it.polimi.ingsw.protocol.server.FSM.State;
+import it.polimi.ingsw.protocol.server.fsm.MatchState;
+import it.polimi.ingsw.protocol.server.fsm.State;
 import it.polimi.ingsw.protocol.server.exceptions.FailedToJoinMatch;
 
 import java.io.File;
@@ -705,7 +705,7 @@ public class MatchManager implements Runnable {
 
         // Sends current state messages to all clients
         for (PlayerInfo playerInfo1 : this.getOnlinePlayerInfo()) {
-            currentStateMessage currState = new currentStateMessage(player, playerInfo1.getPlayer(), "ObjectiveState", this.matchInfo.isLastTurn(), this.onlinePlayersNicknames(), this.matchInfo.getMatch().getCommonObjective(), this.matchInfo.getID());
+            currentStateMessage currState = new currentStateMessage(player, playerInfo1.getPlayer(), "objectiveState", this.matchInfo.isLastTurn(), this.onlinePlayersNicknames(), this.matchInfo.getMatch().getCommonObjective(), this.matchInfo.getID());
             playerInfo1.getConnection().sendCurrentState(currState);
         }
 
@@ -875,7 +875,7 @@ public class MatchManager implements Runnable {
         logCreator.log("ENDGAME");
         // Sends current state messages to all clients
         for (PlayerInfo playerInfo1 : this.getOnlinePlayerInfo()) {
-            currentStateMessage currState = new currentStateMessage(null, playerInfo1.getPlayer(), "EndGameState", this.matchInfo.isLastTurn(), this.onlinePlayersNicknames(), this.matchInfo.getMatch().getCommonObjective(), this.matchInfo.getID());
+            currentStateMessage currState = new currentStateMessage(null, playerInfo1.getPlayer(), "endGameState", this.matchInfo.isLastTurn(), this.onlinePlayersNicknames(), this.matchInfo.getMatch().getCommonObjective(), this.matchInfo.getID());
             playerInfo1.getConnection().sendCurrentState(currState);
         }
 

@@ -4,8 +4,8 @@ import it.polimi.ingsw.protocol.client.controller.Controller;
 import it.polimi.ingsw.protocol.client.controller.ControllerRMI;
 import it.polimi.ingsw.protocol.client.controller.ControllerSocket;
 import it.polimi.ingsw.protocol.client.view.ViewCLI;
-import it.polimi.ingsw.protocol.messages.EndGameState.declareWinnerMessage;
-import it.polimi.ingsw.protocol.messages.ServerOptionState.serverOptionMessage;
+import it.polimi.ingsw.protocol.messages.endGameState.declareWinnerMessage;
+import it.polimi.ingsw.protocol.messages.serverOptionState.serverOptionMessage;
 import it.polimi.ingsw.protocol.messages.currentStateMessage;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -94,13 +94,13 @@ class ServerTest {
             controller.connectToServer("localhost", "1024");
             controller.answerConnection();
 
-            // ServerOptionState
+            // serverOptionState
             controller.getCurrent();
             serverOptionMessage serverOption = controller.serverOptions();
             controller.sendOptions(new serverOptionMessage(true, null, null, false, null));
             assertTrue(controller.correctAnswer().getCorrect());
 
-            // ConnectionState (name and color)
+            // connectionState (name and color)
             matchID_1 = controller.getCurrent().getMatchID();
             controller.getUnavailableName();
             controller.chooseName("ALFA");
@@ -130,7 +130,7 @@ class ServerTest {
 
         System.out.println("\033[0;31mclient_1\033[0m tries to rejoin...");
 
-        // Switch to RMI
+        // Switch to rmi
 
         // Connection 2
         controller = new ControllerRMI("localhost", "1099");
@@ -138,7 +138,7 @@ class ServerTest {
             controller.connectToServer("localhost", "1099");
             controller.answerConnection();
 
-            // ServerOptionState
+            // serverOptionState
             controller.getCurrent();
             while (true) {
                 serverOptionMessage serverOption = controller.serverOptions();
@@ -152,7 +152,7 @@ class ServerTest {
                 }
             }
 
-            // ConnectionState (name and color)
+            // connectionState (name and color)
             controller.getCurrent();
             controller.getUnavailableName();
             controller.chooseName("ALFA");
@@ -191,13 +191,13 @@ class ServerTest {
                 controller.answerConnection();
 
 
-                // ServerOptionState
+                // serverOptionState
                 controller.getCurrent();
                 serverOptionMessage serverOption = controller.serverOptions();
                 controller.sendOptions(new serverOptionMessage(true, serverOption.getWaitingMatches().getFirst(), null, false, null));
                 assertTrue(controller.correctAnswer().getCorrect());
 
-                // ConnectionState (name and color with wrong choices)
+                // connectionState (name and color with wrong choices)
                 controller.getCurrent();
                 controller.getUnavailableName();
                 controller.chooseName("ALFA");
@@ -233,7 +233,7 @@ class ServerTest {
         controller.connectToServer("localhost", "1024");
         controller.answerConnection().getCorrect();
 
-        // ServerOptionState
+        // serverOptionState
         controller.getCurrent();
         while (true) {
             serverOptionMessage serverOption = controller.serverOptions();
@@ -247,7 +247,7 @@ class ServerTest {
             }
         }
 
-        // ConnectionState (name and color)
+        // connectionState (name and color)
         controller.getCurrent();
         controller.getUnavailableName();
         controller.chooseName("BETA");
@@ -288,13 +288,13 @@ class ServerTest {
             controller.connectToServer("localhost", "1099");
             controller.answerConnection();
 
-            // ServerOptionState
+            // serverOptionState
             controller.getCurrent();
             serverOptionMessage serverOption = controller.serverOptions();
             controller.sendOptions(new serverOptionMessage(true, null, null, false, null));
             assertTrue(controller.correctAnswer().getCorrect());
 
-            // ConnectionState (name and color)
+            // connectionState (name and color)
             controller.getCurrent();
             controller.getUnavailableName();
             controller.chooseName("GAMMA");
@@ -342,13 +342,13 @@ class ServerTest {
             controller.connectToServer("localhost", "1099");
             controller.answerConnection();
 
-            // ServerOptionState
+            // serverOptionState
             controller.getCurrent();
             serverOptionMessage serverOption = controller.serverOptions();
             controller.sendOptions(new serverOptionMessage(false, null, null, true, matchID_2));
             assertTrue(controller.correctAnswer().getCorrect());
 
-            // ConnectionState (name and color)
+            // connectionState (name and color)
             controller.getCurrent();
             controller.getUnavailableName();
             controller.chooseName("GAMMA");
@@ -388,13 +388,13 @@ class ServerTest {
 
                 System.out.println("client_4: Connection established");
 
-                // ServerOptionState
+                // serverOptionState
                 controller.getCurrent();
                 serverOptionMessage serverOption = controller.serverOptions();
                 controller.sendOptions(new serverOptionMessage(true, matchID_2, null, false, null));
                 assertTrue(controller.correctAnswer().getCorrect());
 
-                // ConnectionState (name and color)
+                // connectionState (name and color)
                 controller.getCurrent();
                 controller.getUnavailableName();
                 controller.chooseName("DELTA");
@@ -436,7 +436,7 @@ class ServerTest {
             controller.connectToServer("localhost", "1099");
             controller.answerConnection();
 
-            // ServerOptionState
+            // serverOptionState
             while (true) {
 
                 controller.getCurrent();
@@ -446,7 +446,7 @@ class ServerTest {
                     break;
             }
 
-            // ConnectionState (name and color)
+            // connectionState (name and color)
             controller.getCurrent();
             controller.getUnavailableName();
             controller.chooseName("DELTA");
@@ -496,7 +496,7 @@ class ServerTest {
                         controller.updatePlayer();
                         break;
                     }
-                    case "ObjectiveState": {
+                    case "objectiveState": {
                         // Pick an objective
                         if (Objects.equals(current.getCurrentPlayer().getNickname(), current.getPlayer().getNickname()))
                             pickObjective(controller);
@@ -517,7 +517,7 @@ class ServerTest {
                         controller.updatePlayer();
                         break;
                     }
-                    case "EndGameState": {
+                    case "endGameState": {
                         // End of the game;
                         declareWinnerMessage end = controller.endGame();
                         view.endGame(end);
@@ -587,7 +587,7 @@ class ServerTest {
                         controller.updatePlayer();
                         break;
                     }
-                    case "ObjectiveState": {
+                    case "objectiveState": {
                         // Pick an objective
                         if (Objects.equals(current.getCurrentPlayer().getNickname(), current.getPlayer().getNickname()))
                             pickObjective(controller);
@@ -608,7 +608,7 @@ class ServerTest {
                         controller.updatePlayer();
                         break;
                     }
-                    case "EndGameState": {
+                    case "endGameState": {
                         // End of the game;
                         declareWinnerMessage end = controller.endGame();
                         view.endGame(end);

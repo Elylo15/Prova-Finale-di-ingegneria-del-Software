@@ -1,20 +1,20 @@
 package it.polimi.ingsw.protocol.server;
 
 import it.polimi.ingsw.model.cards.ObjectiveCard;
-import it.polimi.ingsw.protocol.messages.ConnectionState.*;
-import it.polimi.ingsw.protocol.messages.EndGameState.declareWinnerMessage;
-import it.polimi.ingsw.protocol.messages.ObjectiveState.objectiveCardMessage;
-import it.polimi.ingsw.protocol.messages.PlayerTurnState.pickCardMessage;
-import it.polimi.ingsw.protocol.messages.PlayerTurnState.placeCardMessage;
-import it.polimi.ingsw.protocol.messages.PlayerTurnState.updatePlayerMessage;
-import it.polimi.ingsw.protocol.messages.ServerOptionState.serverOptionMessage;
-import it.polimi.ingsw.protocol.messages.StaterCardState.starterCardMessage;
-import it.polimi.ingsw.protocol.messages.WaitingforPlayerState.expectedPlayersMessage;
-import it.polimi.ingsw.protocol.messages.WaitingforPlayerState.newHostMessage;
+import it.polimi.ingsw.protocol.messages.connectionState.*;
+import it.polimi.ingsw.protocol.messages.endGameState.declareWinnerMessage;
+import it.polimi.ingsw.protocol.messages.objectiveState.objectiveCardMessage;
+import it.polimi.ingsw.protocol.messages.playerTurnState.pickCardMessage;
+import it.polimi.ingsw.protocol.messages.playerTurnState.placeCardMessage;
+import it.polimi.ingsw.protocol.messages.playerTurnState.updatePlayerMessage;
+import it.polimi.ingsw.protocol.messages.serverOptionState.serverOptionMessage;
+import it.polimi.ingsw.protocol.messages.staterCardState.starterCardMessage;
+import it.polimi.ingsw.protocol.messages.waitingForPlayerState.expectedPlayersMessage;
+import it.polimi.ingsw.protocol.messages.waitingForPlayerState.newHostMessage;
 import it.polimi.ingsw.protocol.messages.currentStateMessage;
 import it.polimi.ingsw.protocol.messages.responseMessage;
-import it.polimi.ingsw.protocol.server.RMI.MessageExchanger;
-import it.polimi.ingsw.protocol.server.RMI.MessageExchangerInterface;
+import it.polimi.ingsw.protocol.server.rmi.MessageExchanger;
+import it.polimi.ingsw.protocol.server.rmi.MessageExchangerInterface;
 
 import java.io.Serializable;
 import java.rmi.AlreadyBoundException;

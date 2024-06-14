@@ -1,7 +1,7 @@
 package it.polimi.ingsw.protocol.server;
 
 import it.polimi.ingsw.model.Match;
-import it.polimi.ingsw.protocol.server.FSM.MatchState;
+import it.polimi.ingsw.protocol.server.fsm.MatchState;
 
 import java.io.Serializable;
 import java.util.ArrayList;

@@ -2,12 +2,12 @@ package it.polimi.ingsw.protocol.server;
 
 import it.polimi.ingsw.model.Match;
 import it.polimi.ingsw.model.Player;
-import it.polimi.ingsw.protocol.messages.ConnectionState.connectionResponseMessage;
-import it.polimi.ingsw.protocol.messages.ServerOptionState.serverOptionMessage;
+import it.polimi.ingsw.protocol.messages.connectionState.connectionResponseMessage;
+import it.polimi.ingsw.protocol.messages.serverOptionState.serverOptionMessage;
 import it.polimi.ingsw.protocol.messages.currentStateMessage;
-import it.polimi.ingsw.protocol.server.FSM.MatchState;
-import it.polimi.ingsw.protocol.server.FSM.State;
-import it.polimi.ingsw.protocol.server.RMI.MainRemoteServer;
+import it.polimi.ingsw.protocol.server.fsm.MatchState;
+import it.polimi.ingsw.protocol.server.fsm.State;
+import it.polimi.ingsw.protocol.server.rmi.MainRemoteServer;
 import it.polimi.ingsw.protocol.server.exceptions.FailedToJoinMatch;
 
 import java.io.File;
@@ -23,7 +23,6 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Random;
-import java.util.Scanner;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
@@ -98,14 +97,14 @@ public class Server implements Runnable {
      */
     protected void acceptConnectionRMI() {
         try {
-            logCreator.log("Opening RMI service");
+            logCreator.log("Opening rmi service");
             registry = LocateRegistry.createRegistry(portRMI);
             server = new MainRemoteServer();
             registry.bind("MainServer", server);
 
             while (this.serverRunning) {
                 try {
-                    logCreator.log("Waiting for new RMI client connection");
+                    logCreator.log("Waiting for new rmi client connection");
 
                     // Listens for new clients and returns a ClientConnection to them
                     ClientConnection connection = server.clientConnected(registry);
@@ -116,7 +115,7 @@ public class Server implements Runnable {
             }
 
         } catch (Exception e) {
-            logCreator.log("Server RMI service closed: " + e.getMessage());
+            logCreator.log("Server rmi service closed: " + e.getMessage());
         }
 
     }
@@ -189,8 +188,8 @@ public class Server implements Runnable {
      */
     private serverOptionMessage obtainServerOption(ClientConnection connection) {
 
-        // Sends status: "ServerOptionState"
-        connection.sendCurrentState(new currentStateMessage(null, null, "ServerOptionState", false, null, null, null));
+        // Sends status: "serverOptionState"
+        connection.sendCurrentState(new currentStateMessage(null, null, "serverOptionState", false, null, null, null));
 
         boolean correctResponse = false;
 
@@ -460,9 +459,9 @@ public class Server implements Runnable {
      */
     private void welcomeNewPlayer(MatchManager lobbyManager, ClientConnection connection) throws FailedToJoinMatch {
         // Sends status information
-        currentStateMessage currState = new currentStateMessage(null, null, "ConnectionState", false, null, null, lobbyManager.getMatchInfo().getID());
+        currentStateMessage currState = new currentStateMessage(null, null, "connectionState", false, null, null, lobbyManager.getMatchInfo().getID());
         connection.sendCurrentState(currState);
-        logCreator.log("ConnectionState sent to" + connection.getIP() + " " + connection.getPort());
+        logCreator.log("connectionState sent to" + connection.getIP() + " " + connection.getPort());
 
         // Obtains unavailable names
         ArrayList<String> unavailableNames;

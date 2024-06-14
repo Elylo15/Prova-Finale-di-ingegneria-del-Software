@@ -1,11 +1,11 @@
 package it.polimi.ingsw.protocol.client.view;
 
 import it.polimi.ingsw.model.cards.ObjectiveCard;
-import it.polimi.ingsw.protocol.messages.ConnectionState.availableColorsMessage;
-import it.polimi.ingsw.protocol.messages.ConnectionState.unavailableNamesMessage;
-import it.polimi.ingsw.protocol.messages.EndGameState.declareWinnerMessage;
-import it.polimi.ingsw.protocol.messages.PlayerTurnState.updatePlayerMessage;
-import it.polimi.ingsw.protocol.messages.ServerOptionState.serverOptionMessage;
+import it.polimi.ingsw.protocol.messages.connectionState.availableColorsMessage;
+import it.polimi.ingsw.protocol.messages.connectionState.unavailableNamesMessage;
+import it.polimi.ingsw.protocol.messages.endGameState.declareWinnerMessage;
+import it.polimi.ingsw.protocol.messages.playerTurnState.updatePlayerMessage;
+import it.polimi.ingsw.protocol.messages.serverOptionState.serverOptionMessage;
 import it.polimi.ingsw.protocol.messages.currentStateMessage;
 import it.polimi.ingsw.protocol.messages.responseMessage;
 
@@ -20,7 +20,7 @@ public abstract class View {
     }
 
     /**
-     * methods implemented by the GUI and CLI views
+     * methods implemented by the gui and CLI views
      */
     public abstract String askIP();
 

@@ -9,12 +9,12 @@ import it.polimi.ingsw.model.cards.PlaceableCard;
 import it.polimi.ingsw.model.cards.PlayerHand;
 import it.polimi.ingsw.model.cards.enumeration.Reign;
 import it.polimi.ingsw.model.cards.enumeration.Resource;
-import it.polimi.ingsw.protocol.messages.ConnectionState.availableColorsMessage;
-import it.polimi.ingsw.protocol.messages.ConnectionState.connectionResponseMessage;
-import it.polimi.ingsw.protocol.messages.ConnectionState.unavailableNamesMessage;
-import it.polimi.ingsw.protocol.messages.EndGameState.declareWinnerMessage;
-import it.polimi.ingsw.protocol.messages.PlayerTurnState.updatePlayerMessage;
-import it.polimi.ingsw.protocol.messages.ServerOptionState.serverOptionMessage;
+import it.polimi.ingsw.protocol.messages.connectionState.availableColorsMessage;
+import it.polimi.ingsw.protocol.messages.connectionState.connectionResponseMessage;
+import it.polimi.ingsw.protocol.messages.connectionState.unavailableNamesMessage;
+import it.polimi.ingsw.protocol.messages.endGameState.declareWinnerMessage;
+import it.polimi.ingsw.protocol.messages.playerTurnState.updatePlayerMessage;
+import it.polimi.ingsw.protocol.messages.serverOptionState.serverOptionMessage;
 import it.polimi.ingsw.protocol.messages.currentStateMessage;
 import it.polimi.ingsw.protocol.messages.responseMessage;
 
@@ -123,7 +123,7 @@ public class ViewCLI extends View {
             System.out.println("The common objectives are: ");
             printOutput(objectives);
 
-            if (!Objects.equals(message.getStateName(), "ObjectiveState")) {
+            if (!Objects.equals(message.getStateName(), "objectiveState")) {
                 if (message.getPlayer().getNickname().equals(message.getCurrentPlayer().getNickname())) {
                     System.out.println("The private objective is: ");
                     objectives = new ArrayList<>();
@@ -971,7 +971,7 @@ public class ViewCLI extends View {
         Scanner scanner = new Scanner(System.in);
 
         while (true) {
-            System.out.println("Do you want to use Socket or RMI?");
+            System.out.println("Do you want to use Socket or rmi?");
             String choice = scanner.nextLine().toLowerCase();
             if (choice.equals("socket")) return true;
             else if (choice.equals("rmi")) return false;

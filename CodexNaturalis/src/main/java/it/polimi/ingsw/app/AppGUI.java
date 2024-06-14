@@ -1,14 +1,14 @@
 package it.polimi.ingsw.app;
 
 import it.polimi.ingsw.protocol.client.Client;
-import it.polimi.ingsw.protocol.client.view.GUI.SceneManager;
+import it.polimi.ingsw.protocol.client.view.gui.SceneManager;
 import it.polimi.ingsw.protocol.client.view.ViewGUI;
 import javafx.application.Application;
 import javafx.scene.input.KeyCombination;
 import javafx.stage.Stage;
 
 /**
- * Main class for the GUI version of the application
+ * Main class for the gui version of the application
  */
 public class AppGUI extends Application {
     public static void main(String[] args) {

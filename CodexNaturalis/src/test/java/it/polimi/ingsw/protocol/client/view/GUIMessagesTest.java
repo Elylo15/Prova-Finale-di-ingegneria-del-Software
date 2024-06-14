@@ -1,13 +1,10 @@
 package it.polimi.ingsw.protocol.client.view;
 
-import it.polimi.ingsw.protocol.client.view.GUI.message.GUIMessages;
-import org.junit.jupiter.api.Assertions;
+import it.polimi.ingsw.protocol.client.view.gui.message.GUIMessages;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 
-import java.util.Timer;
 import java.util.concurrent.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -38,12 +35,12 @@ public class GUIMessagesTest {
     @Test
     @DisplayName("Test writeToGUI and readToGUI")
     public void testWriteToGUIAndReadToGUI() {
-        String message = "Test message to GUI";
+        String message = "Test message to gui";
 
-        // Write the message to the GUI
+        // Write the message to the gui
         GUIMessages.writeToGUI(message);
 
-        // Read the message from the GUI
+        // Read the message from the gui
         Object receivedMessage = GUIMessages.readToGUI();
 
         // Assert that the received message is equal to the sent message
@@ -54,9 +51,9 @@ public class GUIMessagesTest {
     @Test
     @DisplayName("Test concurrent access")
     public void testConcurrentAccess() {
-        // Define two different messages for client and GUI
+        // Define two different messages for client and gui
         String clientMessage = "Client message";
-        String guiMessage = "GUI message";
+        String guiMessage = "gui message";
 
         // Write the messages to the respective queues
         GUIMessages.writeToClient(clientMessage);

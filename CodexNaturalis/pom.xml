@@ -67,6 +67,10 @@
         <directory>src/main/Resources</directory>
         <includes>
           <include>**/*.ttf</include>
+          <include>**/*.fxml</include>
+          <include>**/*.css</include>
+          <include>**/*.png</include>
+          <include>**/*.mp3</include>
         </includes>
       </resource>
     </resources>

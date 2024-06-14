@@ -1,16 +1,16 @@
 package it.polimi.ingsw.protocol.server;
 
 import it.polimi.ingsw.model.cards.ObjectiveCard;
-import it.polimi.ingsw.protocol.messages.ConnectionState.chosenColorMessage;
-import it.polimi.ingsw.protocol.messages.ConnectionState.chosenNameMessage;
-import it.polimi.ingsw.protocol.messages.ConnectionState.connectionResponseMessage;
-import it.polimi.ingsw.protocol.messages.ObjectiveState.objectiveCardMessage;
-import it.polimi.ingsw.protocol.messages.PlayerTurnState.pickCardMessage;
-import it.polimi.ingsw.protocol.messages.PlayerTurnState.placeCardMessage;
-import it.polimi.ingsw.protocol.messages.PlayerTurnState.updatePlayerMessage;
-import it.polimi.ingsw.protocol.messages.ServerOptionState.serverOptionMessage;
-import it.polimi.ingsw.protocol.messages.StaterCardState.starterCardMessage;
-import it.polimi.ingsw.protocol.messages.WaitingforPlayerState.expectedPlayersMessage;
+import it.polimi.ingsw.protocol.messages.connectionState.chosenColorMessage;
+import it.polimi.ingsw.protocol.messages.connectionState.chosenNameMessage;
+import it.polimi.ingsw.protocol.messages.connectionState.connectionResponseMessage;
+import it.polimi.ingsw.protocol.messages.objectiveState.objectiveCardMessage;
+import it.polimi.ingsw.protocol.messages.playerTurnState.pickCardMessage;
+import it.polimi.ingsw.protocol.messages.playerTurnState.placeCardMessage;
+import it.polimi.ingsw.protocol.messages.playerTurnState.updatePlayerMessage;
+import it.polimi.ingsw.protocol.messages.serverOptionState.serverOptionMessage;
+import it.polimi.ingsw.protocol.messages.staterCardState.starterCardMessage;
+import it.polimi.ingsw.protocol.messages.waitingForPlayerState.expectedPlayersMessage;
 import it.polimi.ingsw.protocol.messages.currentStateMessage;
 
 import java.io.Serializable;

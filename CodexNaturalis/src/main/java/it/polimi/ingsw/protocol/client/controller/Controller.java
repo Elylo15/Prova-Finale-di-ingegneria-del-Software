@@ -1,13 +1,13 @@
 package it.polimi.ingsw.protocol.client.controller;
 
-import it.polimi.ingsw.protocol.messages.ConnectionState.availableColorsMessage;
-import it.polimi.ingsw.protocol.messages.ConnectionState.connectionResponseMessage;
-import it.polimi.ingsw.protocol.messages.ConnectionState.unavailableNamesMessage;
-import it.polimi.ingsw.protocol.messages.EndGameState.declareWinnerMessage;
-import it.polimi.ingsw.protocol.messages.ObjectiveState.objectiveCardMessage;
-import it.polimi.ingsw.protocol.messages.PlayerTurnState.updatePlayerMessage;
-import it.polimi.ingsw.protocol.messages.ServerOptionState.serverOptionMessage;
-import it.polimi.ingsw.protocol.messages.WaitingforPlayerState.newHostMessage;
+import it.polimi.ingsw.protocol.messages.connectionState.availableColorsMessage;
+import it.polimi.ingsw.protocol.messages.connectionState.connectionResponseMessage;
+import it.polimi.ingsw.protocol.messages.connectionState.unavailableNamesMessage;
+import it.polimi.ingsw.protocol.messages.endGameState.declareWinnerMessage;
+import it.polimi.ingsw.protocol.messages.objectiveState.objectiveCardMessage;
+import it.polimi.ingsw.protocol.messages.playerTurnState.updatePlayerMessage;
+import it.polimi.ingsw.protocol.messages.serverOptionState.serverOptionMessage;
+import it.polimi.ingsw.protocol.messages.waitingForPlayerState.newHostMessage;
 import it.polimi.ingsw.protocol.messages.currentStateMessage;
 import it.polimi.ingsw.protocol.messages.responseMessage;
 
@@ -33,7 +33,7 @@ public abstract class Controller {
     }
 
     /**
-     * methods implemented by the RMI and Socket controllers
+     * methods implemented by the rmi and Socket controllers
      */
     public abstract void connectToServer(String IP, String port);
 

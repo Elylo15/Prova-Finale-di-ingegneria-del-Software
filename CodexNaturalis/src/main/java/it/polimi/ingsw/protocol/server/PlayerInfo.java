@@ -2,7 +2,7 @@ package it.polimi.ingsw.protocol.server;
 
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.cards.ObjectiveCard;
-import it.polimi.ingsw.protocol.server.FSM.State;
+import it.polimi.ingsw.protocol.server.fsm.State;
 
 import java.io.Serializable;
 
@@ -16,7 +16,7 @@ public class PlayerInfo implements Serializable {
      * Constructs a new PlayerInfo object with the given player, state, and connection.
      *
      * @param player     The player object.
-     * @param state      The current state of the player's FSM.
+     * @param state      The current state of the player's fsm.
      * @param connection The client connection object.
      */
     public PlayerInfo(Player player, State state, ClientConnection connection) {

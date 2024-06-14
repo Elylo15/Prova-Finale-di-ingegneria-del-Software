@@ -9,19 +9,19 @@ module CodexNaturalis {
 
     opens it.polimi.ingsw.app to javafx.fxml;
     exports it.polimi.ingsw.app;
-    opens it.polimi.ingsw.protocol.client.view.GUI to javafx.fxml;
-    exports it.polimi.ingsw.protocol.client.view.GUI;
+    opens it.polimi.ingsw.protocol.client.view.gui to javafx.fxml;
+    exports it.polimi.ingsw.protocol.client.view.gui;
 
     exports  it.polimi.ingsw.model.cards;
     opens it.polimi.ingsw.model.cards to com.fasterxml.jackson.databind;
 
-    exports it.polimi.ingsw.protocol.messages.EndGameState;
-    exports it.polimi.ingsw.protocol.messages.ConnectionState;
-    exports it.polimi.ingsw.protocol.messages.ServerOptionState;
-    exports it.polimi.ingsw.protocol.messages.PlayerTurnState;
-    exports it.polimi.ingsw.protocol.messages.ObjectiveState;
-    exports it.polimi.ingsw.protocol.messages.StaterCardState;
-    exports it.polimi.ingsw.protocol.messages.WaitingforPlayerState;
+    exports it.polimi.ingsw.protocol.messages.endGameState;
+    exports it.polimi.ingsw.protocol.messages.connectionState;
+    exports it.polimi.ingsw.protocol.messages.serverOptionState;
+    exports it.polimi.ingsw.protocol.messages.playerTurnState;
+    exports it.polimi.ingsw.protocol.messages.objectiveState;
+    exports it.polimi.ingsw.protocol.messages.staterCardState;
+    exports it.polimi.ingsw.protocol.messages.waitingForPlayerState;
     exports it.polimi.ingsw.protocol.messages;
 
     exports it.polimi.ingsw.model;
@@ -29,11 +29,11 @@ module CodexNaturalis {
     exports it.polimi.ingsw.model.cards.enumeration;
 
     exports it.polimi.ingsw.protocol.server;
-    exports it.polimi.ingsw.protocol.server.RMI;
+    exports it.polimi.ingsw.protocol.server.rmi;
     exports it.polimi.ingsw.protocol.server.exceptions;
-    exports it.polimi.ingsw.protocol.server.FSM;
-    exports it.polimi.ingsw.protocol.client.view.GUI.controller;
-    opens it.polimi.ingsw.protocol.client.view.GUI.controller to javafx.fxml;
-    exports it.polimi.ingsw.protocol.client.view.GUI.message;
-    opens it.polimi.ingsw.protocol.client.view.GUI.message to javafx.fxml;
+    exports it.polimi.ingsw.protocol.server.fsm;
+    exports it.polimi.ingsw.protocol.client.view.gui.controller;
+    opens it.polimi.ingsw.protocol.client.view.gui.controller to javafx.fxml;
+    exports it.polimi.ingsw.protocol.client.view.gui.message;
+    opens it.polimi.ingsw.protocol.client.view.gui.message to javafx.fxml;
 }

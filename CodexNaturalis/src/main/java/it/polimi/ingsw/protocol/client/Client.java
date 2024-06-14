@@ -7,13 +7,13 @@ import it.polimi.ingsw.protocol.client.controller.ControllerSocket;
 import it.polimi.ingsw.protocol.client.view.View;
 import it.polimi.ingsw.protocol.client.view.ViewCLI;
 import it.polimi.ingsw.protocol.client.view.ViewGUI;
-import it.polimi.ingsw.protocol.messages.ConnectionState.availableColorsMessage;
-import it.polimi.ingsw.protocol.messages.ConnectionState.connectionResponseMessage;
-import it.polimi.ingsw.protocol.messages.ConnectionState.unavailableNamesMessage;
-import it.polimi.ingsw.protocol.messages.EndGameState.declareWinnerMessage;
-import it.polimi.ingsw.protocol.messages.PlayerTurnState.updatePlayerMessage;
-import it.polimi.ingsw.protocol.messages.ServerOptionState.serverOptionMessage;
-import it.polimi.ingsw.protocol.messages.WaitingforPlayerState.newHostMessage;
+import it.polimi.ingsw.protocol.messages.connectionState.availableColorsMessage;
+import it.polimi.ingsw.protocol.messages.connectionState.connectionResponseMessage;
+import it.polimi.ingsw.protocol.messages.connectionState.unavailableNamesMessage;
+import it.polimi.ingsw.protocol.messages.endGameState.declareWinnerMessage;
+import it.polimi.ingsw.protocol.messages.playerTurnState.updatePlayerMessage;
+import it.polimi.ingsw.protocol.messages.serverOptionState.serverOptionMessage;
+import it.polimi.ingsw.protocol.messages.waitingForPlayerState.newHostMessage;
 import it.polimi.ingsw.protocol.messages.currentStateMessage;
 import it.polimi.ingsw.protocol.messages.responseMessage;
 
@@ -64,7 +64,7 @@ public class Client implements Runnable {
     }
 
     /**
-     * method {@code connection}: sets socket or rmi. Enables GUI or CLI.
+     * method {@code connection}: sets socket or rmi. Enables gui or CLI.
      * Connects to a socket server or rmi server.
      */
     private void connection(boolean isSocket) {
@@ -433,11 +433,11 @@ public class Client implements Runnable {
                     String state = current.getStateName();
 
                     switch (state) {
-                        case "ServerOptionState": {
+                        case "serverOptionState": {
                             serverOptions();
                             break;
                         }
-                        case "ConnectionState": {
+                        case "connectionState": {
                             name();
                             color();
                             break;
@@ -454,7 +454,7 @@ public class Client implements Runnable {
                             getView().update(update);
                             break;
                         }
-                        case "ObjectiveState": {
+                        case "objectiveState": {
                             getView().updatePlayer(current);
                             if (Objects.equals(current.getCurrentPlayer().getNickname(), current.getPlayer().getNickname()))
                                 pickObjective();
@@ -478,7 +478,7 @@ public class Client implements Runnable {
                             getView().update(update);
                             break;
                         }
-                        case "EndGameState": {
+                        case "endGameState": {
                             declareWinnerMessage end = getController().endGame();
                             getView().endGame(end);
 //                            throw new Exception("Game ended.");
