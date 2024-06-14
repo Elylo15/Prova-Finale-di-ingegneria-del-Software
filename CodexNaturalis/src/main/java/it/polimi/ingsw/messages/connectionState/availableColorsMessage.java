@@ -9,7 +9,7 @@ import java.util.ArrayList;
  * Message that contains the available colors for the players
  */
 public class availableColorsMessage implements Message, Serializable {
-    ArrayList<String> colors;
+    private final ArrayList<String> colors;
 
     /**
      * Constructor for availableColorsMessage

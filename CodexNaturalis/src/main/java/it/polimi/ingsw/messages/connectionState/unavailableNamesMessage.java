@@ -10,7 +10,7 @@ import java.util.ArrayList;
  */
 public class unavailableNamesMessage implements Message, Serializable {
 
-    ArrayList<String> unavailableNames;
+    private final ArrayList<String> unavailableNames;
 
     /**
      * Constructor for unavailableNamesMessage

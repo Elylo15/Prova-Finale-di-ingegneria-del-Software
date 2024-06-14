@@ -353,7 +353,7 @@ public class LearnToPlay implements Initializable {
      * @param mouseEvent the event triggered by the click
      */
     private void selectPick(MouseEvent mouseEvent) {
-        this.selectedCard = (ImageView) mouseEvent.getSource();
+        selectedCard = (ImageView) mouseEvent.getSource();
         if (selectedCard != null && pick) {
             pick = false;
             double oldLayoutY = selectedCard.getLayoutY();
@@ -374,8 +374,8 @@ public class LearnToPlay implements Initializable {
             removeMouseClick(layoutXDeck, layoutXDeck, layoutXPick0, layoutYResource);
             removeMouseClick(layoutXPick1, layoutXPick0, layoutXPick1, layoutYGold);
 
-            this.selectedCard = null;
-            this.clickedPlaceholder = null;
+            selectedCard = null;
+            clickedPlaceholder = null;
             mainPane2.setDisable(false);
         }
     }
@@ -440,8 +440,8 @@ public class LearnToPlay implements Initializable {
             selectedCard.removeEventHandler(MouseEvent.MOUSE_CLICKED, this::selectCard);
             onTop.toFront();
             Utilities.fadeOutTransition(mainPane, selectedCard, 1, true);
-            this.selectedCard = null;
-            this.clickedPlaceholder = null;
+            selectedCard = null;
+            clickedPlaceholder = null;
             mainPane2.setDisable(false);
         }
     }
@@ -464,8 +464,8 @@ public class LearnToPlay implements Initializable {
             Utilities.fadeOutTransition(mainPane, clickedPlaceholder, 0.5, true);
             selectedCard.setOnMouseClicked(null);
             onTop.toFront();
-            this.selectedCard = null;
-            this.clickedPlaceholder = null;
+            selectedCard = null;
+            clickedPlaceholder = null;
             mainPane2.setDisable(false);
         }
     }
@@ -476,7 +476,7 @@ public class LearnToPlay implements Initializable {
      * @param event MouseEvent
      */
     private void selectedPlaceHolder(MouseEvent event) {
-        this.clickedPlaceholder = (ImageView) event.getSource();
+        clickedPlaceholder = (ImageView) event.getSource();
         if (selectedCard != null && clickedPlaceholder != null && pick) {
             Card card = (Card) selectedCard.getUserData();
             if (selectedCard.getLayoutX() == layoutXCard2 && card.isFront()) {
@@ -489,7 +489,7 @@ public class LearnToPlay implements Initializable {
                 noPLace.setOpacity(0.0);
                 mainPane.getChildren().add(noPLace);
                 Utilities.fadeTransitionForPopUP(noPLace, mainPane);
-                this.selectedCard = null;
+                selectedCard = null;
             } else {
                 pick = false;
                 layoutYFree = selectedCard.getLayoutY();
@@ -519,8 +519,8 @@ public class LearnToPlay implements Initializable {
                 clickedPlaceholder.setOpacity(1);
                 Utilities.fadeOutTransition(mainPane, selectedCard, 1, true);
                 onTop.toFront();
-                this.selectedCard = null;
-                this.clickedPlaceholder = null;
+                selectedCard = null;
+                clickedPlaceholder = null;
                 mainPane2.setDisable(false);
             }
         }
@@ -538,19 +538,6 @@ public class LearnToPlay implements Initializable {
     private void addClickablePlaceholder(double layoutX, double layoutY, double fitHeight, double fitWidth, EventHandler<MouseEvent> eventHandler) {
         Image image = Utilities.randomColorForPlaceholder();
         Utilities.createClickablePane(mainPane, layoutX, layoutY, fitHeight, fitWidth, eventHandler, image);
-
-//        TODO delete this after checking if works
-
-//        ImageView imageView = new ImageView(image);
-//
-//        imageView.setLayoutX(layoutX);
-//        imageView.setLayoutY(layoutY);
-//        imageView.setFitHeight(fitHeight);
-//        imageView.setFitWidth(fitWidth);
-//        imageView.setOnMouseClicked(eventHandler);
-//
-//        mainPane.getChildren().add(imageView);
-//        fadeInTransition(imageView, 0.5);
     }
 
     /**
@@ -608,7 +595,7 @@ public class LearnToPlay implements Initializable {
         ImageView clickedCard = (ImageView) mouseEvent.getSource();
         if (mouseEvent.getClickCount() == 1) {
             Utilities.makeBiggerTransition(clickedCard, 1.05);
-            this.selectedCard = clickedCard;
+            selectedCard = clickedCard;
 
         } else if (mouseEvent.getClickCount() == 2) {
             Utilities.turnAround(mouseEvent);

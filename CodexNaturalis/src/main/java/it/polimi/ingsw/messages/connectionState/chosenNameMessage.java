@@ -8,7 +8,7 @@ import java.io.Serializable;
  * Message that contains the chosen name for the player
  */
 public class chosenNameMessage implements Message, Serializable {
-    String name;
+    private final String name;
 
     /**
      * Constructor for chosenNameMessage

@@ -1279,9 +1279,9 @@ public class GamePageController implements Initializable {
 
                 Utilities.removeHooverEffect(clickedCard);
                 Utilities.makeBiggerTransition(clickedCard, 1.05);
-                this.selectedCard = clickedCard;
+                selectedCard = clickedCard;
 
-                this.selectedStarterFront = isFront ? 1 : 0;
+                selectedStarterFront = isFront ? 1 : 0;
 
             } else if (event.getClickCount() == 2) {
                 Utilities.turnAround(event);
@@ -1314,20 +1314,20 @@ public class GamePageController implements Initializable {
 
             Utilities.removeHooverEffect(clickedCard);
             Utilities.makeBiggerTransition(clickedCard, 1.05);
-            this.selectedCard = clickedCard;
+            selectedCard = clickedCard;
 
             if (cardID == objectivesToChose.get(0).getID()) {
-                this.selectedObjective = 1;
+                selectedObjective = 1;
             } else if (cardID == objectivesToChose.get(1).getID()) {
-                this.selectedObjective = 2;
+                selectedObjective = 2;
             }
         } else if (event.getClickCount() == 2) {
             Utilities.turnAround(event);
             onTop.toFront();
             if (cardID == objectivesToChose.get(0).getID()) {
-                this.selectedObjective = 1;
+                selectedObjective = 1;
             } else if (cardID == objectivesToChose.get(1).getID()) {
-                this.selectedObjective = 2;
+                selectedObjective = 2;
             }
 
         }
@@ -1347,7 +1347,7 @@ public class GamePageController implements Initializable {
             addNewCardToPane(playground, card.getID(), card.isFront(), card, layoutPlacedStarterX, layoutPlacedStarterY,
                     fitHeightPlaced, fitWidthPlaced, null);
             GUIMessages.writeToClient(selectedStarterFront);
-            this.selectedCard = null;
+            selectedCard = null;
         }
     }
 
@@ -1368,7 +1368,7 @@ public class GamePageController implements Initializable {
             addNewCardToPane(mainPane, card.getID(), card.isFront(), card, layoutXObjective, layoutYObjMy, fitHeightCommon,
                     fitWidthCommon, this::turnObjectives);
             GUIMessages.writeToClient(selectedObjective);
-            this.selectedCard = null;
+            selectedCard = null;
         }
     }
 
@@ -1392,32 +1392,32 @@ public class GamePageController implements Initializable {
 
                 Utilities.removeHooverEffect(clickedCard);
                 Utilities.makeBiggerTransition(clickedCard, 1.05);
-                this.selectedCard = clickedCard;
+                selectedCard = clickedCard;
 
                 if (cardID == myHand.getPlaceableCards().getFirst().getID())
-                    this.selectedToPlace[0] = 0;
+                    selectedToPlace[0] = 0;
                 else if (cardID == myHand.getPlaceableCards().get(1).getID())
-                    this.selectedToPlace[0] = 1;
+                    selectedToPlace[0] = 1;
                 else if (cardID == myHand.getPlaceableCards().get(2).getID())
-                    this.selectedToPlace[0] = 2;
+                    selectedToPlace[0] = 2;
 
-                this.selectedToPlace[1] = card.isFront() ? 1 : 0;
+                selectedToPlace[1] = card.isFront() ? 1 : 0;
             } else if (event.getClickCount() == 2) {
                 Utilities.turnAround(event);
                 onTop.toFront();
 
                 if (Objects.equals(currentState, "PlaceTurnState") && Objects.equals(currentPlayerNickname, myself.getNickname())) {
                     if (cardID == myHand.getPlaceableCards().getFirst().getID())
-                        this.selectedToPlace[0] = 0;
+                        selectedToPlace[0] = 0;
                     else if (cardID == myHand.getPlaceableCards().get(1).getID())
-                        this.selectedToPlace[0] = 1;
+                        selectedToPlace[0] = 1;
                     else if (cardID == myHand.getPlaceableCards().get(2).getID())
-                        this.selectedToPlace[0] = 2;
+                        selectedToPlace[0] = 2;
 
                     if (selectedStarterFront == 1)
-                        this.selectedToPlace[1] = 0;
+                        selectedToPlace[1] = 0;
                     else
-                        this.selectedToPlace[1] = 1;
+                        selectedToPlace[1] = 1;
                 }
             }
         }
@@ -1442,13 +1442,13 @@ public class GamePageController implements Initializable {
             int originalColumn = (int) clickedPlaceholder.getProperties().get("originalColumn");
 
             // Update the selectedToPlace array with the original positions
-            this.selectedToPlace[2] = originalRow;
-            this.selectedToPlace[3] = originalColumn;
+            selectedToPlace[2] = originalRow;
+            selectedToPlace[3] = originalColumn;
 
             removeCardFromPositionForHandCard(selectedCard.getLayoutX(), selectedCard.getLayoutY(), () -> {
                 GUIMessages.writeToClient(selectedToPlace);
                 wrong = false;
-                this.selectedCard = null;
+                selectedCard = null;
             });
 //
         }
@@ -1469,22 +1469,22 @@ public class GamePageController implements Initializable {
                 Utilities.makeSmallerTransition(selectedCard);
             }
 
-            this.selectedCard = clickedCard;
+            selectedCard = clickedCard;
             if (cardID == commonArea.getD1().getList().getFirst().getID())
-                this.selectedPick = 1;
+                selectedPick = 1;
             else if (cardID == commonArea.getD2().getList().getFirst().getID())
-                this.selectedPick = 2;
+                selectedPick = 2;
             else if (cardID == commonArea.getTableCards().getFirst().getID())
-                this.selectedPick = 3;
+                selectedPick = 3;
             else if (cardID == commonArea.getTableCards().get(1).getID())
-                this.selectedPick = 4;
+                selectedPick = 4;
             else if (cardID == commonArea.getTableCards().get(2).getID())
-                this.selectedPick = 5;
+                selectedPick = 5;
             else if (cardID == commonArea.getTableCards().get(3).getID())
-                this.selectedPick = 6;
+                selectedPick = 6;
 
             GUIMessages.writeToClient(selectedPick);
-            this.selectedCard = null;
+            selectedCard = null;
         }
     }
 
