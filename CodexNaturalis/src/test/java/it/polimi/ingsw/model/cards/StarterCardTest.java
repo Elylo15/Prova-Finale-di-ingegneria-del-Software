@@ -62,7 +62,7 @@ class StarterCardTest {
     @Test
     void checkPermanentResourcesCard81_true() throws InvalidIdException {
         permanentResources.add(Resource.Insect);
-        StarterCard card81 = new StarterCard(81, 0, null, true, resources, permanentResources, bottomResources);
+        StarterCard card81 = new StarterCard(81, 0, null, false, resources, permanentResources, bottomResources);
         ArrayList<Resource> test = new ArrayList<>();
         test.add(Resource.Insect);
         Assertions.assertEquals(test, card81.getPermanentResource());
@@ -71,7 +71,7 @@ class StarterCardTest {
     @Test
     void checkPermanentResourcesCard81_false() throws InvalidIdException {
         permanentResources.add(Resource.Insect);
-        StarterCard card81 = new StarterCard(81, 0, null, true, resources, permanentResources, bottomResources);
+        StarterCard card81 = new StarterCard(81, 0, null, false, resources, permanentResources, bottomResources);
         ArrayList<Resource> test = new ArrayList<>();
         test.add(Resource.Fungus);
         Assertions.assertNotEquals(test, card81.getPermanentResource());
@@ -82,7 +82,7 @@ class StarterCardTest {
         permanentResources.add(Resource.Plant);
         permanentResources.add(Resource.Animal);
         permanentResources.add(Resource.Fungus);
-        StarterCard card86 = new StarterCard(86, 0, null, true, resources, permanentResources, bottomResources);
+        StarterCard card86 = new StarterCard(86, 0, null, false, resources, permanentResources, bottomResources);
         ArrayList<Resource> test = new ArrayList<>();
         test.add(Resource.Plant);
         test.add(Resource.Animal);
@@ -95,7 +95,7 @@ class StarterCardTest {
         permanentResources.add(Resource.Plant);
         permanentResources.add(Resource.Animal);
         permanentResources.add(Resource.Fungus);
-        StarterCard card86 = new StarterCard(86, 0, null, true, resources, permanentResources, bottomResources);
+        StarterCard card86 = new StarterCard(86, 0, null, false, resources, permanentResources, bottomResources);
         ArrayList<Resource> test = new ArrayList<>();
         test.add(Resource.Fungus);
         test.add(Resource.Insect);

@@ -85,7 +85,7 @@ class PlayerAreaTest {
         bottomResources.add(Resource.Animal);
         PlaceableCard starterCard;
         try {
-            starterCard = new StarterCard(81, 0, null, true, resources, permanentResources, bottomResources);
+            starterCard = new StarterCard(81, 0, null, false, resources, permanentResources, bottomResources);
         } catch (InvalidIdException e) {
             throw new RuntimeException(e);
         }
@@ -102,7 +102,7 @@ class PlayerAreaTest {
             throw new RuntimeException(e);
         }
 
-        playerArea.placeStarterCard(starterCard, true);
+        playerArea.placeStarterCard(starterCard, false);
         playerArea.placeCard(testCard, 1, 1, true);
 
         ArrayList<Integer> counts = new ArrayList<>();

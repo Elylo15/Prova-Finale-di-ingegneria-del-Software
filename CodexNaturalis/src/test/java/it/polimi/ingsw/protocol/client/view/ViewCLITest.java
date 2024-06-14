@@ -5,9 +5,7 @@ import it.polimi.ingsw.model.Match;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.PlayerArea;
 import it.polimi.ingsw.model.cards.*;
-import it.polimi.ingsw.model.cards.enumeration.Reign;
-import it.polimi.ingsw.model.cards.enumeration.Resource;
-import it.polimi.ingsw.model.cards.exceptions.InvalidIdException;
+
 import it.polimi.ingsw.model.cards.exceptions.noPlaceCardException;
 import it.polimi.ingsw.protocol.messages.ConnectionState.availableColorsMessage;
 import it.polimi.ingsw.protocol.messages.ConnectionState.unavailableNamesMessage;
@@ -22,9 +20,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -263,7 +259,7 @@ class ViewCLITest {
         PlaceableCard testCard3 = commonArea.drawFromToPlayer(1);
 
 
-        playerArea.placeStarterCard(starterCard, false);
+        playerArea.placeStarterCard(starterCard, true);
         playerArea.placeCard(testCard, 1, 1, false);
         playerArea.placeCard(testCard2, 2, 2, false);
         playerArea.placeCard(testCard3, -1, -1, true);
@@ -279,7 +275,6 @@ class ViewCLITest {
     void updatePlayerAfterTurnTest() {
         Player player = new Player("player1", "RED", commonArea);
         Player player2 = new Player("player2", "BLUE", commonArea);
-        PlayerArea playerArea = player.getPlayerArea();
 
         ObjectiveCard[] objectives = new ObjectiveCard[2];
         objectives[0] = commonArea.drawObjectiveCard();
@@ -287,11 +282,6 @@ class ViewCLITest {
 
         player.pickObjectiveCard(1, objectives);
         player2.pickObjectiveCard(2, objectives);
-
-        PlaceableCard starterCard = commonArea.drawFromToPlayer(3);
-        PlaceableCard testCard = commonArea.drawFromToPlayer(1);
-        PlaceableCard testCard2 = commonArea.drawFromToPlayer(2);
-        PlaceableCard testCard3 = commonArea.drawFromToPlayer(1);
 
         updatePlayerMessage message = new updatePlayerMessage(player, "player1");
         viewCLI.update(message);
