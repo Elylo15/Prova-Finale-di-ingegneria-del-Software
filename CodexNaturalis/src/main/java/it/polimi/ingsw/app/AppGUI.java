@@ -1,8 +1,8 @@
 package it.polimi.ingsw.app;
 
-import it.polimi.ingsw.protocol.client.Client;
-import it.polimi.ingsw.protocol.client.view.gui.SceneManager;
-import it.polimi.ingsw.protocol.client.view.ViewGUI;
+import it.polimi.ingsw.client.Client;
+import it.polimi.ingsw.client.view.ViewGUI;
+import it.polimi.ingsw.client.view.gui.SceneManager;
 import javafx.application.Application;
 import javafx.scene.input.KeyCombination;
 import javafx.stage.Stage;

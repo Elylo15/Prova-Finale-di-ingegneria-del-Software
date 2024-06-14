@@ -1,6 +1,6 @@
 package it.polimi.ingsw.app;
 
-import it.polimi.ingsw.protocol.server.Server;
+import it.polimi.ingsw.server.Server;
 
 /**
  * Main class for the server

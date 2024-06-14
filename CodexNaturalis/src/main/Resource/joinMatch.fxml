@@ -1,39 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.ListView?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.Pane?>
-
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.protocol.client.view.gui.controller.JoinMatchController">
+<BorderPane xmlns:fx="http://javafx.com/fxml/1" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+            minWidth="-Infinity"
+            prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/21"
+            fx:controller="it.polimi.ingsw.client.view.gui.controller.JoinMatchController">
     <center>
-       <Pane BorderPane.alignment="CENTER">
-          <ImageView fitHeight="1080.0" fitWidth="1920.0" preserveRatio="true">
-             <Image url="@Images/Background/choose.png"/>
-          </ImageView>
-          <ListView fx:id="JoinMatchList" editable="true" layoutX="716.0" layoutY="196.0" opacity="0.72"
-                    prefHeight="820.0" prefWidth="440.0"/>
-          <ImageView fx:id="rotate1" fitHeight="150.0" fitWidth="159.0" layoutX="114.0" layoutY="118.0"
-                     preserveRatio="true">
-             <Image url="@Images/Background/rotate.png"/>
-          </ImageView>
-          <ImageView fx:id="rotate2" fitHeight="150.0" fitWidth="159.0" layoutX="398.0" layoutY="388.0"
-                     preserveRatio="true">
-             <Image url="@Images/Background/rotate.png"/>
-          </ImageView>
-          <ImageView fx:id="rotate3" fitHeight="150.0" fitWidth="159.0" layoutX="110.0" layoutY="610.0"
-                     preserveRatio="true">
-             <Image url="@Images/Background/rotate.png"/>
-          </ImageView>
-          <ImageView fx:id="rotate4" fitHeight="150.0" fitWidth="159.0" layoutX="394.0" layoutY="808.0"
-                     preserveRatio="true">
-             <Image url="@Images/Background/rotate.png"/>
-          </ImageView>
-          <ImageView fx:id="back" fitHeight="209.0" fitWidth="452.0" layoutX="19.0" layoutY="958.0"
-                     onMouseClicked="#goBack" preserveRatio="true">
-             <Image url="@Images/Background/back.png"/>
-          </ImageView>
-       </Pane>
+        <Pane BorderPane.alignment="CENTER">
+            <ImageView fitHeight="1080.0" fitWidth="1920.0" preserveRatio="true">
+                <Image url="@Images/Background/choose.png"/>
+            </ImageView>
+            <ListView fx:id="JoinMatchList" editable="true" layoutX="716.0" layoutY="196.0" opacity="0.72"
+                      prefHeight="820.0" prefWidth="440.0"/>
+            <ImageView fx:id="rotate1" fitHeight="150.0" fitWidth="159.0" layoutX="114.0" layoutY="118.0"
+                       preserveRatio="true">
+                <Image url="@Images/Background/rotate.png"/>
+            </ImageView>
+            <ImageView fx:id="rotate2" fitHeight="150.0" fitWidth="159.0" layoutX="398.0" layoutY="388.0"
+                       preserveRatio="true">
+                <Image url="@Images/Background/rotate.png"/>
+            </ImageView>
+            <ImageView fx:id="rotate3" fitHeight="150.0" fitWidth="159.0" layoutX="110.0" layoutY="610.0"
+                       preserveRatio="true">
+                <Image url="@Images/Background/rotate.png"/>
+            </ImageView>
+            <ImageView fx:id="rotate4" fitHeight="150.0" fitWidth="159.0" layoutX="394.0" layoutY="808.0"
+                       preserveRatio="true">
+                <Image url="@Images/Background/rotate.png"/>
+            </ImageView>
+            <ImageView fx:id="back" fitHeight="209.0" fitWidth="452.0" layoutX="19.0" layoutY="958.0"
+                       onMouseClicked="#goBack" preserveRatio="true">
+                <Image url="@Images/Background/back.png"/>
+            </ImageView>
+        </Pane>
     </center>
 </BorderPane>

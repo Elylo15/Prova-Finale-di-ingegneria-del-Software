@@ -1,7 +1,7 @@
 package it.polimi.ingsw.app;
 
-import it.polimi.ingsw.protocol.client.Client;
-import it.polimi.ingsw.protocol.client.view.ViewCLI;
+import it.polimi.ingsw.client.Client;
+import it.polimi.ingsw.client.view.ViewCLI;
 
 /**
  * Main class for the CLI version of the application

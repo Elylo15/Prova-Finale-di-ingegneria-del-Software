@@ -63,7 +63,7 @@ public class CommonArea implements Serializable {
     /**
      * method drawFromDeck: remove the top GoldCard/ResourceCard of the deck and places it as a face-up card
      *
-     * @param d: number of the deck from which you want to remove a card to put in among the face up cards
+     * @param d:     number of the deck from which you want to remove a card to put in among the face up cards
      * @param index: index where you want to place the card
      */
     public void drawFromDeck(int d, int index) {

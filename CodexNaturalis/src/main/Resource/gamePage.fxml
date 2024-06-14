@@ -1,68 +1,85 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.Pane?>
-<?import javafx.scene.text.Font?>
-
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.protocol.client.view.gui.controller.GamePageController">
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+            minWidth="-Infinity"
+            prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/21"
+            fx:controller="it.polimi.ingsw.client.view.gui.controller.GamePageController">
     <BorderPane prefHeight="1080.0" prefWidth="1920.0">
         <center>
             <Pane fx:id="mainPane" prefHeight="1080.0" prefWidth="1920.0" BorderPane.alignment="CENTER">
                 <ImageView id="background" fitHeight="1080.0" fitWidth="1920.0" preserveRatio="true">
-                    <Image url="@Images/Background/Background.png" />
+                    <Image url="@Images/Background/Background.png"/>
                 </ImageView>
-                <ImageView id="scoreBoard" fitHeight="491.0" fitWidth="246.0" layoutX="1627.0" layoutY="38.0" preserveRatio="true">
-                    <Image url="@Images/Scoreboard/plateau.png" />
+                <ImageView id="scoreBoard" fitHeight="491.0" fitWidth="246.0" layoutX="1627.0" layoutY="38.0"
+                           preserveRatio="true">
+                    <Image url="@Images/Scoreboard/plateau.png"/>
                 </ImageView>
-                <ImageView id="nextPlayer" fx:id="nextPlayer" fitHeight="147.0" fitWidth="535.0" layoutX="6.0" layoutY="5.0" onMouseClicked="#switchToNextPlayer" preserveRatio="true">
-                    <Image url="@Images/NextButton/nextPur.png" />
+                <ImageView id="nextPlayer" fx:id="nextPlayer" fitHeight="147.0" fitWidth="535.0" layoutX="6.0"
+                           layoutY="5.0" onMouseClicked="#switchToNextPlayer" preserveRatio="true">
+                    <Image url="@Images/NextButton/nextPur.png"/>
                 </ImageView>
-                <ImageView id="state" fx:id="state" fitHeight="147.0" fitWidth="535.0" layoutX="1049.0" layoutY="5.0" preserveRatio="true">
-                    <Image url="@Images/Choosing/choosingPur.png" />
+                <ImageView id="state" fx:id="state" fitHeight="147.0" fitWidth="535.0" layoutX="1049.0" layoutY="5.0"
+                           preserveRatio="true">
+                    <Image url="@Images/Choosing/choosingPur.png"/>
                 </ImageView>
-                <Pane id="Playground" fx:id="playground" layoutX="16.0" layoutY="152.0" prefHeight="540.0" prefWidth="1556.0">
+                <Pane id="Playground" fx:id="playground" layoutX="16.0" layoutY="152.0" prefHeight="540.0"
+                      prefWidth="1556.0">
                 </Pane>
-                <ImageView id="layout" fx:id="onTop" fitHeight="1080.0" fitWidth="1920.0" focusTraversable="true" mouseTransparent="true" preserveRatio="true">
-                    <Image url="@Images/Background/GamePage.png" />
+                <ImageView id="layout" fx:id="onTop" fitHeight="1080.0" fitWidth="1920.0" focusTraversable="true"
+                           mouseTransparent="true" preserveRatio="true">
+                    <Image url="@Images/Background/GamePage.png"/>
                 </ImageView>
-                <ImageView id="colorName" fx:id="colorName" fitHeight="147.0" fitWidth="535.0" layoutX="523.0" layoutY="5.0" preserveRatio="true">
-                    <Image url="@Images/NameTemplate/purpleName.png" />
+                <ImageView id="colorName" fx:id="colorName" fitHeight="147.0" fitWidth="535.0" layoutX="523.0"
+                           layoutY="5.0" preserveRatio="true">
+                    <Image url="@Images/NameTemplate/purpleName.png"/>
                 </ImageView>
-                <Label id="playerName" fx:id="playerName" alignment="CENTER" contentDisplay="CENTER" layoutX="528.0" layoutY="-20.0" opacity="0.79" prefHeight="176.0" prefWidth="415.0" textAlignment="CENTER" textFill="#32281a">
+                <Label id="playerName" fx:id="playerName" alignment="CENTER" contentDisplay="CENTER" layoutX="528.0"
+                       layoutY="-20.0" opacity="0.79" prefHeight="176.0" prefWidth="415.0" textAlignment="CENTER"
+                       textFill="#32281a">
                     <font>
-                        <Font name="Fantasy Script" size="54.0" />
+                        <Font name="Fantasy Script" size="54.0"/>
                     </font>
                 </Label>
-                <ImageView id="online" fx:id="online" fitHeight="793.0" fitWidth="1047.0" layoutX="778.0" layoutY="143.0" preserveRatio="true" visible="false">
-                    <Image url="@Images/Background/online.png" />
+                <ImageView id="online" fx:id="online" fitHeight="793.0" fitWidth="1047.0" layoutX="778.0"
+                           layoutY="143.0" preserveRatio="true" visible="false">
+                    <Image url="@Images/Background/online.png"/>
                 </ImageView>
-                <ImageView id="rotate" fx:id="rotate" fitHeight="53.0" fitWidth="56.0" layoutX="1492.0" layoutY="47.0" onMouseClicked="#openOnline" preserveRatio="true">
-                    <Image url="@Images/Background/smallRotate.png" />
+                <ImageView id="rotate" fx:id="rotate" fitHeight="53.0" fitWidth="56.0" layoutX="1492.0" layoutY="47.0"
+                           onMouseClicked="#openOnline" preserveRatio="true">
+                    <Image url="@Images/Background/smallRotate.png"/>
                 </ImageView>
-            <Label fx:id="player1" alignment="CENTER" contentDisplay="CENTER" layoutX="1027.0" layoutY="256.0" opacity="0.7" prefHeight="106.0" prefWidth="293.0" rotate="6.3" text="Player1111" textAlignment="CENTER" textFill="#351f17" visible="false">
-               <font>
-                  <Font name="Fantasy Script" size="43.0" />
-               </font>
-            </Label>
-            <Label fx:id="player2" alignment="CENTER" contentDisplay="CENTER" layoutX="1239.0" layoutY="305.0" opacity="0.7" prefHeight="81.0" prefWidth="302.0" rotate="-15.9" text="Player2222" textAlignment="CENTER" textFill="#351f17" visible="false">
-               <font>
-                  <Font name="Fantasy Script" size="43.0" />
-               </font>
-            </Label>
-            <Label fx:id="player3" alignment="CENTER" contentDisplay="CENTER" layoutX="1281.0" layoutY="422.0" opacity="0.7" prefHeight="87.0" prefWidth="277.0" rotate="8.1" text="Player3333" textAlignment="CENTER" textFill="#351f17" visible="false">
-               <font>
-                  <Font name="Fantasy Script" size="43.0" />
-               </font>
-            </Label>
-            <Label fx:id="player4" alignment="CENTER" contentDisplay="CENTER" layoutX="1283.0" layoutY="530.0" opacity="0.7" prefHeight="111.0" prefWidth="283.0" rotate="-15.3" text="Player4444" textAlignment="CENTER" textFill="#351f17" visible="false">
-               <font>
-                  <Font name="Fantasy Script" size="43.0" />
-               </font>
-            </Label>
+                <Label fx:id="player1" alignment="CENTER" contentDisplay="CENTER" layoutX="1027.0" layoutY="256.0"
+                       opacity="0.7" prefHeight="106.0" prefWidth="293.0" rotate="6.3" text="Player1111"
+                       textAlignment="CENTER" textFill="#351f17" visible="false">
+                    <font>
+                        <Font name="Fantasy Script" size="43.0"/>
+                    </font>
+                </Label>
+                <Label fx:id="player2" alignment="CENTER" contentDisplay="CENTER" layoutX="1239.0" layoutY="305.0"
+                       opacity="0.7" prefHeight="81.0" prefWidth="302.0" rotate="-15.9" text="Player2222"
+                       textAlignment="CENTER" textFill="#351f17" visible="false">
+                    <font>
+                        <Font name="Fantasy Script" size="43.0"/>
+                    </font>
+                </Label>
+                <Label fx:id="player3" alignment="CENTER" contentDisplay="CENTER" layoutX="1281.0" layoutY="422.0"
+                       opacity="0.7" prefHeight="87.0" prefWidth="277.0" rotate="8.1" text="Player3333"
+                       textAlignment="CENTER" textFill="#351f17" visible="false">
+                    <font>
+                        <Font name="Fantasy Script" size="43.0"/>
+                    </font>
+                </Label>
+                <Label fx:id="player4" alignment="CENTER" contentDisplay="CENTER" layoutX="1283.0" layoutY="530.0"
+                       opacity="0.7" prefHeight="111.0" prefWidth="283.0" rotate="-15.3" text="Player4444"
+                       textAlignment="CENTER" textFill="#351f17" visible="false">
+                    <font>
+                        <Font name="Fantasy Script" size="43.0"/>
+                    </font>
+                </Label>
             </Pane>
         </center>
     </BorderPane>
