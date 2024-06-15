@@ -1284,7 +1284,7 @@ public class ViewCLI extends View {
                 numExpected = scanner.nextInt();
                 scanner.nextLine();
                 break;
-            } catch (Exception e) {
+            } catch (NoSuchElementException | IllegalStateException e) {
                 scanner.nextLine();
                 System.out.println("You didn't enter an integer value");
             }
@@ -1320,7 +1320,7 @@ public class ViewCLI extends View {
                 objective = scanner.nextInt();
                 scanner.nextLine();
                 break;
-            } catch (Exception e) {
+            } catch (NoSuchElementException | IllegalStateException e) {
                 scanner.nextLine();
                 System.out.println("You didn't enter an integer value");
             }
@@ -1361,7 +1361,7 @@ public class ViewCLI extends View {
                 chosenCard[0] = scanner.nextInt();
                 scanner.nextLine();
                 break;
-            } catch (Exception e) {
+            } catch (NoSuchElementException | IllegalStateException e) {
                 scanner.nextLine();
                 System.out.println("You didn't enter an integer value");
             }
@@ -1390,7 +1390,7 @@ public class ViewCLI extends View {
                 chosenCard[2] = scanner.nextInt();
                 scanner.nextLine();
                 break;
-            } catch (Exception e) {
+            } catch (NoSuchElementException | IllegalStateException e) {
                 scanner.nextLine();
                 System.out.println("You didn't enter an integer value");
             }
@@ -1403,7 +1403,7 @@ public class ViewCLI extends View {
                 chosenCard[3] = scanner.nextInt();
                 scanner.nextLine();
                 break;
-            } catch (Exception e) {
+            } catch (NoSuchElementException | IllegalStateException e) {
                 scanner.nextLine();
                 System.out.println("You didn't enter an integer value");
             }
@@ -1424,7 +1424,7 @@ public class ViewCLI extends View {
             System.out.print("enter the NUMBER of the card you want to pick DECK (1)," + YELLOW_TEXT +"(2)" + RESET +" or TABLE (3),(4)," + YELLOW_TEXT +"(5),(6): "+ RESET);
             choice = scanner.nextInt();
             scanner.nextLine();
-        } catch (Exception e) {
+        } catch (NoSuchElementException | IllegalStateException e) {
             scanner.nextLine();
             System.out.println("You didn't enter an integer value");
         }
