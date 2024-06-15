@@ -3,13 +3,18 @@ package it.polimi.ingsw.client.view.gui.controller;
 import it.polimi.ingsw.client.view.gui.SceneManager;
 import it.polimi.ingsw.client.view.gui.Utilities;
 import it.polimi.ingsw.client.view.gui.message.GUIMessages;
+import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.util.Duration;
 
 import java.net.URL;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
 import static it.polimi.ingsw.client.view.gui.Utilities.*;
@@ -90,6 +95,9 @@ public class MainPageController implements Initializable {
         hooverEffect(rulesBtn, 1.05);
     }
 
+    /**
+     * This method is called when the player presses the cranio image-button.
+     */
     @FXML
     private void surprise() {
         if(devs.getOpacity() != 0 ) {
@@ -111,6 +119,11 @@ public class MainPageController implements Initializable {
             rotateEffect(greenRotate, 3);
             rotateEffect(purRotate, 3);
 
+            devsP.onMouseClickedProperty().setValue(null);
+            devsR.onMouseClickedProperty().setValue(null);
+            devsG.onMouseClickedProperty().setValue(null);
+            devsB.onMouseClickedProperty().setValue(null);
+
             fadeInTransition(playBtn, 1);
             fadeInTransition(rulesBtn, 1);
             playBtn.setDisable(false);
@@ -130,10 +143,74 @@ public class MainPageController implements Initializable {
             hooverEffect(nico, 1.05);
             hooverEffect(ely, 1.05);
 
+            devsP.onMouseClickedProperty().setValue(this::openBia);
+            devsR.onMouseClickedProperty().setValue(this::openEly);
+            devsG.onMouseClickedProperty().setValue(this::openAgnes);
+            devsB.onMouseClickedProperty().setValue(this::openNico);
+
            fadeOutTransition(pane, playBtn, 1, false);
            fadeOutTransition(pane, rulesBtn, 1, false);
            playBtn.setDisable(true);
            rulesBtn.setDisable(true);
         }
     }
+
+
+    @FXML
+    public void openBia(MouseEvent event) {
+        Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Background/purBia.png")));
+        ImageView imageView = new ImageView(image);
+        imageView.setFitHeight(1080);
+        imageView.setFitWidth(1920);
+        imageView.setPreserveRatio(true);
+        pane.getChildren().add(imageView);
+        fadeInTransition(imageView, 1);
+
+        PauseTransition pause = new PauseTransition(Duration.seconds(10));
+        pause.setOnFinished(e ->  fadeOutTransition(pane, imageView, 1, true));
+        pause.play();
+    }
+
+    @FXML
+    public void openEly(MouseEvent event) {
+        Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Background/redEly.png")));
+        ImageView imageView = new ImageView(image);
+        imageView.setFitHeight(1080);
+        imageView.setFitWidth(1920);
+        pane.getChildren().add(imageView);
+        fadeInTransition(imageView, 1);
+
+        PauseTransition pause = new PauseTransition(Duration.seconds(10));
+        pause.setOnFinished(e ->  fadeOutTransition(pane, imageView, 1, true));
+        pause.play();
+    }
+
+    @FXML
+    public void openNico(MouseEvent event) {
+        Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Background/blueNico.png")));
+        ImageView imageView = new ImageView(image);
+        imageView.setFitHeight(1080);
+        imageView.setFitWidth(1920);
+        pane.getChildren().add(imageView);
+        fadeInTransition(imageView, 1);
+
+        PauseTransition pause = new PauseTransition(Duration.seconds(10));
+        pause.setOnFinished(e ->  fadeOutTransition(pane, imageView, 1, true));
+        pause.play();
+    }
+    @FXML
+    public void openAgnes(MouseEvent event) {
+        Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Background/greenAgnes.png")));
+        ImageView imageView = new ImageView(image);
+        imageView.setFitHeight(1080);
+        imageView.setFitWidth(1920);
+        imageView.setPreserveRatio(true);
+        pane.getChildren().add(imageView);
+        fadeInTransition(imageView, 1);
+
+        PauseTransition pause = new PauseTransition(Duration.seconds(10));
+        pause.setOnFinished(e -> fadeOutTransition(pane, imageView, 1, true));
+        pause.play();
+    }
+
 }

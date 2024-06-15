@@ -38,7 +38,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static it.polimi.ingsw.client.view.gui.Utilities.rotateEffect;
+import static it.polimi.ingsw.client.view.gui.Utilities.*;
 
 public class GamePageController implements Initializable {
     private final double offsetPions = 5;
@@ -830,10 +830,10 @@ public class GamePageController implements Initializable {
             //Add the cards to deck
             if (commonArea.getD1().getList().getFirst() == null)
                 removeCardFromPosition(layoutXDeck, layoutYResource);
-            else
+            else {
                 addNewCardToPane(mainPane, commonArea.getD1().getList().getFirst().getID(), false,
                         commonArea.getD1().getList().getFirst(), layoutXDeck, layoutYResource, fitHeightCommon, fitWidthCommon, this::pickCard);
-
+            }
             if (commonArea.getD2().getList().getFirst() == null)
                 removeCardFromPosition(layoutXDeck, layoutYGold);
             else
@@ -1261,10 +1261,9 @@ public class GamePageController implements Initializable {
             if (eventHandler != null) {
                 newCard.setOnMouseClicked(eventHandler);
             }
-            if (card instanceof ObjectiveCard && pane == mainPane && clickCounter != -1)
+            if (pane == mainPane )
                 Utilities.hooverEffect(newCard, 1.05);
-            else if (card instanceof ObjectiveCard || card instanceof PlaceableCard && pane == mainPane && clickCounter == -1)
-                Utilities.hooverEffect(newCard, 1.05);
+
 
             Platform.runLater(() -> {
                 pane.getChildren().add(newCard);
@@ -1637,7 +1636,7 @@ public class GamePageController implements Initializable {
             for (int i = start; i <= score; i++) {
                 double[] adjustedPosition = getAdjustedPosition(allPions, positions[i][0], positions[i][1], pion);
 
-                KeyFrame keyFrame = new KeyFrame(Duration.millis((i - start) * 200), e -> {
+                KeyFrame keyFrame = new KeyFrame(Duration.millis((i - start) * 800), e -> {
                     pion.setLayoutX(adjustedPosition[0]);
                     pion.setLayoutY(adjustedPosition[1]);
                     pion.toFront();

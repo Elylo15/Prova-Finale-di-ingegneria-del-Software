@@ -32,17 +32,17 @@
             <ImageView id="devsR" fx:id="devsR" fitHeight="1080.0" fitWidth="1920.0" preserveRatio="true">
                 <Image url="@Images/Background/devsR.png" />
             </ImageView>
-            <ImageView id="bia" fx:id="bia" fitHeight="1080.0" fitWidth="1920.0" preserveRatio="true" opacity="0">
+            <ImageView id="bia" fx:id="bia" fitHeight="1080.0" fitWidth="1920.0" preserveRatio="true" opacity="0" onMouseClicked="#openBia">
                 <Image url="@Images/Background/bia.png"/>
             </ImageView>
             <ImageView id="agnes" fx:id="agnes" fitHeight="1080.0" fitWidth="1920.0" preserveRatio="true"
-                       opacity="0">
+                       opacity="0" onMouseClicked="#openAgnes">
                 <Image url="@Images/Background/agnes.png"/>
             </ImageView>
-            <ImageView id="nico" fx:id="nico" fitHeight="1080.0" fitWidth="1920.0" preserveRatio="true" opacity="0">
+            <ImageView id="nico" fx:id="nico" fitHeight="1080.0" fitWidth="1920.0" preserveRatio="true" opacity="0" onMouseClicked="#openNico">
                 <Image url="@Images/Background/nico.png"/>
             </ImageView>
-            <ImageView id="ely" fx:id="ely" fitHeight="1080.0" fitWidth="1920.0" preserveRatio="true" opacity="0">
+            <ImageView id="ely" fx:id="ely" fitHeight="1080.0" fitWidth="1920.0" preserveRatio="true" opacity="0" onMouseClicked="#openEly">
                 <Image url="@Images/Background/ely.png"/>
             </ImageView>
             <ImageView id="circleR" fx:id="redRotate" layoutX="1158.0" layoutY="727.0">
