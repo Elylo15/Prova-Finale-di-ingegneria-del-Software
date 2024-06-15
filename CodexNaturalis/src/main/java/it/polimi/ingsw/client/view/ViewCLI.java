@@ -1188,7 +1188,7 @@ public class ViewCLI extends View {
             System.out.println("Choose a nickname:");
             name = scanner.nextLine();
             if (name.length() > 10)
-                System.out.println(RED_TEXT + "Your nickname is too long! Use at most 10 characters.");
+                System.out.println(RED_TEXT + "Your nickname is too long! Use at most 10 characters." + RESET);
             else
                 ok = true;
         }
@@ -1421,7 +1421,7 @@ public class ViewCLI extends View {
         int choice = 1000;
         Scanner scanner = new Scanner(System.in);
         try {
-            System.out.print("enter the NUMBER of the card you want to pick DECK (1),(2) or TABLE (3),(4),(5),(6): ");
+            System.out.print("enter the NUMBER of the card you want to pick DECK (1)," + YELLOW_TEXT +"(2)" + RESET +" or TABLE (3),(4)," + YELLOW_TEXT +"(5),(6): "+ RESET);
             choice = scanner.nextInt();
             scanner.nextLine();
         } catch (Exception e) {

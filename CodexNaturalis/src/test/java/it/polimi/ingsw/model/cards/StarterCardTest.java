@@ -281,8 +281,10 @@ class StarterCardTest {
 
     @Test
     void shouldNotThrowExceptionWhenIdIsAtLimit() {
-        assertDoesNotThrow(() -> new StarterCard(81));
-        assertDoesNotThrow(() -> new StarterCard(86));
+        for (int i = 81; i < 87; i++) {
+            int a = i;
+            assertDoesNotThrow(() -> new StarterCard(a));
+        }
     }
 
 }
