@@ -106,11 +106,11 @@ StarterCard extends PlaceableCard implements Serializable {
     }
 
     /**
-     * @return the resources in the front of the card if front is true, the resources in the back of the card
-     * if front is false
+     * @return the resources in the front of the card if front is true, the resources in the back of the card if front is false
      */
     @Override
     public ArrayList<Resource> getResource() {
+        // if front is true call the method getResource of PlaceableCard, otherwise create and return an ArrayList with the bottomResource
         if (this.isFront()) {
             return super.getResource();
         } else {
@@ -123,6 +123,7 @@ StarterCard extends PlaceableCard implements Serializable {
      */
     @Override
     public ArrayList<Resource> getPermanentResource() {
+        //if front is false returns the permanent resources in the back of the card, otherwise return an empty ArrayList
         if (!this.isFront()) {
             return permanentResource;
         } else {

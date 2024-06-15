@@ -45,10 +45,11 @@ public class CommonArea implements Serializable {
                 if (tableCards.get(i) instanceof StarterCard) {
                     throw new IllegalArgumentException("Cannot pick StarterCard");
                 }
-                c = tableCards.get(i);
+                c = tableCards.get(i); // get the card to remove
                 cardIndex = i; // Save the index of the card to remove
                 tableCards.remove(cardIndex);
                 if (c.getClass() == ResourceCard.class) {
+                    //if the card removed is a resource card pick a card from first deck to replace it, otherwise from second deck
                     drawFromDeck(1, cardIndex);
                 } else {
                     drawFromDeck(2, cardIndex);

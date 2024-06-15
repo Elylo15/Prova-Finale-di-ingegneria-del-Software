@@ -43,7 +43,7 @@ public class Player implements Serializable {
      * @param side integer that indicates the side chosen.
      */
     public void placeStarter(int side) {
-        //call the method removePlaceableCard of PlayerHand and pass as a parameter the id of the starter card
+        //call the method removePlaceableCard() of PlayerHand and pass as a parameter the id of the starter card
         playerArea.placeStarterCard(deck.removeplaceableCard(deck.getPlaceableCards().getFirst().getID()), pickSide(side));
     }
 
@@ -109,7 +109,7 @@ public class Player implements Serializable {
         int cardID;
         Card card;
 
-        card = pickPlaceableCard(cardPick);
+        card = pickPlaceableCard(cardPick); //card chosen from the cards in playerHand
         // Just to be sure
         if (card == null)
             throw new noPlaceCardException();
@@ -174,6 +174,8 @@ public class Player implements Serializable {
 
         if (drawPick < 1 || drawPick > 6)
             throw new InvalidIdException();
+        //we throw an exception if the player wants to pick a card from a deck that is empty
+        //or if he wants to pick from a position in tableCards that does not contain a card anymore
 
         // Check if the resource deck is empty
         if (commonArea.getD1().getSize() == 0 && drawPick == 1)
