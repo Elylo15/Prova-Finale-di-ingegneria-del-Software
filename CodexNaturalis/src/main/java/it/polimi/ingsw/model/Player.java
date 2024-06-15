@@ -156,12 +156,18 @@ public class Player implements Serializable {
      */
     private PlaceableCard pickPlaceableCard(int cardPick) {
 
-        if (cardPick == 1)
+        if(cardPick == 0){ //return the first card in playerHand
+            return deck.getPlaceableCards().getFirst();
+        }
+        if (cardPick == 1) { //return the second card in playerHand
             return deck.getPlaceableCards().get(1);
-        if (cardPick == 2)
+        }
+        if (cardPick == 2) { //return the third card in playerHand
             return deck.getPlaceableCards().get(2);
-        else
-            return deck.getPlaceableCards().get(0);
+        }
+        //the player can only choose between the three cards in his hand
+        return null;
+
     }
 
     /**
