@@ -14,8 +14,8 @@ public class GUIMessagesTest {
 
     @BeforeEach
     public void setUp() {
-        // Create a new instance of GUIMessages to initialize the queues
-        new GUIMessages();
+        // Initializes the queues
+        GUIMessages.initialize();
     }
 
     @Test
