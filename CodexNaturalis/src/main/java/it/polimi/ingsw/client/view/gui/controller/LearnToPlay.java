@@ -24,6 +24,8 @@ import java.net.URL;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
+import static it.polimi.ingsw.client.view.gui.Utilities.rotateEffect;
+
 public class LearnToPlay implements Initializable {
 
     private final double fitHeightCommon = 141;
@@ -44,6 +46,8 @@ public class LearnToPlay implements Initializable {
     private final ImageView explanation2 = new ImageView();
     int i = 0;
     boolean pick = true;
+    @FXML
+    private ImageView rotate;
     @FXML
     private Button mainPane2;
     @FXML
@@ -92,6 +96,8 @@ public class LearnToPlay implements Initializable {
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+
+        rotateEffect(rotate, 3);
 
         playerName.setText("Player 1");
         nextPlayer.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/NextButton/nextBlue.png"))));

@@ -11,6 +11,9 @@ public class GUIMessages {
     private static BlockingQueue<byte[]> storedObjectsToClient;
     private static BlockingQueue<byte[]> storedObjectsToGUI;
 
+    /**
+     * Initializes the queues.
+     */
     public static void initialize() {
         storedObjectsToGUI = new LinkedBlockingQueue<>();
         storedObjectsToClient = new LinkedBlockingQueue<>();

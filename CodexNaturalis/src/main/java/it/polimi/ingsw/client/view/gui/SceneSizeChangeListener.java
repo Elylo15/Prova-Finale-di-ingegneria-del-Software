@@ -15,7 +15,7 @@ import java.io.IOException;
 public class SceneSizeChangeListener implements ChangeListener<Parent> {
     final double initWidth = 1920;
     final double initHeight = 1080;
-    final Pane root;
+    final Pane root = new Pane();
     private final Scene scene;
 
     /**
@@ -27,8 +27,7 @@ public class SceneSizeChangeListener implements ChangeListener<Parent> {
      * @param mainStage the main stage of the application
      * @throws IOException if the FXML file is not found
      */
-    public SceneSizeChangeListener(String pageName, Stage mainStage, Pane root) throws IOException {
-        this.root = root;
+    public SceneSizeChangeListener(String pageName, Stage mainStage) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource(pageName));
         Pane controller = loader.load();
         controller.setPrefWidth(initWidth);
@@ -40,24 +39,10 @@ public class SceneSizeChangeListener implements ChangeListener<Parent> {
         scale.yProperty().bind(root.heightProperty().divide(initHeight));
         root.getTransforms().add(scale);
 
-        //TODO this can be an idea but I dont know if it works, I still have to try
-//        scene = new Scene(root, initWidth, initHeight);
-//        mainStage.setScene(scene); this should happen only the first time
-        //right now this wont work, need to move that in mainPage
-        this.scene = mainStage.getScene();
-        scene.setRoot(root);
-
+        scene = new Scene(root, initWidth, initHeight);
+        mainStage.setScene(scene);
         mainStage.setResizable(true);
-//        mainStage.show(); shown only the first time
-
-
-        // To change scene without noticing,
-        // maybe remove mainStage.show()
-        // try to find a solution to resize even if do not change scene, but root
-        // root is changed with: mainStage.getScene().setRoot(newRoot)
-        // the new root would be the Pane controller
-        // maybe i can have an observable that listens to the root property of the scene
-        // and if the root changes, it resizes, instead of listening for Parent property
+        mainStage.show();
     }
 
     /**

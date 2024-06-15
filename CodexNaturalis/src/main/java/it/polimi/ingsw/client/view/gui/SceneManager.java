@@ -1,11 +1,8 @@
 package it.polimi.ingsw.client.view.gui;
 
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
-import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -18,7 +15,6 @@ import java.util.Objects;
  */
 public class SceneManager {
     private static Stage primaryStage;
-    private static final Pane root = new Pane();
 
     //viewGUI will use the methods of the class to visualize the scene needed
 
@@ -59,7 +55,7 @@ public class SceneManager {
      */
     public static void availableColors() {
         try {
-            new SceneSizeChangeListener("/availableColors.fxml", primaryStage, root);
+            new SceneSizeChangeListener("/availableColors.fxml", primaryStage);
         } catch (IOException ignore) {
         }
     }
@@ -69,7 +65,7 @@ public class SceneManager {
      */
     public static void Choose_Socket_RMI() {
         try {
-            new SceneSizeChangeListener("/choose_Socket_RMI.fxml", primaryStage, root);
+            new SceneSizeChangeListener("/choose_Socket_RMI.fxml", primaryStage);
         } catch (IOException ignore) {
         }
     }
@@ -79,7 +75,7 @@ public class SceneManager {
      */
     public static void disconnect() {
         try {
-            new SceneSizeChangeListener("/disconnect.fxml", primaryStage, root);
+            new SceneSizeChangeListener("/disconnect.fxml", primaryStage);
         } catch (IOException ignore) {
         }
     }
@@ -89,7 +85,7 @@ public class SceneManager {
      */
     public static void expectedPlayers() {
         try {
-            new SceneSizeChangeListener("/expectedPlayers.fxml", primaryStage, root);
+            new SceneSizeChangeListener("/expectedPlayers.fxml", primaryStage);
         } catch (IOException ignore) {
         }
     }
@@ -99,7 +95,7 @@ public class SceneManager {
      */
     public static void pickNameFA() {
         try {
-            new SceneSizeChangeListener("/pickNameFA.fxml", primaryStage, root);
+            new SceneSizeChangeListener("/pickNameFA.fxml", primaryStage);
         } catch (IOException ignore) {
         }
     }
@@ -109,7 +105,7 @@ public class SceneManager {
      */
     public static void InsertIP() {
         try {
-            new SceneSizeChangeListener("/insertIP.fxml", primaryStage, root);
+            new SceneSizeChangeListener("/insertIP.fxml", primaryStage);
         } catch (IOException ignore) {
         }
     }
@@ -119,7 +115,7 @@ public class SceneManager {
      */
     public static void InsertServerOption() {
         try {
-            new SceneSizeChangeListener("/insertServerOption.fxml", primaryStage, root);
+            new SceneSizeChangeListener("/insertServerOption.fxml", primaryStage);
         } catch (IOException ignore) {
         }
     }
@@ -129,7 +125,7 @@ public class SceneManager {
      */
     public static void JoinMatch() {
         try {
-            new SceneSizeChangeListener("/joinMatch.fxml", primaryStage, root);
+            new SceneSizeChangeListener("/joinMatch.fxml", primaryStage);
         } catch (IOException ignore) {
         }
     }
@@ -139,7 +135,7 @@ public class SceneManager {
      */
     public static void JoinRunningMatch() {
         try {
-            new SceneSizeChangeListener("/joinRunningMatch.fxml", primaryStage, root);
+            new SceneSizeChangeListener("/joinRunningMatch.fxml", primaryStage);
         } catch (IOException ignore) {
         }
     }
@@ -149,7 +145,7 @@ public class SceneManager {
      */
     public static void LoadMatch() {
         try {
-            new SceneSizeChangeListener("/loadMatch.fxml", primaryStage, root);
+            new SceneSizeChangeListener("/loadMatch.fxml", primaryStage);
         } catch (IOException ignore) {
         }
     }
@@ -159,26 +155,7 @@ public class SceneManager {
      */
     public static void MainView() {
         try {
-            //TODO it may not work need to test
-//            new SceneSizeChangeListener("/mainView.fxml", primaryStage);
-            FXMLLoader loader = new FXMLLoader(SceneManager.class.getResource("/mainView.fxml"));
-            Pane controller = loader.load();
-            controller.setPrefWidth(1920);
-            controller.setPrefHeight(1080);
-            root.getChildren().add(controller);
-
-            Scale scale = new Scale(1, 1, 0, 0);
-            scale.xProperty().bind(root.widthProperty().divide(1920));
-            scale.yProperty().bind(root.heightProperty().divide(1080));
-            root.getTransforms().add(scale);
-
-            Scene scene = new Scene(controller, 1920, 1080);
-            primaryStage.setScene(scene);
-            primaryStage.setResizable(true);
-            primaryStage.show();
-
-            //DO I also need the Observer here? Or maybe the first time not?
-
+          new SceneSizeChangeListener("/mainView.fxml", primaryStage);
         } catch (IOException ignore) {
         }
     }
@@ -186,7 +163,7 @@ public class SceneManager {
 
     public static void learToPlay() {
         try {
-            new SceneSizeChangeListener("/learnToPlay.fxml", primaryStage, root);
+            new SceneSizeChangeListener("/learnToPlay.fxml", primaryStage);
         } catch (IOException ignore) {
         }
     }
@@ -196,7 +173,7 @@ public class SceneManager {
      */
     public static void starterPage() {
         try {
-            new SceneSizeChangeListener("/gamePage.fxml", primaryStage, root);
+            new SceneSizeChangeListener("/gamePage.fxml", primaryStage);
         } catch (IOException ignore) {
         }
     }
@@ -206,7 +183,7 @@ public class SceneManager {
      */
     public static void unavailableNames() {
         try {
-            new SceneSizeChangeListener("/unavailableNames.fxml", primaryStage, root);
+            new SceneSizeChangeListener("/unavailableNames.fxml", primaryStage);
         } catch (IOException ignore) {
         }
     }
@@ -216,7 +193,7 @@ public class SceneManager {
      */
     public static void waiting() {
         try {
-            new SceneSizeChangeListener("/waiting.fxml", primaryStage, root);
+            new SceneSizeChangeListener("/waiting.fxml", primaryStage);
         } catch (IOException ignore) {
         }
     }

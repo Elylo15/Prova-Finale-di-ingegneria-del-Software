@@ -38,6 +38,8 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static it.polimi.ingsw.client.view.gui.Utilities.rotateEffect;
+
 public class GamePageController implements Initializable {
     private final double offsetPions = 5;
     private final double[][] positions = {
@@ -146,7 +148,7 @@ public class GamePageController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        Utilities.rotateEffect(rotate, 2);
+        rotateEffect(rotate, 2);
         startMessageListener();
         startMessageProcessor();
     }
@@ -417,6 +419,7 @@ public class GamePageController implements Initializable {
         this.currentState = currentStateMessage.getStateName();
         isLastTurn = currentStateMessage.isLastTurn();
         currentStateCase(currentStateMessage);
+        setRotate(currentStateMessage.getPlayer().getColor());
 
         if (isLastTurn) {
             setLastTurn(currentStateMessage.getCurrentPlayer().getColor());
@@ -462,6 +465,27 @@ public class GamePageController implements Initializable {
                     newStateImage.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/YourTurn/youGreen.png"))));
             case "purple" ->
                     newStateImage.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/YourTurn/youPur.png"))));
+        }
+
+        state = setNewImage(state, newStateImage);
+    }
+
+    /**
+     * Displays the correct color for the rotating circle based on the color of the player
+     *
+     * @param color the color of the player
+     */
+    private void setRotate(String color){
+        ImageView newStateImage = new ImageView();
+        switch (color) {
+            case "red" ->
+                    rotate.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/NameTemplate/red.png"))));
+            case "blue" ->
+                    rotate.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/NameTemplate/blue.png"))));
+            case "green" ->
+                    rotate.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/NameTemplate/green.png"))));
+            case "purple" ->
+                    rotate.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/NameTemplate/purple.png"))));
         }
 
         state = setNewImage(state, newStateImage);
