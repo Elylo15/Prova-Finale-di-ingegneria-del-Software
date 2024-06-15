@@ -1,5 +1,6 @@
 package it.polimi.ingsw.model.cards;
 
+import it.polimi.ingsw.model.CommonArea;
 import it.polimi.ingsw.model.cards.enumeration.Reign;
 import it.polimi.ingsw.model.cards.enumeration.Resource;
 import it.polimi.ingsw.model.cards.exceptions.InvalidIdException;
@@ -224,5 +225,67 @@ class ResourceCardTest {
         assertDoesNotThrow(() -> new ResourceCard(1));
         assertDoesNotThrow(() -> new ResourceCard(40));
     }
+
+    @Test
+    void loadLoadDecksCard1() throws InvalidIdException {
+        LoadDecks loadDecks = new LoadDecks();
+        CommonArea commonArea = loadDecks.load();
+        Deck<ResourceCard> cards = commonArea.getD1();
+        ResourceCard card1 = (ResourceCard) cards.getCard(1);
+
+        ArrayList<Resource> test = new ArrayList<>();
+        test.add(Resource.Fungus);
+        test.add(Resource.Empty);
+        test.add(Resource.Fungus);
+        test.add(Resource.Blocked);
+        ArrayList<Resource> testRequirement = new ArrayList<>();
+        System.out.println(card1.toString());
+
+        ResourceCard testCard = new ResourceCard(1, 0, Reign.Fungus, true, test);
+        assertEquals(card1.getResource(),testCard.getResource());
+        assertEquals(card1.getReign(),testCard.getReign());
+        assertEquals(card1.getPoints(), testCard.getPoints());
+        assertEquals(card1.getRequirement(),testRequirement);
+        assertEquals(card1.getPermanentResource(),testRequirement); //the card is face-up
+        assertTrue(card1.isResource());
+
+        ArrayList<Resource> testReign = new ArrayList<>();
+        testReign.add(Resource.Fungus);
+        card1.setFront(false);
+        assertEquals(card1.getPermanentResource(),testReign); //the card is face-down
+
+    }
+    @Test
+    void loadLoadDecksCard40() throws InvalidIdException {
+        LoadDecks loadDecks = new LoadDecks();
+        CommonArea commonArea = loadDecks.load();
+        Deck<ResourceCard> cards = commonArea.getD1();
+        ResourceCard card40 = (ResourceCard) cards.getCard(40);
+
+        ArrayList<Resource> test = new ArrayList<>();
+        test.add(Resource.Blocked);
+        test.add(Resource.Insect);
+        test.add(Resource.Empty);
+        test.add(Resource.Empty);
+        ArrayList<Resource> testRequirement = new ArrayList<>();
+
+        System.out.println(card40.toString());
+
+        ResourceCard testCard = new ResourceCard(40, 1, Reign.Insect, true, test);
+        assertEquals(card40.getResource(),testCard.getResource());
+        assertEquals(card40.getReign(),testCard.getReign());
+        assertEquals(card40.getPoints(), testCard.getPoints());
+        assertEquals(card40.getRequirement(),testRequirement);
+        assertEquals(card40.getPermanentResource(),testRequirement); //the card is face-up
+        assertTrue(card40.isResource());
+
+        ArrayList<Resource> testReign = new ArrayList<>();
+        testReign.add(Resource.Insect);
+        card40.setFront(false);
+        assertEquals(card40.getPermanentResource(),testReign); //the card is face-down
+
+    }
+
+
 
 }

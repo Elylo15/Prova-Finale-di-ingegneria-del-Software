@@ -80,6 +80,24 @@ class ViewCLITest {
 
 
     }
+    @Test
+    @DisplayName("ShowPlayerArea test")
+    void showPlayerAreaTest2() throws noPlaceCardException {
+
+        PlaceableCard starterCard = commonArea.drawFromToPlayer(3);
+        PlaceableCard testCard = commonArea.drawFromToPlayer(1);
+        PlaceableCard testCard3 = commonArea.drawFromToPlayer(1);
+
+
+        playerArea.placeStarterCard(starterCard, false);
+        System.out.println(starterCard.getResource());
+       playerArea.placeCard(testCard, -1, 1, false);
+       playerArea.placeCard(testCard3, -1, -1, true);
+
+        viewCLI.showPlayerArea(playerArea);
+
+
+    }
 
 
     @Test
