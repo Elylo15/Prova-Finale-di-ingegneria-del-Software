@@ -107,8 +107,8 @@ class ObjectiveCardTest {
        ObjectiveCard card = (ObjectiveCard) cards.getCard(92);
 
         ArrayList<int[]> patternTest  =  new ArrayList<>();
-        int array1[] = {2,0};
-        int array2[] = {3,-1};
+        int[] array1 = {2,0};
+        int[] array2 = {3,-1};
         patternTest.add(array1);
         patternTest.add(array2);
         ArrayList<Reign> reignTest = new ArrayList<>();
@@ -121,10 +121,10 @@ class ObjectiveCardTest {
         Assertions.assertEquals(testCard.getPoints(), card.getPoints());
         Assertions.assertEquals(testCard.getReignCards(), card.getReignCards());
         Assertions.assertNull(card.getRequirements());
-        int card92Pattern1[] = card.getPattern().get(0);
-        int card92Pattern2[] = card.getPattern().get(1);
-        int testPattern1[] = testCard.getPattern().get(0);
-        int testPattern2[] = testCard.getPattern().get(1);
+        int[] card92Pattern1 = card.getPattern().get(0);
+        int[] card92Pattern2 = card.getPattern().get(1);
+        int[] testPattern1 = testCard.getPattern().get(0);
+        int[] testPattern2 = testCard.getPattern().get(1);
 
         Assertions.assertEquals(testPattern1[0],card92Pattern1[0]);
         Assertions.assertEquals(testPattern1[1],card92Pattern1[1]);
@@ -146,7 +146,6 @@ class ObjectiveCardTest {
         Assertions.assertEquals(testCard.getPoints(), card.getPoints());
         Assertions.assertNull(card.getReignCards());
         Assertions.assertEquals(testCard.getRequirements(),card.getRequirements());
-
 
     }
 

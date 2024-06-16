@@ -230,8 +230,10 @@ class ResourceCardTest {
 
     @Test
     void shouldNotThrowExceptionWhenIdIsAtLimit() {
-        assertDoesNotThrow(() -> new ResourceCard(1));
-        assertDoesNotThrow(() -> new ResourceCard(40));
+        for (int i=1;i<41; i++) {
+            int a = i;
+            assertDoesNotThrow(() -> new ResourceCard(a));
+        }
     }
 
     @Test
