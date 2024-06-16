@@ -100,7 +100,8 @@ public class ViewCLI extends View {
     /**
      * Communicates to the user he lost connection
      */
-    public void playerDisconnected() {
+    @Override
+    public void playerDisconnected(Exception e) {
         System.out.println("\n" + RED_BACKGROUND + "You have been disconnected." + RESET + "\n");
     }
 
@@ -109,6 +110,7 @@ public class ViewCLI extends View {
      *
      * @param message: currentStateMessage
      */
+    @Override
     public void updatePlayer(currentStateMessage message) {
         System.out.println("\n This is the turn of " + message.getCurrentPlayer().getNickname());
         System.out.println("ID of the match: " + message.getMatchID());

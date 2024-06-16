@@ -58,7 +58,7 @@ class ViewCLITest {
     @Test
     @DisplayName("PlayerDisconnected test")
     void playerDisconnectedTest() {
-        viewCLI.playerDisconnected();
+        viewCLI.playerDisconnected(new Exception());
     }
 
     @Test

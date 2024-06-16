@@ -24,7 +24,7 @@ public abstract class View {
      */
     public abstract String askIP();
 
-    public abstract void playerDisconnected();
+    public abstract void playerDisconnected(Exception e);
 
     public abstract boolean askSocket();
 

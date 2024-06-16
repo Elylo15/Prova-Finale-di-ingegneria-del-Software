@@ -211,6 +211,7 @@ public class Utilities {
         FadeTransition fadeTransitionIn = new FadeTransition(Duration.seconds(1), node);
         fadeTransitionIn.setFromValue(0.0);
         fadeTransitionIn.setToValue(maxOpacity);
+        node.setDisable(false);
 
         fadeTransitionIn.play();
     }
@@ -227,6 +228,7 @@ public class Utilities {
         FadeTransition fadeTransitionOut = new FadeTransition(Duration.seconds(1), node);
         fadeTransitionOut.setFromValue(maxOpacity);
         fadeTransitionOut.setToValue(0.0);
+        node.setDisable(true);
         if (removeAfterFade)
             fadeTransitionOut.setOnFinished(event -> pane.getChildren().remove(node));
 

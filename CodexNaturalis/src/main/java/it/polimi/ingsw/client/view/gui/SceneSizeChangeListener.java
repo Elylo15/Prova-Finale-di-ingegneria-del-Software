@@ -16,7 +16,7 @@ public class SceneSizeChangeListener implements ChangeListener<Parent> {
     final double initWidth = 1920;
     final double initHeight = 1080;
     final Pane root = new Pane();
-    private final Scene scene;
+    private  Scene scene;
 
     /**
      * This constructor creates a new SceneSizeChangeListener.
@@ -34,15 +34,20 @@ public class SceneSizeChangeListener implements ChangeListener<Parent> {
         controller.setPrefHeight(initHeight);
         root.getChildren().add(controller);
 
+        if(mainStage.getScene() == null){
+            scene = new Scene(root, initWidth, initHeight);
+            mainStage.setScene(scene);
+            mainStage.setResizable(true);
+            mainStage.show();
+        } else {
+            mainStage.getScene().rootProperty().set(root);
+        }
+
         Scale scale = new Scale(1, 1, 0, 0);
         scale.xProperty().bind(root.widthProperty().divide(initWidth));
         scale.yProperty().bind(root.heightProperty().divide(initHeight));
         root.getTransforms().add(scale);
 
-        scene = new Scene(root, initWidth, initHeight);
-        mainStage.setScene(scene);
-        mainStage.setResizable(true);
-        mainStage.show();
     }
 
     /**
@@ -62,5 +67,6 @@ public class SceneSizeChangeListener implements ChangeListener<Parent> {
         root.getChildren().clear();
         root.getChildren().add(t1);
         scene.rootProperty().addListener(this);
+
     }
 }

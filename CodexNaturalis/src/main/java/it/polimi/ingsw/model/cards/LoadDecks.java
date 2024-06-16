@@ -2,7 +2,6 @@ package it.polimi.ingsw.model.cards;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import it.polimi.ingsw.app.Test;
 import it.polimi.ingsw.model.CommonArea;
 
 import java.io.File;
@@ -24,7 +23,7 @@ public class LoadDecks implements Serializable {
         CommonArea c = new CommonArea();
         ObjectMapper mapper = new ObjectMapper();
 
-        try (InputStream inputStream = Test.class.getResourceAsStream("/Json/Cards.json")) {
+        try (InputStream inputStream = getClass().getResourceAsStream("/Json/Cards.json")) {
             if (inputStream == null) {
                 throw new IOException("Resource not found: /Json/Cards.json");
             }

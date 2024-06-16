@@ -126,8 +126,6 @@ public class MainPageController implements Initializable {
 
             fadeInTransition(playBtn, 1);
             fadeInTransition(rulesBtn, 1);
-            playBtn.setDisable(false);
-            rulesBtn.setDisable(false);
         } else {
             fadeInTransition(devs, 1);
             fadeInTransition(bia, 1);
@@ -150,8 +148,6 @@ public class MainPageController implements Initializable {
 
            fadeOutTransition(pane, playBtn, 1, false);
            fadeOutTransition(pane, rulesBtn, 1, false);
-           playBtn.setDisable(true);
-           rulesBtn.setDisable(true);
         }
     }
 
