@@ -5,6 +5,7 @@ import it.polimi.ingsw.model.cards.enumeration.Reign;
 import it.polimi.ingsw.model.cards.enumeration.Resource;
 import it.polimi.ingsw.model.cards.exceptions.InvalidIdException;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -17,7 +18,14 @@ class ResourceCardTest {
 
     private Reign reign;
     private int points;
+    private CommonArea commonArea;
 
+    @BeforeEach
+    void setUp()
+    {
+        LoadDecks loadDecks = new LoadDecks();
+        commonArea = loadDecks.load();
+    }
     @Test
     void checkIsEqual() throws InvalidIdException {
         reign = Reign.Fungus;
@@ -228,8 +236,7 @@ class ResourceCardTest {
 
     @Test
     void loadLoadDecksCard1() throws InvalidIdException {
-        LoadDecks loadDecks = new LoadDecks();
-        CommonArea commonArea = loadDecks.load();
+
         Deck<ResourceCard> cards = commonArea.getD1();
         ResourceCard card1 = (ResourceCard) cards.getCard(1);
 
@@ -257,8 +264,7 @@ class ResourceCardTest {
     }
     @Test
     void loadLoadDecksCard40() throws InvalidIdException {
-        LoadDecks loadDecks = new LoadDecks();
-        CommonArea commonArea = loadDecks.load();
+
         Deck<ResourceCard> cards = commonArea.getD1();
         ResourceCard card40 = (ResourceCard) cards.getCard(40);
 
