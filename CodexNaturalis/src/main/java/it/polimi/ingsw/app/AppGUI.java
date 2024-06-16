@@ -2,6 +2,7 @@ package it.polimi.ingsw.app;
 
 import it.polimi.ingsw.client.Client;
 import it.polimi.ingsw.client.view.ViewGUI;
+import it.polimi.ingsw.client.view.gui.BackgroundMusic;
 import it.polimi.ingsw.client.view.gui.SceneManager;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -25,7 +26,7 @@ public class AppGUI extends Application {
     public void start(Stage primaryStage) {
         SceneManager.setPrimaryStage(primaryStage);
 
-        SceneManager.initializeBackgroundMusic();
+        BackgroundMusic.getInstance();
 
         primaryStage.setFullScreen(true);
         primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);

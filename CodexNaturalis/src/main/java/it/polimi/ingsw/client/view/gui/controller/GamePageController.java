@@ -212,7 +212,7 @@ public class GamePageController implements Initializable {
 
     private void handleObjectiveMessage(ArrayList<?> list) {
         if (Objects.equals(currentState, "objectiveState") && !list.isEmpty() && list.get(0) instanceof ObjectiveCard) {
-            SceneManager.playSoundEffect("/Audio/you.mp3");
+            playSoundEffect("/Audio/you.mp3");
             objectivesToChose.add((ObjectiveCard) list.get(0));
             objectivesToChose.add((ObjectiveCard) list.get(1));
             objectiveCase();
@@ -231,7 +231,7 @@ public class GamePageController implements Initializable {
         if (!responseMessage.getCorrect()) {
             wrong = true;
             wrongPopUp(currentStateMessageSaved.getPlayer().getColor());
-            SceneManager.playSoundEffect("/Audio/wrong.mp3");
+            playSoundEffect("/Audio/wrong.mp3");
             caseCurrentStateMessage(currentStateMessageSaved);
         }
     }
@@ -262,6 +262,11 @@ public class GamePageController implements Initializable {
             Utilities.fadeInTransition(winnerLabel, 0.8);
             Utilities.fadeInTransition(back, 1.0);
             Utilities.fadeInTransition(playerInfoLabel, 0.8);
+
+            winner.toFront();
+            winnerLabel.toFront();
+            back.toFront();
+            playerInfoLabel.toFront();
         }
     }
 
@@ -318,6 +323,10 @@ public class GamePageController implements Initializable {
             mainPane.getChildren().add(back);
             Utilities.fadeInTransition(back, 1.0);
             hooverEffect(back, 1.05);
+            if (winners.contains(myself.getNickname()))
+                playSoundEffect("/Audio/win.mp3");
+            else
+                playSoundEffect("/Audio/lose.mp3");
         });
 
     }
@@ -388,7 +397,6 @@ public class GamePageController implements Initializable {
             mainPane.getChildren().add(playerInfoLabel);
             Utilities.fadeInTransition(playerInfoLabel, 0.8);
 
-            System.out.println("Player info label: " + playerInfoLabel.getText());
             playerInfoLabel.toFront();
         }
     }
@@ -426,7 +434,7 @@ public class GamePageController implements Initializable {
 
         if (isLastTurn) {
             setLastTurn(currentStateMessage.getCurrentPlayer().getColor());
-            SceneManager.playSoundEffect("/Audio/you.mp3");
+            playSoundEffect("/Audio/you.mp3");
         }
 
         if (currentStateMessage.getCurrentPlayer().getNickname().equals(myself.getNickname())) {
@@ -438,10 +446,10 @@ public class GamePageController implements Initializable {
                 setState(currentStateMessage.getPlayer().getColor());
                 starterCase();
                 choosePopUp(currentStateMessage.getPlayer().getColor());
-            } else if (Objects.equals(currentState, "PlaceTurnState")) {
+            } else if (Objects.equals(currentState, "PlaceTurnState") || Objects.equals(currentState, "PickTurnState")) {
                 setState(currentStateMessage.getPlayer().getColor());
-                if (!isLastTurn && !wrong)
-                    SceneManager.playSoundEffect("/Audio/you.mp3");
+                if (!isLastTurn && !wrong && Objects.equals(currentState, "PlaceTurnState"))
+                    playSoundEffect("/Audio/you.mp3");
             }
         } else {
             setStateNotPlaying(currentStateMessage.getCurrentPlayer().getColor());
@@ -475,7 +483,7 @@ public class GamePageController implements Initializable {
      *
      * @param color the color of the player
      */
-    private void setRotate(String color){
+    private void setRotate(String color) {
         ImageView newStateImage = new ImageView();
         switch (color) {
             case "red" ->
@@ -1261,7 +1269,7 @@ public class GamePageController implements Initializable {
             if (eventHandler != null) {
                 newCard.setOnMouseClicked(eventHandler);
             }
-            if (pane == mainPane )
+            if (pane == mainPane)
                 Utilities.hooverEffect(newCard, 1.05);
 
 
@@ -1601,7 +1609,7 @@ public class GamePageController implements Initializable {
             pion.setPreserveRatio(true);
             mainPane.getChildren().add(pion);
             updatePionsPositions(allPions, pion);
-        } else if(pion != null && !mainPane.getChildren().contains(pion) && score != 0){
+        } else if (pion != null && !mainPane.getChildren().contains(pion) && score != 0) {
             double[] adjustedPosition = getAdjustedPosition(allPions, positions[score][0], positions[score][1], pion);
             pion.setLayoutX(adjustedPosition[0]);
             pion.setLayoutY(adjustedPosition[1]);
@@ -1611,6 +1619,8 @@ public class GamePageController implements Initializable {
             mainPane.getChildren().add(pion);
             updatePionsPositions(allPions, pion);
         } else if (pion != null && !isPionAtDesiredPosition(pion, score)) {
+            if (myself.getNickname().equals(currentPlayerNickname))
+                playSoundEffect("/Audio/you.mp3");
             addPoints(pion, score, allPions);
             updatePionsPositions(allPions, pion);
         }
@@ -1798,7 +1808,7 @@ public class GamePageController implements Initializable {
                 // Adjust z-order of the cards
                 for (ImageView cardImageView : cardImageViews) {
                     PlaceableCard card = getCardFromImageView(cardImageView, newCards);
-                    if(card instanceof StarterCard)
+                    if (card instanceof StarterCard)
                         adjustCardZOrder(cardImageView, new ArrayList<>());
                 }
 
@@ -1857,7 +1867,7 @@ public class GamePageController implements Initializable {
 
             for (ImageView cardImageView : cardImageViews) {
                 PlaceableCard card = getCardFromImageView(cardImageView, newCards);
-                if(card instanceof StarterCard)
+                if (card instanceof StarterCard)
                     adjustCardZOrder(cardImageView, new ArrayList<>());
 
             }
@@ -1873,7 +1883,7 @@ public class GamePageController implements Initializable {
      * @param starterImage the card image view
      */
     private void adjustCardZOrder(ImageView starterImage, ArrayList<ImageView> nextLevelCards) {
-        if(starterImage == null)
+        if (starterImage == null)
             return;
         if (nextLevelCards.isEmpty()) {
             starterImage.toFront();
@@ -1888,7 +1898,7 @@ public class GamePageController implements Initializable {
                             .filter(node -> node.getUserData() == card)
                             .findFirst().orElse(null))
                     .collect(Collectors.toCollection(ArrayList::new));
-            if(newNextLevelCard.isEmpty())
+            if (newNextLevelCard.isEmpty())
                 return;
             adjustCardZOrder(starterImage, newNextLevelCard);
         } else {
@@ -1898,7 +1908,7 @@ public class GamePageController implements Initializable {
             ArrayList<ImageView> newNextLevelCard = nextLevelCards.stream()
                     .map(card -> (PlaceableCard) card.getUserData())
                     .flatMap(card -> card.getCells().stream()
-                        .filter(cell -> cell.getTopCard() != null && cell.getTopCard() != card))
+                            .filter(cell -> cell.getTopCard() != null && cell.getTopCard() != card))
                     .map(Cell::getTopCard)
                     .map(card -> (ImageView) playground.getChildren().stream()
                             .filter(node -> node instanceof ImageView)
@@ -1906,7 +1916,7 @@ public class GamePageController implements Initializable {
                             .findFirst().orElse(null))
                     .collect(Collectors.toCollection(ArrayList::new));
 
-            if(newNextLevelCard.isEmpty())
+            if (newNextLevelCard.isEmpty())
                 return;
 
             adjustCardZOrder(starterImage, newNextLevelCard);

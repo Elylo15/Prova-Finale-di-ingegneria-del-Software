@@ -1,12 +1,8 @@
 package it.polimi.ingsw.client.view.gui;
 
-import javafx.scene.layout.Pane;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.util.Objects;
 
 
 /**
@@ -25,29 +21,6 @@ public class SceneManager {
      */
     public static void setPrimaryStage(Stage stage) {
         primaryStage = stage;
-    }
-
-    public static void initializeBackgroundMusic() {
-        String audioFile = Objects.requireNonNull(SceneManager.class.getResource("/Audio/song.mp3")).toString();
-        Media media = new Media(audioFile);
-        MediaPlayer backgroundMediaPlayer = new MediaPlayer(media);
-
-//        backgroundMediaPlayer.setOnEndOfMedia(() -> {
-        backgroundMediaPlayer.seek(backgroundMediaPlayer.getStartTime()); // Restart from the beginning
-//            backgroundMediaPlayer.play();
-//        });
-
-        backgroundMediaPlayer.setVolume(0.3);
-
-        backgroundMediaPlayer.play();
-    }
-
-
-    public static void playSoundEffect(String soundFile) {
-        String audioFile = Objects.requireNonNull(SceneManager.class.getResource(soundFile)).toString();
-        Media media = new Media(audioFile);
-        MediaPlayer mediaPlayer = new MediaPlayer(media);
-        mediaPlayer.play();
     }
 
     /**
@@ -155,7 +128,7 @@ public class SceneManager {
      */
     public static void MainView() {
         try {
-          new SceneSizeChangeListener("/mainView.fxml", primaryStage);
+            new SceneSizeChangeListener("/mainView.fxml", primaryStage);
         } catch (IOException ignore) {
         }
     }

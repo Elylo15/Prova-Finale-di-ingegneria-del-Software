@@ -1,7 +1,6 @@
 package it.polimi.ingsw.client.view.gui.controller;
 
 import it.polimi.ingsw.client.view.gui.SceneManager;
-import it.polimi.ingsw.client.view.gui.Utilities;
 import it.polimi.ingsw.client.view.gui.message.GUIMessages;
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
@@ -100,7 +99,7 @@ public class MainPageController implements Initializable {
      */
     @FXML
     private void surprise() {
-        if(devs.getOpacity() != 0 ) {
+        if (devs.getOpacity() != 0) {
             fadeOutTransition(pane, devs, 1, false);
             fadeOutTransition(pane, bia, 1, false);
             fadeOutTransition(pane, agnes, 1, false);
@@ -146,8 +145,8 @@ public class MainPageController implements Initializable {
             devsG.onMouseClickedProperty().setValue(this::openAgnes);
             devsB.onMouseClickedProperty().setValue(this::openNico);
 
-           fadeOutTransition(pane, playBtn, 1, false);
-           fadeOutTransition(pane, rulesBtn, 1, false);
+            fadeOutTransition(pane, playBtn, 1, false);
+            fadeOutTransition(pane, rulesBtn, 1, false);
         }
     }
 
@@ -163,7 +162,7 @@ public class MainPageController implements Initializable {
         fadeInTransition(imageView, 1);
 
         PauseTransition pause = new PauseTransition(Duration.seconds(10));
-        pause.setOnFinished(e ->  fadeOutTransition(pane, imageView, 1, true));
+        pause.setOnFinished(e -> fadeOutTransition(pane, imageView, 1, true));
         pause.play();
     }
 
@@ -177,7 +176,7 @@ public class MainPageController implements Initializable {
         fadeInTransition(imageView, 1);
 
         PauseTransition pause = new PauseTransition(Duration.seconds(10));
-        pause.setOnFinished(e ->  fadeOutTransition(pane, imageView, 1, true));
+        pause.setOnFinished(e -> fadeOutTransition(pane, imageView, 1, true));
         pause.play();
     }
 
@@ -191,9 +190,10 @@ public class MainPageController implements Initializable {
         fadeInTransition(imageView, 1);
 
         PauseTransition pause = new PauseTransition(Duration.seconds(10));
-        pause.setOnFinished(e ->  fadeOutTransition(pane, imageView, 1, true));
+        pause.setOnFinished(e -> fadeOutTransition(pane, imageView, 1, true));
         pause.play();
     }
+
     @FXML
     public void openAgnes(MouseEvent event) {
         Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Background/greenAgnes.png")));

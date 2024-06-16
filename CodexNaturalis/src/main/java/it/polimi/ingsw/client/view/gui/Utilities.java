@@ -9,6 +9,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
 
 import java.util.Objects;
@@ -309,5 +311,19 @@ public class Utilities {
         };
     }
 
+
+    /**
+     * Plays the sound effect
+     *
+     * @param soundFile the sound file to play
+     */
+    public static void playSoundEffect(String soundFile) {
+        Platform.runLater(() -> {
+            String audioFile = Objects.requireNonNull(Utilities.class.getResource(soundFile)).toString();
+            Media media = new Media(audioFile);
+            MediaPlayer mediaPlayer = new MediaPlayer(media);
+            mediaPlayer.play();
+        });
+    }
 
 }
