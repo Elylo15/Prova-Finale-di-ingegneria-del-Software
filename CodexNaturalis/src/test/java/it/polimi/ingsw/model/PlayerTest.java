@@ -1,6 +1,7 @@
 package it.polimi.ingsw.model;
 
 import it.polimi.ingsw.model.cards.*;
+import it.polimi.ingsw.model.cards.enumeration.Reign;
 import it.polimi.ingsw.model.cards.enumeration.Resource;
 import it.polimi.ingsw.model.cards.exceptions.InvalidIdException;
 import it.polimi.ingsw.model.cards.exceptions.noPlaceCardException;
@@ -273,18 +274,26 @@ class PlayerTest {
         PlaceableCard starterCard = new StarterCard(81, 0, null, true, resources, permanentResources, bottomResources);
         playerArea.placeStarterCard(starterCard, true);
 
-        player.getPlayerHand().addNewPlaceableCard(new GoldCard(44));
-        player.getPlayerHand().addNewPlaceableCard(new GoldCard(43));
-        player.getPlayerHand().addNewPlaceableCard(new GoldCard(49));
+        ArrayList<Resource> resourceCard = new ArrayList<>();
+        resourceCard.add(Resource.Empty);
+        resourceCard.add(Resource.Blocked);
+        resourceCard.add(Resource.Empty);
+        resourceCard.add(Resource.Animal);
 
-        player.playTurn(0, 1, 1, 1);
+        player.getPlayerHand().addNewPlaceableCard(new ResourceCard(29, 1, Reign.Animal, true, resourceCard));
+        player.getPlayerHand().addNewPlaceableCard(new ResourceCard(2));
+        player.getPlayerHand().addNewPlaceableCard(new GoldCard(49));
+        System.out.println(player.getPlayerHand());
+        player.playTurn(0, 1, 1, 1); //place first card in playerHand
         System.out.println(player.getScore());
-        assertTrue(player.getScore() > 0);
+        System.out.println(player.getPlayerHand());
+        assertEquals(1,player.getScore());
     }
 
     @Test
     public void getPlayerArea_ShouldReturnPlayerArea() {
         assertNotNull(player.getPlayerArea());
+        assertInstanceOf(PlayerArea.class, player.getPlayerArea());
     }
 
     @Test
@@ -313,6 +322,57 @@ class PlayerTest {
     @Test
     public void getCommonArea_ShouldReturnCommonArea() {
         assertInstanceOf(CommonArea.class, player.getCommonArea());
+    }
+
+    @Test
+    public void placeHandCard() throws InvalidIdException, noPlaceCardException {
+        ArrayList<Resource> card1 = new ArrayList<>();
+        card1.add(Resource.Fungus);
+        card1.add(Resource.Empty);
+        card1.add(Resource.Fungus);
+        card1.add(Resource.Blocked);
+        ArrayList<Resource> card29 = new ArrayList<>();
+        card29.add(Resource.Empty);
+        card29.add(Resource.Blocked);
+        card1.add(Resource.Empty);
+        card29.add(Resource.Animal);
+        ArrayList<Resource> card57 = new ArrayList<>();
+        card57.add(Resource.Empty);
+        card57.add(Resource.Blocked);
+        card57.add(Resource.Quill);
+        card57.add(Resource.Blocked);
+        ArrayList<Resource> requirement = new ArrayList<>();
+        requirement.add(Resource.Plant);
+        requirement.add(Resource.Plant);
+        requirement.add(Resource.Plant);
+
+        player.getPlayerHand().addNewPlaceableCard(new ResourceCard(1,0, Reign.Fungus,true,card1));
+        player.getPlayerHand().addNewPlaceableCard(new ResourceCard(29,1,Reign.Animal,true,card29));
+        player.getPlayerHand().addNewPlaceableCard(new GoldCard(57, 3, Reign.Plant,true,card57,requirement));
+        System.out.println(player.getPlayerHand());
+
+        //should throw an exception if the player choose a card number that is not 0, 1 or 2 because pickPlaceableCard will return null
+        assertThrows(noPlaceCardException.class, () -> player.playTurn(4,1,1,1));
+
+        ArrayList<Resource> resources = new ArrayList<>();
+        resources.add(Resource.Empty);
+        resources.add(Resource.Plant);
+        resources.add(Resource.Insect);
+        resources.add(Resource.Empty);
+        ArrayList<Resource> permanentResources = new ArrayList<>();
+        permanentResources.add(Resource.Insect);
+        ArrayList<Resource> bottomResources = new ArrayList<>();
+        bottomResources.add(Resource.Fungus);
+        bottomResources.add(Resource.Plant);
+        bottomResources.add(Resource.Insect);
+        bottomResources.add(Resource.Animal);
+        PlaceableCard starterCard = new StarterCard(81, 0, null, true, resources, permanentResources, bottomResources);
+        playerArea.placeStarterCard(starterCard, true);
+
+        player.playTurn(1,1,1,1);
+        System.out.println(player.getPlayerHand());
+
+
     }
 
 }

@@ -1,9 +1,11 @@
 package it.polimi.ingsw.model.cards;
 
+import it.polimi.ingsw.model.CommonArea;
 import it.polimi.ingsw.model.cards.enumeration.Reign;
 import it.polimi.ingsw.model.cards.enumeration.Resource;
 import it.polimi.ingsw.model.cards.exceptions.InvalidIdException;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -16,7 +18,14 @@ class ResourceCardTest {
 
     private Reign reign;
     private int points;
+    private CommonArea commonArea;
 
+    @BeforeEach
+    void setUp()
+    {
+        LoadDecks loadDecks = new LoadDecks();
+        commonArea = loadDecks.load();
+    }
     @Test
     void checkIsEqual() throws InvalidIdException {
         reign = Reign.Fungus;
@@ -221,8 +230,70 @@ class ResourceCardTest {
 
     @Test
     void shouldNotThrowExceptionWhenIdIsAtLimit() {
-        assertDoesNotThrow(() -> new ResourceCard(1));
-        assertDoesNotThrow(() -> new ResourceCard(40));
+        for (int i=1;i<41; i++) {
+            int a = i;
+            assertDoesNotThrow(() -> new ResourceCard(a));
+        }
     }
+
+    @Test
+    void loadLoadDecksCard1() throws InvalidIdException {
+
+        Deck<ResourceCard> cards = commonArea.getD1();
+        ResourceCard card1 = (ResourceCard) cards.getCard(1);
+
+        ArrayList<Resource> test = new ArrayList<>();
+        test.add(Resource.Fungus);
+        test.add(Resource.Empty);
+        test.add(Resource.Fungus);
+        test.add(Resource.Blocked);
+        ArrayList<Resource> testRequirement = new ArrayList<>();
+        System.out.println(card1.toString());
+
+        ResourceCard testCard = new ResourceCard(1, 0, Reign.Fungus, true, test);
+        assertEquals(card1.getResource(),testCard.getResource());
+        assertEquals(card1.getReign(),testCard.getReign());
+        assertEquals(card1.getPoints(), testCard.getPoints());
+        assertEquals(card1.getRequirement(),testRequirement);
+        assertEquals(card1.getPermanentResource(),testRequirement); //the card is face-up
+        assertTrue(card1.isResource());
+
+        ArrayList<Resource> testReign = new ArrayList<>();
+        testReign.add(Resource.Fungus);
+        card1.setFront(false);
+        assertEquals(card1.getPermanentResource(),testReign); //the card is face-down
+
+    }
+    @Test
+    void loadLoadDecksCard40() throws InvalidIdException {
+
+        Deck<ResourceCard> cards = commonArea.getD1();
+        ResourceCard card40 = (ResourceCard) cards.getCard(40);
+
+        ArrayList<Resource> test = new ArrayList<>();
+        test.add(Resource.Blocked);
+        test.add(Resource.Insect);
+        test.add(Resource.Empty);
+        test.add(Resource.Empty);
+        ArrayList<Resource> testRequirement = new ArrayList<>();
+
+        System.out.println(card40.toString());
+
+        ResourceCard testCard = new ResourceCard(40, 1, Reign.Insect, true, test);
+        assertEquals(card40.getResource(),testCard.getResource());
+        assertEquals(card40.getReign(),testCard.getReign());
+        assertEquals(card40.getPoints(), testCard.getPoints());
+        assertEquals(card40.getRequirement(),testRequirement);
+        assertEquals(card40.getPermanentResource(),testRequirement); //the card is face-up
+        assertTrue(card40.isResource());
+
+        ArrayList<Resource> testReign = new ArrayList<>();
+        testReign.add(Resource.Insect);
+        card40.setFront(false);
+        assertEquals(card40.getPermanentResource(),testReign); //the card is face-down
+
+    }
+
+
 
 }

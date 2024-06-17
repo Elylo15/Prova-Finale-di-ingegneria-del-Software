@@ -100,7 +100,8 @@ public class ViewCLI extends View {
     /**
      * Communicates to the user he lost connection
      */
-    public void playerDisconnected() {
+    @Override
+    public void playerDisconnected(Exception e) {
         System.out.println("\n" + RED_BACKGROUND + "You have been disconnected." + RESET + "\n");
     }
 
@@ -109,6 +110,7 @@ public class ViewCLI extends View {
      *
      * @param message: currentStateMessage
      */
+    @Override
     public void updatePlayer(currentStateMessage message) {
         System.out.println("\n This is the turn of " + message.getCurrentPlayer().getNickname());
         System.out.println("ID of the match: " + message.getMatchID());
@@ -1188,7 +1190,7 @@ public class ViewCLI extends View {
             System.out.println("Choose a nickname:");
             name = scanner.nextLine();
             if (name.length() > 10)
-                System.out.println(RED_TEXT + "Your nickname is too long! Use at most 10 characters.");
+                System.out.println(RED_TEXT + "Your nickname is too long! Use at most 10 characters." + RESET);
             else
                 ok = true;
         }
@@ -1284,7 +1286,7 @@ public class ViewCLI extends View {
                 numExpected = scanner.nextInt();
                 scanner.nextLine();
                 break;
-            } catch (Exception e) {
+            } catch (NoSuchElementException | IllegalStateException e) {
                 scanner.nextLine();
                 System.out.println("You didn't enter an integer value");
             }
@@ -1320,7 +1322,7 @@ public class ViewCLI extends View {
                 objective = scanner.nextInt();
                 scanner.nextLine();
                 break;
-            } catch (Exception e) {
+            } catch (NoSuchElementException | IllegalStateException e) {
                 scanner.nextLine();
                 System.out.println("You didn't enter an integer value");
             }
@@ -1361,7 +1363,7 @@ public class ViewCLI extends View {
                 chosenCard[0] = scanner.nextInt();
                 scanner.nextLine();
                 break;
-            } catch (Exception e) {
+            } catch (NoSuchElementException | IllegalStateException e) {
                 scanner.nextLine();
                 System.out.println("You didn't enter an integer value");
             }
@@ -1390,7 +1392,7 @@ public class ViewCLI extends View {
                 chosenCard[2] = scanner.nextInt();
                 scanner.nextLine();
                 break;
-            } catch (Exception e) {
+            } catch (NoSuchElementException | IllegalStateException e) {
                 scanner.nextLine();
                 System.out.println("You didn't enter an integer value");
             }
@@ -1403,7 +1405,7 @@ public class ViewCLI extends View {
                 chosenCard[3] = scanner.nextInt();
                 scanner.nextLine();
                 break;
-            } catch (Exception e) {
+            } catch (NoSuchElementException | IllegalStateException e) {
                 scanner.nextLine();
                 System.out.println("You didn't enter an integer value");
             }
@@ -1421,10 +1423,10 @@ public class ViewCLI extends View {
         int choice = 1000;
         Scanner scanner = new Scanner(System.in);
         try {
-            System.out.print("enter the NUMBER of the card you want to pick DECK (1),(2) or TABLE (3),(4),(5),(6): ");
+            System.out.print("enter the NUMBER of the card you want to pick DECK (1)," + YELLOW_TEXT +"(2)" + RESET +" or TABLE (3),(4)," + YELLOW_TEXT +"(5),(6): "+ RESET);
             choice = scanner.nextInt();
             scanner.nextLine();
-        } catch (Exception e) {
+        } catch (NoSuchElementException | IllegalStateException e) {
             scanner.nextLine();
             System.out.println("You didn't enter an integer value");
         }

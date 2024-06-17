@@ -24,6 +24,8 @@ import java.net.URL;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
+import static it.polimi.ingsw.client.view.gui.Utilities.rotateEffect;
+
 public class LearnToPlay implements Initializable {
 
     private final double fitHeightCommon = 141;
@@ -44,6 +46,8 @@ public class LearnToPlay implements Initializable {
     private final ImageView explanation2 = new ImageView();
     int i = 0;
     boolean pick = true;
+    @FXML
+    private ImageView rotate;
     @FXML
     private Button mainPane2;
     @FXML
@@ -92,6 +96,8 @@ public class LearnToPlay implements Initializable {
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+
+        rotateEffect(rotate, 3);
 
         playerName.setText("Player 1");
         nextPlayer.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/NextButton/nextBlue.png"))));
@@ -358,7 +364,7 @@ public class LearnToPlay implements Initializable {
             pick = false;
             double oldLayoutY = selectedCard.getLayoutY();
             double oldLayoutX = selectedCard.getLayoutX();
-            selectedCard.removeEventHandler(MouseEvent.MOUSE_CLICKED, this::selectPick);
+            selectedCard.onMouseClickedProperty().setValue(null);
             Card card = (Card) selectedCard.getUserData();
             selectedCard.setLayoutY(layoutYFree);
             selectedCard.setLayoutX(layoutXFree);
@@ -436,8 +442,8 @@ public class LearnToPlay implements Initializable {
             clickedPlaceholder.setImage(selectedCard.getImage());
             clickedPlaceholder.setOpacity(1);
             Utilities.hooverEffect(clickedPlaceholder, 1.05);
-            clickedPlaceholder.removeEventHandler(MouseEvent.MOUSE_CLICKED, this::waitForClickObjective);
-            selectedCard.removeEventHandler(MouseEvent.MOUSE_CLICKED, this::selectCard);
+            clickedPlaceholder.onMouseClickedProperty().setValue(null);
+            selectedCard.onMouseClickedProperty().setValue(null);
             onTop.toFront();
             Utilities.fadeOutTransition(mainPane, selectedCard, 1, true);
             selectedCard = null;
@@ -502,19 +508,19 @@ public class LearnToPlay implements Initializable {
                 ImageView placeholder3 = Utilities.getCardFromPosition(837, 439, mainPane);
                 ImageView placeholder4 = Utilities.getCardFromPosition(523, 439, mainPane);
                 if (placeholder1 != null)
-                    placeholder1.removeEventHandler(MouseEvent.MOUSE_CLICKED, this::selectedPlaceHolder);
+                    placeholder1.onMouseClickedProperty().setValue(null);
                 if (placeholder2 != null)
-                    placeholder2.removeEventHandler(MouseEvent.MOUSE_CLICKED, this::selectedPlaceHolder);
+                    placeholder2.onMouseClickedProperty().setValue(null);
                 if (placeholder3 != null)
-                    placeholder3.removeEventHandler(MouseEvent.MOUSE_CLICKED, this::selectedPlaceHolder);
+                    placeholder3.onMouseClickedProperty().setValue(null);
                 if (placeholder4 != null)
-                    placeholder4.removeEventHandler(MouseEvent.MOUSE_CLICKED, this::selectedPlaceHolder);
+                    placeholder4.onMouseClickedProperty().setValue(null);
                 if (card1 != null)
-                    card1.removeEventHandler(MouseEvent.MOUSE_CLICKED, this::selectCard);
+                    card1.onMouseClickedProperty().setValue(null);
                 if (card2 != null)
-                    card2.removeEventHandler(MouseEvent.MOUSE_CLICKED, this::selectCard);
+                    card2.onMouseClickedProperty().setValue(null);
                 if (card3 != null)
-                    card3.removeEventHandler(MouseEvent.MOUSE_CLICKED, this::selectCard);
+                    card3.onMouseClickedProperty().setValue(null);
                 clickedPlaceholder.setImage(selectedCard.getImage());
                 clickedPlaceholder.setOpacity(1);
                 Utilities.fadeOutTransition(mainPane, selectedCard, 1, true);

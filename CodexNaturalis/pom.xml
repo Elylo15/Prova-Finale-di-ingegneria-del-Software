@@ -59,8 +59,9 @@
     <build>
         <resources>
             <resource>
-                <directory>src/main/Resources</directory>
+                <directory>src/main/Resource</directory>
                 <includes>
+                    <include>**/*.json</include>
                     <include>**/*.ttf</include>
                     <include>**/*.fxml</include>
                     <include>**/*.css</include>
@@ -121,6 +122,9 @@
                             <id>default -cli</id>
                             <configuration>
                                 <mainClass>it.polimi.ingsw.app.AppGUI</mainClass>
+                                <options>
+                                    <option>--add-modules=javafx.controls,javafx.fxml,javafx.media</option>
+                                </options>
                             </configuration>
                         </execution>
                     </executions>

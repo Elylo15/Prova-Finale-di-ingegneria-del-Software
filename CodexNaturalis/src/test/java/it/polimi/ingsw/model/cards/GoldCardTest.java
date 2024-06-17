@@ -1,9 +1,11 @@
 package it.polimi.ingsw.model.cards;
 
+import it.polimi.ingsw.model.CommonArea;
 import it.polimi.ingsw.model.cards.enumeration.Reign;
 import it.polimi.ingsw.model.cards.enumeration.Resource;
 import it.polimi.ingsw.model.cards.exceptions.InvalidIdException;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -18,6 +20,15 @@ class GoldCardTest {
     private boolean front;
     private Reign reign;
     private int points;
+
+    private CommonArea commonArea;
+
+    @BeforeEach
+    void setUp()
+    {
+        LoadDecks loadDecks = new LoadDecks();
+        commonArea = loadDecks.load();
+    }
 
     @Test
     void checkIsEqual() throws InvalidIdException {
@@ -272,8 +283,56 @@ class GoldCardTest {
 
     @Test
     void shouldNotThrowExceptionWhenIdIsAtLimit() {
-        assertDoesNotThrow(() -> new GoldCard(41));
-        assertDoesNotThrow(() -> new GoldCard(80));
+        for (int i=41; i<81; i++) {
+            int a = i;
+            assertDoesNotThrow(() -> new GoldCard(a));
+        }
+    }
+    @Test
+    void LoadDecks54() throws InvalidIdException {
+        Deck<GoldCard> cards = commonArea.getD2();
+        GoldCard card = (GoldCard) cards.getCard(54);
+
+        ArrayList<Resource> testResource = new ArrayList<>();
+        testResource.add(Resource.Blocked);
+        testResource.add(Resource.Empty);
+        testResource.add(Resource.Empty);
+        testResource.add(Resource.Empty);
+        ArrayList<Resource> testRequirement = new ArrayList<>();
+        testRequirement.add(Resource.Plant);
+        testRequirement.add(Resource.Plant);
+        testRequirement.add(Resource.Plant);
+        testRequirement.add(Resource.Insect);
+
+
+        GoldCard testCard = new GoldCard(54,2,Reign.Plant,true,testResource,testRequirement);
+
+        Assertions.assertEquals(testCard.getPoints(),card.getPoints());
+        Assertions.assertEquals(testCard.getReign(),card.getReign());
+        Assertions.assertEquals(testCard.getResource(),card.getResource());
+        Assertions.assertEquals(testCard.getRequirement(),card.getRequirement());
+        Assertions.assertTrue(card.isGold());
+
+        ArrayList<Integer> req = new ArrayList<>();
+        req.add(1); //fungus
+        req.add(1); //insect
+        req.add(2); //animal
+        req.add(0); //plant
+        req.add(0); //manuscript
+        req.add(0); //quill
+        req.add(0); //inkwell
+        req.add(3); //empty
+        req.add(1); //blocked
+        Assertions.assertFalse(card.checkRequirement(req));
+
+        card.setFront(false);
+        Assertions.assertTrue(card.checkRequirement(req));
+
+
+
+
+
+
     }
 
 }

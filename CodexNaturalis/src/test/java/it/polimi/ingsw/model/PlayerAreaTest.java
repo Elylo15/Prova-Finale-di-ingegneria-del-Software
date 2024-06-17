@@ -1,5 +1,6 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.client.view.ViewCLI;
 import it.polimi.ingsw.model.cards.*;
 import it.polimi.ingsw.model.cards.enumeration.Reign;
 import it.polimi.ingsw.model.cards.enumeration.Resource;
@@ -68,41 +69,45 @@ class PlayerAreaTest {
         Assertions.assertTrue(playerArea.contains(2, 2));
     }
 
+
+    // REMOVE THIS
+    void prova(){
+
+        CommonArea commonArea = (new LoadDecks()).load();
+        ArrayList<StarterCard> cards = commonArea.getD3().getList();
+
+        PlayerArea area;
+
+        for(StarterCard card : cards){
+            System.out.println(card);
+
+            area = new PlayerArea();
+            area.placeStarterCard(card, true);
+            new ViewCLI().showPlayerArea(area);
+
+            area = new PlayerArea();
+            area.placeStarterCard(card, false);
+            new ViewCLI().showPlayerArea(area);
+
+        }
+
+    }
+
     @Test
     void getResources() throws noPlaceCardException {
 
-        ArrayList<Resource> resources = new ArrayList<>();
-        resources.add(Resource.Empty);
-        resources.add(Resource.Plant);
-        resources.add(Resource.Insect);
-        resources.add(Resource.Empty);
-        ArrayList<Resource> permanentResources = new ArrayList<>();
-        permanentResources.add(Resource.Insect);
-        ArrayList<Resource> bottomResources = new ArrayList<>();
-        bottomResources.add(Resource.Fungus);
-        bottomResources.add(Resource.Plant);
-        bottomResources.add(Resource.Insect);
-        bottomResources.add(Resource.Animal);
+        CommonArea commonArea = (new LoadDecks()).load();
+        ArrayList<StarterCard> cards = commonArea.getD3().getList();
+        ArrayList<ResourceCard> resourcesCards = commonArea.getD1().getList();
+
         PlaceableCard starterCard;
-        try {
-            starterCard = new StarterCard(81, 0, null, false, resources, permanentResources, bottomResources);
-        } catch (InvalidIdException e) {
-            throw new RuntimeException(e);
-        }
+        starterCard = cards.get(0);
 
         PlaceableCard testCard;
-        resources = new ArrayList<>();
-        resources.add(Resource.Fungus);
-        resources.add(Resource.Fungus);
-        resources.add(Resource.Blocked);
-        resources.add(Resource.Empty);
-        try {
-            testCard = new ResourceCard(2, 0, Reign.Fungus, true, resources);
-        } catch (InvalidIdException e) {
-            throw new RuntimeException(e);
-        }
+        testCard = resourcesCards.get(1);
 
         playerArea.placeStarterCard(starterCard, false);
+
         playerArea.placeCard(testCard, 1, 1, true);
 
         ArrayList<Integer> counts = new ArrayList<>();

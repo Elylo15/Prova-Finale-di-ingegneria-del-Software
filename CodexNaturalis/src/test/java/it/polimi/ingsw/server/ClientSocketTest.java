@@ -5,6 +5,7 @@ import it.polimi.ingsw.messages.connectionState.connectionResponseMessage;
 import it.polimi.ingsw.messages.currentStateMessage;
 import it.polimi.ingsw.messages.endGameState.declareWinnerMessage;
 import it.polimi.ingsw.messages.objectiveState.objectiveCardMessage;
+import it.polimi.ingsw.messages.playerTurnState.pickCardMessage;
 import it.polimi.ingsw.messages.playerTurnState.placeCardMessage;
 import it.polimi.ingsw.messages.playerTurnState.updatePlayerMessage;
 import it.polimi.ingsw.messages.responseMessage;
@@ -15,6 +16,8 @@ import it.polimi.ingsw.model.CommonArea;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.cards.LoadDecks;
 import it.polimi.ingsw.model.cards.ObjectiveCard;
+import it.polimi.ingsw.model.cards.ResourceCard;
+import it.polimi.ingsw.model.cards.exceptions.InvalidIdException;
 import org.junit.jupiter.api.*;
 
 import java.io.IOException;
@@ -29,10 +32,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class ClientSocketTest {
     ControllerSocket controller;
     ClientConnection connection;
-    //in order to see if the controller can correctly send and receive messages we create a server to exchange them
     private ServerSocket serverSocket;
     private Socket socket;
     private ThreadPoolExecutor executor;
+
+    //in order to see if ClientSocket can correctly send and receive messages we create a ControllerSocket object to exchange them
+
 
 
     @BeforeEach
@@ -87,20 +92,26 @@ class ClientSocketTest {
     @Test
     @DisplayName("Sending the current state")
     void getCurrentTest() {
-        currentStateMessage current = new currentStateMessage(null, null, "State", false, null, null, 0);
+        //ClientSocket should correctly send a currentStateMessage
+        Player player = new Player("player", "red", null);
+        currentStateMessage current = new currentStateMessage(player, player, "State", false, null, null, 0);
         connection.sendCurrentState(current);
-        currentStateMessage controllerCurrent = controller.getCurrent();
+        currentStateMessage controllerCurrent = controller.getCurrent();  //controller receives message
         Assertions.assertEquals("State", controllerCurrent.getStateName());
         Assertions.assertFalse(controllerCurrent.isLastTurn());
+        Assertions.assertEquals("red", controllerCurrent.getCurrentPlayer().getColor());
+        Assertions.assertEquals("player", controllerCurrent.getCurrentPlayer().getNickname());
         Assertions.assertEquals(0, (int) controllerCurrent.getMatchID());
     }
 
     @Test
     @DisplayName("Sending and receiving server options")
     public void getServerOptionsTest() {
+        //ClientSocket should correctly create and send a serverOptionMessage and then receive a serverOptionMessage from controller
         serverOptionMessage options = new serverOptionMessage(true, 0, 1, false, 0);
-        controller.sendOptions(options);
-        serverOptionMessage receivedOptions = connection.getServerOption(null, null, null);
+        controller.sendOptions(options); //controller sends message
+        serverOptionMessage receivedOptions = connection.getServerOption(null, null, null); //message received from controller
+
         Assertions.assertTrue(receivedOptions.isNewMatch());
         Assertions.assertEquals(0, receivedOptions.getMatchID());
         Assertions.assertEquals(1, receivedOptions.getStartedMatchID());
@@ -121,27 +132,32 @@ class ClientSocketTest {
     @Test
     @DisplayName("Sending unavailable names and receiving a name")
     void NamesTest() throws InterruptedException, ExecutionException {
+        //ClientSocket should correctly an unavailableNamesMessage and then receive a chosenNameMessage
         ArrayList<String> unavailableNames = new ArrayList<>();
         unavailableNames.add("Alfa");
         unavailableNames.add("Beta");
-        Future<String> name = executor.submit(() -> connection.getName(unavailableNames).getName());
+        Future<String> nameReceived = executor.submit(() -> connection.getName(unavailableNames).getName());
         ArrayList<String> names = controller.getUnavailableName().getNames();
         Assertions.assertEquals("Alfa", names.get(0));
         Assertions.assertEquals("Beta", names.get(1));
         controller.chooseName("Alfa");
-        Assertions.assertEquals("Alfa", name.get());
+        Assertions.assertEquals("Alfa", nameReceived.get());
     }
 
     @Test
     @DisplayName("Sending available colors and receiving a color")
     void ColorsTest() throws ExecutionException, InterruptedException {
+        //ClientSocket should correctly create and send an availableColorsMessage and then receive a chosenColorMessage
         ArrayList<String> availableColors = new ArrayList<>();
         availableColors.add("Red");
         availableColors.add("Blue");
+        availableColors.add("purple");
         Future<String> color = executor.submit(() -> connection.getColor(availableColors).getColor());
-        ArrayList<String> colors = controller.getAvailableColor().getColors();
-        Assertions.assertEquals("Red", colors.get(0));
-        Assertions.assertEquals("Blue", colors.get(1));
+        ArrayList<String> colorsReceived = controller.getAvailableColor().getColors();
+        Assertions.assertEquals("Red", colorsReceived.get(0));
+        Assertions.assertEquals("Blue", colorsReceived.get(1));
+        Assertions.assertEquals("purple", colorsReceived.get(2));
+
         controller.chooseColor("Red");
         Assertions.assertEquals("Red", color.get());
     }
@@ -149,6 +165,7 @@ class ClientSocketTest {
     @Test
     @DisplayName("Sending the new host")
     void newHostTest() {
+        //ClientSocket should correctly create and send a newHostMessage
         connection.sendNewHostMessage("Alfa");
         Assertions.assertEquals("Alfa", controller.newHost().getNewHostNickname());
     }
@@ -156,67 +173,87 @@ class ClientSocketTest {
     @Test
     @DisplayName("Receiving the expected players")
     void expectedPlayersTest() {
+        //ClientSocket should correctly receive an expectedPlayersMessage
         controller.expectedPlayers(3, false);
         expectedPlayersMessage expected = connection.getExpectedPlayer();
         Assertions.assertEquals(3, expected.getExpectedPlayers());
+        Assertions.assertFalse(expected.isNoResponse());
     }
 
     @Test
     @DisplayName("Placing the starter card")
     void placeStarterTest() {
+        //ClientSocket should correctly receive a starterCardMessage
         controller.placeStarter(0, false);
         starterCardMessage starter = connection.getStaterCard();
         Assertions.assertEquals(0, starter.getSide());
+        Assertions.assertFalse(starter.isNoResponse());
     }
 
     @Test
     @DisplayName("Sending the objective cards and receiving an answer")
     void ObjectiveCardsTest() throws ExecutionException, InterruptedException {
+        //ClientSocket should correctly create and send an objectiveCardMessage and then receive an objectiveCardMessage from controller
         ArrayList<ObjectiveCard> cards = new ArrayList<>();
         CommonArea area = (new LoadDecks()).load();
         cards.add(area.drawObjectiveCard());
         cards.add(area.drawObjectiveCard());
+
         Future<objectiveCardMessage> messageFuture = executor.submit(() -> connection.getChosenObjective(cards));
         ArrayList<ObjectiveCard> receivedCards = controller.getObjectiveCards().getObjectiveCard();
         Assertions.assertEquals(cards.get(0).getID(), receivedCards.get(0).getID());
         Assertions.assertEquals(cards.get(1).getID(), receivedCards.get(1).getID());
         controller.chooseObjective(0, false);
         Assertions.assertEquals(0, messageFuture.get().getChoice());
+        Assertions.assertFalse(messageFuture.get().isNoResponse());
     }
 
     @Test
     @DisplayName("Placing a card")
     void placeCardTest() {
+        //ClientSocket should correctly receive a placeCardMessage
         controller.placeCard(0, 0, 0, 0, false);
         placeCardMessage message = connection.getPlaceCard();
         Assertions.assertEquals(0, message.getCard());
         Assertions.assertEquals(0, message.getFront());
         Assertions.assertEquals(0, message.getRow());
         Assertions.assertEquals(0, message.getColumn());
+        Assertions.assertFalse(message.isNoResponse());
     }
 
     @Test
     @DisplayName("Picking a card")
     void pickCardTest() {
+        //ClientSocket should correctly receive a pickCardMessage
         controller.pickCard(0, false);
-        Assertions.assertEquals(0, connection.getChosenPick().getCard());
+        pickCardMessage messageReceived = connection.getChosenPick();
+        Assertions.assertEquals(0,messageReceived.getCard());
+        Assertions.assertFalse(messageReceived.isNoResponse());
     }
 
     @Test
     @DisplayName("Updating the player")
-    void updatePlayerTest() {
-        Player player = new Player("Alfa", "Red", null);
+    void updatePlayerTest() throws InvalidIdException {
+        //ClientSocket should correctly send an updatePlayerMessage
+        CommonArea area = new CommonArea();
+        ResourceCard testCard = new ResourceCard(1);
+        area.getD1().addCard(testCard);
+        Player player = new Player("Alfa", "Red", area);
         updatePlayerMessage message = new updatePlayerMessage(player, "Alfa");
         connection.sendUpdatePlayer(message);
         updatePlayerMessage received = controller.updatePlayer();
         Assertions.assertEquals("Alfa", received.getPlayer().getNickname());
         Assertions.assertEquals("Red", received.getPlayer().getColor());
-        Assertions.assertNotNull(received.getPlayer().getCommonArea());
+        //commonArea of the player send in the message is equal to the commonArea of the player received
+        Assertions.assertEquals(area.getD1().getSize(),received.getPlayer().getCommonArea().getD1().getSize());
+        Assertions.assertEquals(area.getD1().getCard(1),received.getPlayer().getCommonArea().getD1().getCard(1));
+
     }
 
     @Test
     @DisplayName("Ending the game")
     void endGameTest() {
+        //ClientSocket should correctly create and send a declareWinnerMessage
         HashMap<String, Integer> score = new HashMap<>();
         score.put("Alfa", 10);
         score.put("Beta", 20);

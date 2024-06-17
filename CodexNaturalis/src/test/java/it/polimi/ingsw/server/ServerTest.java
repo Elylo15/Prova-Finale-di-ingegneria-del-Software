@@ -474,7 +474,6 @@ class ServerTest {
     private boolean clientSimulator(int numberOfTurns, Controller controller, String name) {
         Integer remainingTurns = numberOfTurns;
         Integer counter = 1;
-        ViewCLI view = new ViewCLI();
         if (numberOfTurns == 0)
             remainingTurns = null;
         try {
@@ -520,7 +519,10 @@ class ServerTest {
                     case "endGameState": {
                         // End of the game;
                         declareWinnerMessage end = controller.endGame();
-                        view.endGame(end);
+
+                        //ViewCLI view = new ViewCLI();
+                        //view.endGame(end);
+
                         System.out.println(name + " wins the game");
                         return true;
                     }
@@ -561,7 +563,6 @@ class ServerTest {
     private boolean clientSimulatorScheduledDisconnections(int numberOfTurns, Controller controller, String name) {
         Integer remainingTurns = numberOfTurns;
         Integer counter = 1;
-        ViewCLI view = new ViewCLI();
         if (numberOfTurns == 0)
             remainingTurns = null;
         try {
@@ -611,7 +612,6 @@ class ServerTest {
                     case "endGameState": {
                         // End of the game;
                         declareWinnerMessage end = controller.endGame();
-                        view.endGame(end);
                         System.out.println(name + " wins the game");
                         return true;
                     }

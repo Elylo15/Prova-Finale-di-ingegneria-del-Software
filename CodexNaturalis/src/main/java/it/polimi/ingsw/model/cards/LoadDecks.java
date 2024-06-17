@@ -4,8 +4,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.polimi.ingsw.model.CommonArea;
 
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
@@ -22,10 +22,12 @@ public class LoadDecks implements Serializable {
         CommonArea c = new CommonArea();
         ObjectMapper mapper = new ObjectMapper();
 
-        try {
-            File file = new File("src/main/Resource/Json/Cards.json");
-            Map<String, List<?>> cardMap = mapper.readValue(file, new TypeReference<>() {
-            });
+        try (InputStream inputStream = getClass().getResourceAsStream("/Json/Cards.json")) {
+            if (inputStream == null) {
+                throw new IOException("Resource not found: /Json/Cards.json");
+            }
+
+            Map<String, List<?>> cardMap = mapper.readValue(inputStream, new TypeReference<>() {});
 
             List<ResourceCard> resourceCards = mapper.convertValue(cardMap.get("ResourceCard"), new TypeReference<>() {
             });

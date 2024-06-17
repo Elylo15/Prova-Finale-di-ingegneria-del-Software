@@ -13,6 +13,7 @@ import it.polimi.ingsw.model.cards.ObjectiveCard;
 import javafx.application.Platform;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * This class represents the gui view of the game.
@@ -104,13 +105,16 @@ public class ViewGUI extends View {
      * This method is called when a player disconnects from the game.
      */
     @Override
-    public void playerDisconnected() {
+    public void playerDisconnected(Exception e) {
         GUIMessages.clearQueue();
-        Platform.runLater(SceneManager::disconnect);
+        if(!Objects.equals(e.getMessage(), "Game ended."))
+            Platform.runLater(SceneManager::disconnect);
+        else {
+            GUIMessages.readToClient();
+        }
         try {
-            Thread.sleep(2000);
+            Thread.sleep(5000);
         } catch (InterruptedException ignore) {
-
         }
     }
 

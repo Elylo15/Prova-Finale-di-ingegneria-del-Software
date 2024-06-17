@@ -37,6 +37,9 @@ import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+
+import static it.polimi.ingsw.client.view.gui.Utilities.*;
 
 public class GamePageController implements Initializable {
     private final double offsetPions = 5;
@@ -146,7 +149,7 @@ public class GamePageController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        Utilities.rotateEffect(rotate, 2);
+        rotateEffect(rotate, 2);
         startMessageListener();
         startMessageProcessor();
     }
@@ -209,7 +212,7 @@ public class GamePageController implements Initializable {
 
     private void handleObjectiveMessage(ArrayList<?> list) {
         if (Objects.equals(currentState, "objectiveState") && !list.isEmpty() && list.get(0) instanceof ObjectiveCard) {
-            SceneManager.playSoundEffect("/Audio/you.mp3");
+            playSoundEffect("/Audio/you.mp3");
             objectivesToChose.add((ObjectiveCard) list.get(0));
             objectivesToChose.add((ObjectiveCard) list.get(1));
             objectiveCase();
@@ -228,7 +231,7 @@ public class GamePageController implements Initializable {
         if (!responseMessage.getCorrect()) {
             wrong = true;
             wrongPopUp(currentStateMessageSaved.getPlayer().getColor());
-            SceneManager.playSoundEffect("/Audio/wrong.mp3");
+            playSoundEffect("/Audio/wrong.mp3");
             caseCurrentStateMessage(currentStateMessageSaved);
         }
     }
@@ -240,7 +243,7 @@ public class GamePageController implements Initializable {
      */
     private void displayWinner(declareWinnerMessage declareWinnerMessage) {
         endgame = true;
-        rotate.removeEventHandler(MouseEvent.MOUSE_CLICKED, this::openOnline);
+        rotate.onMouseClickedProperty().setValue(null);
         rotate.addEventHandler(MouseEvent.MOUSE_CLICKED, this::hideSeeWinner);
         winner(declareWinnerMessage);
     }
@@ -248,9 +251,8 @@ public class GamePageController implements Initializable {
     /**
      * Displays or hides the winner, and player info
      */
-
     private void hideSeeWinner(MouseEvent event) {
-        if (winner.isVisible()) {
+        if (winner.getOpacity() == 1.0) {
             Utilities.fadeOutTransition(mainPane, winner, 1, false);
             Utilities.fadeOutTransition(mainPane, winnerLabel, 0.8, false);
             Utilities.fadeOutTransition(mainPane, back, 1.0, false);
@@ -260,6 +262,11 @@ public class GamePageController implements Initializable {
             Utilities.fadeInTransition(winnerLabel, 0.8);
             Utilities.fadeInTransition(back, 1.0);
             Utilities.fadeInTransition(playerInfoLabel, 0.8);
+
+            winner.toFront();
+            winnerLabel.toFront();
+            back.toFront();
+            playerInfoLabel.toFront();
         }
     }
 
@@ -294,28 +301,32 @@ public class GamePageController implements Initializable {
             }
             mainPane.getChildren().add(winner);
             Utilities.fadeInTransition(winner, 1.0);
-        });
 
-        winnerLabel.setFont(Font.loadFont(getClass().getResourceAsStream("/Fonts/FantasyScript.ttf"), 60));
-        winnerLabel.setTextFill(Color.rgb(53, 31, 23));
-        winnerLabel.setLayoutX(980);
-        winnerLabel.setLayoutY(555);
-        winnerLabel.setPrefWidth(440);
-        winnerLabel.setPrefHeight(120);
-        winnerLabel.setAlignment(Pos.CENTER);
-        mainPane.getChildren().add(winnerLabel);
-        Utilities.fadeInTransition(winnerLabel, 0.8);
-        displayPlayerInfo(scores, objectives);
 
-        Platform.runLater(() -> {
+            winnerLabel.setFont(Font.loadFont(getClass().getResourceAsStream("/Fonts/FantasyScript.ttf"), 60));
+            winnerLabel.setTextFill(Color.rgb(53, 31, 23));
+            winnerLabel.setLayoutX(980);
+            winnerLabel.setLayoutY(555);
+            winnerLabel.setPrefWidth(440);
+            winnerLabel.setPrefHeight(120);
+            winnerLabel.setAlignment(Pos.CENTER);
+            mainPane.getChildren().add(winnerLabel);
+            Utilities.fadeInTransition(winnerLabel, 0.8);
+            displayPlayerInfo(scores, objectives);
+
             back = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Background/image.png"))));
-            back.setOnMouseClicked(event -> SceneManager.MainView());
+            back.setOnMouseClicked(event -> GUIMessages.writeToClient(true));
             back.setFitWidth(500);
             back.setFitHeight(131);
             back.setLayoutX(1038);
             back.setLayoutY(882);
             mainPane.getChildren().add(back);
             Utilities.fadeInTransition(back, 1.0);
+            hooverEffect(back, 1.05);
+            if (winners.contains(myself.getNickname()))
+                playSoundEffect("/Audio/win.mp3");
+            else
+                playSoundEffect("/Audio/lose.mp3");
         });
 
     }
@@ -384,7 +395,9 @@ public class GamePageController implements Initializable {
             i++;
 
             mainPane.getChildren().add(playerInfoLabel);
-            Utilities.fadeInTransition(playerInfoLabel, 1.0);
+            Utilities.fadeInTransition(playerInfoLabel, 0.8);
+
+            playerInfoLabel.toFront();
         }
     }
 
@@ -417,10 +430,11 @@ public class GamePageController implements Initializable {
         this.currentState = currentStateMessage.getStateName();
         isLastTurn = currentStateMessage.isLastTurn();
         currentStateCase(currentStateMessage);
+        setRotate(currentStateMessage.getPlayer().getColor());
 
         if (isLastTurn) {
             setLastTurn(currentStateMessage.getCurrentPlayer().getColor());
-            SceneManager.playSoundEffect("/Audio/you.mp3");
+            playSoundEffect("/Audio/you.mp3");
         }
 
         if (currentStateMessage.getCurrentPlayer().getNickname().equals(myself.getNickname())) {
@@ -432,17 +446,14 @@ public class GamePageController implements Initializable {
                 setState(currentStateMessage.getPlayer().getColor());
                 starterCase();
                 choosePopUp(currentStateMessage.getPlayer().getColor());
-            } else if (Objects.equals(currentState, "PlaceTurnState")) {
-                if (!isLastTurn && !wrong) {
-                    SceneManager.playSoundEffect("/Audio/you.mp3");
-                    setState(currentStateMessage.getPlayer().getColor());
-                }
+            } else if (Objects.equals(currentState, "PlaceTurnState") || Objects.equals(currentState, "PickTurnState")) {
+                setState(currentStateMessage.getPlayer().getColor());
+                if (!isLastTurn && !wrong && Objects.equals(currentState, "PlaceTurnState"))
+                    playSoundEffect("/Audio/you.mp3");
             }
         } else {
             setStateNotPlaying(currentStateMessage.getCurrentPlayer().getColor());
         }
-
-
     }
 
     /**
@@ -462,6 +473,27 @@ public class GamePageController implements Initializable {
                     newStateImage.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/YourTurn/youGreen.png"))));
             case "purple" ->
                     newStateImage.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/YourTurn/youPur.png"))));
+        }
+
+        state = setNewImage(state, newStateImage);
+    }
+
+    /**
+     * Displays the correct color for the rotating circle based on the color of the player
+     *
+     * @param color the color of the player
+     */
+    private void setRotate(String color) {
+        ImageView newStateImage = new ImageView();
+        switch (color) {
+            case "red" ->
+                    rotate.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/NameTemplate/red.png"))));
+            case "blue" ->
+                    rotate.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/NameTemplate/blue.png"))));
+            case "green" ->
+                    rotate.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/NameTemplate/green.png"))));
+            case "purple" ->
+                    rotate.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/NameTemplate/purple.png"))));
         }
 
         state = setNewImage(state, newStateImage);
@@ -806,10 +838,10 @@ public class GamePageController implements Initializable {
             //Add the cards to deck
             if (commonArea.getD1().getList().getFirst() == null)
                 removeCardFromPosition(layoutXDeck, layoutYResource);
-            else
+            else {
                 addNewCardToPane(mainPane, commonArea.getD1().getList().getFirst().getID(), false,
                         commonArea.getD1().getList().getFirst(), layoutXDeck, layoutYResource, fitHeightCommon, fitWidthCommon, this::pickCard);
-
+            }
             if (commonArea.getD2().getList().getFirst() == null)
                 removeCardFromPosition(layoutXDeck, layoutYGold);
             else
@@ -1237,10 +1269,9 @@ public class GamePageController implements Initializable {
             if (eventHandler != null) {
                 newCard.setOnMouseClicked(eventHandler);
             }
-            if (card instanceof ObjectiveCard && pane == mainPane && clickCounter != -1)
+            if (pane == mainPane)
                 Utilities.hooverEffect(newCard, 1.05);
-            else if (card instanceof ObjectiveCard || card instanceof PlaceableCard && pane == mainPane && clickCounter == -1)
-                Utilities.hooverEffect(newCard, 1.05);
+
 
             Platform.runLater(() -> {
                 pane.getChildren().add(newCard);
@@ -1578,7 +1609,18 @@ public class GamePageController implements Initializable {
             pion.setPreserveRatio(true);
             mainPane.getChildren().add(pion);
             updatePionsPositions(allPions, pion);
+        } else if (pion != null && !mainPane.getChildren().contains(pion) && score != 0) {
+            double[] adjustedPosition = getAdjustedPosition(allPions, positions[score][0], positions[score][1], pion);
+            pion.setLayoutX(adjustedPosition[0]);
+            pion.setLayoutY(adjustedPosition[1]);
+            pion.setFitHeight(49);
+            pion.setFitWidth(49);
+            pion.setPreserveRatio(true);
+            mainPane.getChildren().add(pion);
+            updatePionsPositions(allPions, pion);
         } else if (pion != null && !isPionAtDesiredPosition(pion, score)) {
+            if (myself.getNickname().equals(currentPlayerNickname))
+                playSoundEffect("/Audio/you.mp3");
             addPoints(pion, score, allPions);
             updatePionsPositions(allPions, pion);
         }
@@ -1613,7 +1655,7 @@ public class GamePageController implements Initializable {
             for (int i = start; i <= score; i++) {
                 double[] adjustedPosition = getAdjustedPosition(allPions, positions[i][0], positions[i][1], pion);
 
-                KeyFrame keyFrame = new KeyFrame(Duration.millis((i - start) * 200), e -> {
+                KeyFrame keyFrame = new KeyFrame(Duration.millis((i - start) * 800), e -> {
                     pion.setLayoutX(adjustedPosition[0]);
                     pion.setLayoutY(adjustedPosition[1]);
                     pion.toFront();
@@ -1766,7 +1808,8 @@ public class GamePageController implements Initializable {
                 // Adjust z-order of the cards
                 for (ImageView cardImageView : cardImageViews) {
                     PlaceableCard card = getCardFromImageView(cardImageView, newCards);
-                    adjustCardZOrder(cardImageView, Objects.requireNonNull(card));
+                    if (card instanceof StarterCard)
+                        adjustCardZOrder(cardImageView, new ArrayList<>());
                 }
 
                 // Adjust size and position to fit
@@ -1824,7 +1867,9 @@ public class GamePageController implements Initializable {
 
             for (ImageView cardImageView : cardImageViews) {
                 PlaceableCard card = getCardFromImageView(cardImageView, newCards);
-                adjustCardZOrder(cardImageView, Objects.requireNonNull(card));
+                if (card instanceof StarterCard)
+                    adjustCardZOrder(cardImageView, new ArrayList<>());
+
             }
 
             adjustSizeAndPosition(playground, allImageViews);
@@ -1835,20 +1880,46 @@ public class GamePageController implements Initializable {
     /**
      * Adjusts the z-order of the card based on its position relative to other cards
      *
-     * @param cardImageView the card image view
-     * @param card          the card
+     * @param starterImage the card image view
      */
-    private void adjustCardZOrder(ImageView cardImageView, PlaceableCard card) {
-        boolean isTop = card.getCells().stream().anyMatch(cell -> cell.getTopCard() == card);
-        boolean isBottom = card.getCells().stream().anyMatch(cell -> cell.getBottomCard() == card);
+    private void adjustCardZOrder(ImageView starterImage, ArrayList<ImageView> nextLevelCards) {
+        if (starterImage == null)
+            return;
+        if (nextLevelCards.isEmpty()) {
+            starterImage.toFront();
 
-        if (isTop) {
-            cardImageView.toFront();
-        } else if (isBottom) {
-            cardImageView.toBack();
+            StarterCard starterCard = (StarterCard) starterImage.getUserData();
+
+            ArrayList<ImageView> newNextLevelCard = starterCard.getCells().stream()
+                    .filter(cell -> cell.getTopCard() != null && cell.getTopCard() != starterCard)
+                    .map(Cell::getTopCard)
+                    .map(card -> (ImageView) playground.getChildren().stream()
+                            .filter(node -> node instanceof ImageView)
+                            .filter(node -> node.getUserData() == card)
+                            .findFirst().orElse(null))
+                    .collect(Collectors.toCollection(ArrayList::new));
+            if (newNextLevelCard.isEmpty())
+                return;
+            adjustCardZOrder(starterImage, newNextLevelCard);
         } else {
-            playground.getChildren().remove(cardImageView);
-            playground.getChildren().add(cardImageView);
+            for (ImageView nextLevelCard : nextLevelCards)
+                nextLevelCard.toFront();
+
+            ArrayList<ImageView> newNextLevelCard = nextLevelCards.stream()
+                    .map(card -> (PlaceableCard) card.getUserData())
+                    .flatMap(card -> card.getCells().stream()
+                            .filter(cell -> cell.getTopCard() != null && cell.getTopCard() != card))
+                    .map(Cell::getTopCard)
+                    .map(card -> (ImageView) playground.getChildren().stream()
+                            .filter(node -> node instanceof ImageView)
+                            .filter(node -> node.getUserData() == card)
+                            .findFirst().orElse(null))
+                    .collect(Collectors.toCollection(ArrayList::new));
+
+            if (newNextLevelCard.isEmpty())
+                return;
+
+            adjustCardZOrder(starterImage, newNextLevelCard);
         }
     }
 

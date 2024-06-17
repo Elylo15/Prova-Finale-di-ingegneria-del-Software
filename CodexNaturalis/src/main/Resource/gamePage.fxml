@@ -48,9 +48,9 @@
                            layoutY="143.0" preserveRatio="true" visible="false">
                     <Image url="@Images/Background/online.png"/>
                 </ImageView>
-                <ImageView id="rotate" fx:id="rotate" fitHeight="53.0" fitWidth="56.0" layoutX="1492.0" layoutY="47.0"
+                <ImageView id="rotate" fx:id="rotate" layoutX="1500.0" layoutY="48.0"
                            onMouseClicked="#openOnline" preserveRatio="true">
-                    <Image url="@Images/Background/smallRotate.png"/>
+                    <Image url="@Images/NameTemplate/purple.png"/>
                 </ImageView>
                 <Label fx:id="player1" alignment="CENTER" contentDisplay="CENTER" layoutX="1027.0" layoutY="256.0"
                        opacity="0.7" prefHeight="106.0" prefWidth="293.0" rotate="6.3" text="Player1111"

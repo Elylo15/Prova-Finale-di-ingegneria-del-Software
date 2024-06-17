@@ -1,4 +1,4 @@
-package it.polimi.ingsw.client;
+    package it.polimi.ingsw.client;
 
 import it.polimi.ingsw.client.controller.Controller;
 import it.polimi.ingsw.client.controller.ControllerRMI;
@@ -76,7 +76,7 @@ public class Client implements Runnable {
                 if (view instanceof ViewCLI)
                     ((ViewCLI) view).answerToConnection(answer);
             } catch (Exception e) {
-                view.playerDisconnected();
+                view.playerDisconnected(e);
                 throw new RuntimeException();
             }
         } else {
@@ -86,7 +86,7 @@ public class Client implements Runnable {
                 if (view instanceof ViewCLI)
                     ((ViewCLI) view).answerToConnection(answer);
             } catch (Exception e) {
-                view.playerDisconnected();
+                view.playerDisconnected(e);
                 throw new RuntimeException();
             }
         }
@@ -357,13 +357,13 @@ public class Client implements Runnable {
             try {
                 this.controller = new ControllerSocket(server, "1024");
             } catch (Exception e) {
-                view.playerDisconnected();
+                view.playerDisconnected(e);
             }
         } else {
             try {
                 this.controller = new ControllerRMI(server, "1099");
             } catch (Exception e) {
-                view.playerDisconnected();
+                view.playerDisconnected(e);
             }
         }
     }
@@ -481,7 +481,7 @@ public class Client implements Runnable {
                         case "endGameState": {
                             declareWinnerMessage end = getController().endGame();
                             getView().endGame(end);
-//                            throw new Exception("Game ended.");
+                            throw new Exception("Game ended.");
                         }
 
                         case "ConnectionFAState": {
@@ -497,7 +497,7 @@ public class Client implements Runnable {
                     }
                 }
             } catch (Exception e) {
-                getView().playerDisconnected();
+                getView().playerDisconnected(e);
             }
         }
     }

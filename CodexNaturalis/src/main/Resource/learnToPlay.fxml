@@ -5,57 +5,46 @@
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
-<AnchorPane xmlns:fx="http://javafx.com/fxml/1" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
-            minWidth="-Infinity"
-            prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/21"
-            fx:controller="it.polimi.ingsw.client.view.gui.controller.LearnToPlay">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.client.view.gui.controller.LearnToPlay">
     <BorderPane prefHeight="1080.0" prefWidth="1920.0">
         <center>
             <Pane fx:id="mainPane" prefHeight="1080.0" prefWidth="1920.0" BorderPane.alignment="CENTER">
                 <ImageView id="background" fitHeight="1080.0" fitWidth="1920.0" preserveRatio="true">
-                    <Image url="@Images/Background/Background.png"/>
+                    <Image url="@Images/Background/Background.png" />
                 </ImageView>
-                <ImageView id="scoreBoard" fitHeight="491.0" fitWidth="246.0" layoutX="1627.0" layoutY="38.0"
-                           preserveRatio="true">
-                    <Image url="@Images/Scoreboard/plateau.png"/>
+                <ImageView id="scoreBoard" fitHeight="491.0" fitWidth="246.0" layoutX="1627.0" layoutY="38.0" preserveRatio="true">
+                    <Image url="@Images/Scoreboard/plateau.png" />
                 </ImageView>
-                <ImageView id="nextPlayer" fx:id="nextPlayer" fitHeight="147.0" fitWidth="535.0" layoutX="6.0"
-                           layoutY="5.0" preserveRatio="true">
-                    <Image url="@Images/NextButton/nextPur.png"/>
+                <ImageView id="nextPlayer" fx:id="nextPlayer" fitHeight="147.0" fitWidth="535.0" layoutX="6.0" layoutY="5.0" preserveRatio="true">
+                    <Image url="@Images/NextButton/nextPur.png" />
                 </ImageView>
-                <ImageView id="state" fx:id="state" fitHeight="147.0" fitWidth="535.0" layoutX="1049.0" layoutY="5.0"
-                           preserveRatio="true">
-                    <Image url="@Images/Choosing/choosingPur.png"/>
+                <ImageView id="state" fx:id="state" fitHeight="147.0" fitWidth="535.0" layoutX="1049.0" layoutY="5.0" preserveRatio="true">
+                    <Image url="@Images/Choosing/choosingPur.png" />
                 </ImageView>
-                <Pane id="Playground" fx:id="playground" layoutX="16.0" layoutY="152.0" prefHeight="540.0"
-                      prefWidth="1556.0">
+                <Pane id="Playground" fx:id="playground" layoutX="16.0" layoutY="152.0" prefHeight="540.0" prefWidth="1556.0">
                 </Pane>
-                <ImageView id="layout" fx:id="onTop" fitHeight="1080.0" fitWidth="1920.0" mouseTransparent="true"
-                           preserveRatio="true">
-                    <Image url="@Images/Background/GamePage.png"/>
+                <ImageView id="layout" fx:id="onTop" fitHeight="1080.0" fitWidth="1920.0" mouseTransparent="true" preserveRatio="true">
+                    <Image url="@Images/Background/GamePage.png" />
                 </ImageView>
-                <ImageView id="colorName" fx:id="colorName" fitHeight="147.0" fitWidth="535.0" layoutX="523.0"
-                           layoutY="5.0" preserveRatio="true">
-                    <Image url="@Images/NameTemplate/purpleName.png"/>
+                <ImageView id="colorName" fx:id="colorName" fitHeight="147.0" fitWidth="535.0" layoutX="523.0" layoutY="5.0" preserveRatio="true">
+                    <Image url="@Images/NameTemplate/purpleName.png" />
                 </ImageView>
-                <ImageView fx:id="explanation" fitHeight="1080.0" fitWidth="1920.0" mouseTransparent="true"
-                           preserveRatio="true">
-                    <Image url="@Images/rulesTxt/1.png"/>
+                <ImageView fx:id="explanation" fitHeight="1080.0" fitWidth="1920.0" mouseTransparent="true" preserveRatio="true">
+                    <Image url="@Images/rulesTxt/1.png" />
                 </ImageView>
-                <ImageView fitHeight="90.0" fitWidth="349.0" layoutX="1100.0" layoutY="996.0" onMouseClicked="#back"
-                           preserveRatio="true">
-                    <Image url="@Images/Background/image.png"/>
+                <ImageView fitHeight="90.0" fitWidth="349.0" layoutX="1100.0" layoutY="996.0" onMouseClicked="#back" preserveRatio="true">
+                    <Image url="@Images/Background/image.png" />
                 </ImageView>
-                <Label id="playerName" fx:id="playerName" alignment="CENTER" contentDisplay="CENTER" layoutX="528.0"
-                       layoutY="-20.0" prefHeight="176.0" prefWidth="415.0" text="Player 1" textAlignment="CENTER"
-                       textFill="#351f17">
+                <Label id="playerName" fx:id="playerName" alignment="CENTER" contentDisplay="CENTER" layoutX="528.0" layoutY="-20.0" prefHeight="176.0" prefWidth="415.0" text="Player 1" textAlignment="CENTER" textFill="#351f17">
                     <font>
-                        <Font name="Fantasy Script" size="54.0"/>
+                        <Font name="Fantasy Script" size="54.0" />
                     </font>
                 </Label>
-                <Button fx:id="mainPane2" opacity="0.0" prefHeight="992.0" prefWidth="1920.0"
-                        BorderPane.alignment="CENTER">
+                <Button fx:id="mainPane2" opacity="0.0" prefHeight="992.0" prefWidth="1920.0" BorderPane.alignment="CENTER">
                 </Button>
+                <ImageView fx:id="rotate" layoutX="1500.0" layoutY="48.0" preserveRatio="true">
+                    <Image url="@Images/NameTemplate/purple.png"/>
+                </ImageView>
             </Pane>
         </center>
     </BorderPane>
