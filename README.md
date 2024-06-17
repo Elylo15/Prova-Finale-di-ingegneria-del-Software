@@ -3,9 +3,6 @@
 
 **Codex Naturalis** is the Java implementation of the omonimus Board Game by **Cranio Creation**. It is the final project of the **Software Engineering** course of **Computer Science Engineering** held at **Politecnico di Milano**.
 
-## Find out more about [Codex Naturalis](https://www.craniocreations.it/prodotto/codex-naturalis)
-"Bring together the pages of the Codex Naturalis, the secret manuscript that lists the species of the four kingdoms dwelling in the virgin forests. Play and place your cards strategically to exploit resources, complete objectives, and compose the most elaborate manuscript!"
-
 ## Grade ??/30
 
 ## Developers
@@ -44,7 +41,7 @@ Implemented Features:
 | Multiple Games             |         ✔️           |
 | esiliences                 |         ✔️           |
 | Persistence                |         ✔️           |
-| Chat                       |         ✔️           |
+| Chat                       |         ✖️           |
 
 </td></tr>
 </table>
@@ -67,6 +64,9 @@ Here you can find the [Requirements](https://github.com/Elylo15/ing-sw-2024-Loll
 * FasterXML - jackson
 * JUnit
 * Maven
+
+## Find out more about [Codex Naturalis](https://www.craniocreations.it/prodotto/codex-naturalis)
+"Bring together the pages of the Codex Naturalis, the secret manuscript that lists the species of the four kingdoms dwelling in the virgin forests. Play and place your cards strategically to exploit resources, complete objectives, and compose the most elaborate manuscript!"
 
 ## Disclaimer
 **Codex Naturalis** is a board game developed and published by **Cranio Creations Srl**. The graphic contents of this project related to the tabletop editorial product are used with the prior approval of Cranio Creations Srl for educational purposes only. Distribution, copying, or reproduction of the contents and images in any form outside of the project is prohibited, as well as the redistribution and publication of the contents and images for purposes other than those mentioned above. Commercial use of such contents is also prohibited.
