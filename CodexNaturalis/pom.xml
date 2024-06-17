@@ -113,21 +113,11 @@
                 </plugin>
                 <plugin>
                     <groupId>org.openjfx</groupId>
-                    <artifactId>javafx -maven -plugin</artifactId>
+                    <artifactId>javafx-maven-plugin</artifactId>
                     <version>21.0.3</version>
-                    <executions>
-                        <execution>
-                            <!-- Default configuration for running -->
-                            <!-- Usage: mvn clean javafx:run -->
-                            <id>default -cli</id>
-                            <configuration>
-                                <mainClass>it.polimi.ingsw.app.AppGUI</mainClass>
-                                <options>
-                                    <option>--add-modules=javafx.controls,javafx.fxml,javafx.media</option>
-                                </options>
-                            </configuration>
-                        </execution>
-                    </executions>
+                    <configuration>
+                        <mainClass>it.polimi.ingsw.app.AppGUI</mainClass>
+                    </configuration>
                 </plugin>
 
             </plugins>
@@ -137,8 +127,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>3.2.4</version>
-                <configuration>
-                </configuration>
                 <executions>
                     <execution>
                         <id>clientGUI</id>
@@ -150,15 +138,14 @@
                             <shadedArtifactAttached>true</shadedArtifactAttached>
                             <shadedClassifierName>clientGUI</shadedClassifierName>
                             <transformers>
-                                <transformer
-                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>it.polimi.ingsw.app.AppGUI</mainClass>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>it.polimi.ingsw.app.AppFX</mainClass>
                                 </transformer>
                             </transformers>
                         </configuration>
                     </execution>
                     <execution>
-                        <id>sever</id>
+                        <id>server</id>
                         <phase>package</phase>
                         <goals>
                             <goal>shade</goal>
@@ -167,8 +154,7 @@
                             <shadedArtifactAttached>true</shadedArtifactAttached>
                             <shadedClassifierName>server</shadedClassifierName>
                             <transformers>
-                                <transformer
-                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <mainClass>it.polimi.ingsw.app.AppServer</mainClass>
                                 </transformer>
                             </transformers>
@@ -184,8 +170,7 @@
                             <shadedArtifactAttached>true</shadedArtifactAttached>
                             <shadedClassifierName>clientCLI</shadedClassifierName>
                             <transformers>
-                                <transformer
-                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <mainClass>it.polimi.ingsw.app.AppCLI</mainClass>
                                 </transformer>
                             </transformers>
