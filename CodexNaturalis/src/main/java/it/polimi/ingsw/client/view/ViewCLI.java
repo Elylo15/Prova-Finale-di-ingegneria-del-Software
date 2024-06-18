@@ -1014,7 +1014,7 @@ public class ViewCLI extends View {
             } else if (choice.equals("no") || choice.equals("n")) {
                 newMatch = false;
             } else {
-                System.out.println("ANSWER NOT VALID");
+                System.out.println(RED_TEXT + "ANSWER NOT VALID" + RESET);
                 continue;
             }
             break;
@@ -1041,14 +1041,14 @@ public class ViewCLI extends View {
                         matchID = scanner.nextInt();
                         scanner.nextLine();
                         if (matchID < 1 || matchID > i) {
-                            System.out.println("ANSWER NOT VALID");
+                            System.out.println(RED_TEXT + "ANSWER NOT VALID" + RESET);
                             continue;
                         }
                         matchID = message.getWaitingMatches().get(matchID - 1);
                         break;
                     } catch (Exception e) {
                         scanner.nextLine();
-                        System.out.println("ANSWER NOT VALID");
+                        System.out.println(RED_TEXT + "ANSWER NOT VALID" + RESET);
                     }
                 }
 
@@ -1056,7 +1056,7 @@ public class ViewCLI extends View {
                 matchID = null;
                 break;
             } else {
-                System.out.println("ANSWER NOT VALID");
+                System.out.println(RED_TEXT + "ANSWER NOT VALID" + RESET);
             }
         }
 
@@ -1072,7 +1072,7 @@ public class ViewCLI extends View {
                 } else if (choice.equals("no") || choice.equals("n")) {
                     runMatch = false;
                 } else {
-                    System.out.println("ANSWER NOT VALID");
+                    System.out.println(RED_TEXT + "ANSWER NOT VALID" + RESET);
                     continue;
                 }
                 break;
@@ -1100,14 +1100,14 @@ public class ViewCLI extends View {
                             scanner.nextLine();
 
                             if (startedMatchID < 1 || startedMatchID > i) {
-                                System.out.println("ANSWER NOT VALID");
+                                System.out.println(RED_TEXT + "ANSWER NOT VALID" + RESET);
                                 continue;
                             }
                             startedMatchID = message.getRunningMatches().get(startedMatchID - 1);
                             break;
                         } catch (Exception e) {
                             scanner.nextLine();
-                            System.out.println("You didn't enter an int value");
+                            System.out.println(RED_TEXT + "You didn't enter an int value" + RESET);
                         }
                     }
                 }
@@ -1122,7 +1122,7 @@ public class ViewCLI extends View {
                     } else if (choice.equals("no") || choice.equals("n")) {
                         break;
                     } else {
-                        System.out.println("ANSWER NOT VALID");
+                        System.out.println(RED_TEXT + "ANSWER NOT VALID" + RESET);
                         continue;
                     }
                     break;
@@ -1148,7 +1148,7 @@ public class ViewCLI extends View {
                                 scanner.nextLine();
 
                                 if (savedMatchID < 1 || savedMatchID > i) {
-                                    System.out.println("ANSWER NOT VALID");
+                                    System.out.println(RED_TEXT + "ANSWER NOT VALID" + RESET);
                                     continue;
                                 }
 
@@ -1156,7 +1156,7 @@ public class ViewCLI extends View {
                                 break;
                             } catch (Exception e) {
                                 scanner.nextLine();
-                                System.out.println("ANSWER NOT VALID");
+                                System.out.println(RED_TEXT + "ANSWER NOT VALID" + RESET);
                             }
                         }
                     }
@@ -1205,7 +1205,7 @@ public class ViewCLI extends View {
      */
     public boolean answer(responseMessage message) {
         if (!message.getCorrect())
-            System.out.println("You didn't entered a valid value, please try again");
+            System.out.println(RED_TEXT + "You didn't entered a valid value, please try again" + RESET);
         return true;
     }
 
@@ -1288,7 +1288,7 @@ public class ViewCLI extends View {
                 break;
             } catch (NoSuchElementException | IllegalStateException e) {
                 scanner.nextLine();
-                System.out.println("You didn't enter an integer value");
+                System.out.println(RED_TEXT + "You didn't enter an integer value" + RESET);
             }
         }
         return numExpected;
@@ -1324,7 +1324,7 @@ public class ViewCLI extends View {
                 break;
             } catch (NoSuchElementException | IllegalStateException e) {
                 scanner.nextLine();
-                System.out.println("You didn't enter an integer value");
+                System.out.println(RED_TEXT + "You didn't enter an integer value" + RESET);
             }
         }
         return objective;
@@ -1365,7 +1365,7 @@ public class ViewCLI extends View {
                 break;
             } catch (NoSuchElementException | IllegalStateException e) {
                 scanner.nextLine();
-                System.out.println("You didn't enter an integer value");
+                System.out.println(RED_TEXT + "You didn't enter an integer value" +RESET);
             }
         }
 
@@ -1394,7 +1394,7 @@ public class ViewCLI extends View {
                 break;
             } catch (NoSuchElementException | IllegalStateException e) {
                 scanner.nextLine();
-                System.out.println("You didn't enter an integer value");
+                System.out.println(RED_TEXT + "You didn't enter an integer value" + RESET);
             }
         }
 
@@ -1407,7 +1407,7 @@ public class ViewCLI extends View {
                 break;
             } catch (NoSuchElementException | IllegalStateException e) {
                 scanner.nextLine();
-                System.out.println("You didn't enter an integer value");
+                System.out.println(RED_TEXT + "You didn't enter an integer value" + RESET);
             }
         }
 
@@ -1428,7 +1428,7 @@ public class ViewCLI extends View {
             scanner.nextLine();
         } catch (NoSuchElementException | IllegalStateException e) {
             scanner.nextLine();
-            System.out.println("You didn't enter an integer value");
+            System.out.println(RED_TEXT + "You didn't enter an integer value" + RESET);
         }
         return choice;
     }
