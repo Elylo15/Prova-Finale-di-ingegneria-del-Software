@@ -85,6 +85,9 @@
                 <plugin>
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>3.11.0</version>
+                    <configuration>
+                        <release>21</release>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <artifactId>maven-surefire-plugin</artifactId>
@@ -111,18 +114,19 @@
                     <artifactId>maven-project-info-reports-plugin</artifactId>
                     <version>3.4.2</version>
                 </plugin>
-                <plugin>
-                    <groupId>org.openjfx</groupId>
-                    <artifactId>javafx-maven-plugin</artifactId>
-                    <version>21.0.3</version>
-                    <configuration>
-                        <mainClass>it.polimi.ingsw.app.AppGUI</mainClass>
-                    </configuration>
-                </plugin>
+
 
             </plugins>
         </pluginManagement>
         <plugins>
+            <plugin>
+                <groupId>org.openjfx</groupId>
+                <artifactId>javafx-maven-plugin</artifactId>
+                <version>0.0.8</version>
+                <configuration>
+                    <mainClass>CodexNaturalis/it.polimi.ingsw.app.AppFX</mainClass>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
