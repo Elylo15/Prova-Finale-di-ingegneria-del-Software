@@ -61,7 +61,7 @@ public class ResourceCard extends PlaceableCard implements Serializable {
      * @throws InvalidIdException if the condition on ID is not met
      */
     public ResourceCard(int ID, int points, Reign reign, boolean front, ArrayList<Resource> resources) throws InvalidIdException {
-        super(ID, points, reign, front, resources, null);
+        super(ID, points, reign, front, resources, new ArrayList<>());
     }
 
     /**

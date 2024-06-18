@@ -88,7 +88,7 @@ public abstract class PlaceableCard extends Card implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         PlaceableCard that = (PlaceableCard) o;
-        return points == that.points && this.isFront() == that.isFront() && Objects.equals(requirement, that.requirement) && reign == that.reign && Objects.equals(cells, that.cells) && Objects.equals(resources, that.resources);
+        return points == that.points && this.isFront() == that.isFront() && Objects.equals(requirement, that.requirement) && reign == that.reign &&  Objects.equals(resources, that.resources);
     }
 
     /**
@@ -102,7 +102,7 @@ public abstract class PlaceableCard extends Card implements Serializable {
     }
 
     /**
-     * returns an ArrayList containing the resources you must have to place the card,
+     * returns an ArrayList containing the resources the player must have to place the card
      *
      * @return an ArrayList<Resource>
      */

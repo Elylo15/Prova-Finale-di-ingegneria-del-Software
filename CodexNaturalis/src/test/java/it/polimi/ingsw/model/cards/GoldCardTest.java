@@ -312,6 +312,7 @@ class GoldCardTest {
         Assertions.assertEquals(testCard.getResource(),card.getResource());
         Assertions.assertEquals(testCard.getRequirement(),card.getRequirement());
         Assertions.assertTrue(card.isGold());
+        Assertions.assertTrue(card.equals(testCard));
 
         ArrayList<Integer> req = new ArrayList<>();
         req.add(1); //fungus
@@ -328,9 +329,45 @@ class GoldCardTest {
         card.setFront(false);
         Assertions.assertTrue(card.checkRequirement(req));
 
+    }
+    @Test
+    void loadLoadDecksCards() throws InvalidIdException {
+        Deck<GoldCard> cards = commonArea.getD2();
+        for (int i = 41; i< 81; i++){
 
+            GoldCard card = (GoldCard) cards.getCard(i);
+            Assertions.assertTrue(card.isGold());
+            //the back of the cards should have only empty resources
+            ArrayList<Resource> test = new ArrayList<>();
+            test.add(Resource.Empty);
+            test.add(Resource.Empty);
+            test.add(Resource.Empty);
+            test.add(Resource.Empty);
 
+            card.setFront(false);
+            ArrayList<Integer> req = new ArrayList<>();
+            req.add(2);
+            Assertions.assertEquals(test,card.getResource());
+            Assertions.assertTrue(card.checkRequirement(req));
 
+            ArrayList<Resource> permanent = new ArrayList<>();
+
+            if(card.getID()>40 && card.getID()<51){
+                permanent.add(Resource.Fungus);
+                assertEquals(permanent, card.getPermanentResource());
+            }
+            if(card.getID()>50 && card.getID()<61){
+                permanent.add(Resource.Plant);
+                assertEquals(permanent, card.getPermanentResource());
+            }if(card.getID()>60 && card.getID()<71){
+                permanent.add(Resource.Animal);
+                assertEquals(permanent, card.getPermanentResource());
+            }if(card.getID()>70 && card.getID()<81){
+                permanent.add(Resource.Insect);
+                assertEquals(permanent, card.getPermanentResource());
+            }
+
+        }
 
 
     }

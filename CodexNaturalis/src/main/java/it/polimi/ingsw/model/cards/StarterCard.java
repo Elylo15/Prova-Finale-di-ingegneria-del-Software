@@ -90,7 +90,7 @@ StarterCard extends PlaceableCard implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
+       // if (!super.equals(o)) return false;
         StarterCard that = (StarterCard) o;
         return Objects.equals(permanentResource, that.permanentResource) && Objects.equals(bottomResource, that.bottomResource);
     }
