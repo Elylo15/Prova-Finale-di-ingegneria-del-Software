@@ -1,18 +1,13 @@
-package it.polimi.ingsw.app;
+package it.polimi.ingsw.client.view.gui;
 
 import it.polimi.ingsw.client.Client;
 import it.polimi.ingsw.client.view.ViewGUI;
-import it.polimi.ingsw.client.view.gui.BackgroundMusic;
-import it.polimi.ingsw.client.view.gui.SceneManager;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.input.KeyCombination;
 import javafx.stage.Stage;
 
-/**
- * Main class for the gui version of the application
- */
-public class AppGUI extends Application {
+public class mainGUI extends Application {
     public static void main(String[] args) {
         launch(args);
     }

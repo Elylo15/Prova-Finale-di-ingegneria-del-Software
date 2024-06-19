@@ -7,14 +7,14 @@ import junit.framework.TestSuite;
 /**
  * Unit test for simple App.
  */
-public class AppGUITest
+public class mainGUITest
         extends TestCase {
     /**
      * Create the test case
      *
      * @param testName name of the test case
      */
-    public AppGUITest(String testName) {
+    public mainGUITest(String testName) {
         super(testName);
     }
 
@@ -22,7 +22,7 @@ public class AppGUITest
      * @return the suite of tests being tested
      */
     public static Test suite() {
-        return new TestSuite(AppGUITest.class);
+        return new TestSuite(mainGUITest.class);
     }
 
     /**
