@@ -197,9 +197,8 @@ public abstract class PlaceableCard extends Card implements Serializable {
 
     /**
      * Gold and Resource cards contain only one permanent resources in their back
-     * Starter cards contain from one to three permanent resources in their front
      *
-     * @return an Arraylist containing the permanent resources based on the ID of the card
+     * @return an Arraylist containing the permanent resource of the card
      */
     public ArrayList<Resource> getPermanentResource() {
         ArrayList<Resource> resources = new ArrayList<>();
