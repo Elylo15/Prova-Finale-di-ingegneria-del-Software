@@ -152,6 +152,12 @@ public class GamePageController implements Initializable {
         rotateEffect(rotate, 2);
         startMessageListener();
         startMessageProcessor();
+        playerName.setFont(Font.loadFont(getClass().getResourceAsStream("/Fonts/FantasyScript.ttf"), 54));
+        Font font = Font.loadFont(getClass().getResourceAsStream("/Fonts/FantasyScript.ttf"), 43);
+        player1.setFont(font);
+        player2.setFont(font);
+        player3.setFont(font);
+        player4.setFont(font);
     }
 
     /**

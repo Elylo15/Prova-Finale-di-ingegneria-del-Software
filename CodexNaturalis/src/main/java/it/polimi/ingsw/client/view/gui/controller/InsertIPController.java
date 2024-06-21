@@ -7,6 +7,8 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 
 
 /**
@@ -70,6 +72,8 @@ public class InsertIPController {
 
         Utilities.hooverEffect(submit_ip, 1.05);
         Utilities.hooverEffect(backBtn, 1.05);
+
+        ip.setFont(Font.loadFont(getClass().getResourceAsStream("/Fonts/FantasyScript.ttf"), 38));
 
         submit_ip.setOnMouseClicked(event -> {
             GUIMessages.writeToClient(ip.getText());// Send the IP to the client

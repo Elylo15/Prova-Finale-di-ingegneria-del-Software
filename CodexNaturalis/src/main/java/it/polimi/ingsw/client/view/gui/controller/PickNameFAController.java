@@ -6,6 +6,7 @@ import it.polimi.ingsw.messages.connectionState.unavailableNamesMessage;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.text.Font;
 
 import java.util.ArrayList;
 
@@ -31,17 +32,21 @@ public class PickNameFAController {
         // List of names
         ArrayList<String> names = message.getNames();
 
-        if (!names.isEmpty())
+        if (!names.isEmpty()) {
             player1.setText(names.getFirst());
-
+            player1.setFont(Font.loadFont(getClass().getResourceAsStream("/Fonts/FantasyScript.ttf"), 96));
+        }
         if (names.size() > 1) {
             player2.setText(names.get(1));
+            player2.setFont(Font.loadFont(getClass().getResourceAsStream("/Fonts/FantasyScript.ttf"), 96));
         }
         if (names.size() > 2) {
             player3.setText(names.get(2));
+            player3.setFont(Font.loadFont(getClass().getResourceAsStream("/Fonts/FantasyScript.ttf"), 96));
         }
         if (names.size() > 3) {
             player4.setText(names.get(3));
+            player4.setFont(Font.loadFont(getClass().getResourceAsStream("/Fonts/FantasyScript.ttf"), 96));
         }
 
         Utilities.hooverEffect(player1, 1.05);
@@ -50,6 +55,10 @@ public class PickNameFAController {
         Utilities.hooverEffect(player4, 1.05);
     }
 
+    /**
+     * This method is called when a player clicks on a name. It sends the name to the client.
+     * @param event the event of the click
+     */
     @FXML
     public void onCLickSend(MouseEvent event) {
         Label player = (Label) event.getSource();

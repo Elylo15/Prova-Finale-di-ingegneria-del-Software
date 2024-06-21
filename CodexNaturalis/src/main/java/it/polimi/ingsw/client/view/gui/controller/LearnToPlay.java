@@ -18,6 +18,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.text.Font;
 import javafx.util.Duration;
 
 import java.net.URL;
@@ -96,6 +97,7 @@ public class LearnToPlay implements Initializable {
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        playerName.setFont(Font.loadFont(getClass().getResourceAsStream("/Fonts/FantasyScript.ttf"), 54));
 
         rotateEffect(rotate, 3);
 
