@@ -39,7 +39,9 @@ public class UnavailableNamesController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         unavailableNamesMessage message = (unavailableNamesMessage) GUIMessages.readToGUI();
-
+        Font font = Font.loadFont(getClass().getResourceAsStream("/Fonts/FantasyScript.ttf"), 42);
+        nameToChoose.setFont(font);
+        retry.setFont(Font.loadFont(getClass().getResourceAsStream("/Fonts/FantasyScript.ttf"), 58));
         Utilities.hooverEffect(submitButton, 1.05);
 
         submitButton.setOnMouseClicked(event -> {
@@ -56,7 +58,6 @@ public class UnavailableNamesController implements Initializable {
                 GUIMessages.writeToClient(nameToChoose.getText());
         });
 
-        Font font = Font.loadFont(getClass().getResourceAsStream("/Fonts/FantasyScript.ttf"), 42);
 
         names = message.getNames();
         unavailableNames.setFont(font);

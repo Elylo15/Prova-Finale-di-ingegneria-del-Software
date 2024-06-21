@@ -27,7 +27,7 @@ public class LogCreator {
         this.matchID = null;
         File f = new File(fileName);
         try {
-            FileWriter fw = new FileWriter(fileName, true);
+            FileWriter fw = new FileWriter(fileName, true); //append parameter is true as we do not want to overwrite the file
             writer = new BufferedWriter(fw);
         } catch (IOException e) {
             e.printStackTrace();
@@ -46,8 +46,6 @@ public class LogCreator {
         File dir = new File("logs");
         if (!dir.exists()) {
             boolean dirCreated = dir.mkdir();
-
-            System.out.println("Failed to create directory: " + dir.getAbsolutePath());
 
             if (!dirCreated) {
                 System.out.println("Failed to create directory: " + dir.getAbsolutePath());
@@ -88,6 +86,7 @@ public class LogCreator {
      * @param message the content of the log message
      */
     public synchronized void log(String message) {
+        //the method is synchronized, so it is not possible for two different processes to call the method on the same LogCreator object
         LocalDateTime currentTime = LocalDateTime.now();
         String timestamp = currentTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS"));
         try {

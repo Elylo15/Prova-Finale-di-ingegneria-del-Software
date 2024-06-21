@@ -7,6 +7,7 @@ import it.polimi.ingsw.messages.serverOptionState.serverOptionMessage;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.image.ImageView;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 /**
@@ -38,6 +39,11 @@ public class InsertServerOptionController {
     private void initialize() {
         this.serverOptionMessage = (serverOptionMessage) GUIMessages.readToGUI();
         GUIMessages.writeToGUI(serverOptionMessage);
+
+        join_match.setFont(Font.loadFont(getClass().getResourceAsStream("/Fonts/FantasyScript.ttf"), 96));
+        load_match.setFont(Font.loadFont(getClass().getResourceAsStream("/Fonts/FantasyScript.ttf"), 96));
+        join_running_match.setFont(Font.loadFont(getClass().getResourceAsStream("/Fonts/FantasyScript.ttf"), 96));
+        new_match.setFont(Font.loadFont(getClass().getResourceAsStream("/Fonts/FantasyScript.ttf"), 96));
 
         Utilities.hooverEffect(new_match, 1.05);
         Utilities.hooverEffect(join_match, 1.05);
