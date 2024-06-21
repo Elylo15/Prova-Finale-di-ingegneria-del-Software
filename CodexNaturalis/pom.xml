@@ -124,7 +124,10 @@
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>0.0.8</version>
                 <configuration>
-                    <mainClass>CodexNaturalis/it.polimi.ingsw.app.AppFX</mainClass>
+                    <launcher>CodexNaturalisGUILauncher</launcher>
+                    <jlinkZipName>CodexNaturalis_GUI</jlinkZipName>
+                    <jlinkImageName>CodexNaturalis_GUI</jlinkImageName>
+                    <mainClass>it.polimi.ingsw.app.AppFX</mainClass>
                 </configuration>
             </plugin>
             <plugin>
