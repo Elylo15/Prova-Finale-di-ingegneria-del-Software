@@ -75,8 +75,8 @@ public class Server implements Runnable {
                 logCreator.log("server socket opened");
                 Socket socket = serverSocket.accept();
                 ClientConnection connection = null;
-                InetAddress clientAddress = socket.getInetAddress();
-                int clientPort = socket.getPort();
+                InetAddress clientAddress = socket.getInetAddress(); //get IP of the client connected to the server
+                int clientPort = socket.getPort(); //get port of the client connected to the server
                 try {
                     connection = new ClientSocket(clientAddress.toString(), Integer.toString(clientPort), socket);
                 } catch (Exception e) {

@@ -27,10 +27,10 @@ public abstract class ClientConnection implements Runnable, Serializable {
     private final String port;
 
     /**
-     * method {@code ClientConnection}: constructs a new ClientConnection
+     * method {@code ClientConnection}: constructs a new ClientConnection object
      *
-     * @param IP   the IP address of the server.
-     * @param port the port of the server.
+     * @param IP: String, is the IP address of the client .
+     * @param port: String, is the port of the client.
      */
     public ClientConnection(String IP, String port) {
         this.IP = IP;
@@ -38,7 +38,7 @@ public abstract class ClientConnection implements Runnable, Serializable {
     }
 
     /**
-     * method {@code getIP}: the IP address of the server.
+     * method {@code getIP}: the IP address of the client that connected to the server.
      *
      * @return IP: String
      */
@@ -47,7 +47,7 @@ public abstract class ClientConnection implements Runnable, Serializable {
     }
 
     /**
-     * method {@code getPort}: the port address of the server.
+     * method {@code getPort}: the port address of the client that connected to the server.
      *
      * @return port: String
      */

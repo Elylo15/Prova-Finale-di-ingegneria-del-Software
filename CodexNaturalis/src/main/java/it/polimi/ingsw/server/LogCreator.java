@@ -21,8 +21,15 @@ public class LogCreator {
         this.fileName = "logs/log_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")) + ".log";
         File dir = new File("logs");
         if (!dir.exists()) {
-            working = dir.mkdir();
-            System.out.println(working);
+            working = dir.mkdir(); //creates the directory
+            if(working) {
+                System.out.println("directory correctly created");
+            }
+            else {
+                System.out.println("Failed to create directory: " + dir.getAbsolutePath());
+                System.err.println("Failed to create directory: " + dir.getAbsolutePath());
+
+            }
         }
         this.matchID = null;
         File f = new File(fileName);
@@ -48,8 +55,8 @@ public class LogCreator {
             boolean dirCreated = dir.mkdir();
 
             if (!dirCreated) {
-                System.out.println("Failed to create directory: " + dir.getAbsolutePath());
-                System.err.println("Failed to create directory: " + dir.getAbsolutePath());
+                System.out.println("Failed to create directory: " + dir.getAbsolutePath()); //standard output stream
+                System.err.println("Failed to create directory: " + dir.getAbsolutePath()); //error output stream
             }
         }
         File f = new File(fileName);
