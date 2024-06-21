@@ -71,6 +71,22 @@ public class Utilities {
     }
 
     /**
+     * Rotates the image
+     *
+     * @param imageView the image to rotate
+     * @param seconds   the duration of the rotation
+     */
+    public static void rotateEffectArrow(ImageView imageView, int seconds) {
+        RotateTransition rotateTransition = new RotateTransition(Duration.seconds(seconds), imageView);
+        rotateTransition.setByAngle(-720); // Rotate 500 degrees
+        rotateTransition.setCycleCount(RotateTransition.INDEFINITE); // Repeat indefinitely
+        rotateTransition.setAutoReverse(false); // Do not reverse the direction
+
+        // Start the rotation
+        rotateTransition.play();
+    }
+
+    /**
      * Bind the image to the card and set the card to the imageView
      *
      * @param imageView the imageView to set the card to

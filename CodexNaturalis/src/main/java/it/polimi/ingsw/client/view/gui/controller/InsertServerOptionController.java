@@ -18,6 +18,14 @@ import javafx.scene.text.Text;
  */
 public class InsertServerOptionController {
     @FXML
+    private ImageView arrow;
+    @FXML
+    private ImageView arrow1;
+    @FXML
+    private ImageView arrow11;
+    @FXML
+    private ImageView arrow111;
+    @FXML
     private Text new_match;// Button to start a new match
     @FXML
     private Text join_match;// Button to join a match
@@ -50,7 +58,12 @@ public class InsertServerOptionController {
         Utilities.hooverEffect(load_match, 1.05);
         Utilities.hooverEffect(join_running_match, 1.05);
 
-        Utilities.rotateEffect(rotate, 3);
+
+//        Utilities.rotateEffect(rotate, 3);
+        Utilities.rotateEffectArrow(arrow, 4);
+        Utilities.rotateEffectArrow(arrow1, 4);
+        Utilities.rotateEffectArrow(arrow11, 4);
+        Utilities.rotateEffectArrow(arrow111, 4);
 
         new_match.setOnMouseClicked(event -> {
             serverOptionMessage = new serverOptionMessage(true, null, null, false, null);
@@ -70,6 +83,10 @@ public class InsertServerOptionController {
         join_running_match.setOnMouseClicked(event -> {
             Platform.runLater(SceneManager::JoinRunningMatch);
             GUIMessages.writeToGUI(serverOptionMessage);
+        });
+
+        rotate.setOnMouseClicked(event -> {
+            GUIMessages.writeToClient(serverOptionMessage);
         });
     }
 
