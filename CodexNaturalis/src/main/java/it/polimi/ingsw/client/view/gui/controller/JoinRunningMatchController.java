@@ -13,6 +13,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.image.ImageView;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * This class is a controller for the gui scene where the user joins a running match.
@@ -42,6 +43,7 @@ public class JoinRunningMatchController {
      */
     @FXML
     private void initialize() {
+        JoinMatchList.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/styles.css")).toExternalForm());
         serverOptionMessage serverOptionMessage = (serverOptionMessage) GUIMessages.readToGUI();
         ArrayList<Integer> matchList = serverOptionMessage.getRunningMatches();
 
@@ -63,8 +65,6 @@ public class JoinRunningMatchController {
         JoinMatchList.setItems(items);
 
         JoinMatchList.setCellFactory(listView -> new ClickableListCell());
-
-
     }
 
     /**
