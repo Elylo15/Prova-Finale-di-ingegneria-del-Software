@@ -48,6 +48,7 @@ public class LogCreator {
             boolean dirCreated = dir.mkdir();
 
             if (!dirCreated) {
+                System.out.println("Failed to create directory: " + dir.getAbsolutePath());
                 System.err.println("Failed to create directory: " + dir.getAbsolutePath());
             }
         }
