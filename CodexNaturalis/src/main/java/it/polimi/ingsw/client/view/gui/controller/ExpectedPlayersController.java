@@ -4,7 +4,12 @@ import it.polimi.ingsw.client.view.gui.Utilities;
 import it.polimi.ingsw.client.view.gui.message.GUIMessages;
 import javafx.fxml.FXML;
 import javafx.scene.image.ImageView;
-
+/**
+ * This class is a controller for the gui scene where the user chooses the number of expected players.
+ * It contains three image-buttons: two, three, and four.
+ * When the player presses one of the image-buttons, it sends a message to the client with the number of expected players.
+ * The client will then send the message to the server.
+ */
 public class ExpectedPlayersController {
     @FXML
     private ImageView two;

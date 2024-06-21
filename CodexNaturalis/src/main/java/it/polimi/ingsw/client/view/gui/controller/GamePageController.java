@@ -40,7 +40,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import static it.polimi.ingsw.client.view.gui.Utilities.*;
-
+/**
+* This class is a controller for the gui scene where the game is played.
+* It contains the game board and the player's cards, objectives, and resources.
+* It displays the game state and the player's turn.
+* When the player's turn is active, it allows the player to interact with the game board.
+*/
 public class GamePageController implements Initializable {
     private final double offsetPions = 5;
     private final double[][] positions = {

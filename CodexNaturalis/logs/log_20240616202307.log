@@ -1,0 +1,45 @@
+2024-06-16 20:23:07.966 -> Opening rmi service
+2024-06-16 20:23:07.974 -> server socket opened
+2024-06-16 20:23:07.974 -> Server started
+2024-06-16 20:23:08.088 -> Waiting for new rmi client connection
+2024-06-16 20:24:42.323 -> server socket opened
+2024-06-16 20:24:42.336 -> New client accepted, answer sent: /127.0.0.1 54105
+2024-06-16 20:26:05.684 -> Server option fetched from client/127.0.0.1 54105
+2024-06-16 20:26:05.684 -> Client /127.0.0.1:54105 wants to load a game
+2024-06-16 20:26:05.704 -> Error loading match 89870: it.polimi.ingsw.model.CommonArea; local class incompatible: stream classdesc serialVersionUID = -4277219053909914939, local class serialVersionUID = 2471398104524886098
+2024-06-16 20:26:05.708 -> Client /127.0.0.1 54105 failed to join match 89870 due to not found saved game
+2024-06-16 20:26:05.709 -> Client /127.0.0.1 54105 failed to join match null: sending again the serverOption
+2024-06-16 20:26:05.709 -> New client accepted, answer sent: /127.0.0.1 54105
+2024-06-16 20:26:07.745 -> Server option fetched from client/127.0.0.1 54105
+2024-06-16 20:26:07.745 -> Client /127.0.0.1:54105 wants to load a game
+2024-06-16 20:26:07.747 -> Error loading match 60187: invalid stream header: EFBFBDEF
+2024-06-16 20:26:07.747 -> Client /127.0.0.1 54105 failed to join match 60187 due to not found saved game
+2024-06-16 20:26:07.747 -> Client /127.0.0.1 54105 failed to join match null: sending again the serverOption
+2024-06-16 20:26:07.748 -> New client accepted, answer sent: /127.0.0.1 54105
+2024-06-16 20:26:09.272 -> Server option fetched from client/127.0.0.1 54105
+2024-06-16 20:26:09.273 -> Client /127.0.0.1:54105 wants to load a game
+2024-06-16 20:26:09.279 -> Error loading match 54939: it.polimi.ingsw.model.CommonArea; local class incompatible: stream classdesc serialVersionUID = -4277219053909914939, local class serialVersionUID = 2471398104524886098
+2024-06-16 20:26:09.279 -> Client /127.0.0.1 54105 failed to join match 54939 due to not found saved game
+2024-06-16 20:26:09.279 -> Client /127.0.0.1 54105 failed to join match null: sending again the serverOption
+2024-06-16 20:26:09.279 -> New client accepted, answer sent: /127.0.0.1 54105
+2024-06-16 20:26:10.878 -> Server option fetched from client/127.0.0.1 54105
+2024-06-16 20:26:10.878 -> Client /127.0.0.1:54105 wants to load a game
+2024-06-16 20:26:10.878 -> Error loading match 60187: invalid stream header: EFBFBDEF
+2024-06-16 20:26:10.878 -> Client /127.0.0.1 54105 failed to join match 60187 due to not found saved game
+2024-06-16 20:26:10.878 -> Client /127.0.0.1 54105 failed to join match null: sending again the serverOption
+2024-06-16 20:26:10.879 -> New client accepted, answer sent: /127.0.0.1 54105
+2024-06-16 20:26:30.755 -> Server option fetched from client/127.0.0.1 54105
+2024-06-16 20:26:30.755 -> Client /127.0.0.1:54105 wants to join a new game
+2024-06-16 20:26:31.018 -> Client socket /127.0.0.1 54105 starts a new ClientManager
+2024-06-16 20:26:31.019 -> connectionState sent to/127.0.0.1 54105
+2024-06-16 20:26:34.657 -> Client /127.0.0.1 54105 chose name: ely
+2024-06-16 20:26:38.728 -> Client /127.0.0.1 54105 chose color: green
+2024-06-16 20:26:38.730 -> Client /127.0.0.1 54105 joined match 63482
+2024-06-16 20:26:57.484 -> server socket opened
+2024-06-16 20:26:57.485 -> New client accepted, answer sent: /127.0.0.1 54140
+2024-06-16 20:27:02.102 -> Server option fetched from client/127.0.0.1 54140
+2024-06-16 20:27:02.102 -> Client /127.0.0.1:54140 wants to join a new game
+2024-06-16 20:27:02.104 -> connectionState sent to/127.0.0.1 54140
+2024-06-16 20:27:06.613 -> Client /127.0.0.1 54140 chose name: dany
+2024-06-16 20:27:08.863 -> Client /127.0.0.1 54140 chose color: purple
+2024-06-16 20:27:08.864 -> Client /127.0.0.1 54140 joined match 63482

@@ -22,7 +22,11 @@ import java.util.Objects;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicIntegerArray;
-
+/**
+ * This class is the Client class.
+ * It is responsible for the client side of the application.
+ * It is responsible for the connection to the server and the communication with it
+ */
 public class Client implements Runnable {
     private final View view;
     private final ThreadPoolExecutor executor;

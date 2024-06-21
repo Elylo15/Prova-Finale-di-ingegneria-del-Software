@@ -1,0 +1,21 @@
+2024-06-15 12:37:02.914 -> Opening RMI service
+2024-06-15 12:37:02.923 -> Server started
+2024-06-15 12:37:02.924 -> server socket opened
+2024-06-15 12:37:03.047 -> Waiting for new RMI client connection
+2024-06-15 12:38:53.655 -> Waiting for new RMI client connection
+2024-06-15 12:38:53.659 -> New client accepted, answer sent: RMI_Client_1 no_port
+2024-06-15 12:39:01.074 -> Server option fetched from clientRMI_Client_1 no_port
+2024-06-15 12:39:01.075 -> Client RMI_Client_1:no_port wants to join a new game
+2024-06-15 12:39:01.438 -> Client socket RMI_Client_1 no_port starts a new ClientManager
+2024-06-15 12:39:01.439 -> ConnectionState sent toRMI_Client_1 no_port
+2024-06-15 12:39:05.569 -> Client RMI_Client_1 no_port chose name: miki
+2024-06-15 12:39:12.868 -> Client RMI_Client_1 no_port chose color: green
+2024-06-15 12:39:12.872 -> Client RMI_Client_1 no_port joined match 94616
+2024-06-15 12:39:37.606 -> server socket opened
+2024-06-15 12:39:37.606 -> New client accepted, answer sent: /127.0.0.1 50731
+2024-06-15 12:39:47.795 -> Server option fetched from client/127.0.0.1 50731
+2024-06-15 12:39:47.795 -> Client /127.0.0.1:50731 wants to join a new game
+2024-06-15 12:39:47.796 -> ConnectionState sent to/127.0.0.1 50731
+2024-06-15 12:39:53.724 -> Client /127.0.0.1 50731 chose name: ely
+2024-06-15 12:39:54.165 -> Client /127.0.0.1 50731 chose color: red
+2024-06-15 12:39:54.165 -> Client /127.0.0.1 50731 joined match 94616

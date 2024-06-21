@@ -9,12 +9,18 @@ import it.polimi.ingsw.model.cards.exceptions.InvalidIdException;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+/**
+ * This class represents the Resource cards in the game.
+ * It extends the PlaceableCard class and implements the Serializable interface.
+ * It provides constructors for creating a ResourceCard with different parameters.
+ */
 public class ResourceCard extends PlaceableCard implements Serializable {
     /**
-     * Constructor
+     * This constructor creates a new ResourceCard with the given ID.
+     * It throws an InvalidIdException if the ID is not between 1 and 40.
      *
-     * @param ID, it must be >=1  and =<40
-     * @throws InvalidIdException if the condition on ID is not met
+     * @param ID The ID of the card. It must be between 1 and 40.
+     * @throws InvalidIdException If the ID is not between 1 and 40.
      */
     public ResourceCard(int ID) throws InvalidIdException {
         super(ID);
@@ -28,7 +34,8 @@ public class ResourceCard extends PlaceableCard implements Serializable {
     }
 
     /**
-     * Constructor used to import from JSON
+     * This constructor is used to load the cards from JSON.
+     * It creates a new ResourceCard with the given parameters.
      *
      * @param ID,          it must be >=1  and =<40
      * @param front,       true if the card is front, false if the card is back
@@ -51,7 +58,8 @@ public class ResourceCard extends PlaceableCard implements Serializable {
     }
 
     /**
-     * Constructor
+     * This constructor creates a new ResourceCard with the given parameters.
+     * It throws an InvalidIdException if the ID is not between 1 and 40.
      *
      * @param ID,       it must be >=1  and =<40
      * @param points    points given by the card
@@ -65,7 +73,8 @@ public class ResourceCard extends PlaceableCard implements Serializable {
     }
 
     /**
-     * check if the requirement to place the card is met, it always returns true as resource cards have no requirement
+     * This method checks if the requirement to place the card is met.
+     * It always returns true as resource cards have no requirement.
      *
      * @param req it receives as parameter an ArrayList containing the number of resources of each type the player possesses in his PlayerArea
      * @return true

@@ -9,7 +9,11 @@ import it.polimi.ingsw.model.cards.exceptions.InvalidIdException;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-
+/**
+ * This class represents the Objective cards in the game.
+ * It extends the Card class and implements the Serializable interface.
+ * It provides constructors for creating an ObjectiveCard with different parameters.
+ */
 public class ObjectiveCard extends Card implements Serializable {
     private int points;
     private ArrayList<Resource> requirements;
@@ -17,10 +21,11 @@ public class ObjectiveCard extends Card implements Serializable {
     private ArrayList<Reign> reignCards;
 
     /**
-     * Creates a new objective card based on ID
+     * This constructor creates a new ObjectiveCard with the given ID.
+     * It throws an InvalidIdException if the ID is not between 87 and 102.
      *
-     * @param ID identifier of the card, must be 87 <= ID <= 102
-     * @throws InvalidIdException if the condition on ID is not met
+     * @param ID The ID of the card. It must be between 87 and 102.
+     * @throws InvalidIdException If the ID is not between 87 and 102.
      */
     public ObjectiveCard(int ID) throws InvalidIdException {
         if (ID >= 87 && ID <= 102) {
@@ -49,14 +54,16 @@ public class ObjectiveCard extends Card implements Serializable {
     }
 
     /**
-     * Creates a new objective card. It used to load the cards from the JSON.
+     * This constructor is used to load the cards from JSON.
+     * It creates a new ObjectiveCard with the given parameters.
      *
-     * @param ID           identifier of the card, must be 87 <= ID <= 102
-     * @param front        true if the card is front, false if the card is back
-     * @param points       points given by the card
-     * @param requirements resources required  to place the card
-     * @param pattern      pattern of the card
-     * @param reignCards   reign of the cards involved in the pattern
+     * @param ID           The ID of the card. It must be between 87 and 102.
+     * @param front        True if the card is front, false if the card is back.
+     * @param points       The points of the card.
+     * @param requirements The requirements to place the card.
+     * @param pattern      The pattern of the card.
+     * @param reignCards   The reign of the cards involved in the pattern.
+     * @throws InvalidIdException If the ID is not between 87 and 102.
      */
     @JsonCreator
     public ObjectiveCard(@JsonProperty("ID") int ID,
@@ -70,13 +77,14 @@ public class ObjectiveCard extends Card implements Serializable {
     }
 
     /**
-     * Creates a new objective card.
+     * This constructor creates a new ObjectiveCard with the given parameters.
+     * It throws an InvalidIdException if the ID is not between 87 and 102.
      *
-     * @param ID           identifier of the card, must be 87 <= ID <= 102
-     * @param points       points given by the card
-     * @param requirements resources required to get points
-     * @param pattern      pattern of the card
-     * @param reignCards   reign of the cards involved in the pattern
+     * @param ID           The ID of the card. It must be between 87 and 102.
+     * @param points       The points of the card.
+     * @param requirements The requirements to place the card.
+     * @param pattern      The pattern of the card.
+     * @param reignCards   The reign of the cards involved in the pattern.
      */
     public ObjectiveCard(int ID, int points, ArrayList<Resource> requirements, ArrayList<int[]> pattern, ArrayList<Reign> reignCards) {
         super();
@@ -84,6 +92,14 @@ public class ObjectiveCard extends Card implements Serializable {
         properties(points, requirements, pattern, reignCards);
     }
 
+    /**
+     * This method sets the properties of the ObjectiveCard.
+     *
+     * @param points       The points of the card.
+     * @param requirements The requirements to place the card.
+     * @param pattern      The pattern of the card.
+     * @param reignCards   The reign of the cards involved in the pattern.
+     */
     private void properties(int points, ArrayList<Resource> requirements, ArrayList<int[]> pattern, ArrayList<Reign> reignCards) {
         this.points = points;
         this.requirements = requirements;
@@ -92,18 +108,18 @@ public class ObjectiveCard extends Card implements Serializable {
     }
 
     /**
-     * Returns the points given by a single identified pattern
+     * This method returns the points given by a single identified pattern.
      *
-     * @return points
+     * @return The points of the card.
      */
     public int getPoints() {
         return points;
     }
 
     /**
-     * Returns the resources required to get points, or null if the objective doesn't require resources.
+     * This method returns the resources required to get points, or null if the objective doesn't require resources.
      *
-     * @return List of resource or null il the objective requires no resources
+     * @return The list of resources required to get points, or null if the objective doesn't require resources.
      */
     public ArrayList<Resource> getRequirements() {
         return requirements;

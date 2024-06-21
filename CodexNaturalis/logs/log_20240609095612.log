@@ -1,0 +1,17 @@
+2024-06-09 09:56:12.516 -> Opening RMI service
+2024-06-09 09:56:12.525 -> Server started
+2024-06-09 09:56:12.525 -> server socket opened
+2024-06-09 09:56:12.657 -> Waiting for new RMI client connection
+2024-06-09 09:56:44.098 -> server socket opened
+2024-06-09 09:56:44.106 -> New client accepted, answer sent: /127.0.0.1 50591
+2024-06-09 09:56:58.743 -> Server option fetched from client/127.0.0.1 50591
+2024-06-09 09:56:58.744 -> Client /127.0.0.1:50591 wants to load a game
+2024-06-09 09:56:58.756 -> Error loading match 54939: it.polimi.ingsw.protocol.server.MatchInfo; local class incompatible: stream classdesc serialVersionUID = 6948653874431510157, local class serialVersionUID = 3803569894211094242
+2024-06-09 09:56:58.766 -> Client /127.0.0.1 50591 failed to join match 54939 due to not found saved game
+2024-06-09 09:56:58.766 -> Client /127.0.0.1 50591 failed to join match null: sending again the serverOption
+2024-06-09 09:56:58.767 -> New client accepted, answer sent: /127.0.0.1 50591
+2024-06-09 09:58:58.777 -> Client /127.0.0.1 kicked due to no serverOption received
+2024-06-09 09:58:58.777 -> Client /127.0.0.1 50591 kicked due to no serverOption received
+2024-06-09 10:02:22.999 -> server socket opened
+2024-06-09 10:02:23.000 -> New client accepted, answer sent: /127.0.0.1 50602
+2024-06-09 10:02:38.734 -> Client /127.0.0.1 50602 kicked due to no serverOption received

@@ -6,7 +6,10 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.input.KeyCombination;
 import javafx.stage.Stage;
-
+/**
+ * This class is the main class for the GUI.
+ * It starts the application and initializes the primary stage.
+ */
 public class mainGUI extends Application {
     public static void main(String[] args) {
         launch(args);

@@ -3,7 +3,9 @@ package it.polimi.ingsw.model.cards;
 import it.polimi.ingsw.model.cards.exceptions.InvalidIdException;
 
 import java.io.Serializable;
-
+/**
+ * Abstract class that represents a generic card.
+ */
 public abstract class Card implements Serializable {
     protected int ID;
     private boolean front;

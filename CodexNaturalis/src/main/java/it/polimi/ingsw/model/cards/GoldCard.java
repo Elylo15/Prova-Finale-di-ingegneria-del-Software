@@ -9,12 +9,18 @@ import it.polimi.ingsw.model.cards.exceptions.InvalidIdException;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+/**
+ * This class represents the Gold cards in the game.
+ * It extends the PlaceableCard class and implements the Serializable interface.
+ * It provides constructors for creating a GoldCard with different parameters.
+ */
 public class GoldCard extends PlaceableCard implements Serializable {
     /**
-     * Constructor
+     * This constructor creates a new GoldCard with the given ID.
+     * It throws an InvalidIdException if the ID is not between 41 and 80.
      *
-     * @param ID, it must be >=41  and =<80
-     * @throws InvalidIdException if the condition on ID is not met
+     * @param ID The ID of the card. It must be between 41 and 80.
+     * @throws InvalidIdException If the ID is not between 41 and 80.
      */
     public GoldCard(int ID) throws InvalidIdException {
         super(ID);
@@ -28,16 +34,17 @@ public class GoldCard extends PlaceableCard implements Serializable {
     }
 
     /**
-     * Constructor used to load the cards from JSON
+     * This constructor is used to load the cards from JSON.
+     * It creates a new GoldCard with the given parameters.
      *
-     * @param ID,          it must be >=41  and =<80
-     * @param front,       true if the card is front, false if the card is back
-     * @param requirement, the requirements to place the card
-     * @param points,      the points of the card
-     * @param reign,       the reign of the card
-     * @param cells,       the cells of the card
-     * @param resources,   the resources of the card
-     * @throws InvalidIdException if the condition on ID is not met
+     * @param ID          The ID of the card. It must be between 41 and 80.
+     * @param front       True if the card is front, false if the card is back.
+     * @param requirement The requirements to place the card.
+     * @param points      The points of the card.
+     * @param reign       The reign of the card.
+     * @param cells       The cells of the card.
+     * @param resources   The resources of the card.
+     * @throws InvalidIdException If the ID is not between 41 and 80.
      */
     @JsonCreator
     public GoldCard(@JsonProperty("ID") int ID,
@@ -51,15 +58,16 @@ public class GoldCard extends PlaceableCard implements Serializable {
     }
 
     /**
-     * Constructor
+     * This constructor creates a new GoldCard with the given parameters.
+     * It throws an InvalidIdException if the ID is not between 41 and 80.
      *
-     * @param ID,           it must be >=41  and =<80
-     * @param points,       the points of the card
-     * @param reign,        the reign of the card
-     * @param front,        true if the card is front, false if the card is back
-     * @param resources,    the resources of the card
-     * @param requirements, the requirements to place the card
-     * @throws InvalidIdException if the condition on ID is not met
+     * @param ID           The ID of the card. It must be between 41 and 80.
+     * @param points       The points of the card.
+     * @param reign        The reign of the card.
+     * @param front        True if the card is front, false if the card is back.
+     * @param resources    The resources of the card.
+     * @param requirements The requirements to place the card.
+     * @throws InvalidIdException If the ID is not between 41 and 80.
      */
     public GoldCard(int ID, int points, Reign reign, boolean front, ArrayList<Resource> resources, ArrayList<Resource> requirements) throws InvalidIdException {
         super(ID, points, reign, front, resources, requirements);

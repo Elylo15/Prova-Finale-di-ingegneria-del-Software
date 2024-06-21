@@ -1,0 +1,13 @@
+2024-06-16 15:23:17.405 -> Opening rmi service
+2024-06-16 15:23:17.415 -> Server started
+2024-06-16 15:23:17.416 -> server socket opened
+2024-06-16 15:23:17.567 -> Waiting for new rmi client connection
+2024-06-16 15:25:27.810 -> server socket opened
+2024-06-16 15:25:27.818 -> New client accepted, answer sent: /127.0.0.1 53875
+2024-06-16 15:25:34.528 -> Server option fetched from client/127.0.0.1 53875
+2024-06-16 15:25:34.529 -> Client /127.0.0.1:53875 wants to join a new game
+2024-06-16 15:25:34.839 -> Client socket /127.0.0.1 53875 starts a new ClientManager
+2024-06-16 15:25:34.841 -> connectionState sent to/127.0.0.1 53875
+2024-06-16 15:25:45.068 -> Client /127.0.0.1 53875 chose name: ely
+2024-06-16 15:25:49.356 -> Client /127.0.0.1 53875 chose color: blue
+2024-06-16 15:25:49.359 -> Client /127.0.0.1 53875 joined match 49215

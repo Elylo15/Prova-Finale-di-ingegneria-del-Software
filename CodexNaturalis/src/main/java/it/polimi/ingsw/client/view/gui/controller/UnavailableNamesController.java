@@ -16,6 +16,10 @@ import java.util.ArrayList;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
+/**
+ * This class is the controller for the UnavailableNames scene.
+ * It handles the user's interaction with the GUI when choosing a name for the game.
+ */
 public class UnavailableNamesController implements Initializable {
     @FXML
     private Label unavailableNames;

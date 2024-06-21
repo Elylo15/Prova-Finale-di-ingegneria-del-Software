@@ -8,6 +8,11 @@ import javafx.scene.image.ImageView;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+/**
+ * This class is a controller for the gui scene where the user answers to a question.
+ * It contains an image.
+ * When the player presses the image, it sends a message to the client to notify that the user has clicked the image and wants to proceed.
+ */
 public class AnswerController implements Initializable {
     @FXML
     private ImageView image;

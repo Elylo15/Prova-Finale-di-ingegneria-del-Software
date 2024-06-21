@@ -11,7 +11,10 @@ import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-
+/**
+ * This class is the controller for the main page of the game.
+ * It handles the user's interaction with the GUI on the main page.
+ */
 public class SceneSizeChangeListener implements ChangeListener<Parent> {
     final double initWidth = 1920;
     final double initHeight = 1080;

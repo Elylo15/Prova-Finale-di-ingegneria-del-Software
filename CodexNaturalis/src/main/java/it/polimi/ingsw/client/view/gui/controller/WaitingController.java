@@ -10,12 +10,18 @@ import javafx.scene.layout.BorderPane;
 import java.net.URL;
 import java.util.Objects;
 import java.util.ResourceBundle;
-
+/**
+ * This class is a controller for the gui scene where the user waits for the other players to choose their colors.
+ * It contains an image that changes based on the color chosen by the user.
+ */
 public class WaitingController implements Initializable {
 
     @FXML
     private BorderPane pane;
-
+    /**
+     * This method is called when the scene is loaded.
+     * It reads the color from the gui and sets the image to the color chosen by the user.
+     */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         String color = (String) GUIMessages.readToGUI();

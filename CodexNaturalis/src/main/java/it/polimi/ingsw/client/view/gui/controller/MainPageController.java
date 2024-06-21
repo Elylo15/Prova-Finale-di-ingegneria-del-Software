@@ -18,7 +18,12 @@ import java.util.ResourceBundle;
 
 import static it.polimi.ingsw.client.view.gui.Utilities.*;
 
-
+/**
+ * This class is a controller for the gui scene where the player can start the game or learn how to play.
+ * It contains two image-buttons: play and rules.
+ * When the player presses the play image-button, it sends a message to start the game.
+ * When the player presses the rules image-button, it loads the rules that teaches the player how to play.
+ */
 public class MainPageController implements Initializable {
     @FXML
     public Pane pane;

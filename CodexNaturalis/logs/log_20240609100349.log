@@ -1,0 +1,7 @@
+2024-06-09 10:03:49.776 -> Opening RMI service
+2024-06-09 10:03:49.792 -> server socket opened
+2024-06-09 10:03:49.792 -> Server started
+2024-06-09 10:03:49.945 -> Waiting for new RMI client connection
+2024-06-09 10:04:04.951 -> server socket opened
+2024-06-09 10:04:04.963 -> New client accepted, answer sent: /127.0.0.1 50667
+2024-06-09 10:04:48.273 -> Client /127.0.0.1 50667 kicked due to no serverOption received

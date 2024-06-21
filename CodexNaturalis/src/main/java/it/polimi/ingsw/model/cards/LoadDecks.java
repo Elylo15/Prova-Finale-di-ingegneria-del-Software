@@ -10,11 +10,16 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
+
+/**
+ * This class is responsible for loading the decks of cards from a JSON file.
+ * It implements the Serializable interface.
+ */
 public class LoadDecks implements Serializable {
     /**
-     * method load: takes the cards that are collected in the Cards.json file
-     * and converts them into PlaceableCard/ObjectiveCard and places them in the various decks.
-     * Once inserted into the deck it puts them inside the CommonArea which is returned
+     * This method loads the cards from the Cards.json file.
+     * It converts them into PlaceableCard/ObjectiveCard and places them in the various decks.
+     * Once inserted into the deck it puts them inside the CommonArea which is returned.
      *
      * @return CommonArea: common area of all players who will be placed in the match
      */
@@ -26,18 +31,16 @@ public class LoadDecks implements Serializable {
             if (inputStream == null) {
                 throw new IOException("Resource not found: /Json/Cards.json");
             }
-
+            // Map the JSON file to a Map object
             Map<String, List<?>> cardMap = mapper.readValue(inputStream, new TypeReference<>() {});
 
-            List<ResourceCard> resourceCards = mapper.convertValue(cardMap.get("ResourceCard"), new TypeReference<>() {
-            });
-            List<GoldCard> goldCards = mapper.convertValue(cardMap.get("GoldCard"), new TypeReference<>() {
-            });
-            List<StarterCard> starterCards = mapper.convertValue(cardMap.get("StarterCard"), new TypeReference<>() {
-            });
-            List<ObjectiveCard> objectiveCards = mapper.convertValue(cardMap.get("ObjectiveCard"), new TypeReference<>() {
-            });
+            // Convert the map values to the appropriate card types
+            List<ResourceCard> resourceCards = mapper.convertValue(cardMap.get("ResourceCard"), new TypeReference<>() {});
+            List<GoldCard> goldCards = mapper.convertValue(cardMap.get("GoldCard"), new TypeReference<>() {});
+            List<StarterCard> starterCards = mapper.convertValue(cardMap.get("StarterCard"), new TypeReference<>() {});
+            List<ObjectiveCard> objectiveCards = mapper.convertValue(cardMap.get("ObjectiveCard"), new TypeReference<>() {});
 
+            // Add the cards to the appropriate decks in the common area
             resourceCards.forEach(card -> c.getD1().addCard(card));
             goldCards.forEach(card -> c.getD2().addCard(card));
             starterCards.forEach(card -> c.getD3().addCard(card));

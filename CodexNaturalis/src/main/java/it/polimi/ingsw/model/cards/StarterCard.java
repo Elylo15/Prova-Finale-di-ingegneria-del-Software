@@ -10,13 +10,19 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Objects;
 
+/**
+ * This class represents the Starter cards in the game.
+ * It extends the PlaceableCard class and implements the Serializable interface.
+ * It provides constructors for creating a StarterCard with different parameters.
+ */
 public class
 StarterCard extends PlaceableCard implements Serializable {
     private ArrayList<Resource> permanentResource;
     private ArrayList<Resource> bottomResource;
 
     /**
-     * Constructor
+     * This constructor creates a new StarterCard with the given ID.
+     * It throws an InvalidIdException if the ID is not between 81 and 86.
      *
      * @param ID, it must be >=81 and <=86
      * @throws InvalidIdException if the condition on ID is not met
@@ -33,7 +39,8 @@ StarterCard extends PlaceableCard implements Serializable {
     }
 
     /**
-     * Constructor used to import from JSON
+     * This constructor is used to load the cards from JSON.
+     * It creates a new StarterCard with the given parameters.
      *
      * @param ID,                it must be >=1  and =<40
      * @param front,             true if the card is front, false if the card is back
@@ -62,7 +69,8 @@ StarterCard extends PlaceableCard implements Serializable {
     }
 
     /**
-     * Constructor
+     * This constructor creates a new StarterCard with the given parameters.
+     * It throws an InvalidIdException if the ID is not between 1 and 40.
      *
      * @param ID,                it must be >=1  and =<40
      * @param front,             true if the card is front, false if the card is back
@@ -106,7 +114,9 @@ StarterCard extends PlaceableCard implements Serializable {
     }
 
     /**
-     * @return the resources in the front of the card if front is true, the resources in the back of the card if front is false
+     * Returns the resources in the front of the card if front is true, the resources in the back of the card if front is false.
+     *
+     * @return the resources in the front of the card if front is true, the resources in the back of the card if front is false.
      */
     @Override
     public ArrayList<Resource> getResource() {
@@ -119,7 +129,9 @@ StarterCard extends PlaceableCard implements Serializable {
     }
 
     /**
-     * @return the permanent resources in the back of the card
+     * Returns the permanent resources in the back of the card.
+     *
+     * @return the permanent resources in the back of the card.
      */
     @Override
     public ArrayList<Resource> getPermanentResource() {
@@ -132,10 +144,10 @@ StarterCard extends PlaceableCard implements Serializable {
     }
 
     /**
-     * check if the requirement to place the card is met, it always returns true as starter cards have no requirement
+     * Checks if the requirement to place the card is met, it always returns true as starter cards have no requirement.
      *
-     * @param req ArrayList containing the number of resources
-     * @return true
+     * @param req ArrayList containing the number of resources.
+     * @return true.
      */
     @Override
     public boolean checkRequirement(ArrayList<Integer> req) {

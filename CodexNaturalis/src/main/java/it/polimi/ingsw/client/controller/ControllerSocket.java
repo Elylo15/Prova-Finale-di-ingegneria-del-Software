@@ -17,7 +17,10 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-
+/**
+ * This class is the controller for the socket connection.
+ * It handles the connection to the server and the messages exchange.
+ */
 public class ControllerSocket extends Controller {
     private Socket socket;
     private ObjectOutputStream outputStream;

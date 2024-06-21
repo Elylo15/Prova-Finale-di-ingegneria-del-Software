@@ -8,7 +8,11 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 import java.util.Objects;
-
+/**
+ * This class is a controller for the gui scene where the user chooses the color of his pawn.
+ * It contains four image-buttons: red, green, blue, and purple.
+ * When the player presses one of the image-buttons, it sends a message to the client with the color of the pawn.
+ */
 public class AvailableColorsController {
     availableColorsMessage message;
     @FXML

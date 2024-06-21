@@ -1,0 +1,78 @@
+2024-06-12 09:56:51.758 -> Opening RMI service
+2024-06-12 09:56:51.765 -> server socket opened
+2024-06-12 09:56:51.766 -> Server started
+2024-06-12 09:56:51.885 -> Waiting for new RMI client connection
+2024-06-12 09:57:12.308 -> server socket opened
+2024-06-12 09:57:12.317 -> New client accepted, answer sent: /127.0.0.1 52334
+2024-06-12 09:57:16.228 -> Server option fetched from client/127.0.0.1 52334
+2024-06-12 09:57:16.229 -> Client /127.0.0.1:52334 wants to join a new game
+2024-06-12 09:57:16.529 -> Client socket /127.0.0.1 52334 starts a new ClientManager
+2024-06-12 09:57:16.530 -> ConnectionState sent to/127.0.0.1 52334
+2024-06-12 09:57:21.122 -> Client /127.0.0.1 52334 chose name: ely
+2024-06-12 09:57:23.255 -> Client /127.0.0.1 52334 chose color: blue
+2024-06-12 09:57:23.258 -> Client /127.0.0.1 52334 joined match 60187
+2024-06-12 09:57:43.655 -> Waiting for new RMI client connection
+2024-06-12 09:57:43.656 -> New client accepted, answer sent: RMI_Client_1 no_port
+2024-06-12 09:59:43.666 -> Client RMI_Client_1 kicked due to no serverOption received
+2024-06-12 09:59:43.667 -> Client RMI_Client_1 no_port kicked due to no serverOption received
+2024-06-12 10:01:48.817 -> server socket opened
+2024-06-12 10:01:48.817 -> New client accepted, answer sent: /127.0.0.1 52360
+2024-06-12 10:03:48.819 -> Client /127.0.0.1 kicked due to no serverOption received
+2024-06-12 10:03:48.819 -> Client /127.0.0.1 52360 kicked due to no serverOption received
+2024-06-12 10:08:56.576 -> server socket opened
+2024-06-12 10:08:56.577 -> New client accepted, answer sent: /127.0.0.1 52418
+2024-06-12 10:09:15.038 -> Server option fetched from client/127.0.0.1 52418
+2024-06-12 10:09:15.038 -> Client /127.0.0.1:52418 wants to join a new game
+2024-06-12 10:09:15.058 -> Client socket /127.0.0.1 52418 starts a new ClientManager
+2024-06-12 10:09:15.059 -> ConnectionState sent to/127.0.0.1 52418
+2024-06-12 10:09:18.854 -> Client /127.0.0.1 52418 chose name: ely
+2024-06-12 10:09:19.938 -> Client /127.0.0.1 52418 chose color: purple
+2024-06-12 10:09:19.939 -> Client /127.0.0.1 52418 joined match 31525
+2024-06-12 10:09:38.544 -> server socket opened
+2024-06-12 10:09:38.544 -> New client accepted, answer sent: /127.0.0.1 52422
+2024-06-12 10:09:44.438 -> Server option fetched from client/127.0.0.1 52422
+2024-06-12 10:09:44.438 -> Client /127.0.0.1:52422 wants to join a new game
+2024-06-12 10:09:44.440 -> ConnectionState sent to/127.0.0.1 52422
+2024-06-12 10:09:51.346 -> Client /127.0.0.1 52422 chose name: pippo
+2024-06-12 10:09:52.936 -> Client /127.0.0.1 52422 chose color: purple
+2024-06-12 10:09:52.936 -> Client /127.0.0.1 52422 joined match 60187
+2024-06-12 10:10:40.058 -> server socket opened
+2024-06-12 10:10:40.058 -> New client accepted, answer sent: /127.0.0.1 52431
+2024-06-12 10:12:40.061 -> Client /127.0.0.1 kicked due to no serverOption received
+2024-06-12 10:12:40.061 -> Client /127.0.0.1 52431 kicked due to no serverOption received
+2024-06-12 10:21:36.807 -> server socket opened
+2024-06-12 10:21:36.808 -> New client accepted, answer sent: /127.0.0.1 52503
+2024-06-12 10:23:18.712 -> Client /127.0.0.1 52503 kicked due to no serverOption received
+2024-06-12 10:23:29.280 -> server socket opened
+2024-06-12 10:23:29.280 -> New client accepted, answer sent: /127.0.0.1 52515
+2024-06-12 10:23:35.287 -> Server option fetched from client/127.0.0.1 52515
+2024-06-12 10:23:35.288 -> Client /127.0.0.1:52515 wants to join a new game
+2024-06-12 10:23:35.302 -> Client socket /127.0.0.1 52515 starts a new ClientManager
+2024-06-12 10:23:35.303 -> ConnectionState sent to/127.0.0.1 52515
+2024-06-12 10:23:39.168 -> Client /127.0.0.1 52515 chose name: ely
+2024-06-12 10:23:40.481 -> Client /127.0.0.1 52515 chose color: purple
+2024-06-12 10:23:40.481 -> Client /127.0.0.1 52515 joined match 93377
+2024-06-12 10:23:54.650 -> server socket opened
+2024-06-12 10:23:54.650 -> New client accepted, answer sent: /127.0.0.1 52519
+2024-06-12 10:24:22.287 -> Server option fetched from client/127.0.0.1 52519
+2024-06-12 10:24:22.287 -> Client /127.0.0.1:52519 wants to join a new game
+2024-06-12 10:24:22.288 -> ConnectionState sent to/127.0.0.1 52519
+2024-06-12 10:24:32.990 -> Client /127.0.0.1 kicked due to EXECUTION ERROR: 
+Cannot invoke "it.polimi.ingsw.protocol.messages.ConnectionState.chosenNameMessage.getName()" because the return value of "it.polimi.ingsw.protocol.server.ClientConnection.getName(java.util.ArrayList)" is null
+2024-06-12 10:24:42.691 -> server socket opened
+2024-06-12 10:24:42.691 -> New client accepted, answer sent: /127.0.0.1 52524
+2024-06-12 10:26:42.693 -> Client /127.0.0.1 kicked due to no serverOption received
+2024-06-12 10:26:42.693 -> Client /127.0.0.1 52524 kicked due to no serverOption received
+2024-06-12 10:33:23.725 -> server socket opened
+2024-06-12 10:33:23.726 -> New client accepted, answer sent: /127.0.0.1 52545
+2024-06-12 10:33:29.113 -> Server option fetched from client/127.0.0.1 52545
+2024-06-12 10:33:29.114 -> Client /127.0.0.1:52545 wants to join a new game
+2024-06-12 10:33:29.128 -> Client socket /127.0.0.1 52545 starts a new ClientManager
+2024-06-12 10:33:29.128 -> ConnectionState sent to/127.0.0.1 52545
+2024-06-12 10:33:35.639 -> Client /127.0.0.1 52545 chose name: aaaa
+2024-06-12 10:33:36.709 -> Client /127.0.0.1 52545 chose color: purple
+2024-06-12 10:33:36.710 -> Client /127.0.0.1 52545 joined match 39512
+2024-06-12 10:33:51.532 -> server socket opened
+2024-06-12 10:33:51.532 -> New client accepted, answer sent: /127.0.0.1 52550
+2024-06-12 10:35:51.534 -> Client /127.0.0.1 kicked due to no serverOption received
+2024-06-12 10:35:51.534 -> Client /127.0.0.1 52550 kicked due to no serverOption received

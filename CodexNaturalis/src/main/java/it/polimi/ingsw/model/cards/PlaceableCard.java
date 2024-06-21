@@ -10,6 +10,11 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Objects;
 
+/**
+ * This abstract class represents a card that can be placed on the board.
+ * It extends the Card class and implements the Serializable interface.
+ * It provides constructors for creating a PlaceableCard with different parameters.
+ */
 public abstract class PlaceableCard extends Card implements Serializable {
     private final ArrayList<Resource> requirement;
     private int points;
@@ -18,7 +23,8 @@ public abstract class PlaceableCard extends Card implements Serializable {
     private ArrayList<Resource> resources;
 
     /**
-     * Creates a new PlaceableCard based on ID
+     * This constructor creates a new PlaceableCard with the given ID.
+     * It throws an InvalidIdException if the ID is not between 1 and 86.
      *
      * @param ID must be 1 <= ID <= 86
      * @throws InvalidIdException if the condition on ID is not met
@@ -31,7 +37,8 @@ public abstract class PlaceableCard extends Card implements Serializable {
     }
 
     /**
-     * Creates a new PlaceableCard. It used to load the cards from the JSON.
+     * This constructor is used to load the cards from JSON.
+     * It creates a new PlaceableCard with the given parameters.
      *
      * @param ID          must be 1 <= ID <= 86
      * @param front       true if the card is front, false if the card is back
@@ -58,7 +65,8 @@ public abstract class PlaceableCard extends Card implements Serializable {
     }
 
     /**
-     * Creates a new PlaceableCard based on ID
+     * This constructor creates a new PlaceableCard with the given parameters.
+     * It throws an InvalidIdException if the ID is not between 1 and 86.
      *
      * @param ID          must be 1 <= ID <= 86
      * @param points      points given by the card
@@ -102,7 +110,7 @@ public abstract class PlaceableCard extends Card implements Serializable {
     }
 
     /**
-     * returns an ArrayList containing the resources the player must have to place the card
+     * Returns an ArrayList containing the resources the player must have to place the card
      *
      * @return an ArrayList<Resource>
      */
@@ -111,9 +119,9 @@ public abstract class PlaceableCard extends Card implements Serializable {
     }
 
     /**
-     * check if the requirement to place the card is met, return true if the player possesses the
+     * Check if the requirement to place the card is met, return true if the player possesses the
      * necessary resources in his PlayerArea
-     * the requirement applies only if the player wants to play the front of the card
+     * The requirement applies only if the player wants to play the front of the card
      *
      * @param req it receives as parameter an ArrayList containing the number of resources of each type
      *            the player possesses in his PlayerArea
@@ -151,6 +159,8 @@ public abstract class PlaceableCard extends Card implements Serializable {
     }
 
     /**
+     * Returns the reign of the card.
+     *
      * @return the reign of the card
      */
     public Reign getReign() {
@@ -158,6 +168,8 @@ public abstract class PlaceableCard extends Card implements Serializable {
     }
 
     /**
+     * Returns the cells of the card.
+     *
      * @return the cells of the card
      */
     public ArrayList<Cell> getCells() {
@@ -174,6 +186,8 @@ public abstract class PlaceableCard extends Card implements Serializable {
     }
 
     /**
+     * Returns the point associated with the card.
+     *
      * @return the point associated with the card
      */
     public int getPoints() {
@@ -181,6 +195,8 @@ public abstract class PlaceableCard extends Card implements Serializable {
     }
 
     /**
+     * Returns the resources of the card.
+     *
      * @return the resources of the card
      */
     public ArrayList<Resource> getResource() {
@@ -221,6 +237,8 @@ public abstract class PlaceableCard extends Card implements Serializable {
     }
 
     /**
+     * Returns true if the card is a resource card.
+     *
      * @return true if the card is a resource card
      */
     public boolean isResource() {
@@ -228,6 +246,8 @@ public abstract class PlaceableCard extends Card implements Serializable {
     }
 
     /**
+     * Returns true if the card is a gold card.
+     *
      * @return true if the card is a gold card
      */
     public boolean isGold() {
@@ -236,6 +256,8 @@ public abstract class PlaceableCard extends Card implements Serializable {
     }
 
     /**
+     * Returns true if the card is a starter card.
+     *
      * @return true if the card is a starter card
      */
     public boolean isStarter() {

@@ -6,9 +6,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
- * CommonArea class
- *
- * @author elylo
+ * This class represents the common area in the game.
+ * It contains decks of different types of cards and a list of face-up cards on the table.
+ * It provides methods for drawing cards from the decks and picking face-up cards from the table.
+ * It implements the Serializable interface.
  */
 public class CommonArea implements Serializable {
     private final Deck<ResourceCard> d1;
@@ -18,23 +19,23 @@ public class CommonArea implements Serializable {
     private final ArrayList<PlaceableCard> tableCards;
 
     /**
-     * Class constructor
+     * This is the constructor for the CommonArea class.
+     * It initializes the decks and the list of face-up cards.
      */
     public CommonArea() {
-
-        d1 = new Deck<>(); //resource cards
-        d2 = new Deck<>(); //gold cards
-        d3 = new Deck<>(); //starter cards
-        d4 = new Deck<>(); //objective cards
-        tableCards = new ArrayList<>();
+        d1 = new Deck<>(); // Initialize the deck of resource cards
+        d2 = new Deck<>(); // Initialize the deck of gold cards
+        d3 = new Deck<>(); // Initialize the deck of starter cards
+        d4 = new Deck<>(); // Initialize the deck of objective cards
+        tableCards = new ArrayList<>(); // Initialize the list of face-up cards
     }
 
     /**
-     * method pickTableCard: remove a face-up card
+     * This method removes a face-up card from the table.
+     * It throws an IllegalArgumentException if the card is a StarterCard.
      *
-     * @param cardNumber: card you want to take from the exposed cards
-     * @return PlaceableCard: card removed from those face up and which will go to a player
-     * @throws IllegalArgumentException: if the card is a StarterCard
+     * @param cardNumber The ID of the card to remove from the table.
+     * @return PlaceableCard The removed card. If the card is not found, it returns null.
      */
     public PlaceableCard pickTableCard(int cardNumber) {
         PlaceableCard c;
@@ -62,10 +63,10 @@ public class CommonArea implements Serializable {
     }
 
     /**
-     * method drawFromDeck: remove the top GoldCard/ResourceCard of the deck and places it as a face-up card
+     * This method removes the top card from the specified deck and places it at the specified position among the face-up cards.
      *
-     * @param d:     number of the deck from which you want to remove a card to put in among the face up cards
-     * @param index: index where you want to place the card
+     * @param d     The number of the deck from which to remove a card.
+     * @param index The index at which to place the card among the face-up cards.
      */
     public void drawFromDeck(int d, int index) {
         PlaceableCard c = null;
@@ -82,9 +83,9 @@ public class CommonArea implements Serializable {
 
 
     /**
-     * method drawFromDeck: remove the top GoldCard/ResourceCard of the deck and places it as a face-up card
+     * This method removes the top card from the specified deck and places it among the face-up cards.
      *
-     * @param d: number of the deck from which you want to remove a card to put in among the face up cards
+     * @param d The number of the deck from which to remove a card.
      */
     public void drawFromDeck(int d) {
         PlaceableCard c = null;
@@ -96,10 +97,11 @@ public class CommonArea implements Serializable {
     }
 
     /**
-     * method drawFromPlayer: the player draws from the GoldCardDeck/ResourceCardDeck/StarterCardDeck and keeps the card
+     * This method removes the top card from the specified deck and gives it to a player.
+     * It throws an IllegalArgumentException if the deck is the ObjectiveCardDeck.
      *
-     * @param d: number of the deck from which the player wants to draw
-     * @return PlaceableCard: card removed from a deck and which will go to a player
+     * @param d The number of the deck from which the player wants to draw.
+     * @return PlaceableCard The removed card.
      */
     public PlaceableCard drawFromToPlayer(int d) {
         PlaceableCard c = null;
@@ -113,18 +115,18 @@ public class CommonArea implements Serializable {
     }
 
     /**
-     * method getTableCards:show the player the cards face-up
+     * This method returns the list of face-up cards on the table.
      *
-     * @return ArrayList<PlaceableCard>: array list of face-up cards
+     * @return ArrayList<PlaceableCard> The list of face-up cards on the table.
      */
     public ArrayList<PlaceableCard> getTableCards() {
         return tableCards;
     }
 
     /**
-     * method drawObjectiveCard:the player draws from the ObjectiveCardDeck and keeps the card
+     * This method removes the top card from the ObjectiveCardDeck and gives it to a player.
      *
-     * @return ObjectiveCard: ObjectiveCard that will be given to a player
+     * @return ObjectiveCard The removed card.
      */
     public ObjectiveCard drawObjectiveCard() {
         return d4.removeCard();
@@ -132,36 +134,36 @@ public class CommonArea implements Serializable {
     }
 
     /**
-     * method  getD1: Resource deck
+     * This method returns the deck of resource cards.
      *
-     * @return Deck<ResourceCard>: return all ResourceCardDeck
+     * @return Deck<ResourceCard> The deck of resource cards.
      */
     public Deck<ResourceCard> getD1() {
         return d1;
     }
 
     /**
-     * method  getD2: GoldCard deck
+     * This method returns the deck of gold cards.
      *
-     * @return Deck<GoldCard>: return all GoldCardDeck
+     * @return Deck<GoldCard> The deck of gold cards.
      */
     public Deck<GoldCard> getD2() {
         return d2;
     }
 
     /**
-     * method  getD3: StarterCard deck
+     * This method returns the deck of starter cards.
      *
-     * @return Deck<GoldCard>: return all StarterCardDeck
+     * @return Deck<StarterCard> The deck of starter cards.
      */
     public Deck<StarterCard> getD3() {
         return d3;
     }
 
     /**
-     * method  getD4: ObjectiveCard deck
+     * This method returns the deck of objective cards.
      *
-     * @return Deck<GoldCard>: return all ObjectiveCardDeck
+     * @return Deck<ObjectiveCard> The deck of objective cards.
      */
     public Deck<ObjectiveCard> getD4() {
         return d4;

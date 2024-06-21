@@ -12,13 +12,20 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * This class represents a player's area in the game.
+ * It contains a matrix of cells and a list of permanent resources.
+ * It provides methods for adding cells, checking positions, placing cards, and checking patterns.
+ * It implements the Serializable interface.
+ */
 public class PlayerArea implements Serializable {
 
     private final HashMap<ArrayList<Integer>, Cell> CellMatrix;
     private final ArrayList<Integer> permanentResource;
 
     /**
-     * Creates an empty PlayerArea
+     * This is the constructor for the PlayerArea class.
+     * It initializes the matrix of cells and the list of permanent resources.
      */
     public PlayerArea() {
         this.CellMatrix = new HashMap<>();
@@ -28,6 +35,13 @@ public class PlayerArea implements Serializable {
         }
     }
 
+    /**
+     * This method returns the coordinates of a cell given its row and column.
+     *
+     * @param x The row of the cell.
+     * @param y The column of the cell.
+     * @return ArrayList<Integer> The coordinates of the cell.
+     */
     private static ArrayList<Integer> getCoordinates(int x, int y) {
         ArrayList<Integer> coordinates = new ArrayList<>();
         coordinates.add(x);
@@ -36,11 +50,11 @@ public class PlayerArea implements Serializable {
     }
 
     /**
-     * Return if a cell exists at the given coordinates
+     * This method checks if a cell exists at the given coordinates.
      *
-     * @param x Row coordinate
-     * @param y Column coordinate
-     * @return True if exists a cell with the given coordinates.
+     * @param x The row of the cell.
+     * @param y The column of the cell.
+     * @return boolean True if a cell exists at the given coordinates, false otherwise.
      */
     public boolean contains(int x, int y) {
         ArrayList<Integer> coordinates = getCoordinates(x, y);
@@ -48,11 +62,11 @@ public class PlayerArea implements Serializable {
     }
 
     /**
-     * Return a cell given its coordinates
+     * This method returns a cell given its coordinates.
      *
-     * @param x Row coordinate
-     * @param y Column coordinate
-     * @return A reference to the Cell, if the cell exists; null otherwise
+     * @param x The row of the cell.
+     * @param y The column of the cell.
+     * @return Cell The cell at the given coordinates. If no cell exists at the given coordinates, it returns null.
      */
     private Cell getCell(int x, int y) {
         ArrayList<Integer> coordinates = getCoordinates(x, y);
@@ -60,9 +74,9 @@ public class PlayerArea implements Serializable {
     }
 
     /**
-     * Add a cell to the PlayerArea
+     * This method adds a cell to the player's area.
      *
-     * @param cell Reference to the cell to add
+     * @param cell The cell to add to the player's area.
      */
     public void addCell(Cell cell) {
         ArrayList<Integer> coordinates = getCoordinates(cell.getRow(), cell.getColumn());
@@ -70,9 +84,9 @@ public class PlayerArea implements Serializable {
     }
 
     /**
-     * Increase of 1 the stored counter of the given resource
+     * This method increases the stored counter of the given resource by 1.
      *
-     * @param resource Resource to increase
+     * @param resource The resource to increase.
      */
     private void addPermanentResource(Resource resource) {
         int selector = resourceSelector(resource);
@@ -80,10 +94,10 @@ public class PlayerArea implements Serializable {
     }
 
     /**
-     * Selects the resource
+     * This method selects a resource and returns an integer that represents the resource.
      *
-     * @param resource Resource to be selected
-     * @return int that represents the resource
+     * @param resource The resource to select.
+     * @return int An integer that represents the resource.
      */
     private int resourceSelector(Resource resource) {
         return switch (resource) {
@@ -100,7 +114,7 @@ public class PlayerArea implements Serializable {
     }
 
     /**
-     * Counts all resources, permanent and not
+     * This method counts all resources, both permanent and non-permanent, in the player's area.
      *
      * @return A list of 8 counters:
      * 0. Counter for FUNGUS
@@ -121,10 +135,10 @@ public class PlayerArea implements Serializable {
     }
 
     /**
-     * Used to count resources given the list of counters
+     * This method increases the counter of a resource in a list of counters.
      *
-     * @param list     ArrayList of counters
-     * @param resource Resource of which increase counter
+     * @param list     The list of counters.
+     * @param resource The resource of which to increase the counter.
      */
     private void addResourceToList(ArrayList<Integer> list, Resource resource) {
 
@@ -133,10 +147,10 @@ public class PlayerArea implements Serializable {
     }
 
     /**
-     * Returns a list of coordinates of available position.
-     * A position is made of a square of four cells, and it is represented by the coordinates of its top-left cell
+     * This method returns a list of available positions for placing a card.
+     * A position is made of a square of four cells, and it is represented by the coordinates of its top-left cell.
      *
-     * @return A list of positions where a card could be placed
+     * @return ArrayList<Integer[]> A list of positions where a card could be placed.
      */
     public ArrayList<Integer[]> getAvailablePosition() {
         /*
@@ -175,11 +189,11 @@ public class PlayerArea implements Serializable {
     }
 
     /**
-     * Checks if a position is available to place a card
+     * This method checks if a position is available to place a card.
      *
-     * @param x Row coordinate
-     * @param y Column coordinate
-     * @return True if at the given position a card can be placed
+     * @param x The row of the position.
+     * @param y The column of the position.
+     * @return boolean True if a card can be placed at the given position, false otherwise.
      */
     public boolean checkPosition(int x, int y) {
         //Basic check: if a position is already taken
@@ -227,11 +241,11 @@ public class PlayerArea implements Serializable {
     }
 
     /**
-     * Returns the card given the coordinates of its position
+     * This method returns a card given the coordinates of its position.
      *
-     * @param x Row coordinate
-     * @param y Column coordinate
-     * @return Reference to the placed card or null if there is no card at the given position
+     * @param x The row of the position.
+     * @param y The column of the position.
+     * @return PlaceableCard The card at the given position. If no card exists at the given position, it returns null.
      */
     private PlaceableCard getCard(int x, int y) {
         /*
@@ -260,10 +274,10 @@ public class PlayerArea implements Serializable {
     }
 
     /**
-     * Places the starter card
+     * This method places the starter card in the player's area.
      *
-     * @param card  StarterCard
-     * @param front Side of the starter card
+     * @param card  The starter card to place.
+     * @param front The side of the starter card to place.
      */
     public void placeStarterCard(PlaceableCard card, boolean front) {
         card.setFront(front);
@@ -279,7 +293,7 @@ public class PlayerArea implements Serializable {
     }
 
     /**
-     * Places a card at the given position
+     * This method places a card in the player's area.
      *
      * @param card Reference to the card to place
      * @param x    Row coordinate
