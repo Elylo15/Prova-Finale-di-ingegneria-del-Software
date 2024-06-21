@@ -129,7 +129,7 @@ public class Server implements Runnable {
     private void handleConnection(ClientConnection connection) {
         if (connection == null)
             return;
-        // Confirms the connection to the client
+        // Confirms the positive establishment of the connection to the client
         connection.sendAnswerToConnection(new connectionResponseMessage(true));
 
         while (true) {
