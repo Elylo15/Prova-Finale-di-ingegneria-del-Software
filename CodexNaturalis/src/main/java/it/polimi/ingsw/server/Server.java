@@ -57,7 +57,7 @@ public class Server implements Runnable {
 
         int corePoolSize = 15;
         int maximumPoolSize = 200;
-        long keepAliveTime = 300;
+        long keepAliveTime = 300; //after 300 seconds idle threads in excess of corePoolSize are terminated
         TimeUnit unit = TimeUnit.SECONDS;
         executor = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, unit, new LinkedBlockingQueue<>());
     }
