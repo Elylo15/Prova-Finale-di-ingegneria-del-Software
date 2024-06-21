@@ -166,6 +166,7 @@ public class ViewGUI extends View {
                 }
             }
         } else if(message.getCorrect() && Objects.equals(state, "ServerOptionState")) {
+            GUIMessages.writeToGUI("random");
             Platform.runLater(SceneManager::waiting);
             return true;
         }

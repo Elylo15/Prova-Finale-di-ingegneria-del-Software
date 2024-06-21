@@ -71,7 +71,7 @@ public class Utilities {
     }
 
     /**
-     * Rotates the image
+     * Rotates the arrow Image
      *
      * @param imageView the image to rotate
      * @param seconds   the duration of the rotation
