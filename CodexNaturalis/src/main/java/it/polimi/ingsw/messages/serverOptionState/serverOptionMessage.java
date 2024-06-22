@@ -70,7 +70,7 @@ public class serverOptionMessage implements Message, Serializable {
     }
 
     /**
-     * @return ID of the match (not yet started) the client wants to join. null if the client wants to join a new game
+     * @return ID of the match (not yet started) the client wants to join. Null if the client wants to join a new game
      */
     public Integer getMatchID() {
         return matchID;
@@ -85,7 +85,7 @@ public class serverOptionMessage implements Message, Serializable {
 
 
     /**
-     * @return true if the client wants to load a custom match
+     * @return true if the client wants to load a saved match
      */
     public boolean isLoadMatch() {
         return loadMatch;

@@ -198,15 +198,16 @@ public class Server implements Runnable {
 
 
         while (!correctResponse) {
-            // Obtains the list of waiting
+            // Obtains the list of games in waiting
             ArrayList<Integer> waitingGames = games.stream()
                     .filter(game -> game.getMatchInfo().getStatus() == MatchState.Waiting)
                     .map(game -> game.getMatchInfo().getID())
-                    .collect(Collectors.toCollection(ArrayList::new));
+                    .collect(Collectors.toCollection(ArrayList::new)); // list of ID of the matches that are in MatchState Waiting
 
             // Obtains the list of running games
             ArrayList<Integer> runningGames = games.stream()
                     .filter(game -> game.getMatchInfo().getStatus() != MatchState.Waiting && game.getMatchInfo().getStatus() != MatchState.Endgame)
+                    //stream must contain only matches whose number of online players is lower than the number of expected players
                     .filter(game -> game.getMatchInfo().getExpectedPlayers() != null && game.getOnlinePlayerInfo().size() < game.getMatchInfo().getExpectedPlayers())
                     .map(game -> game.getMatchInfo().getID())
                     .collect(Collectors.toCollection(ArrayList::new));
@@ -216,12 +217,14 @@ public class Server implements Runnable {
             savedMatches.removeAll(waitingGames);
             savedMatches.removeAll(runningGames);
 
-            // Requests the ServerOptionMessage
+            //Sends towards the client waitingMatches, runningMatches, savedMatches.
+            //Requests to receive the ServerOptionMessage with the choice of the user
             serverOption = executor.submit(() -> connection.getServerOption(waitingGames, runningGames, savedMatches));
 
             try {
-                msg = serverOption.get(this.timeoutSeconds, TimeUnit.SECONDS);
-            } catch (TimeoutException e) {
+                msg = serverOption.get(this.timeoutSeconds, TimeUnit.SECONDS); //try to obtain the serverOptionMessage, blocking program execution, if necessary, until timeout is over
+            } //if it does not manage to obtain the result of the task submitted to the executor we print the error in the log file
+            catch (TimeoutException e) {
                 connection.closeConnection();
                 logCreator.log("Client " + connection.getIP() + " kicked due to no serverOption received");
                 return null;
@@ -239,11 +242,14 @@ public class Server implements Runnable {
                 return null;
 
             // Checks if the response message is valid
+               //the user wants to create a new game or join an existing one (not yet started)
             if (msg.isNewMatch() && (msg.getMatchID() == null || waitingGames.contains(msg.getMatchID()))) {
                 correctResponse = true;
-            } else if (msg.getStartedMatchID() != null && runningGames.contains(msg.getStartedMatchID())) {
+            } //the user wants to join a running match
+            else if (msg.getStartedMatchID() != null && runningGames.contains(msg.getStartedMatchID())) {
                 correctResponse = true;
-            } else if (msg.isLoadMatch() && (msg.getSavedMatchID() != null) && savedMatches.contains(msg.getSavedMatchID())) {
+            }  //the user wants to load a saved match
+            else if (msg.isLoadMatch() && (msg.getSavedMatchID() != null) && savedMatches.contains(msg.getSavedMatchID())) {
                 correctResponse = true;
             } else {
                 // correctResponse = false;
