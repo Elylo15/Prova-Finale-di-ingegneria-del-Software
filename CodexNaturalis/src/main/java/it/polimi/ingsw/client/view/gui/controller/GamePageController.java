@@ -1724,14 +1724,14 @@ public class GamePageController implements Initializable {
         for (ImageView pion : pions) {
             if (pion != myPion) {
                 if (pion != null && pion.getLayoutX() == targetX) {
-                    while(pion.getLayoutY() == targetY + offsetY) {
+                    while(pion.getLayoutY() == (targetY += offsetY)) {
                         offsetY -= offsetPions;
-                        targetY += offsetY;
+//                        targetY += offsetY;
                     }
                 }
             }
         }
-        return new double[]{targetX, targetY + offsetY};
+        return new double[]{targetX, targetY };
     }
 
     /**
