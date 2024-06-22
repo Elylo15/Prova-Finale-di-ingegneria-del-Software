@@ -267,21 +267,33 @@ public class MatchManager implements Runnable {
                     this.turnNumber += 1;
 
 
-                    if (currentPlayer != null && findPlayer(currentPlayer).getState() == State.PickCard) {
+                    if (currentPlayer != null && findPlayer(currentPlayer) != null && findPlayer(currentPlayer).getState() == State.PickCard) {
                         this.matchInfo.setStatus(MatchState.Player4);
                     }
 
                     if (this.matchInfo.isLastTurn())
                         this.matchInfo.setStatus(MatchState.Endgame);
 
-                    if (this.matchInfo.getMatch().getPlayers().stream()
-                            .anyMatch(player -> player.getScore() >= 20) ||
-                            (this.matchInfo.getMatch().getCommonArea().getTableCards().isEmpty()
-                                    && this.getMatch().getCommonArea().getD1().getList().isEmpty()
-                                    && this.getMatch().getCommonArea().getD2().getList().isEmpty())) {
-                        logCreator.log("This is the last turn");
-                        matchInfo.setLastTurn(true);
+                    if (currentPlayer == null || findPlayer(currentPlayer) == null) {
+                        if (this.matchInfo.getMatch().getPlayers().stream()
+                                .anyMatch(player -> player.getScore() >= 2) ||
+                                ( this.getMatch().getCommonArea().getD1().getList().isEmpty()
+                                        && this.getMatch().getCommonArea().getD2().getList().isEmpty())) {
+                            logCreator.log("This is the last turn");
+                            matchInfo.setLastTurn(true);
+                        }
+                    } else {
+                        if (findPlayer(currentPlayer).getState() != State.PickCard) {
+                            if (this.matchInfo.getMatch().getPlayers().stream()
+                                    .anyMatch(player -> player.getScore() >= 20) ||
+                                    ( this.getMatch().getCommonArea().getD1().getList().isEmpty()
+                                            && this.getMatch().getCommonArea().getD2().getList().isEmpty())) {
+                                logCreator.log("This is the last turn");
+                                matchInfo.setLastTurn(true);
+                            }
+                        }
                     }
+
 
                 }
                 case Endgame -> this.endgame();
