@@ -39,9 +39,9 @@ public class MatchManager implements Runnable {
     private int turnNumber;
 
     /**
-     * Standard constructor for ClientManager
+     * Standard constructor for MatchManager
      *
-     * @param match object representing the model and data related to the server
+     * @param match: is a MatchInfo object representing the model and data related to the server
      */
     public MatchManager(MatchInfo match) {
         this.matchInfo = match;

@@ -7,10 +7,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 
-/**
- * This class is the controller for the PickNameFA scene.
- * It handles the user's interaction with the GUI when picking a name for the game.
- */
 import java.util.ArrayList;
 
 public class PickNameFAController {
@@ -53,13 +49,7 @@ public class PickNameFAController {
         Utilities.hooverEffect(player3, 1.05);
         Utilities.hooverEffect(player4, 1.05);
     }
-    /**
-     * This method is triggered when the user clicks the "Send" button.
-     * It retrieves the source of the event (which is the clicked button), casts it to a Label,
-     * and then sends the text of the Label (which represents the player's name) to the client.
-     *
-     * @param event The MouseEvent object representing the user's click action.
-     */
+
     @FXML
     public void onCLickSend(MouseEvent event) {
         Label player = (Label) event.getSource();

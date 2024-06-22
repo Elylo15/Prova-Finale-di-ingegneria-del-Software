@@ -21,13 +21,20 @@ public class LogCreator {
         this.fileName = "logs/log_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")) + ".log";
         File dir = new File("logs");
         if (!dir.exists()) {
-            working = dir.mkdir();
-            System.out.println(working);
+            working = dir.mkdir(); //creates the directory
+            if(working) {
+                System.out.println("directory correctly created");
+            }
+            else {
+                System.out.println("Failed to create directory: " + dir.getAbsolutePath());
+                System.err.println("Failed to create directory: " + dir.getAbsolutePath());
+
+            }
         }
         this.matchID = null;
         File f = new File(fileName);
         try {
-            FileWriter fw = new FileWriter(fileName, true);
+            FileWriter fw = new FileWriter(fileName, true); //append parameter is true as we do not want to overwrite the file
             writer = new BufferedWriter(fw);
         } catch (IOException e) {
             e.printStackTrace();
@@ -47,11 +54,9 @@ public class LogCreator {
         if (!dir.exists()) {
             boolean dirCreated = dir.mkdir();
 
-            System.out.println("Failed to create directory: " + dir.getAbsolutePath());
-
             if (!dirCreated) {
-                System.out.println("Failed to create directory: " + dir.getAbsolutePath());
-                System.err.println("Failed to create directory: " + dir.getAbsolutePath());
+                System.out.println("Failed to create directory: " + dir.getAbsolutePath()); //standard output stream
+                System.err.println("Failed to create directory: " + dir.getAbsolutePath()); //error output stream
             }
         }
         File f = new File(fileName);
@@ -88,6 +93,7 @@ public class LogCreator {
      * @param message the content of the log message
      */
     public synchronized void log(String message) {
+        //the method is synchronized, so it is not possible for two different processes to call the method on the same LogCreator object
         LocalDateTime currentTime = LocalDateTime.now();
         String timestamp = currentTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS"));
         try {

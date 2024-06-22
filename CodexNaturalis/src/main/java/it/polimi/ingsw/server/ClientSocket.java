@@ -30,8 +30,8 @@ public class ClientSocket extends ClientConnection implements Serializable {
     /**
      * method {@code ClientSocket}: constructs a new ClientSocket
      *
-     * @param IP:   String
-     * @param port: String
+     * @param IP:   String, Ip of the client
+     * @param port: String, port of the client
      */
     public ClientSocket(String IP, String port, Socket socket) {
         super(IP, port);
@@ -54,9 +54,10 @@ public class ClientSocket extends ClientConnection implements Serializable {
     }
 
     /**
-     * method {@code getServerOption}: sends an empty server option message and expects an answer.
+     * method {@code getServerOption}: sends a serverOptionMessage setting everything to null except for the parameters waitingMatches, runningMatches, savedMatches
+     * and expects an answer.
      *
-     * @return serverOptionMessage
+     * @return serverOptionMessage received from controller
      */
     @Override
     public synchronized serverOptionMessage getServerOption(ArrayList<Integer> waitingMatches, ArrayList<Integer> runningMatches, ArrayList<Integer> savedMatches) {

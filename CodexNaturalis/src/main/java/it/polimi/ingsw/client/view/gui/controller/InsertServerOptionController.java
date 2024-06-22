@@ -7,6 +7,7 @@ import it.polimi.ingsw.messages.serverOptionState.serverOptionMessage;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.image.ImageView;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 /**
@@ -16,6 +17,14 @@ import javafx.scene.text.Text;
  * When a button is clicked, it performs the corresponding action and sends a message to the client.
  */
 public class InsertServerOptionController {
+    @FXML
+    private ImageView arrow;
+    @FXML
+    private ImageView arrow1;
+    @FXML
+    private ImageView arrow11;
+    @FXML
+    private ImageView arrow111;
     @FXML
     private Text new_match;// Button to start a new match
     @FXML
@@ -39,12 +48,22 @@ public class InsertServerOptionController {
         this.serverOptionMessage = (serverOptionMessage) GUIMessages.readToGUI();
         GUIMessages.writeToGUI(serverOptionMessage);
 
+        join_match.setFont(Font.loadFont(getClass().getResourceAsStream("/Fonts/FantasyScript.ttf"), 96));
+        load_match.setFont(Font.loadFont(getClass().getResourceAsStream("/Fonts/FantasyScript.ttf"), 96));
+        join_running_match.setFont(Font.loadFont(getClass().getResourceAsStream("/Fonts/FantasyScript.ttf"), 96));
+        new_match.setFont(Font.loadFont(getClass().getResourceAsStream("/Fonts/FantasyScript.ttf"), 96));
+
         Utilities.hooverEffect(new_match, 1.05);
         Utilities.hooverEffect(join_match, 1.05);
         Utilities.hooverEffect(load_match, 1.05);
         Utilities.hooverEffect(join_running_match, 1.05);
 
-        Utilities.rotateEffect(rotate, 3);
+
+//        Utilities.rotateEffect(rotate, 3);
+        Utilities.rotateEffectArrow(arrow, 4);
+        Utilities.rotateEffectArrow(arrow1, 4);
+        Utilities.rotateEffectArrow(arrow11, 4);
+        Utilities.rotateEffectArrow(arrow111, 4);
 
         new_match.setOnMouseClicked(event -> {
             serverOptionMessage = new serverOptionMessage(true, null, null, false, null);
@@ -64,6 +83,10 @@ public class InsertServerOptionController {
         join_running_match.setOnMouseClicked(event -> {
             Platform.runLater(SceneManager::JoinRunningMatch);
             GUIMessages.writeToGUI(serverOptionMessage);
+        });
+
+        rotate.setOnMouseClicked(event -> {
+            GUIMessages.writeToClient(serverOptionMessage);
         });
     }
 

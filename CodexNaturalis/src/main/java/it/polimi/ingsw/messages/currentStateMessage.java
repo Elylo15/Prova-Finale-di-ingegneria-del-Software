@@ -15,7 +15,7 @@ public class currentStateMessage implements Message, Serializable {
     private final Player player;        // player who receives the message
     private final String stateName;
     private final boolean lastTurn;
-    private final ArrayList<String> onlinePlayers;
+    private final ArrayList<String> onlinePlayers; //ArrayList of names of online players
     private final ArrayList<ObjectiveCard> commonObjectiveCards;
     private final Integer MatchID;
 

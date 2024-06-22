@@ -36,6 +36,8 @@ public class WaitingController implements Initializable {
                     img = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Waiting/WaitingGreen.png")));
             case "purple" ->
                     img = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Waiting/WaitingPurple.png")));
+            default ->
+                    img = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Waiting/WaitingRand.png")));
         }
 
         ImageView imageView = new ImageView(img);

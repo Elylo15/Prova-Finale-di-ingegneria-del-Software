@@ -54,6 +54,7 @@ public class ViewGUI extends View {
      * @return The IP address entered by the user.
      */
     public String askIP() {
+        state = "IPState";
         // Clear the message queue to avoid processing any unexpected messages
         GUIMessages.clearQueue();
 
@@ -77,6 +78,7 @@ public class ViewGUI extends View {
      */
     @Override
     public boolean askSocket() {// true = socket, false = rmi
+        state = "SocketState";
         //to avoid reading unexpected messages
         GUIMessages.clearQueue();
         boolean useSocket;
@@ -93,6 +95,7 @@ public class ViewGUI extends View {
      */
     @Override
     public serverOptionMessage serverOptions(serverOptionMessage message) {
+        state = "ServerOptionState";
         GUIMessages.clearQueue();
         serverOptionMessage newMessage;
         GUIMessages.writeToGUI(message);
@@ -106,6 +109,7 @@ public class ViewGUI extends View {
      */
     @Override
     public void playerDisconnected(Exception e) {
+        state = "disconnectedState";
         GUIMessages.clearQueue();
         if(!Objects.equals(e.getMessage(), "Game ended."))
             Platform.runLater(SceneManager::disconnect);
@@ -126,6 +130,7 @@ public class ViewGUI extends View {
      */
     @Override
     public String unavailableNames(unavailableNamesMessage message) {
+        state = "UnavailableNamesState";
         GUIMessages.clearQueue();  //remove all elements that could be in the queue
         if (firstTimeName) {
             firstTimeName = false;
@@ -151,12 +156,19 @@ public class ViewGUI extends View {
                     GUIMessages.writeToGUI(message);
                     return true;
                 }
+                case "ServerOptionState" -> {
+                    return true;
+                }
                 default -> {
                     Platform.runLater(SceneManager::disconnect);
                     ok = (boolean) GUIMessages.readToClient();
                     return ok;
                 }
             }
+        } else if(message.getCorrect() && Objects.equals(state, "NameFAState")) {
+            GUIMessages.writeToGUI("random");
+            Platform.runLater(SceneManager::waiting);
+            return true;
         }
 
         return true;
@@ -170,6 +182,7 @@ public class ViewGUI extends View {
      */
     @Override
     public String availableColors(availableColorsMessage message) {
+        state = "AvailableColorsState";
         //to avoid reading unexpected messages
         GUIMessages.clearQueue();
         GUIMessages.writeToGUI(message); //in AvailableColorsController we call GUIMessages.readToGui() to receive this message
@@ -185,6 +198,7 @@ public class ViewGUI extends View {
      */
     @Override
     public int expectedPlayers() {
+        state = "ExpectedPlayersState";
         //to avoid reading unexpected messages
         GUIMessages.clearQueue();
         int number;
@@ -202,6 +216,7 @@ public class ViewGUI extends View {
      */
     @Override
     public void waiting() {
+        state = "WaitingState";
         GUIMessages.clearQueue();
         GUIMessages.writeToGUI(color);
         Platform.runLater(SceneManager::waiting);
@@ -286,6 +301,7 @@ public class ViewGUI extends View {
      */
     @Override
     public String pickNameFA(unavailableNamesMessage message) {
+        state = "NameFAState";
         //to avoid reading unexpected messages
         GUIMessages.clearQueue();  //remove all elements that could be in the queue
         String name;
@@ -303,6 +319,7 @@ public class ViewGUI extends View {
      */
     @Override
     public void endGame(declareWinnerMessage message) {
+        state = "endGameState";
         GUIMessages.writeToGUI(message);
     }
 

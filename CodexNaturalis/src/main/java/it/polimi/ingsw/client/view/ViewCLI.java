@@ -991,8 +991,8 @@ public class ViewCLI extends View {
     }
 
     /**
-     * This method allow the client to choose if he wants to create a new match, join an existing one in waiting,
-     * load a saved Match or join a running match
+     * This method allow the client to choose if he wants to create a new match, join an existing one in waiting (not yet started),
+     * join a running match or load a saved match
      *
      * @param message a serverOption message received from the server
      * @return message with the values chosen by the user

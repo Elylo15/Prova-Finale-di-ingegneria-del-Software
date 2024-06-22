@@ -43,8 +43,8 @@ public class MatchInfo implements Serializable {
         clonedMatchInfo.setLastTurn(this.lastTurn);
 
         for (PlayerInfo playerInfo : this.allPlayersInfo) {
-            PlayerInfo clonedPlayerInfo = new PlayerInfo(playerInfo);
-            clonedMatchInfo.addPlayer(clonedPlayerInfo);
+            PlayerInfo clonedPlayerInfo = new PlayerInfo(playerInfo); //create a clone of each PlayerInfo
+            clonedMatchInfo.addPlayer(clonedPlayerInfo); //add each clone to the MatchInfo to return
         }
 
         return clonedMatchInfo;
@@ -79,7 +79,7 @@ public class MatchInfo implements Serializable {
 
         if (player.getConnection() != null)
             player.getConnection().closeConnection();
-        player.setConnection(null);
+        player.setConnection(null);  //the ClientConnection attribute of the PlayerInfo object is set to null
     }
 
     /**
@@ -91,7 +91,7 @@ public class MatchInfo implements Serializable {
     protected void bringOnline(String Nickname, ClientConnection connection) {
         for (PlayerInfo player : allPlayersInfo) {
             if (player.getPlayer().getNickname().equalsIgnoreCase(Nickname)) {
-                player.setConnection(connection);
+                player.setConnection(connection); //the ClientConnection attribute of the PlayerInfo object is set to connection
                 return;
             }
         }
