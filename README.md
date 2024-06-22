@@ -1,5 +1,5 @@
 ## Codex Naturalis - Software Engeneering Project
-<a href="https://ibb.co/0DvQvTS"><img src="https://i.ibb.co/NVb7b5P/Schermata-del-2024-06-17-14-26-16.png" alt="Schermata-del-2024-06-17-14-26-16" width="1920"></a>
+<a href="https://ibb.co/Wnq85Pb"><img src="https://i.ibb.co/hshQ9ZP/Screenshot-2024-06-22-153007.png" alt="Screenshot-2024-06-22-153007" width="1920"></a>
 
 **Codex Naturalis** is the Java implementation of the omonimus Board Game by **Cranio Creation**. It is the final project of the **Software Engineering** course of **Computer Science Engineering** held at **Politecnico di Milano**.
 
@@ -48,7 +48,18 @@ Implemented Features:
 
 Here you can find the [Requirements](https://github.com/Elylo15/ing-sw-2024-Lollino-Ianosel-Locatelli-Martini/blob/main/CodexNaturalis/Deliverables/Rules_Requirements/Requisiti%20del%20progetto.pdf) and the [rulebook](https://github.com/Elylo15/ing-sw-2024-Lollino-Ianosel-Locatelli-Martini/blob/main/CodexNaturalis/Deliverables/Rules_Requirements/CODEX_Rulebook_EN.pdf).
 
-## Game images
+## Game images GUI
+<a href="https://ibb.co/dGWdpPQ"><img src="https://i.ibb.co/5BMNjr5/Screenshot-2024-06-22-153233.png" alt="Screenshot-2024-06-22-153233" width="1920"></a>
+<a href="https://ibb.co/HTnBbLM"><img src="https://i.ibb.co/whMBPZb/Screenshot-2024-06-22-153513.png" alt="Screenshot-2024-06-22-153513" width="1920"></a>
+<a href="https://ibb.co/93hGBtg"><img src="https://i.ibb.co/FqXncV3/Screenshot-2024-06-22-155503.png" alt="Screenshot-2024-06-22-155503" width="1920"></a>
+<a href="https://ibb.co/sQT6hqJ"><img src="https://i.ibb.co/2PzswdY/Screenshot-2024-06-22-155801.png" alt="Screenshot-2024-06-22-155801" width="1920"></a>
+<a href="https://ibb.co/mRHCygq"><img src="https://i.ibb.co/cyNc8VF/Screenshot-2024-06-22-155814.png" alt="Screenshot-2024-06-22-155814" width="1920"></a>
+
+## Game images CLI
+<a href="https://ibb.co/1nWcGzp"><img src="https://i.ibb.co/dcYZ4m3/Screenshot-2024-06-22-160011.png" alt="Screenshot-2024-06-22-160011" width="1920"></a>
+<a href="https://ibb.co/sVK3twR"><img src="https://i.ibb.co/x7153jL/Screenshot-2024-06-22-160116.png" alt="Screenshot-2024-06-22-160116" width="1920"></a>
+<a href="https://ibb.co/4WCwCy0"><img src="https://i.ibb.co/6YGcGhq/Screenshot-2024-06-22-160126.png" alt="Screenshot-2024-06-22-160126" width="1920"></a>
+<a href="https://ibb.co/db87dx1"><img src="https://i.ibb.co/28G5DHm/Screenshot-2024-06-22-160200.png" alt="Screenshot-2024-06-22-160200" width="1920"></a>
 
 ## How to use/Download:
 
