@@ -276,7 +276,7 @@ public class MatchManager implements Runnable {
 
                     if (currentPlayer == null || findPlayer(currentPlayer) == null) {
                         if (this.matchInfo.getMatch().getPlayers().stream()
-                                .anyMatch(player -> player.getScore() >= 2) ||
+                                .anyMatch(player -> player.getScore() >= 20) ||
                                 ( this.getMatch().getCommonArea().getD1().getList().isEmpty()
                                         && this.getMatch().getCommonArea().getD2().getList().isEmpty())) {
                             logCreator.log("This is the last turn");
