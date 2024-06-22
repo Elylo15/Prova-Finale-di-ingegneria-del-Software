@@ -527,7 +527,7 @@ public class GamePageController implements Initializable {
                 case "green" ->
                         newStateImage.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Choosing/choosingGreen.png"))));
                 case "purple" ->
-                        newStateImage.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Background/ChoosingPur.png"))));
+                        newStateImage.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Choosing/choosingPur.png"))));
             }
         } else {
             switch (color) {
