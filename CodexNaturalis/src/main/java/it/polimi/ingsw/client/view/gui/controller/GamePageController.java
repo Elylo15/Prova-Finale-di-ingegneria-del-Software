@@ -124,7 +124,7 @@ public class GamePageController implements Initializable {
     private ImageView purple;
     private ImageView green;
     private ImageView back;
-    private Label playerInfoLabel;
+    private Label[] playerInfoLabel;
     private ImageView selectedCard;
     private Player myself;
     private PlayerHand myHand;
@@ -267,17 +267,17 @@ public class GamePageController implements Initializable {
             Utilities.fadeOutTransition(mainPane, winner, 1, false);
             Utilities.fadeOutTransition(mainPane, winnerLabel, 0.8, false);
             Utilities.fadeOutTransition(mainPane, back, 1.0, false);
-            Utilities.fadeOutTransition(mainPane, playerInfoLabel, 0.8, false);
+            for (Label label : playerInfoLabel) Utilities.fadeOutTransition(mainPane, label, 0.8, false);
         } else {
             Utilities.fadeInTransition(winner, 1);
             Utilities.fadeInTransition(winnerLabel, 0.8);
             Utilities.fadeInTransition(back, 1.0);
-            Utilities.fadeInTransition(playerInfoLabel, 0.8);
+            for (Label label : playerInfoLabel) Utilities.fadeInTransition(label, 0.8);
 
             winner.toFront();
             winnerLabel.toFront();
             back.toFront();
-            playerInfoLabel.toFront();
+            for (Label label : playerInfoLabel) label.toFront();
         }
     }
 
@@ -394,21 +394,21 @@ public class GamePageController implements Initializable {
             Integer playerObjectives = objectives.get(playerName);
 
             // Create a label with the player information
-            playerInfoLabel = new Label(playerName + " - " + playerScore + " Points - " + playerObjectives + " Objectives");
+            playerInfoLabel[i] = new Label(playerName + " - " + playerScore + " Points - " + playerObjectives + " Objectives");
 
-            playerInfoLabel.setFont(Font.loadFont(getClass().getResourceAsStream("/Fonts/FantasyScript.ttf"), 37));
-            playerInfoLabel.setTextFill(Color.rgb(53, 31, 23));
-            playerInfoLabel.setLayoutX(497);
-            playerInfoLabel.setLayoutY(198 + 79 * i);
-            playerInfoLabel.setPrefWidth(916);
-            playerInfoLabel.setPrefHeight(75);
-            playerInfoLabel.setAlignment(Pos.CENTER);
+            playerInfoLabel[i].setFont(Font.loadFont(getClass().getResourceAsStream("/Fonts/FantasyScript.ttf"), 37));
+            playerInfoLabel[i].setTextFill(Color.rgb(53, 31, 23));
+            playerInfoLabel[i].setLayoutX(497);
+            playerInfoLabel[i].setLayoutY(198 + 79 * i);
+            playerInfoLabel[i].setPrefWidth(916);
+            playerInfoLabel[i].setPrefHeight(75);
+            playerInfoLabel[i].setAlignment(Pos.CENTER);
             i++;
 
-            mainPane.getChildren().add(playerInfoLabel);
-            Utilities.fadeInTransition(playerInfoLabel, 0.8);
+            mainPane.getChildren().add(playerInfoLabel[i]);
+            Utilities.fadeInTransition(playerInfoLabel[i], 0.8);
 
-            playerInfoLabel.toFront();
+            playerInfoLabel[i].toFront();
         }
     }
 
@@ -773,6 +773,7 @@ public class GamePageController implements Initializable {
             fadeOut.setOnFinished(event -> {
                 playerName.setText(newNickname);
                 Utilities.fadeInTransition(playerName, 0.79);
+                playerName.toFront();
             });
         }
     }
@@ -782,11 +783,11 @@ public class GamePageController implements Initializable {
      * Sets the visualized page with the cards of the page's player
      */
     private void setPage() {
-        String nickname = (clickCounter == -1) ? myself.getNickname() : players.get(clickCounter).getNickname();
-        setPlayerNameWithFade(nickname);
-
         String color = (clickCounter == -1) ? myself.getColor() : players.get(clickCounter).getColor();
         setColorName(color);
+
+        String nickname = (clickCounter == -1) ? myself.getNickname() : players.get(clickCounter).getNickname();
+        setPlayerNameWithFade(nickname);
 
         int next = clickCounter;
         if (clickCounter == players.size() - 1)
@@ -1722,8 +1723,11 @@ public class GamePageController implements Initializable {
 
         for (ImageView pion : pions) {
             if (pion != myPion) {
-                if (pion != null && pion.getLayoutX() == targetX && pion.getLayoutY() == targetY + offsetY) {
-                    offsetY -= offsetPions;
+                if (pion != null && pion.getLayoutX() == targetX) {
+                    while(pion.getLayoutY() == targetY + offsetY) {
+                        offsetY -= offsetPions;
+                        targetY += offsetY;
+                    }
                 }
             }
         }

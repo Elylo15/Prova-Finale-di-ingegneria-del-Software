@@ -25,6 +25,7 @@ public class ViewGUI extends View {
     private boolean firstTimeCurrent = true;
     private boolean firstTimeName = true;
     private String state;
+    private serverOptionMessage newMessage;
     private String color;
 
 
@@ -97,7 +98,6 @@ public class ViewGUI extends View {
     public serverOptionMessage serverOptions(serverOptionMessage message) {
         state = "ServerOptionState";
         GUIMessages.clearQueue();
-        serverOptionMessage newMessage;
         GUIMessages.writeToGUI(message);
         Platform.runLater(SceneManager::InsertServerOption);
         newMessage = (serverOptionMessage) GUIMessages.readToClient();
@@ -165,7 +165,8 @@ public class ViewGUI extends View {
                     return ok;
                 }
             }
-        } else if(message.getCorrect() && Objects.equals(state, "NameFAState")) {
+        } else if(message.getCorrect() && (Objects.equals(state, "NameFAState") || Objects.equals(state, "AvailableColorsState"))
+                    && !Objects.equals(state, "WaitingState") && (!newMessage.isNewMatch() || newMessage.getMatchID() != null)) {
             GUIMessages.writeToGUI("random");
             Platform.runLater(SceneManager::waiting);
             return true;

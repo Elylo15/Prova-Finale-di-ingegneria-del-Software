@@ -1,5 +1,7 @@
 package it.polimi.ingsw.client.view;
 
+import it.polimi.ingsw.client.view.gui.SceneManager;
+import it.polimi.ingsw.client.view.gui.message.GUIMessages;
 import it.polimi.ingsw.messages.connectionState.availableColorsMessage;
 import it.polimi.ingsw.messages.connectionState.connectionResponseMessage;
 import it.polimi.ingsw.messages.connectionState.unavailableNamesMessage;
@@ -17,6 +19,7 @@ import it.polimi.ingsw.model.cards.PlaceableCard;
 import it.polimi.ingsw.model.cards.PlayerHand;
 import it.polimi.ingsw.model.cards.enumeration.Reign;
 import it.polimi.ingsw.model.cards.enumeration.Resource;
+import javafx.application.Platform;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -44,6 +47,9 @@ public class ViewCLI extends View {
     private static final String PURPLE_BACKGROUND = "\033[45m";
     private static final String CYAN_BACKGROUND = "\033[46m";
     private static final String BRIGHT_WHITE_BACKGROUND = "\033[107m";
+
+    private serverOptionMessage newMessage;
+    private String state = "";
 
     //the purpose of ViewCLI is to handle the interaction with the user and
     // visualize what he needs to see in order to play the game
@@ -89,6 +95,7 @@ public class ViewCLI extends View {
      */
     @Override
     public String askIP() {
+        state = "IP";
         Scanner scanner = new Scanner(System.in);
         String server;
 
@@ -102,6 +109,7 @@ public class ViewCLI extends View {
      */
     @Override
     public void playerDisconnected(Exception e) {
+        state = "Disconnected";
         System.out.println("\n" + RED_BACKGROUND + "You have been disconnected." + RESET + "\n");
     }
 
@@ -112,6 +120,7 @@ public class ViewCLI extends View {
      */
     @Override
     public void updatePlayer(currentStateMessage message) {
+        state = "UpdatePlayer";
         System.out.println("\n This is the turn of " + message.getCurrentPlayer().getNickname());
         System.out.println("ID of the match: " + message.getMatchID());
         System.out.println("The online players are: " + message.getOnlinePlayers());
@@ -970,6 +979,7 @@ public class ViewCLI extends View {
      * @return boolean
      */
     public boolean askSocket() {
+        state = "Socket";
         Scanner scanner = new Scanner(System.in);
 
         while (true) {
@@ -986,6 +996,7 @@ public class ViewCLI extends View {
      * @param message the message received from the server
      */
     public void answerToConnection(connectionResponseMessage message) {
+        state = "Connection";
         if (message.getCorrect())
             System.out.println(GREEN_TEXT + "the connection has been established" + RESET);
     }
@@ -998,6 +1009,7 @@ public class ViewCLI extends View {
      * @return message with the values chosen by the user
      */
     public serverOptionMessage serverOptions(serverOptionMessage message) {
+        state = "ServerOptions";
         Scanner scanner = new Scanner(System.in);
         boolean newMatch;
         Integer matchID = null;
@@ -1166,6 +1178,7 @@ public class ViewCLI extends View {
         }
 
         message = new serverOptionMessage(newMatch, matchID, startedMatchID, loadMatch, savedMatchID);
+        newMessage = message;
         return message;
     }
 
@@ -1176,6 +1189,7 @@ public class ViewCLI extends View {
      * @return the chosen nickname
      */
     public String unavailableNames(unavailableNamesMessage message) {
+        state = "UnavailableNamesState";
         //the client can call the method view.unavailableNames passing as a parameter the arraylist of unavailable names received from server
         if (!message.toString().equals("[]")) {
             System.out.println("This nicknames are not available: " + message);
@@ -1206,6 +1220,11 @@ public class ViewCLI extends View {
     public boolean answer(responseMessage message) {
         if (!message.getCorrect())
             System.out.println(RED_TEXT + "You didn't entered a valid value, please try again" + RESET);
+        else if(message.getCorrect() && (Objects.equals(state, "NameFAState") || Objects.equals(state, "AvailableColors")) && !Objects.equals(state, "Waiting")
+                && (!newMessage.isNewMatch() || newMessage.getMatchID() != null)) {
+            System.out.println(PURPLE_TEXT + "Waiting for" + BLUE_TEXT + " other players" + GREEN_TEXT + " to join" + RED_TEXT + " the game..." + RESET);
+            return true;
+        }
         return true;
     }
 
@@ -1213,6 +1232,7 @@ public class ViewCLI extends View {
      * This method lets the user know that he has to wait for other players to join the game
      */
     public void waiting() {
+        state = "Waiting";
         System.out.println(PURPLE_TEXT + "Waiting for" + BLUE_TEXT + " other players" + GREEN_TEXT + " to join" + RED_TEXT + " the game..." + RESET);
     }
 
@@ -1223,6 +1243,7 @@ public class ViewCLI extends View {
      * @param message the message received from the server
      */
     public String availableColors(availableColorsMessage message) {
+        state = "AvailableColors";
         //the client can call the method view.availableColors passing as a parameter the arraylist of available colors received from server
         System.out.print("These are the colors that ara available:  ");
         for (int i = 0; i < message.getColors().size(); i++) {
@@ -1254,6 +1275,7 @@ public class ViewCLI extends View {
      * @return the side of the card
      */
     public int placeStarter() {
+        state = "PlaceStarter";
         System.out.println("Place your STARTER card on the table");
         Scanner scanner = new Scanner(System.in);
 
@@ -1277,6 +1299,7 @@ public class ViewCLI extends View {
      * @return number of expected players
      */
     public int expectedPlayers() {
+        state = "ExpectedPlayers";
         int numExpected;
         Scanner scanner = new Scanner(System.in);
         while (true) {
@@ -1301,6 +1324,7 @@ public class ViewCLI extends View {
      * @return int representing the chosen objective
      */
     public int chooseObjective(ArrayList<ObjectiveCard> objectives) {
+        state = "ChooseObjective";
         int objective;
         System.out.println("You have to choose your personal objective");
 
@@ -1351,6 +1375,7 @@ public class ViewCLI extends View {
      * @return Array of int representing the card chosen by the user, side, and position
      */
     public int[] placeCard() {
+        state = "PlaceCard";
         int[] chosenCard = new int[4];
         chosenCard[0] = 1000;
         chosenCard[1] = 1000;
@@ -1420,6 +1445,7 @@ public class ViewCLI extends View {
      * @return int representing the card the user wants to pick
      */
     public int pickCard() {
+        state = "PickCard";
         int choice = 1000;
         Scanner scanner = new Scanner(System.in);
         try {
@@ -1440,6 +1466,7 @@ public class ViewCLI extends View {
      * @param message the message received from the server
      */
     public void endGame(declareWinnerMessage message) {
+        state = "EndGame";
         HashMap<String, Integer> points;
         HashMap<String, Integer> numObjectives;
 
@@ -1593,6 +1620,7 @@ public class ViewCLI extends View {
      */
     @Override
     public String pickNameFA(unavailableNamesMessage message) {
+        state = "NameFAState";
         System.out.println("Please choose a nickname: ");
         int i = 1;
         //print the available names preceded by a number to identify them
