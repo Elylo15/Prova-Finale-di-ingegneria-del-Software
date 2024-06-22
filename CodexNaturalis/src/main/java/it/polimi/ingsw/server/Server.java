@@ -202,7 +202,7 @@ public class Server implements Runnable {
             ArrayList<Integer> waitingGames = games.stream()
                     .filter(game -> game.getMatchInfo().getStatus() == MatchState.Waiting)
                     .map(game -> game.getMatchInfo().getID())
-                    .collect(Collectors.toCollection(ArrayList::new)); // list of ID of the matches that are in MatchState Waiting
+                    .collect(Collectors.toCollection(ArrayList::new)); // Arraylist of ID of the matches that are in MatchState Waiting
 
             // Obtains the list of running games
             ArrayList<Integer> runningGames = games.stream()
@@ -273,7 +273,7 @@ public class Server implements Runnable {
      * @param connection connection with the client.
      */
     private void joinNewMatch(ClientConnection connection) {
-        // Client wants to join a new game
+        // User wants to join a new game
         boolean correctJoining = false;
         while (!correctJoining) {
             Integer id = this.createNewMatchID();
@@ -281,7 +281,7 @@ public class Server implements Runnable {
 
             MatchManager lobbyManager = new MatchManager(matchInfo);
             games.add(lobbyManager);
-            executor.submit(lobbyManager);
+            executor.submit(lobbyManager); // run() method of MatchManager is submitted to the executor
 
             logCreator.log("Client socket " + connection.getIP() + " " + connection.getPort() + " starts a new ClientManager");
 
@@ -302,10 +302,10 @@ public class Server implements Runnable {
      * @throws FailedToJoinMatch if the player cannot join the game.
      */
     private void joinWaitingMatch(ClientConnection connection, serverOptionMessage msg) throws FailedToJoinMatch {
-        // Player wants to join a waiting game
+        // User wants to join a waiting game
         MatchManager lobbyManager = games.stream()
                 .filter(matchManager -> Objects.equals(matchManager.getMatchInfo().getID(), msg.getMatchID()))
-                .limit(1)
+                .limit(1)  //the stream must contain only matchManager object whose id match related is equal to the matchID in the serverOptionMessage
                 .findAny().orElse(null);
 
         // Checks again: Game not found
@@ -332,7 +332,7 @@ public class Server implements Runnable {
                 .limit(1)
                 .findAny().orElse(null);
 
-        // Checks again: Game not found
+        // there is no MatchManager in games whose related match ID is equal to startedMatchID in serverOptionMessage or the number of expected players is not lower to the number of online players
         if (lobbyManager == null || lobbyManager.getMatchInfo().getExpectedPlayers() <= lobbyManager.getOnlinePlayerInfo().size()) {
             logCreator.log("Client " + connection.getIP() + " " + connection.getPort() + " failed to join match " + msg.getMatchID() + " due to not found lobby");
             throw new FailedToJoinMatch("Failed to join match " + msg.getMatchID() + " due to not found lobby");
@@ -353,6 +353,7 @@ public class Server implements Runnable {
 
         MatchManager lobbyManager;
         synchronized (this) {
+            //if savedMatchID of serverOptionMessage is already present in games it means the match has already started
             if (this.games.stream().anyMatch(matchManager -> Objects.equals(matchManager.getMatchInfo().getID(), message.getSavedMatchID()))) {
                 logCreator.log("Client " + connection.getIP() + " " + connection.getPort() + " failed to join match " + message.getSavedMatchID() + " due to already started game");
                 throw new FailedToJoinMatch("Failed to join match " + message.getSavedMatchID() + " due to already started game");
@@ -363,14 +364,15 @@ public class Server implements Runnable {
             // Loads the game
             if (matchFiles.contains(message.getSavedMatchID())) {
                 MatchInfo matchInfo = this.loadMatch(message.getSavedMatchID());
-                if (matchInfo == null) {
+
+                if (matchInfo == null) { //loadMatch will return false if it can't find the file
                     logCreator.log("Client " + connection.getIP() + " " + connection.getPort() + " failed to join match " + message.getSavedMatchID() + " due to not found saved game");
                     throw new FailedToJoinMatch("Failed to join match " + message.getSavedMatchID() + " due to not found saved game");
                 }
 
                 lobbyManager = new MatchManager(matchInfo);
-                games.add(lobbyManager);
-                executor.submit(lobbyManager::loadAndWaitSavedMatch);
+                games.add(lobbyManager); //add the MatchManager to games
+                executor.submit(lobbyManager::loadAndWaitSavedMatch); // submit the method loadAndWaitSavedMatch() of MatchManager to the executor
             } else {
                 logCreator.log("Client " + connection.getIP() + " " + connection.getPort() + " failed to join match " + message.getSavedMatchID() + " due to not found saved game");
                 throw new FailedToJoinMatch("Failed to join match " + message.getSavedMatchID() + " due to not found saved game");
@@ -398,6 +400,7 @@ public class Server implements Runnable {
                 .map(playerInfo -> playerInfo.getPlayer().getNickname().toLowerCase())
                 .collect(Collectors.toCollection(ArrayList::new));
 
+        //throws exception if there are no offline players or the number of expected players is not bigger than the number of online players
         if (offlineNames.isEmpty() || lobbyManager.getOnlinePlayerInfo().size() >= lobbyManager.getMatchInfo().getExpectedPlayers()) {
             logCreator.log("Client " + connection.getIP() + " " + connection.getPort() + " failed to join match " + msg.getMatchID() + " due to full lobby");
             throw new FailedToJoinMatch("Failed to join match " + msg.getMatchID() + " due to full lobby");
@@ -405,7 +408,7 @@ public class Server implements Runnable {
 
         // Sends status information
         currentStateMessage currState = new currentStateMessage(null, null, "ConnectionFAState", false, null, null, lobbyManager.getMatchInfo().getID());
-        connection.sendCurrentState(currState);
+        connection.sendCurrentState(currState); //send the currentStateMessage to the client
 
         // Obtains the name of the player
         String name = "";
@@ -599,7 +602,7 @@ public class Server implements Runnable {
 
 
     /**
-     * Closes the match when the ClientManager is not running anymore.
+     * Closes the match when the MatchManager is not running anymore.
      */
     private void closeMatch() {
         while (this.serverRunning || !this.games.isEmpty()) {
@@ -622,7 +625,7 @@ public class Server implements Runnable {
             if (games.stream()
                     .map(matchManager -> matchManager.getMatchInfo().getID())
                     .noneMatch(a -> Objects.equals(a, finalMatchID)))
-                correct = true;
+                correct = true;  //the random ID generated is not equal to any ID of the saved matches and to any ID of the matches contained in games attribute
         }
         return MatchID;
     }
@@ -630,15 +633,15 @@ public class Server implements Runnable {
     /**
      * Lists the saved matches.
      *
-     * @return list of the saved matches.
+     * @return an ArrayList of the saved matches.
      */
     private ArrayList<Integer> listSavedMatches() {
         File directory = new File(defaultPath);
-        File[] files = directory.listFiles((dir, name) -> name.endsWith(".match"));
+        File[] files = directory.listFiles((dir, name) -> name.endsWith(".match")); //obtains the files contained in the directory that ends with ".match"
         ArrayList<Integer> matchFiles = new ArrayList<>();
         if (files != null) {
             for (File file : files) {
-                matchFiles.add(Integer.parseInt(file.getName().substring(6, file.getName().length() - 6)));
+                matchFiles.add(Integer.parseInt(file.getName().substring(6, file.getName().length() - 6))); //extract a substring from index 6 to length - 6
             }
         }
         return matchFiles;
@@ -651,7 +654,7 @@ public class Server implements Runnable {
      * @return MatchInfo of the loaded match.
      */
     private MatchInfo loadMatch(Integer matchID) {
-        String filename = this.defaultPath + "/match_" + matchID + ".match";
+        String filename = this.defaultPath + "/match_" + matchID + ".match"; //path of the file to read from
         try (FileInputStream fileIn = new FileInputStream(filename);
              ObjectInputStream in = new ObjectInputStream(fileIn)) {
             return (MatchInfo) in.readObject();
