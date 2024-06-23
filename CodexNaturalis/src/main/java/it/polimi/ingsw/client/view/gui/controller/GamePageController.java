@@ -464,7 +464,7 @@ public class GamePageController implements Initializable {
                     playSoundEffect("/Audio/you.mp3");
             }
         } else {
-            if(isLastTurn)
+            if (isLastTurn)
                 setLastTurn(currentStateMessage.getCurrentPlayer().getColor());
             else
                 setStateNotPlaying(currentStateMessage.getCurrentPlayer().getColor());
@@ -699,11 +699,9 @@ public class GamePageController implements Initializable {
             setPions(currentPlayer);
         }
 
+        addCardsToCommonArea();
         if (!Objects.equals(currentState, "objectiveState") && !Objects.equals(currentState, "StarterCardState") || first) {
-            addCardsToCommonArea();
             first = false;
-        } else if (Objects.equals(currentState, "PlaceTurnState") || Objects.equals(currentState, "PickTurnState")) {
-            addCardsToCommonArea();
         }
 
         addCommonObjective();
@@ -827,49 +825,56 @@ public class GamePageController implements Initializable {
 
         Platform.runLater(() -> {
             //Add the front up cards to commonArea
-            if (commonArea.getTableCards().getFirst() == null) {
-                if (Utilities.getCardFromPosition(layoutXPick0, layoutYResource, mainPane) != null)
-                    removeCardFromPosition(layoutXPick0, layoutYResource);
-            } else
+            try {
                 addNewCardToPane(mainPane, commonArea.getTableCards().getFirst().getID(), true,
                         commonArea.getTableCards().getFirst(), layoutXPick0, layoutYResource, fitHeightCommon, fitWidthCommon, this::pickCard);
-
-            if (commonArea.getTableCards().get(1) == null) {
+            } catch (IndexOutOfBoundsException e) {
                 if (Utilities.getCardFromPosition(layoutXPick1, layoutYResource, mainPane) != null)
                     removeCardFromPosition(layoutXPick1, layoutYResource);
-            } else
-                addNewCardToPane(mainPane, commonArea.getTableCards().get(1).getID(), true,
-                        commonArea.getTableCards().get(1), layoutXPick1, layoutYResource, fitHeightCommon, fitWidthCommon, this::pickCard);
-
-            if (commonArea.getTableCards().get(2) == null) {
-                if (Utilities.getCardFromPosition(layoutXPick0, layoutYGold, mainPane) != null)
-                    removeCardFromPosition(layoutXPick0, layoutYGold);
-            } else
-                addNewCardToPane(mainPane, commonArea.getTableCards().get(2).getID(), true,
-                        commonArea.getTableCards().get(2), layoutXPick0, layoutYGold, fitHeightCommon, fitWidthCommon, this::pickCard);
-
-            if (commonArea.getTableCards().get(3) == null) {
-                if (Utilities.getCardFromPosition(layoutXPick1, layoutYGold, mainPane) != null)
-                    removeCardFromPosition(layoutXPick1, layoutYGold);
-            } else
-                addNewCardToPane(mainPane, commonArea.getTableCards().get(3).getID(), true,
-                        commonArea.getTableCards().get(3), layoutXPick1, layoutYGold, fitHeightCommon, fitWidthCommon, this::pickCard);
-
-            //Add the cards to deck
-            if (commonArea.getD1().getList().getFirst() == null) {
-                if (Utilities.getCardFromPosition(layoutXDeck, layoutYResource, mainPane) != null)
-                    removeCardFromPosition(layoutXDeck, layoutYResource);
-            } else {
-                addNewCardToPane(mainPane, commonArea.getD1().getList().getFirst().getID(), false,
-                        commonArea.getD1().getList().getFirst(), layoutXDeck, layoutYResource, fitHeightCommon, fitWidthCommon, this::pickCard);
             }
 
-            if (commonArea.getD2().getList().getFirst() == null) {
-                if (Utilities.getCardFromPosition(layoutXDeck, layoutYGold, mainPane) != null)
-                    removeCardFromPosition(layoutXDeck, layoutYGold);
-            } else
+            try {
+                addNewCardToPane(mainPane, commonArea.getTableCards().get(1).getID(), true,
+                        commonArea.getTableCards().get(1), layoutXPick1, layoutYResource, fitHeightCommon, fitWidthCommon, this::pickCard);
+            } catch (IndexOutOfBoundsException e) {
+                if (Utilities.getCardFromPosition(layoutXPick1, layoutYResource, mainPane) != null)
+                    removeCardFromPosition(layoutXPick1, layoutYResource);
+            }
+
+            try {
+                addNewCardToPane(mainPane, commonArea.getTableCards().get(2).getID(), true,
+                        commonArea.getTableCards().get(2), layoutXPick0, layoutYGold, fitHeightCommon, fitWidthCommon, this::pickCard);
+            } catch (IndexOutOfBoundsException e) {
+                if (Utilities.getCardFromPosition(layoutXPick0, layoutYGold, mainPane) != null)
+                    removeCardFromPosition(layoutXPick0, layoutYGold);
+            }
+
+            try {
+                addNewCardToPane(mainPane, commonArea.getTableCards().get(3).getID(), true,
+                        commonArea.getTableCards().get(3), layoutXPick1, layoutYGold, fitHeightCommon, fitWidthCommon, this::pickCard);
+            } catch (IndexOutOfBoundsException e) {
+                if (Utilities.getCardFromPosition(layoutXPick1, layoutYGold, mainPane) != null)
+                    removeCardFromPosition(layoutXPick1, layoutYGold);
+            }
+
+
+            //Add the cards to deck
+            try {
+                addNewCardToPane(mainPane, commonArea.getD1().getList().getFirst().getID(), false,
+                        commonArea.getD1().getList().getFirst(), layoutXDeck, layoutYResource, fitHeightCommon, fitWidthCommon, this::pickCard);
+            } catch (IndexOutOfBoundsException e) {
+                if (Utilities.getCardFromPosition(layoutXDeck, layoutYResource, mainPane) != null)
+                    removeCardFromPosition(layoutXDeck, layoutYResource);
+            }
+
+            try {
                 addNewCardToPane(mainPane, commonArea.getD2().getList().getFirst().getID(), false,
                         commonArea.getD2().getList().getFirst(), layoutXDeck, layoutYGold, fitHeightCommon, fitWidthCommon, this::pickCard);
+            } catch (IndexOutOfBoundsException e) {
+                if (Utilities.getCardFromPosition(layoutXDeck, layoutYGold, mainPane) != null)
+                    removeCardFromPosition(layoutXDeck, layoutYGold);
+            }
+
         });
     }
 
@@ -900,7 +905,7 @@ public class GamePageController implements Initializable {
                 addNewCardToPane(mainPane, myHand.getPlaceableCards().get(i).getID(), true,
                         myHand.getPlaceableCards().get(i), layoutXCard0 + i * 246, layoutYHand, fitHeightCard, fitWidthCard, null);
             }
-            if(myHand.getPlaceableCards().size() == 2)
+            if (myHand.getPlaceableCards().size() == 2)
                 removeCardFromPosition(layoutXCard2, layoutYHand);
         } else {
             Platform.runLater(() -> {
@@ -1004,7 +1009,7 @@ public class GamePageController implements Initializable {
                 addNewCardToPane(mainPane, hand.getPlaceableCards().get(i).getID(), true,
                         hand.getPlaceableCards().get(i), layoutXCard0 + i * 246, layoutYHand, fitHeightCard, fitWidthCard, null);
             }
-            if(hand.getPlaceableCards().size() == 2)
+            if (hand.getPlaceableCards().size() == 2)
                 removeCardFromPosition(layoutXCard2, layoutYHand);
         } else {
             PlayerHand hand = players.get(clickCounter).getPlayerHand();
@@ -1107,15 +1112,16 @@ public class GamePageController implements Initializable {
         if (clickCounter == -1)
             addMyObjective();
         else {
-            if (players.size() > clickCounter && players.get(clickCounter) != null) {
-                if (players.get(clickCounter).getObjective() != null) {
-                    if (endgame)
-                        Platform.runLater(() -> addNewCardToPane(mainPane, players.get(clickCounter).getObjective().getID(), true, players.get(clickCounter).getObjective(),
-                                layoutXObjective, layoutYObjMy, fitHeightCommon, fitWidthCommon, null));
-                    else
-                        Platform.runLater(() -> addNewCardToPane(mainPane, players.get(clickCounter).getObjective().getID(), false, players.get(clickCounter).getObjective(),
-                                layoutXObjective, layoutYObjMy, fitHeightCommon, fitWidthCommon, null));
-                }
+            try {
+                if (endgame)
+                    Platform.runLater(() -> addNewCardToPane(mainPane, players.get(clickCounter).getObjective().getID(), true, players.get(clickCounter).getObjective(),
+                            layoutXObjective, layoutYObjMy, fitHeightCommon, fitWidthCommon, null));
+                else
+                    Platform.runLater(() -> addNewCardToPane(mainPane, players.get(clickCounter).getObjective().getID(), false, players.get(clickCounter).getObjective(),
+                            layoutXObjective, layoutYObjMy, fitHeightCommon, fitWidthCommon, null));
+            } catch (IndexOutOfBoundsException e) {
+                if (Utilities.getCardFromPosition(layoutXObjective, layoutYObjMy, mainPane) != null)
+                    removeCardFromPosition(layoutXObjective, layoutYObjMy);
             }
         }
     }
@@ -1319,7 +1325,6 @@ public class GamePageController implements Initializable {
             }
             if (pane == mainPane)
                 Utilities.hooverEffect(newCard, 1.05);
-
 
             Platform.runLater(() -> {
                 pane.getChildren().add(newCard);
