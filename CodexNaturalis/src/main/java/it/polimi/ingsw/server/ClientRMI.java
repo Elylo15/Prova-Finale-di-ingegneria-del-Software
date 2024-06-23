@@ -324,10 +324,10 @@ public class ClientRMI extends ClientConnection implements Runnable, Serializabl
      * @return boolean true if the connection is active, false or no answer otherwise
      */
     @Override
-    public synchronized boolean isConnected() {
+    public synchronized boolean isConnected(ArrayList<String> onlinePlayers) {
         try {
             String answer = "ACK";
-            currentStateMessage message = new currentStateMessage(null, null, "AnswerCheckConnection", false, null, null, null);
+            currentStateMessage message = new currentStateMessage(null, null, "AnswerCheckConnection", false, onlinePlayers, null, null);
             this.sendCurrentState(message);
             return answer.equals(toServer.read());
         } catch (Exception e) {

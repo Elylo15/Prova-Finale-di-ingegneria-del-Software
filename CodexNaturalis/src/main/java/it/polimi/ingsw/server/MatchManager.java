@@ -1101,7 +1101,9 @@ public class MatchManager implements Runnable {
         // Sends a ping to all players
         for (PlayerInfo playerInfo : this.getOnlinePlayerInfo()) {
             //for each playerInfo object whose player is online, we submit to the executor a task to check if he is online
-            Future<Boolean> future = executor.submit(() -> playerInfo.getConnection().isConnected());
+            Future<Boolean> future = executor.submit(() -> playerInfo.getConnection().isConnected(this.getOnlinePlayerInfo().stream()
+                    .map(playerInfo1 -> playerInfo1.getPlayer().getNickname())
+                    .collect(Collectors.toCollection(ArrayList::new))));
             futures.put(future, playerInfo);
         }
         int timeout = 5;

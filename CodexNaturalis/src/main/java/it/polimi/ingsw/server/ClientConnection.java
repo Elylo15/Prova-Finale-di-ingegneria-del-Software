@@ -92,7 +92,7 @@ public abstract class ClientConnection implements Runnable, Serializable {
 
     public abstract void closeConnection();
 
-    public abstract boolean isConnected();
+    public abstract boolean isConnected(ArrayList<String> onlinePlayers);
 
 
 }

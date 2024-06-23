@@ -326,10 +326,10 @@ public class ClientSocket extends ClientConnection implements Serializable {
      * @return boolean true if the connection is active, false or no answer otherwise
      */
     @Override
-    public boolean isConnected() {
+    public boolean isConnected(ArrayList<String> onlinePlayers) {
         try {
             String answer = "ACK";
-            currentStateMessage message = new currentStateMessage(null, null, "AnswerCheckConnection", false, null, null, null);
+            currentStateMessage message = new currentStateMessage(null, null, "AnswerCheckConnection", false, onlinePlayers, null, null);
             this.sendCurrentState(message);
             return answer.equals(inputStream.readObject());
         } catch (Exception e) {

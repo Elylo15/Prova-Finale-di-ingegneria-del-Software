@@ -274,14 +274,14 @@ class ControllerSocketTest {
     @DisplayName("Sending an answer to a ping test")
     void sendAnswerToPingTest() {
         controller.sendAnswerToPing();
-        Assertions.assertTrue(connection.isConnected());
+        Assertions.assertTrue(connection.isConnected(null));
     }
 
     @Test
     @DisplayName("Closing the connection")
     void closeConnectionTest() {
         connection.closeConnection();
-        Assertions.assertFalse(connection.isConnected());
+        Assertions.assertFalse(connection.isConnected(null));
 
         Assertions.assertThrows(RuntimeException.class, () -> controller.getCurrent());
         Assertions.assertThrows(RuntimeException.class, () -> controller.serverOptions());
