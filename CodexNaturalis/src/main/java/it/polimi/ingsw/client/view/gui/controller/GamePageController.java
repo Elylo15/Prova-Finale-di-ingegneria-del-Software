@@ -40,12 +40,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import static it.polimi.ingsw.client.view.gui.Utilities.*;
+
 /**
-* This class is a controller for the gui scene where the game is played.
-* It contains the game board and the player's cards, objectives, and resources.
-* It displays the game state and the player's turn.
-* When the player's turn is active, it allows the player to interact with the game board.
-*/
+ * This class is a controller for the gui scene where the game is played.
+ * It contains the game board and the player's cards, objectives, and resources.
+ * It displays the game state and the player's turn.
+ * When the player's turn is active, it allows the player to interact with the game board.
+ */
 public class GamePageController implements Initializable {
     private final double offsetPions = 5;
     private final double[][] positions = {
@@ -87,6 +88,7 @@ public class GamePageController implements Initializable {
     private final double layoutXCard1 = 1110;
     private final double layoutXCard2 = 1356;
     private final Label winnerLabel = new Label();
+    private final ArrayList<Label> playerInfoLabel = new ArrayList<>();
     private final BlockingQueue<Object> messageQueue = new LinkedBlockingQueue<>();
     private final ArrayList<Player> players = new ArrayList<>();
     private final ArrayList<ObjectiveCard> objectivesToChose = new ArrayList<>();
@@ -124,7 +126,6 @@ public class GamePageController implements Initializable {
     private ImageView purple;
     private ImageView green;
     private ImageView back;
-    private Label[] playerInfoLabel;
     private ImageView selectedCard;
     private Player myself;
     private PlayerHand myHand;
@@ -276,8 +277,8 @@ public class GamePageController implements Initializable {
 
             winner.toFront();
             winnerLabel.toFront();
-            back.toFront();
             for (Label label : playerInfoLabel) label.toFront();
+            back.toFront();
         }
     }
 
@@ -393,22 +394,23 @@ public class GamePageController implements Initializable {
             Integer playerScore = entry.getValue();
             Integer playerObjectives = objectives.get(playerName);
 
-            // Create a label with the player information
-            playerInfoLabel[i] = new Label(playerName + " - " + playerScore + " Points - " + playerObjectives + " Objectives");
+            // Label with the player information
+            Label playerInfo = new Label(playerName + " - " + playerScore + " Points - " + playerObjectives + " Objectives");
 
-            playerInfoLabel[i].setFont(Font.loadFont(getClass().getResourceAsStream("/Fonts/FantasyScript.ttf"), 37));
-            playerInfoLabel[i].setTextFill(Color.rgb(53, 31, 23));
-            playerInfoLabel[i].setLayoutX(497);
-            playerInfoLabel[i].setLayoutY(198 + 79 * i);
-            playerInfoLabel[i].setPrefWidth(916);
-            playerInfoLabel[i].setPrefHeight(75);
-            playerInfoLabel[i].setAlignment(Pos.CENTER);
+            playerInfo.setFont(Font.loadFont(getClass().getResourceAsStream("/Fonts/FantasyScript.ttf"), 37));
+            playerInfo.setTextFill(Color.rgb(53, 31, 23));
+            playerInfo.setLayoutX(497);
+            playerInfo.setLayoutY(198 + 79 * i);
+            playerInfo.setPrefWidth(916);
+            playerInfo.setPrefHeight(75);
+            playerInfo.setAlignment(Pos.CENTER);
+
+            playerInfoLabel.add(playerInfo);
+            mainPane.getChildren().add(playerInfoLabel.get(i));
+            Utilities.fadeInTransition(playerInfoLabel.get(i), 0.8);
+
+            playerInfoLabel.get(i).toFront();
             i++;
-
-            mainPane.getChildren().add(playerInfoLabel[i]);
-            Utilities.fadeInTransition(playerInfoLabel[i], 0.8);
-
-            playerInfoLabel[i].toFront();
         }
     }
 
@@ -1085,7 +1087,7 @@ public class GamePageController implements Initializable {
      * Displays the player's personal objective
      */
     private void addMyObjective() {
-        if(myObjective != null) {
+        if (myObjective != null) {
             if (endgame)
                 Platform.runLater(() -> addNewCardToPane(mainPane, myObjective.getID(), true, myObjective, layoutXObjective, layoutYObjMy, fitHeightCommon, fitWidthCommon, null));
             Platform.runLater(() -> addNewCardToPane(mainPane, myObjective.getID(), true, myObjective, layoutXObjective, layoutYObjMy, fitHeightCommon, fitWidthCommon, this::turnObjectives));
@@ -1101,7 +1103,7 @@ public class GamePageController implements Initializable {
             addMyObjective();
         else {
             if (players.size() > clickCounter && players.get(clickCounter) != null) {
-                if(players.get(clickCounter).getObjective() != null) {
+                if (players.get(clickCounter).getObjective() != null) {
                     if (endgame)
                         Platform.runLater(() -> addNewCardToPane(mainPane, players.get(clickCounter).getObjective().getID(), true, players.get(clickCounter).getObjective(),
                                 layoutXObjective, layoutYObjMy, fitHeightCommon, fitWidthCommon, null));
@@ -1486,14 +1488,13 @@ public class GamePageController implements Initializable {
                     else if (cardID == myHand.getPlaceableCards().get(2).getID())
                         selectedToPlace[0] = 2;
 
-                    if (selectedStarterFront == 1)
+                    if (selectedToPlace[1] == 1)
                         selectedToPlace[1] = 0;
                     else
                         selectedToPlace[1] = 1;
                 }
             }
         }
-
     }
 
     /**
@@ -1724,14 +1725,14 @@ public class GamePageController implements Initializable {
         for (ImageView pion : pions) {
             if (pion != myPion) {
                 if (pion != null && pion.getLayoutX() == targetX) {
-                    while(pion.getLayoutY() == (targetY += offsetY)) {
+                    while (pion.getLayoutY() == (targetY += offsetY)) {
                         offsetY -= offsetPions;
 //                        targetY += offsetY;
                     }
                 }
             }
         }
-        return new double[]{targetX, targetY };
+        return new double[]{targetX, targetY};
     }
 
     /**
