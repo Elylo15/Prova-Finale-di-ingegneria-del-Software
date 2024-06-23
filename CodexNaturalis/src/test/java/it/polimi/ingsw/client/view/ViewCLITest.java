@@ -102,7 +102,7 @@ class ViewCLITest {
 
 
     @Test
-    @DisplayName("Scoreboard test")
+    @DisplayName("Scoreboard test: purple winner")
     void testEndOneWinnerPurple() {
         Player alfa = new Player("alfa", "red", null);
         Player beta = new Player("beta", "purple", null);
@@ -125,7 +125,7 @@ class ViewCLITest {
     }
 
     @Test
-    @DisplayName("Scoreboard test")
+    @DisplayName("Scoreboard test: blue winner")
     void testEndOneWinnerBlue() {
         Player alfa = new Player("alfa", "red", null);
         Player beta = new Player("beta", "blue", null);
@@ -149,7 +149,7 @@ class ViewCLITest {
     }
 
     @Test
-    @DisplayName("Scoreboard test")
+    @DisplayName("Scoreboard test: green winner")
     void testEndOneWinnerGreen() {
         Player alfa = new Player("alfa", "red", null);
         Player beta = new Player("beta", "blue", null);
@@ -172,7 +172,7 @@ class ViewCLITest {
     }
 
     @Test
-    @DisplayName("Scoreboard test")
+    @DisplayName("Scoreboard test: red winner")
     void testEndOneWinnerRed() {
         Player alfa = new Player("alfa", "red", null);
         Player beta = new Player("beta", "blue", null);
@@ -195,7 +195,7 @@ class ViewCLITest {
     }
 
     @Test
-    @DisplayName("Scoreboard test")
+    @DisplayName("Scoreboard test: two winners")
     void testEndTwoWinners() {
         Player alfa = new Player("alfa", "red", null);
         Player beta = new Player("beta", "purple", null);
