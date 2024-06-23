@@ -71,11 +71,14 @@ public class MatchManager implements Runnable {
      * @throws FailedToJoinMatch if the player cannot join the match
      */
     protected synchronized void addPlayerInfo(PlayerInfo playerInfo) throws FailedToJoinMatch {
+        //this method is synchronized, so it is not possible to add simultaneously more than one playerInfo on the same MatchManager object
         if (playerInfo != null
                 && matchInfo.getStatus() == MatchState.Waiting
                 && (matchInfo.getExpectedPlayers() == null || matchInfo.getExpectedPlayers() > matchInfo.getAllPlayersInfo().size())
                 && matchInfo.getAllPlayersInfo().stream().noneMatch(playerInfo1 -> playerInfo1.getPlayer().getNickname().equalsIgnoreCase(playerInfo.getPlayer().getNickname()))
                 && matchInfo.getAllPlayersInfo().stream().noneMatch(playerInfo1 -> playerInfo1.getPlayer().getColor().equalsIgnoreCase(playerInfo.getPlayer().getColor()))) {
+            //in order to add playerInfo to the MatchInfo attribute of MatchManager the match must be in state waiting, number of expected players must be null or lower than the number of players
+            //none of the players already involved in the match has the same name and color of the player to add
             this.matchInfo.addPlayer(playerInfo);
             logCreator.log("Player added: " + playerInfo.getPlayer().getNickname() + " " + playerInfo.getPlayer().getColor());
             this.notifyAll();
@@ -101,15 +104,15 @@ public class MatchManager implements Runnable {
      */
     protected synchronized void wakeUpPlayer(String nickname, ClientConnection connection) throws FailedToJoinMatch {
 
-        // Check if the state of the match allows the player to join
+        // Check if the state of the match allows the player to join, throws exception if it is not possible to join
         if (this.matchInfo.getStatus() == MatchState.Waiting || this.matchInfo.getStatus() == MatchState.KickingPlayers || this.matchInfo.getStatus() == MatchState.Endgame) {
             throw new FailedToJoinMatch("Player cannot join the match, match is not in the right state");
         }
 
-        // Check if the player is in the list of players and it is offline
+        // Check if the player is in the list of players involved in the match and he is offline
         PlayerInfo playerInfo = matchInfo.getAllPlayersInfo().stream()
                 .filter(playerInfo1 -> playerInfo1.getPlayer().getNickname().equalsIgnoreCase(nickname))
-                .filter(playerInfo1 -> playerInfo1.getConnection() == null)
+                .filter(playerInfo1 -> playerInfo1.getConnection() == null) //if the player is offline his connection has been previously set to null
                 .findFirst().orElse(null);
 
 
@@ -128,13 +131,18 @@ public class MatchManager implements Runnable {
      * Retrieves a list of all online players in the match.
      * A player is considered online if their connection is not null.
      *
-     * @return An ArrayList of PlayerInfo objects representing the online players.
+     * @return An ArrayList of PlayerInfo objects containing the online players.
      */
     protected ArrayList<PlayerInfo> getOnlinePlayerInfo() {
         return this.matchInfo.getAllPlayersInfo().stream()
                 .filter(playerInfo -> playerInfo.getConnection() != null)
                 .collect(Collectors.toCollection(ArrayList::new));
     }
+
+    /**
+     * Retrieves a list of all online players in the match.
+     * @return An ArrayList of PlayerInfo objects containing the offline players.
+     */
 
     protected ArrayList<PlayerInfo> getOfflinePlayerInfo() {
         return this.matchInfo.getAllPlayersInfo().stream()
@@ -160,17 +168,26 @@ public class MatchManager implements Runnable {
         return this.matchInfo.getMatch();
     }
 
-
+    /**
+     * create a clone of matchInfo and write it to a file that is created in the directory 'savedMatches'
+     */
     private synchronized void saveMatch() {
-        MatchInfo copy = matchInfo.cloneForSerialization();
+        MatchInfo copy = matchInfo.cloneForSerialization(); //obtain an object MatchInfo equal to matchInfo attribute
         File dir = new File("savedMatches");
-        if (!dir.exists())
-            dir.mkdir();
+        if (!dir.exists()) {
+            boolean dirCreated = dir.mkdir(); //create the file if it does not already exist
+
+            if (!dirCreated) {
+                System.out.println("Failed to create directory to save the match: " + dir.getAbsolutePath()); //standard output stream
+                System.err.println("Failed to create directory to save the match: " + dir.getAbsolutePath()); //error output stream
+            }
+        }
 
         String filename = "savedMatches/match_" + copy.getID() + ".match";
-        try (FileOutputStream fileOut = new FileOutputStream(filename);
-             ObjectOutputStream out = new ObjectOutputStream(fileOut)) {
-            out.writeObject(copy);
+        try (FileOutputStream fileOut = new FileOutputStream(filename); //create a FileOutputStream to write bytes to the file
+             ObjectOutputStream out = new ObjectOutputStream(fileOut))  //create a ObjectOutputStream to write serialized object to fileOut
+        {    //fileOut and out are automatically closed after try block
+            out.writeObject(copy); //write the matchInfo clone to the file
             logCreator.log("Match " + copy.getID() + " saved");
         } catch (Exception e) {
             e.printStackTrace();
