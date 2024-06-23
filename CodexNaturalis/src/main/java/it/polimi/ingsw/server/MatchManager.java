@@ -46,7 +46,7 @@ public class MatchManager implements Runnable {
     public MatchManager(MatchInfo match) {
         this.matchInfo = match;
         this.matchInfo.setLastTurn(false);
-        this.turnNumber = 0;
+        this.turnNumber = 0; //initialize to 0 the number of turn played
 
         this.timeout = 120 * 1000;
 
@@ -88,7 +88,7 @@ public class MatchManager implements Runnable {
     }
 
     /**
-     * Kicks a player from the match, closing its connection.
+     * Kicks a player out of the match, closing its connection.
      *
      * @param playerInfo player to be kicked
      */
@@ -205,24 +205,24 @@ public class MatchManager implements Runnable {
         while (!gameOver) {
 
 
-            // After the first turns prioritizes the players who reconnect and are in the starter state
-            // or objective state
+            // After the first turns prioritizes the players who reconnect and are in state StarterCard or Objective
             synchronized (this) {
-                // Draws common objective cards
+                // Draws common objective cards, if the array of common objectives in the match is null call Match method drawCommonObjective()
                 if (this.turnNumber == 2 && this.matchInfo.getMatch().getCommonObjective()[0] == null) {
                     this.matchInfo.getMatch().drawCommonObjective();
                     this.saveMatch();
                 }
 
-                // Checks if there are online player in the starter state after the initial turns
+                // Checks if there are online player in the StarterCard state after turnNumber 1 in which players place starter card
                 if (this.turnNumber > 1) {
                     this.getOnlinePlayerInfo().stream()
                             .filter(playerInfo -> playerInfo.getState() == State.StarterCard)
+                            //now stream contains only playerInfo objects whose player is online and in state StarterCard
                             .forEach(playerInfo -> this.player(playerInfo.getPlayer()));
                 }
 
 
-                // Checks if there are online player in the objective state after the initial turns
+                // Checks if there are online player in the Objective state after turnNumber 2 in which players choose private objective
                 if (this.turnNumber > 2) {
                     this.getOnlinePlayerInfo().stream()
                             .filter(playerInfo -> playerInfo.getState() == State.Objective)
@@ -230,7 +230,7 @@ public class MatchManager implements Runnable {
                 }
 
 
-                // Eventually update all players to last turn
+                // Eventually update all players to LastTurn state
                 if (this.matchInfo.isLastTurn()) {
                     this.getOnlinePlayerInfo().stream()
                             .filter(playerInfo -> playerInfo.getState() == State.PlaceCard)
@@ -646,6 +646,7 @@ public class MatchManager implements Runnable {
      */
     private void updateMatchStatus() {
         switch (this.matchInfo.getStatus()) {
+            //the match state is updated to the player's turn
             case Player1 -> this.matchInfo.setStatus(MatchState.Player2);
             case Player2 -> this.matchInfo.setStatus(MatchState.Player3);
             case Player3 -> this.matchInfo.setStatus(MatchState.Player4);
@@ -948,6 +949,9 @@ public class MatchManager implements Runnable {
         this.saveMatch();
     }
 
+    /**
+     * Kick out of the match each online player
+     */
     private void kickingPlayers() {
         logCreator.log("Kicking out all players");
         this.getOnlinePlayerInfo().forEach(this::kickPlayer);
@@ -1088,7 +1092,7 @@ public class MatchManager implements Runnable {
 
     /**
      * Checks if all players are still connected.
-     * If a player is not connected, they are kicked from the match.
+     * If a player is not connected, he is kicked out of the match.
      */
     private synchronized void checkPlayersConnections() {
         HashMap<Future<Boolean>, PlayerInfo> futures = new HashMap<>();
@@ -1096,19 +1100,20 @@ public class MatchManager implements Runnable {
 
         // Sends a ping to all players
         for (PlayerInfo playerInfo : this.getOnlinePlayerInfo()) {
+            //for each playerInfo object whose player is online, we submit to the executor a task to check if he is online
             Future<Boolean> future = executor.submit(() -> playerInfo.getConnection().isConnected());
             futures.put(future, playerInfo);
         }
-
         int timeout = 5;
         TimeUnit unit = TimeUnit.SECONDS;
 
         // Expects a response from all players
         for (Future<Boolean> currFuture : futures.keySet()) {
+            //for each boolean key in futures, representing whether players are online or offline we submit to the executor a task to kick offline players
             Future<Boolean> responseFuture = executor.submit(() -> {
                 try {
-                    boolean response = currFuture.get(timeout, unit);
-                    if (!response)
+                    boolean response = currFuture.get(timeout, unit); //waits 5 seconds to obtain
+                    if (!response) //if response is false, the player is offline, throws exception that will kick the player
                         throw new Exception();
                     //logCreator.log("Player " + futures.get(currFuture).getPlayer().getNickname() + " is online");
                     return true;
@@ -1118,11 +1123,11 @@ public class MatchManager implements Runnable {
                     return false;
                 }
             });
-
+            //results will contain objects of type Future<Boolean>, they will be true if we obtain in less than 5 seconds the result of the task that check players' connection
             results.add(responseFuture);
         }
 
-        // Waits for all tasks to complete
+        // Waits for all tasks to complete, blocks the thread until we obtain the result for each element of the ArrayList results
         for (Future<Boolean> future : results) {
             try {
                 future.get();
