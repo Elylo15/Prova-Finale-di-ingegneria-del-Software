@@ -445,10 +445,6 @@ public class GamePageController implements Initializable {
         currentStateCase(currentStateMessage);
         setRotate(currentStateMessage.getPlayer().getColor());
 
-        if (isLastTurn) {
-            setLastTurn(currentStateMessage.getCurrentPlayer().getColor());
-            playSoundEffect("/Audio/you.mp3");
-        }
 
         if (currentStateMessage.getCurrentPlayer().getNickname().equals(myself.getNickname())) {
             if (Objects.equals(currentState, "StarterCardState")) {
@@ -460,12 +456,18 @@ public class GamePageController implements Initializable {
                 starterCase();
                 choosePopUp(currentStateMessage.getPlayer().getColor());
             } else if (Objects.equals(currentState, "PlaceTurnState") || Objects.equals(currentState, "PickTurnState")) {
-                setState(currentStateMessage.getPlayer().getColor());
-                if (!isLastTurn && !wrong && Objects.equals(currentState, "PlaceTurnState"))
+                if (isLastTurn)
+                    setLastTurn(currentStateMessage.getCurrentPlayer().getColor());
+                else
+                    setState(currentStateMessage.getPlayer().getColor());
+                if (!wrong)
                     playSoundEffect("/Audio/you.mp3");
             }
         } else {
-            setStateNotPlaying(currentStateMessage.getCurrentPlayer().getColor());
+            if(isLastTurn)
+                setLastTurn(currentStateMessage.getCurrentPlayer().getColor());
+            else
+                setStateNotPlaying(currentStateMessage.getCurrentPlayer().getColor());
         }
     }
 
@@ -825,7 +827,6 @@ public class GamePageController implements Initializable {
 
         Platform.runLater(() -> {
             //Add the front up cards to commonArea
-
             if (commonArea.getTableCards().getFirst() == null) {
                 if (Utilities.getCardFromPosition(layoutXPick0, layoutYResource, mainPane) != null)
                     removeCardFromPosition(layoutXPick0, layoutYResource);
@@ -899,6 +900,8 @@ public class GamePageController implements Initializable {
                 addNewCardToPane(mainPane, myHand.getPlaceableCards().get(i).getID(), true,
                         myHand.getPlaceableCards().get(i), layoutXCard0 + i * 246, layoutYHand, fitHeightCard, fitWidthCard, null);
             }
+            if(myHand.getPlaceableCards().size() == 2)
+                removeCardFromPosition(layoutXCard2, layoutYHand);
         } else {
             Platform.runLater(() -> {
                 ImageView card0 = Utilities.getCardFromPosition(layoutXCard0, layoutYHand, mainPane);
@@ -1001,6 +1004,8 @@ public class GamePageController implements Initializable {
                 addNewCardToPane(mainPane, hand.getPlaceableCards().get(i).getID(), true,
                         hand.getPlaceableCards().get(i), layoutXCard0 + i * 246, layoutYHand, fitHeightCard, fitWidthCard, null);
             }
+            if(hand.getPlaceableCards().size() == 2)
+                removeCardFromPosition(layoutXCard2, layoutYHand);
         } else {
             PlayerHand hand = players.get(clickCounter).getPlayerHand();
             ImageView card0 = Utilities.getCardFromPosition(layoutXCard0, layoutYHand, mainPane);
@@ -1662,7 +1667,7 @@ public class GamePageController implements Initializable {
             updatePionsPositions(allPions, pion);
         } else if (pion != null && !isPionAtDesiredPosition(pion, score)) {
             if (myself.getNickname().equals(currentPlayerNickname))
-                playSoundEffect("/Audio/you.mp3");
+                playSoundEffect("/Audio/points.mp3");
             addPoints(pion, score, allPions);
             updatePionsPositions(allPions, pion);
         }
