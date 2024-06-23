@@ -27,6 +27,7 @@ public class ViewGUI extends View {
     private String state;
     private serverOptionMessage newMessage;
     private String color;
+    private ArrayList<String> names;
 
 
     /**
@@ -136,6 +137,7 @@ public class ViewGUI extends View {
             firstTimeName = false;
             Platform.runLater(SceneManager::unavailableNames);
         }
+        names = message.getNames();
         GUIMessages.writeToGUI(message);
         return (String) GUIMessages.readToClient();
     }
@@ -166,7 +168,7 @@ public class ViewGUI extends View {
                 }
             }
         } else if(message.getCorrect() && (Objects.equals(state, "NameFAState") || Objects.equals(state, "AvailableColorsState"))
-                    && !Objects.equals(state, "WaitingState") && (!newMessage.isNewMatch() || newMessage.getMatchID() != null)) {
+                    && !Objects.equals(state, "WaitingState") && (!newMessage.isNewMatch() || (newMessage.getMatchID() != null && !names.isEmpty()))) {
             GUIMessages.writeToGUI("random");
             Platform.runLater(SceneManager::waiting);
             return true;

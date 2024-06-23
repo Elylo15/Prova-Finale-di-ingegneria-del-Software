@@ -50,6 +50,7 @@ public class ViewCLI extends View {
 
     private serverOptionMessage newMessage;
     private String state = "";
+    private ArrayList<String> names = new ArrayList<>();
 
     //the purpose of ViewCLI is to handle the interaction with the user and
     // visualize what he needs to see in order to play the game
@@ -1190,6 +1191,7 @@ public class ViewCLI extends View {
      */
     public String unavailableNames(unavailableNamesMessage message) {
         state = "UnavailableNamesState";
+        names = message.getNames();
         //the client can call the method view.unavailableNames passing as a parameter the arraylist of unavailable names received from server
         if (!message.toString().equals("[]")) {
             System.out.println("This nicknames are not available: " + message);
@@ -1220,8 +1222,8 @@ public class ViewCLI extends View {
     public boolean answer(responseMessage message) {
         if (!message.getCorrect())
             System.out.println(RED_TEXT + "You didn't entered a valid value, please try again" + RESET);
-        else if(message.getCorrect() && (Objects.equals(state, "NameFAState") || Objects.equals(state, "AvailableColors")) && !Objects.equals(state, "Waiting")
-                && (!newMessage.isNewMatch() || newMessage.getMatchID() != null)) {
+        else if(message.getCorrect() && (Objects.equals(state, "NameFAState") || Objects.equals(state, "AvailableColors"))
+                && !Objects.equals(state, "Waiting") && (!newMessage.isNewMatch() || (newMessage.getMatchID() != null && !names.isEmpty()))) {
             System.out.println(PURPLE_TEXT + "Waiting for" + BLUE_TEXT + " other players" + GREEN_TEXT + " to join" + RED_TEXT + " the game..." + RESET);
             return true;
         }
