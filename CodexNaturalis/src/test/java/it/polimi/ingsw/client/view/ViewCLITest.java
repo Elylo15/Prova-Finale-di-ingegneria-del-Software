@@ -11,6 +11,7 @@ import it.polimi.ingsw.model.CommonArea;
 import it.polimi.ingsw.model.Match;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.PlayerArea;
+import it.polimi.ingsw.model.cards.Deck;
 import it.polimi.ingsw.model.cards.ObjectiveCard;
 import it.polimi.ingsw.model.cards.PlaceableCard;
 import it.polimi.ingsw.model.cards.exceptions.noPlaceCardException;
@@ -259,6 +260,29 @@ class ViewCLITest {
         viewCLI.showPlayerHand(player1, "player1");
 
         viewCLI.showPlayerHand(player1, "player2");
+    }
+
+    @Test
+    @DisplayName("Partially empty and fully empty commonArea test")
+    void emptyCommonAreaTest() {
+        while (commonArea.getD2().getSize() > 0 && commonArea.getD1().getSize() > 0) {
+            commonArea.drawFromToPlayer(2);
+            commonArea.drawFromToPlayer(1);
+        }
+        int id;
+        viewCLI.showCommonArea(commonArea);
+        id = commonArea.getTableCards().getFirst().getID();
+        commonArea.pickTableCard(id);
+        viewCLI.showCommonArea(commonArea);
+        id = commonArea.getTableCards().getFirst().getID();
+        commonArea.pickTableCard(id);
+        viewCLI.showCommonArea(commonArea);
+        id = commonArea.getTableCards().getFirst().getID();
+        commonArea.pickTableCard(id);
+        viewCLI.showCommonArea(commonArea);
+        id = commonArea.getTableCards().getFirst().getID();
+        commonArea.pickTableCard(id);
+        viewCLI.showCommonArea(commonArea);
     }
 
     @Test

@@ -208,17 +208,17 @@ public class ViewCLI extends View {
         index += " (3)  " + "     ";
 
         try {
-            this.printDeck(output, area.getD1().getList().getFirst());
+            this.printDeck(output, area.getD1().getList().stream().findFirst().orElse(null));
         } catch (IndexOutOfBoundsException e) {
             this.printDeck(output, null);
         }
         try {
-            this.printDeck(output, area.getD2().getList().getFirst());
+            this.printDeck(output, area.getD2().getList().stream().findFirst().orElse(null));
         } catch (IndexOutOfBoundsException e) {
             this.printDeck(output, null);
         }
         try {
-            this.printCard(output, area.getTableCards().getFirst());
+            this.printCard(output, area.getTableCards().get(0));
         } catch (IndexOutOfBoundsException e) {
             this.printCard(output, null);
         }
