@@ -212,10 +212,16 @@ public class Server implements Runnable {
                     .map(game -> game.getMatchInfo().getID())
                     .collect(Collectors.toCollection(ArrayList::new));
 
+            // Obtains the list of all the current matches in this.games
+            ArrayList<Integer> allGames = games.stream()
+                    .map(matchManager -> matchManager.getMatchInfo().getID())
+                    .collect(Collectors.toCollection(ArrayList::new));
+
             // Obtains the list of saved matches
             ArrayList<Integer> savedMatches = this.listSavedMatches();
             savedMatches.removeAll(waitingGames);
             savedMatches.removeAll(runningGames);
+            savedMatches.removeAll(allGames);
 
             //Sends towards the client waitingMatches, runningMatches, savedMatches.
             //Requests to receive the ServerOptionMessage with the choice of the user
