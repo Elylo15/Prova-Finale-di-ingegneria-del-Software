@@ -326,7 +326,7 @@ public class GamePageController implements Initializable {
             Utilities.fadeInTransition(winnerLabel, 0.8);
             displayPlayerInfo(scores, objectives);
 
-            back = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Background/image.png"))));
+            back = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Buttons/image.png"))));
             back.setOnMouseClicked(event -> GUIMessages.writeToClient(true));
             back.setFitWidth(500);
             back.setFitHeight(131);

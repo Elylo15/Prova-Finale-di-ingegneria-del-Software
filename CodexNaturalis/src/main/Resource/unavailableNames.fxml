@@ -33,7 +33,7 @@
             </ImageView>
             <ImageView fx:id="submitButton" fitHeight="155.0" fitWidth="549.0" layoutX="1432.0" layoutY="888.0"
                        preserveRatio="true">
-                <Image url="@Images/Background/submit.png"/>
+                <Image url="@Images/Buttons/submit.png"/>
             </ImageView>
             <Label id="retry" fx:id="retry" layoutX="1589.0" layoutY="647.0" text="Try Again" textFill="#750000"
                    visible="false">

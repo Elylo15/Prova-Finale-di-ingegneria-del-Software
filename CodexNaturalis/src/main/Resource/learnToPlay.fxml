@@ -33,7 +33,7 @@
                     <Image url="@Images/rulesTxt/1.png" />
                 </ImageView>
                 <ImageView fitHeight="90.0" fitWidth="349.0" layoutX="1100.0" layoutY="996.0" onMouseClicked="#back" preserveRatio="true">
-                    <Image url="@Images/Background/image.png" />
+                    <Image url="@Images/Buttons/image.png" />
                 </ImageView>
                 <Label id="playerName" fx:id="playerName" alignment="CENTER" contentDisplay="CENTER" layoutX="528.0" layoutY="-20.0" prefHeight="176.0" prefWidth="415.0" text="Player 1" textAlignment="CENTER" textFill="#351f17">
                     <font>
@@ -42,7 +42,7 @@
                 </Label>
                 <Button fx:id="mainPane2" opacity="0.0" prefHeight="992.0" prefWidth="1920.0" BorderPane.alignment="CENTER">
                 </Button>
-                <ImageView fx:id="rotate" layoutX="1500.0" layoutY="48.0" preserveRatio="true">
+                <ImageView fx:id="rotate" fitHeight="60.0" fitWidth="60.0" layoutX="1500.0" layoutY="48.0" preserveRatio="true">
                     <Image url="@Images/NameTemplate/purple.png"/>
                 </ImageView>
             </Pane>

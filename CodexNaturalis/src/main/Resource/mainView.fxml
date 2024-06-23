@@ -1,62 +1,63 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.image.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.Pane?>
+
 <BorderPane fx:id="pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.client.view.gui.controller.MainPageController">
     <center>
         <Pane BorderPane.alignment="CENTER">
             <ImageView id="back" fitHeight="1080.0" fitWidth="1920.0" preserveRatio="true">
-                <Image url="@Images/Background/gamePageMain.png" />
+                <Image url="@Images/mainPage/gamePageMain.png" />
             </ImageView>
             <ImageView id="start" fx:id="playBtn" fitHeight="120.0" fitWidth="414.0" layoutX="1545.0" layoutY="540.0" onMouseClicked="#start" preserveRatio="true">
-                <Image url="@Images/Background/start.png" />
+                <Image url="@Images/Buttons/start.png" />
             </ImageView>
             <ImageView id="howTo" fx:id="rulesBtn" fitHeight="120.0" fitWidth="414.0" layoutX="54.0" layoutY="540.0" onMouseClicked="#loadRules" preserveRatio="true">
-                <Image url="@Images/Background/rules.png" />
+                <Image url="@Images/Buttons/rules.png" />
             </ImageView>
-            <ImageView id="devs" fx:id="devs" fitHeight="1080.0" fitWidth="1920.0" preserveRatio="true" opacity="0" disable="true">
-                <Image url="@Images/Background/devs.png" />
+            <ImageView id="devs" fx:id="devs" disable="true" fitHeight="1080.0" fitWidth="1920.0" opacity="0" preserveRatio="true">
+                <Image url="@Images/mainPage/devs.png" />
             </ImageView>
             <ImageView id="devsP" fx:id="devsP" fitHeight="1080.0" fitWidth="1920.0" preserveRatio="true">
-                <Image url="@Images/Background/devsP.png" />
+                <Image url="@Images/mainPage/devsP.png" />
             </ImageView>
             <ImageView id="devsG" fx:id="devsG" fitHeight="1080.0" fitWidth="1920.0" preserveRatio="true">
-                <Image url="@Images/Background/devsG.png" />
+                <Image url="@Images/mainPage/devsG.png" />
             </ImageView>
             <ImageView id="devsB" fx:id="devsB" fitHeight="1080.0" fitWidth="1920.0" preserveRatio="true">
-                <Image url="@Images/Background/devsB.png" />
+                <Image url="@Images/mainPage/devsB.png" />
             </ImageView>
             <ImageView id="devsR" fx:id="devsR" fitHeight="1080.0" fitWidth="1920.0" preserveRatio="true">
-                <Image url="@Images/Background/devsR.png" />
+                <Image url="@Images/mainPage/devsR.png" />
             </ImageView>
-            <ImageView id="bia" fx:id="bia" fitHeight="1080.0" fitWidth="1920.0" preserveRatio="true" opacity="0" onMouseClicked="#openBia" disable="true">
-                <Image url="@Images/Background/bia.png"/>
+            <ImageView id="bia" fx:id="bia" disable="true" fitHeight="1080.0" fitWidth="1920.0" onMouseClicked="#openBia" opacity="0" preserveRatio="true">
+                <Image url="@Images/mainPage/bia.png" />
             </ImageView>
-            <ImageView id="agnes" fx:id="agnes" fitHeight="1080.0" fitWidth="1920.0" preserveRatio="true"
-                       opacity="0" onMouseClicked="#openAgnes" disable="true">
-                <Image url="@Images/Background/agnes.png"/>
+            <ImageView id="agnes" fx:id="agnes" disable="true" fitHeight="1080.0" fitWidth="1920.0" onMouseClicked="#openAgnes" opacity="0" preserveRatio="true">
+                <Image url="@Images/mainPage/agnes.png" />
             </ImageView>
-            <ImageView id="nico" fx:id="nico" fitHeight="1080.0" fitWidth="1920.0" preserveRatio="true" opacity="0" onMouseClicked="#openNico" disable="true">
-                <Image url="@Images/Background/nico.png"/>
+            <ImageView id="nico" fx:id="nico" disable="true" fitHeight="1080.0" fitWidth="1920.0" onMouseClicked="#openNico" opacity="0" preserveRatio="true">
+                <Image url="@Images/mainPage/nico.png" />
             </ImageView>
-            <ImageView id="ely" fx:id="ely" fitHeight="1080.0" fitWidth="1920.0" preserveRatio="true" opacity="0" onMouseClicked="#openEly" disable="true">
-                <Image url="@Images/Background/ely.png"/>
+            <ImageView id="ely" fx:id="ely" disable="true" fitHeight="1080.0" fitWidth="1920.0" onMouseClicked="#openEly" opacity="0" preserveRatio="true">
+                <Image url="@Images/mainPage/ely.png" />
             </ImageView>
-            <ImageView id="circleR" fx:id="redRotate" layoutX="1158.0" layoutY="727.0">
-                <Image url="@Images/Background/redRotate.png" />
+            <ImageView id="circleR" fx:id="redRotate" fitHeight="115.0" fitWidth="115.0" layoutX="1158.0" layoutY="727.0">
+                <Image url="@Images/mainPage/redRotate.png" />
             </ImageView>
-            <ImageView id="circleP" fx:id="purRotate" layoutX="669.0" layoutY="725.0">
-                <Image url="@Images/Background/purRotate.png" />
+            <ImageView id="circleP" fx:id="purRotate" fitHeight="115.0" fitWidth="115.0" layoutX="669.0" layoutY="725.0" preserveRatio="true">
+                <Image url="@Images/mainPage/purRotate.png" />
             </ImageView>
-            <ImageView id="circleB" fx:id="blueRotate" layoutX="1155.0" layoutY="239.0">
-                <Image url="@Images/Background/blueRotate.png" />
+            <ImageView id="circleB" fx:id="blueRotate" fitHeight="115.0" fitWidth="115.0" layoutX="1155.0" layoutY="239.0" preserveRatio="true">
+                <Image url="@Images/mainPage/blueRotate.png" />
             </ImageView>
-            <ImageView id="circleG" fx:id="greenRotate" layoutX="671.0" layoutY="242.0">
-                <Image url="@Images/Background/greeRotate.png" />
+            <ImageView id="circleG" fx:id="greenRotate" fitHeight="110.0" fitWidth="110.0" layoutX="671.0" layoutY="242.0" preserveRatio="true">
+                <Image url="@Images/mainPage/greeRotate.png" />
             </ImageView>
             <ImageView id="cranio" fx:id="cranio" fitHeight="105.0" fitWidth="230.0" layoutX="1766.0" layoutY="963.0" onMouseClicked="#surprise" opacity="0.7" preserveRatio="true">
-                <Image url="@Images/Background/cranio.png" />
+                <Image url="@Images/mainPage/cranio.png" />
             </ImageView>
         </Pane>
     </center>

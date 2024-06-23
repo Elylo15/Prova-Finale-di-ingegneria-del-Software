@@ -33,23 +33,41 @@
                     <Font name="Fantasy Script" size="96.0" />
                 </font>
             </Text>
-            <ImageView fx:id="rotate" fitHeight="331.0" fitWidth="331.0" layoutX="946.0" layoutY="584.0" preserveRatio="true">
-                <Image url="@Images/Background/rotate.png" />
+            <ImageView fx:id="reload11" fitHeight="200.0" fitWidth="200.0" layoutX="1569.0" layoutY="196.0" onMouseClicked="#reloadOptions">
+                <Image url="@Images/ServerOptions/reload.png" />
             </ImageView>
-            <ImageView fx:id="arrow" fitHeight="147.0" fitWidth="150.0" layoutX="1037.0" layoutY="580.0" mouseTransparent="true" preserveRatio="true">
-                <Image url="@Images/Background/reloadArrow.png" />
+            <ImageView fx:id="reload10" fitHeight="200.0" fitWidth="200.0" layoutX="926.0" layoutY="24.0" onMouseClicked="#reloadOptions">
+                <Image url="@Images/ServerOptions/reload.png" />
             </ImageView>
-            <ImageView fx:id="arrow1" fitHeight="147.0" fitWidth="150.0" layoutX="1134.0" layoutY="672.0"
-                       mouseTransparent="true" preserveRatio="true" rotate="60.0">
-                <Image url="@Images/Background/reloadArrow.png"/>
+            <ImageView fx:id="reload9" fitHeight="200.0" fitWidth="200.0" layoutX="1127.0" layoutY="357.0" onMouseClicked="#reloadOptions">
+                <Image url="@Images/ServerOptions/reload.png" />
             </ImageView>
-            <ImageView fx:id="arrow11" fitHeight="147.0" fitWidth="150.0" layoutX="942.0" layoutY="675.0"
-                       mouseTransparent="true" preserveRatio="true" rotate="300.0">
-                <Image url="@Images/Background/reloadArrow.png"/>
+            <ImageView fx:id="reload8" fitHeight="200.0" fitWidth="200.0" layoutX="39.0" layoutY="174.0" onMouseClicked="#reloadOptions">
+                <Image url="@Images/ServerOptions/reload.png" />
             </ImageView>
-            <ImageView fx:id="arrow111" fitHeight="147.0" fitWidth="150.0" layoutX="1037.0" layoutY="768.0"
-                       mouseTransparent="true" preserveRatio="true" rotate="180.0">
-                <Image url="@Images/Background/reloadArrow.png"/>
+            <ImageView fx:id="reload7" fitHeight="200.0" fitWidth="200.0" layoutX="1209.0" layoutY="683.0" onMouseClicked="#reloadOptions">
+                <Image url="@Images/ServerOptions/reload.png" />
+            </ImageView>
+            <ImageView fx:id="reload6" fitHeight="200.0" fitWidth="200.0" layoutX="1017.0" layoutY="585.0" onMouseClicked="#reloadOptions">
+                <Image url="@Images/ServerOptions/reload.png" />
+            </ImageView>
+            <ImageView fx:id="reload5" fitHeight="200.0" fitWidth="200.0" layoutX="886.0" layoutY="780.0" onMouseClicked="#reloadOptions">
+                <Image url="@Images/ServerOptions/reload.png" />
+            </ImageView>
+            <ImageView fx:id="reload4" fitHeight="200.0" fitWidth="200.0" layoutX="864.0" layoutY="444.0" onMouseClicked="#reloadOptions">
+                <Image url="@Images/ServerOptions/reload.png" />
+            </ImageView>
+            <ImageView fx:id="reload3" fitHeight="200.0" fitWidth="200.0" layoutX="575.0" layoutY="174.0" onMouseClicked="#reloadOptions">
+                <Image url="@Images/ServerOptions/reload.png" />
+            </ImageView>
+            <ImageView fx:id="reload2" fitHeight="200.0" fitWidth="200.0" layoutX="1749.0" layoutY="-26.0" onMouseClicked="#reloadOptions">
+                <Image url="@Images/ServerOptions/reload.png" />
+            </ImageView>
+            <ImageView fx:id="reload1" fitHeight="200.0" fitWidth="200.0" layoutX="587.0" layoutY="431.0" onMouseClicked="#reloadOptions">
+                <Image url="@Images/ServerOptions/reload.png" />
+            </ImageView>
+            <ImageView fx:id="reload0" fitHeight="200.0" fitWidth="200.0" layoutX="1045.0" layoutY="888.0" onMouseClicked="#reloadOptions">
+                <Image url="@Images/ServerOptions/reload.png" />
             </ImageView>
         </Pane>
     </center>

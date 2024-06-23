@@ -7,6 +7,7 @@ import it.polimi.ingsw.messages.serverOptionState.serverOptionMessage;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
@@ -18,13 +19,29 @@ import javafx.scene.text.Text;
  */
 public class InsertServerOptionController {
     @FXML
-    private ImageView arrow;
+    private ImageView reload0;
     @FXML
-    private ImageView arrow1;
+    private ImageView reload1;
     @FXML
-    private ImageView arrow11;
+    private ImageView reload2;
     @FXML
-    private ImageView arrow111;
+    private ImageView reload3;
+    @FXML
+    private ImageView reload4;
+    @FXML
+    private ImageView reload5;
+    @FXML
+    private ImageView reload6;
+    @FXML
+    private ImageView reload7;
+    @FXML
+    private ImageView reload8;
+    @FXML
+    private ImageView reload9;
+    @FXML
+    private ImageView reload10;
+    @FXML
+    private ImageView reload11;
     @FXML
     private Text new_match;// Button to start a new match
     @FXML
@@ -33,8 +50,6 @@ public class InsertServerOptionController {
     private Text load_match;// Button to load a match
     @FXML
     private Text join_running_match;// Button to join a running match
-    @FXML
-    private ImageView rotate;
     private serverOptionMessage serverOptionMessage;// Message to be sent to the client
 
     /**
@@ -44,7 +59,7 @@ public class InsertServerOptionController {
      * When the join_match, join_running_match or load_match button is clicked, it updates the scene to JoinMatch and sends the serverOptionMessage to the gui.
      */
     @FXML
-    private void initialize() {
+    private void initialize() throws NoSuchFieldException, IllegalAccessException {
         this.serverOptionMessage = (serverOptionMessage) GUIMessages.readToGUI();
         GUIMessages.writeToGUI(serverOptionMessage);
 
@@ -57,13 +72,32 @@ public class InsertServerOptionController {
         Utilities.hooverEffect(join_match, 1.05);
         Utilities.hooverEffect(load_match, 1.05);
         Utilities.hooverEffect(join_running_match, 1.05);
+        Utilities.hooverEffect(reload0, 1.2);
+        Utilities.hooverEffect(reload1, 1.2);
+        Utilities.hooverEffect(reload2, 1.2);
+        Utilities.hooverEffect(reload3, 1.2);
+        Utilities.hooverEffect(reload4, 1.2);
+        Utilities.hooverEffect(reload5, 1.2);
+        Utilities.hooverEffect(reload6, 1.2);
+        Utilities.hooverEffect(reload7, 1.2);
+        Utilities.hooverEffect(reload8, 1.2);
+        Utilities.hooverEffect(reload9, 1.2);
+        Utilities.hooverEffect(reload10, 1.2);
+        Utilities.hooverEffect(reload11, 1.2);
 
+        Utilities.rotateEffect(reload0, 4);
+        Utilities.rotateEffectArrow(reload1, 5);
+        Utilities.rotateEffect(reload2, 2);
+        Utilities.rotateEffectArrow(reload3, 3);
+        Utilities.rotateEffect(reload4, 3);
+        Utilities.rotateEffectArrow(reload5, 3);
+        Utilities.rotateEffect(reload6, 2);
+        Utilities.rotateEffectArrow(reload7, 5);
+        Utilities.rotateEffectArrow(reload8, 3);
+        Utilities.rotateEffect(reload9, 2);
+        Utilities.rotateEffect(reload10, 4);
+        Utilities.rotateEffectArrow(reload11, 4);
 
-//        Utilities.rotateEffect(rotate, 3);
-        Utilities.rotateEffectArrow(arrow, 4);
-        Utilities.rotateEffectArrow(arrow1, 4);
-        Utilities.rotateEffectArrow(arrow11, 4);
-        Utilities.rotateEffectArrow(arrow111, 4);
 
         new_match.setOnMouseClicked(event -> {
             serverOptionMessage = new serverOptionMessage(true, null, null, false, null);
@@ -85,9 +119,10 @@ public class InsertServerOptionController {
             GUIMessages.writeToGUI(serverOptionMessage);
         });
 
-        rotate.setOnMouseClicked(event -> {
-            GUIMessages.writeToClient(serverOptionMessage);
-        });
     }
 
+    @FXML
+    public void reloadOptions() {
+        GUIMessages.writeToClient(serverOptionMessage);
+    }
 }

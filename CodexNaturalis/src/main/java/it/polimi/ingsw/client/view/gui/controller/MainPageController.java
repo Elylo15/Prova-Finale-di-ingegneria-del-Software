@@ -158,7 +158,7 @@ public class MainPageController implements Initializable {
 
     @FXML
     public void openBia(MouseEvent event) {
-        Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Background/purBia.png")));
+        Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/mainPage/purBia.png")));
         ImageView imageView = new ImageView(image);
         imageView.setFitHeight(1080);
         imageView.setFitWidth(1920);
@@ -173,7 +173,7 @@ public class MainPageController implements Initializable {
 
     @FXML
     public void openEly(MouseEvent event) {
-        Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Background/redEly.png")));
+        Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/mainPage/redEly.png")));
         ImageView imageView = new ImageView(image);
         imageView.setFitHeight(1080);
         imageView.setFitWidth(1920);
@@ -187,7 +187,7 @@ public class MainPageController implements Initializable {
 
     @FXML
     public void openNico(MouseEvent event) {
-        Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Background/blueNico.png")));
+        Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/mainPage/blueNico.png")));
         ImageView imageView = new ImageView(image);
         imageView.setFitHeight(1080);
         imageView.setFitWidth(1920);
@@ -201,7 +201,7 @@ public class MainPageController implements Initializable {
 
     @FXML
     public void openAgnes(MouseEvent event) {
-        Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Background/greenAgnes.png")));
+        Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/mainPage/greenAgnes.png")));
         ImageView imageView = new ImageView(image);
         imageView.setFitHeight(1080);
         imageView.setFitWidth(1920);
