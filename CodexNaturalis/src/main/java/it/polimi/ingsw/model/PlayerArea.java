@@ -346,7 +346,7 @@ public class PlayerArea implements Serializable {
                 pointsOnResource.add(52);
                 pointsOnResource.add(53);
                 pointsOnCorner.add(54);
-                pointsOnCorner.add(45);
+                pointsOnCorner.add(55);
                 pointsOnCorner.add(56);
 
                 //ANIMAL
