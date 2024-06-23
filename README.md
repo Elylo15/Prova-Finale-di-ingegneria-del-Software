@@ -50,10 +50,10 @@ Here you can find the [Requirements](https://github.com/Elylo15/ing-sw-2024-Loll
 
 ## Game images GUI
 <a href="https://ibb.co/dGWdpPQ"><img src="https://i.ibb.co/5BMNjr5/Screenshot-2024-06-22-153233.png" alt="Screenshot-2024-06-22-153233" width="1920"></a>
-<a href="https://ibb.co/HTnBbLM"><img src="https://i.ibb.co/whMBPZb/Screenshot-2024-06-22-153513.png" alt="Screenshot-2024-06-22-153513" width="1920"></a>
-<a href="https://ibb.co/93hGBtg"><img src="https://i.ibb.co/FqXncV3/Screenshot-2024-06-22-155503.png" alt="Screenshot-2024-06-22-155503" width="1920"></a>
-<a href="https://ibb.co/sQT6hqJ"><img src="https://i.ibb.co/2PzswdY/Screenshot-2024-06-22-155801.png" alt="Screenshot-2024-06-22-155801" width="1920"></a>
-<a href="https://ibb.co/mRHCygq"><img src="https://i.ibb.co/cyNc8VF/Screenshot-2024-06-22-155814.png" alt="Screenshot-2024-06-22-155814" width="1920"></a>
+<a href="https://ibb.co/W2ydzdm"><img src="https://i.ibb.co/P6hbWbq/Screenshot-2024-06-23-163940.png" alt="Screenshot-2024-06-23-163940" width="1920"></a>
+<a href="https://ibb.co/9sNgRV6"><img src="https://i.ibb.co/r4m0ncY/Screenshot-2024-06-23-165220.png" alt="Screenshot-2024-06-23-165220" width="1920"></a>
+<a href="https://ibb.co/LkzNZL2"><img src="https://i.ibb.co/3ryRCDL/Screenshot-2024-06-23-165148.png" alt="Screenshot-2024-06-23-165148" width="1920"></a>
+
 
 ## Game images CLI
 <a href="https://ibb.co/1nWcGzp"><img src="https://i.ibb.co/dcYZ4m3/Screenshot-2024-06-22-160011.png" alt="Screenshot-2024-06-22-160011" width="1920"></a>

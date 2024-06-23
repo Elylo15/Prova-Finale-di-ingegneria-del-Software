@@ -386,7 +386,7 @@ public class PlayerArea implements Serializable {
                     }
 
                     // Manuscript
-                    if (card.getID() == 41 || card.getID() == 52 || card.getID() == 62 || card.getID() == 72) {
+                    if (card.getID() == 43 || card.getID() == 52 || card.getID() == 62 || card.getID() == 72) {
                         points = (int) (1 + CellMatrix.values().stream()
                                 .filter(cell -> !position.contains(cell))
                                 .filter(cell -> cell.getResource() == Resource.Manuscript)
