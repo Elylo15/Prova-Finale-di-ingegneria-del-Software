@@ -144,7 +144,7 @@ public class SceneManager {
     /**
      * Load and view the scene to place the StarterCard
      */
-    public static void starterPage() {
+    public static void gamePage() {
         try {
             new SceneSizeChangeListener("/gamePage.fxml", primaryStage);
         } catch (IOException ignore) {

@@ -1,6 +1,6 @@
 package it.polimi.ingsw.app;
 
-import it.polimi.ingsw.client.view.gui.mainGUI;
+import it.polimi.ingsw.client.view.gui.MainGUI;
 
 /**
  * This is the main class for the client side of the application.
@@ -9,11 +9,11 @@ import it.polimi.ingsw.client.view.gui.mainGUI;
 public class AppFX {
     /**
      * The main method of the application.
-     * It calls the main method of the mainGUI class, passing the command line arguments to it.
+     * It calls the main method of the MainGUI class, passing the command line arguments to it.
      *
      * @param args The command line arguments.
      */
     public static void main(String[] args) {
-        mainGUI.main(args);
+        MainGUI.main(args);
     }
 }

@@ -10,7 +10,7 @@ import javafx.stage.Stage;
  * This class is the main class for the GUI.
  * It starts the application and initializes the primary stage.
  */
-public class mainGUI extends Application {
+public class MainGUI extends Application {
     public static void main(String[] args) {
         launch(args);
     }

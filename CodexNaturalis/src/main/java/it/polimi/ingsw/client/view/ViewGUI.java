@@ -12,6 +12,7 @@ import it.polimi.ingsw.messages.serverOptionState.serverOptionMessage;
 import it.polimi.ingsw.model.cards.ObjectiveCard;
 import javafx.application.Platform;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -110,16 +111,39 @@ public class ViewGUI extends View {
      */
     @Override
     public void playerDisconnected(Exception e) {
-        state = "disconnectedState";
         GUIMessages.clearQueue();
-        if(!Objects.equals(e.getMessage(), "Game ended."))
+        if(!Objects.equals(e.getMessage(), "Game ended.")) {
             Platform.runLater(SceneManager::disconnect);
-        else {
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException ignore) {
+
+            }
+        } else {
             GUIMessages.readToClient();
         }
+
+        restartApplication();
+    }
+
+    public void restartApplication() {
         try {
-            Thread.sleep(5000);
-        } catch (InterruptedException ignore) {
+            // Get the runtime to execute the command to restart the application
+            String javaBin = System.getProperty("java.home") + "/bin/java";
+            String classPath = System.getProperty("java.class.path");
+            String className = getClass().getName();
+
+            // Build the command
+            ProcessBuilder builder = new ProcessBuilder(javaBin, "-cp", classPath, className);
+
+            // Start the new process
+            builder.start();
+
+            // Exit the current application
+            Platform.exit();
+            System.exit(0);
+        } catch (IOException e) {
+            System.out.println("Error restarting application: " + e.getMessage());
         }
     }
 
@@ -238,7 +262,7 @@ public class ViewGUI extends View {
         GUIMessages.writeToGUI(message);
         if (firstTimeCurrent) {
             firstTimeCurrent = false; //Load this page only the first time the method is called
-            Platform.runLater(SceneManager::starterPage);
+            Platform.runLater(SceneManager::gamePage);
         }
     }
 

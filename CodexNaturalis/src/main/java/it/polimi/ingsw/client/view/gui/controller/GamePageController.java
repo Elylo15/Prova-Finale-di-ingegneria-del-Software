@@ -1647,16 +1647,7 @@ public class GamePageController implements Initializable {
      * @param allPions the list of all pions
      */
     private void setPionPosition(ImageView pion, int score, List<ImageView> allPions) {
-        if (pion != null && score == 0 && !isPionAtDesiredPosition(pion, 0)) {
-            double[] adjustedPosition = getAdjustedPosition(allPions, positions[0][0], positions[0][1], pion);
-            pion.setLayoutX(adjustedPosition[0]);
-            pion.setLayoutY(adjustedPosition[1]);
-            pion.setFitHeight(49);
-            pion.setFitWidth(49);
-            pion.setPreserveRatio(true);
-            mainPane.getChildren().add(pion);
-            updatePionsPositions(allPions, pion);
-        } else if (pion != null && !mainPane.getChildren().contains(pion) && score != 0) {
+        if (pion != null && !mainPane.getChildren().contains(pion) && !isPionAtDesiredPosition(pion, score)) {
             double[] adjustedPosition = getAdjustedPosition(allPions, positions[score][0], positions[score][1], pion);
             pion.setLayoutX(adjustedPosition[0]);
             pion.setLayoutY(adjustedPosition[1]);
@@ -1749,10 +1740,10 @@ public class GamePageController implements Initializable {
      */
     private boolean isPionAtDesiredPosition(ImageView pion, int score) {
         double[] desiredPosition = positions[score];
-        return (pion.getLayoutX() == desiredPosition[0] || pion.getLayoutY() == desiredPosition[1])
-                && (pion.getLayoutX() == desiredPosition[0] || pion.getLayoutY() == desiredPosition[1] - offsetPions)
-                && (pion.getLayoutX() == desiredPosition[0] || pion.getLayoutY() == desiredPosition[1] - 2 * offsetPions)
-                && (pion.getLayoutX() == desiredPosition[0] || pion.getLayoutY() == desiredPosition[1] - 3 * offsetPions);
+        return (pion.getLayoutX() == desiredPosition[0] && pion.getLayoutY() == desiredPosition[1])
+                || (pion.getLayoutX() == desiredPosition[0] && pion.getLayoutY() == desiredPosition[1] - offsetPions)
+                || (pion.getLayoutX() == desiredPosition[0] && pion.getLayoutY() == desiredPosition[1] - 2 * offsetPions)
+                || (pion.getLayoutX() == desiredPosition[0] && pion.getLayoutY() == desiredPosition[1] - 3 * offsetPions);
     }
 
     /**
