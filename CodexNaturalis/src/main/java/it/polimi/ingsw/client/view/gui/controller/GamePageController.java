@@ -777,7 +777,6 @@ public class GamePageController implements Initializable {
             fadeOut.setOnFinished(event -> {
                 playerName.setText(newNickname);
                 Utilities.fadeInTransition(playerName, 0.79);
-                playerName.toFront();
             });
         }
     }
@@ -792,6 +791,7 @@ public class GamePageController implements Initializable {
 
         String nickname = (clickCounter == -1) ? myself.getNickname() : players.get(clickCounter).getNickname();
         setPlayerNameWithFade(nickname);
+        playerName.toFront();
 
         int next = clickCounter;
         if (clickCounter == players.size() - 1)
