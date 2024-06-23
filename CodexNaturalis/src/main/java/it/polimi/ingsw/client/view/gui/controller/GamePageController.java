@@ -34,8 +34,8 @@ import javafx.util.Duration;
 
 import java.net.URL;
 import java.util.*;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -144,7 +144,14 @@ public class GamePageController implements Initializable {
     private boolean wrong = false;
     private boolean first = true;
     private boolean isUpdate;
-    private boolean endgame = false;
+    private final AtomicBoolean endgame = new AtomicBoolean(false);
+
+    // References to Threads
+    ThreadPoolExecutor executor = new ThreadPoolExecutor(10, 10, 200, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>());
+    Future<Void> messageListener;
+    Future<Void> messageProcessor;
+
+
 
 
     /**
@@ -170,36 +177,34 @@ public class GamePageController implements Initializable {
      * Starts a new internal thread to listen for messages
      */
     private void startMessageListener() {
-        new Thread(() -> {
-            while (!endgame) {
+        messageListener = executor.submit(() -> {
+            while (!endgame.get()) {
                 try {
                     Object message = GUIMessages.readToGUI();
                     if (message != null) {
                         messageQueue.put(message);
 
                     }
-                } catch (Exception e) {
-                    System.out.println("Error in reading message");
-                }
+                } catch (Exception ignore) {}
             }
-        }).start();
+            return null;
+        });
     }
 
     /**
      * Starts a new internal thread to process messages
      */
     private void startMessageProcessor() {
-        new Thread(() -> {
-            while (!endgame) {
+        messageProcessor = executor.submit(() -> {
+            while (!endgame.get()) {
                 try {
                     Object message = messageQueue.take();
 
                     Platform.runLater(() -> processMessage(message));
-                } catch (Exception e) {
-                    System.out.println("Error in processing message");
-                }
+                } catch (Exception ignore) {}
             }
-        }).start();
+            return null;
+        });
     }
 
     /**
@@ -218,6 +223,13 @@ public class GamePageController implements Initializable {
             case updatePlayerMessage updatePlayerMessage -> updatePlayerCase(updatePlayerMessage);
             case responseMessage responseMessage -> handleResponseMessage(responseMessage);
             case declareWinnerMessage declareWinnerMessage -> displayWinner(declareWinnerMessage);
+            case String disconnected -> {
+                if (Objects.equals(disconnected, "disconnected")) {
+                    endgame.set(true);
+                    messageListener.cancel(true);
+                    messageProcessor.cancel(true);
+                }
+            }
             default -> System.out.println("Unknown message received");
         }
     }
@@ -254,7 +266,9 @@ public class GamePageController implements Initializable {
      * @param declareWinnerMessage the message containing the winner
      */
     private void displayWinner(declareWinnerMessage declareWinnerMessage) {
-        endgame = true;
+        endgame.set(true);
+        messageListener.cancel(true);
+        messageProcessor.cancel(true);
         rotate.onMouseClickedProperty().setValue(null);
         rotate.addEventHandler(MouseEvent.MOUSE_CLICKED, this::hideSeeWinner);
         winner(declareWinnerMessage);
@@ -900,7 +914,7 @@ public class GamePageController implements Initializable {
     private void addCardsToHand() {
         if (clickCounter != -1)
             addPlayerCardsToHand();
-        else if (endgame) {
+        else if (endgame.get()) {
             for (int i = 0; i < myHand.getPlaceableCards().size(); i++) {
                 addNewCardToPane(mainPane, myHand.getPlaceableCards().get(i).getID(), true,
                         myHand.getPlaceableCards().get(i), layoutXCard0 + i * 246, layoutYHand, fitHeightCard, fitWidthCard, null);
@@ -1003,7 +1017,7 @@ public class GamePageController implements Initializable {
     private void addPlayerCardsToHand() {
         if (clickCounter == -1)
             addCardsToHand();
-        else if (endgame) {
+        else if (endgame.get()) {
             PlayerHand hand = players.get(clickCounter).getPlayerHand();
             for (int i = 0; i < hand.getPlaceableCards().size(); i++) {
                 addNewCardToPane(mainPane, hand.getPlaceableCards().get(i).getID(), true,
@@ -1098,7 +1112,7 @@ public class GamePageController implements Initializable {
      */
     private void addMyObjective() {
         if (myObjective != null) {
-            if (endgame)
+            if (endgame.get())
                 Platform.runLater(() -> addNewCardToPane(mainPane, myObjective.getID(), true, myObjective, layoutXObjective, layoutYObjMy, fitHeightCommon, fitWidthCommon, null));
             Platform.runLater(() -> addNewCardToPane(mainPane, myObjective.getID(), true, myObjective, layoutXObjective, layoutYObjMy, fitHeightCommon, fitWidthCommon, this::turnObjectives));
         }
@@ -1113,7 +1127,7 @@ public class GamePageController implements Initializable {
             addMyObjective();
         else {
             try {
-                if (endgame)
+                if (endgame.get())
                     Platform.runLater(() -> addNewCardToPane(mainPane, players.get(clickCounter).getObjective().getID(), true, players.get(clickCounter).getObjective(),
                             layoutXObjective, layoutYObjMy, fitHeightCommon, fitWidthCommon, null));
                 else

@@ -112,6 +112,15 @@ public class ViewGUI extends View {
     @Override
     public void playerDisconnected(Exception e) {
         GUIMessages.clearQueue();
+
+        // Sends a message to GamePageController Thread to end its threads
+        GUIMessages.writeToGUI("disconnected");
+
+
+        // Allows the user to reload correctly the page
+        firstTimeCurrent = true;
+        firstTimeName = true;
+
         if(!Objects.equals(e.getMessage(), "Game ended.")) {
             Platform.runLater(SceneManager::disconnect);
             try {
@@ -122,30 +131,9 @@ public class ViewGUI extends View {
         } else {
             GUIMessages.readToClient();
         }
-
-        restartApplication();
     }
 
-    public void restartApplication() {
-        try {
-            // Get the runtime to execute the command to restart the application
-            String javaBin = System.getProperty("java.home") + "/bin/java";
-            String classPath = System.getProperty("java.class.path");
-            String className = getClass().getName();
 
-            // Build the command
-            ProcessBuilder builder = new ProcessBuilder(javaBin, "-cp", classPath, className);
-
-            // Start the new process
-            builder.start();
-
-            // Exit the current application
-            Platform.exit();
-            System.exit(0);
-        } catch (IOException e) {
-            System.out.println("Error restarting application: " + e.getMessage());
-        }
-    }
 
     /**
      * This method is used when a user needs to choose a name
@@ -157,6 +145,8 @@ public class ViewGUI extends View {
     public String unavailableNames(unavailableNamesMessage message) {
         state = "UnavailableNamesState";
         GUIMessages.clearQueue();  //remove all elements that could be in the queue
+
+        // Avoids to reload the page if the user entered a wrong name
         if (firstTimeName) {
             firstTimeName = false;
             Platform.runLater(SceneManager::unavailableNames);
