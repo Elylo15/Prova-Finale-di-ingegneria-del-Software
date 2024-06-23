@@ -641,7 +641,14 @@ public class Server implements Runnable {
         ArrayList<Integer> matchFiles = new ArrayList<>();
         if (files != null) {
             for (File file : files) {
-                matchFiles.add(Integer.parseInt(file.getName().substring(6, file.getName().length() - 6))); //extract a substring from index 6 to length - 6
+                try (FileInputStream fileIn = new FileInputStream(file);
+                     ObjectInputStream in = new ObjectInputStream(fileIn)) {
+                     MatchInfo matchInfo = (MatchInfo) in.readObject();
+                     if (matchInfo.getStatus() != MatchState.Endgame && matchInfo.getStatus() != MatchState.KickingPlayers && matchInfo.getStatus() != MatchState.Waiting)
+                         matchFiles.add(Integer.parseInt(file.getName().substring(6, file.getName().length() - 6))); //extract a substring from index 6 to length - 6
+                } catch (IOException | ClassNotFoundException e) {
+                    logCreator.log("Error reading match " + file.getName() + ": " + e.getMessage());
+                }
             }
         }
         return matchFiles;

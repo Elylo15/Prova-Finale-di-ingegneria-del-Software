@@ -1093,7 +1093,7 @@ public class MatchManager implements Runnable {
                     boolean response = currFuture.get(timeout, unit);
                     if (!response)
                         throw new Exception();
-                    logCreator.log("Player " + futures.get(currFuture).getPlayer().getNickname() + " is online");
+                    //logCreator.log("Player " + futures.get(currFuture).getPlayer().getNickname() + " is online");
                     return true;
                 } catch (Exception e) {
                     logCreator.log("Player " + futures.get(currFuture).getPlayer().getNickname() + " has not answered to ping");
