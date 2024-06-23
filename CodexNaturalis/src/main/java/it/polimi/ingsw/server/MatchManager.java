@@ -1092,7 +1092,7 @@ public class MatchManager implements Runnable {
 
     /**
      * Checks if all players are still connected.
-     * If a player is not connected, they are kicked from the match.
+     * If a player is not connected, he is kicked out of the match.
      */
     private synchronized void checkPlayersConnections() {
         HashMap<Future<Boolean>, PlayerInfo> futures = new HashMap<>();
