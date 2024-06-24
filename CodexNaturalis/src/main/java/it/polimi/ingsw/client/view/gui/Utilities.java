@@ -15,6 +15,7 @@ import javafx.util.Duration;
 
 import java.util.Objects;
 import java.util.Random;
+
 /**
  * This class is the controller for the main page of the game.
  * It handles the user's interaction with the GUI on the main page.
@@ -219,7 +220,7 @@ public class Utilities {
                 }
             }
         }
-        return imageView;
+        return imageView; // Return null if not found
     }
 
     /**

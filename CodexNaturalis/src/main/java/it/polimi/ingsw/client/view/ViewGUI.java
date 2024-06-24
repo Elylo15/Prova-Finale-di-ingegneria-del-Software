@@ -12,7 +12,6 @@ import it.polimi.ingsw.messages.serverOptionState.serverOptionMessage;
 import it.polimi.ingsw.model.cards.ObjectiveCard;
 import javafx.application.Platform;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -80,14 +79,13 @@ public class ViewGUI extends View {
      * @return A boolean value representing the user's choice. True for socket, false for rmi.
      */
     @Override
-    public boolean askSocket() {// true = socket, false = rmi
+    public boolean askSocket() {
         state = "SocketState";
-        //to avoid reading unexpected messages
         GUIMessages.clearQueue();
         boolean useSocket;
         Platform.runLater(SceneManager::Choose_Socket_RMI);
         useSocket = (boolean) GUIMessages.readToClient();
-        return useSocket;
+        return useSocket; // true = socket, false = rmi
     }
 
     /**
@@ -111,28 +109,26 @@ public class ViewGUI extends View {
      */
     @Override
     public void playerDisconnected(Exception e) {
+        state = "DisconnectedState";
         GUIMessages.clearQueue();
 
         // Sends a message to GamePageController Thread to end its threads
         GUIMessages.writeToGUI("disconnected");
 
-
         // Allows the user to reload correctly the page
         firstTimeCurrent = true;
         firstTimeName = true;
 
-        if(!Objects.equals(e.getMessage(), "Game ended.")) {
+        if (!Objects.equals(e.getMessage(), "Game ended.")) {
             Platform.runLater(SceneManager::disconnect);
             try {
                 Thread.sleep(5000);
             } catch (InterruptedException ignore) {
-
             }
         } else {
-            GUIMessages.readToClient();
+            GUIMessages.readToClient(); //read the click of the ToMain button from the GamePageController
         }
     }
-
 
 
     /**
@@ -181,8 +177,8 @@ public class ViewGUI extends View {
                     return ok;
                 }
             }
-        } else if(message.getCorrect() && (Objects.equals(state, "NameFAState") || Objects.equals(state, "AvailableColorsState"))
-                    && !Objects.equals(state, "WaitingState") && (!newMessage.isNewMatch() || (newMessage.getMatchID() != null && !names.isEmpty()))) {
+        } else if (message.getCorrect() && (Objects.equals(state, "NameFAState") || Objects.equals(state, "AvailableColorsState"))
+                && !Objects.equals(state, "WaitingState") && (!newMessage.isNewMatch() || (newMessage.getMatchID() != null && !names.isEmpty()))) {
             GUIMessages.writeToGUI("random");
             Platform.runLater(SceneManager::waiting);
             return true;
@@ -200,7 +196,6 @@ public class ViewGUI extends View {
     @Override
     public String availableColors(availableColorsMessage message) {
         state = "AvailableColorsState";
-        //to avoid reading unexpected messages
         GUIMessages.clearQueue();
         GUIMessages.writeToGUI(message); //in AvailableColorsController we call GUIMessages.readToGui() to receive this message
         Platform.runLater(SceneManager::availableColors); //run the method availableColors in SceneManager
@@ -216,7 +211,6 @@ public class ViewGUI extends View {
     @Override
     public int expectedPlayers() {
         state = "ExpectedPlayersState";
-        //to avoid reading unexpected messages
         GUIMessages.clearQueue();
         int number;
         Platform.runLater(SceneManager::expectedPlayers); //run the method expectedPlayers in SceneManager
@@ -247,8 +241,8 @@ public class ViewGUI extends View {
      */
     @Override
     public void updatePlayer(currentStateMessage message) {
-        GUIMessages.clearQueue();
         state = message.getStateName();
+        GUIMessages.clearQueue();
         GUIMessages.writeToGUI(message);
         if (firstTimeCurrent) {
             firstTimeCurrent = false; //Load this page only the first time the method is called

@@ -28,6 +28,9 @@ public class CommonArea implements Serializable {
         d3 = new Deck<>(); // Initialize the deck of starter cards
         d4 = new Deck<>(); // Initialize the deck of objective cards
         tableCards = new ArrayList<>(); // Initialize the list of face-up cards
+        for (int i = 0; i < 4; i++) {
+            tableCards.add(null); //Initialize the list of face-up cards with 4 nulls
+        }
     }
 
     /**
@@ -41,14 +44,16 @@ public class CommonArea implements Serializable {
         PlaceableCard c;
         int cardIndex;
 
-        for (int i = 0; i < tableCards.size(); i++) {
-            if (cardNumber == tableCards.get(i).getID()) {
+        for (int i = 0; i < tableCards.size(); i++) { // Iterate over the face-up cards that should be 4, if there is no card with the given ID return null
+            if (tableCards.get(i) == null) {
+                return null;
+            } else if (cardNumber == tableCards.get(i).getID()) {
                 if (tableCards.get(i) instanceof StarterCard) {
                     throw new IllegalArgumentException("Cannot pick StarterCard");
                 }
                 c = tableCards.get(i); // get the card to remove
                 cardIndex = i; // Save the index of the card to remove
-                tableCards.remove(cardIndex);
+                tableCards.set(cardIndex, null); //put null in the place of the card removed
                 if (c.getClass() == ResourceCard.class) {
                     //if the card removed is a resource card pick a card from first deck to replace it, otherwise from second deck
                     drawFromDeck(1, cardIndex);
@@ -71,29 +76,17 @@ public class CommonArea implements Serializable {
     public void drawFromDeck(int d, int index) {
         PlaceableCard c = null;
         switch (d) {
-            case 1 -> c = d1.removeCard();
+            case 1 -> c = d1.removeCard(); //null if deck is empty
             case 2 -> c = d2.removeCard();
         }
-        if (c != null && index >= 0 && index <= tableCards.size()) {
-            tableCards.add(index, c); // Add the card to the same position in the tableCards
-        } else if (c != null) {
+        if (index >= 0 && index < 4) {
+            tableCards.set(index, c); // Add the card to the same position in the tableCards
+        } else {
             tableCards.add(c); // Fallback: Add the card to the end if the index is invalid
         }
-    }
 
-
-    /**
-     * This method removes the top card from the specified deck and places it among the face-up cards.
-     *
-     * @param d The number of the deck from which to remove a card.
-     */
-    public void drawFromDeck(int d) {
-        PlaceableCard c = null;
-        switch (d) {
-            case 1 -> c = d1.removeCard();
-            case 2 -> c = d2.removeCard();
-        }
-        tableCards.add(c); //add the card to the table cards
+        //By accepting the null value, we have an ArrayList with gaps, so the cards position of
+        //the tableCards will not change when a card is picked
     }
 
     /**
@@ -111,7 +104,7 @@ public class CommonArea implements Serializable {
             case 3 -> c = d3.removeCard();
             case 4 -> throw new IllegalArgumentException("Cannot draw from ObjectiveCardDeck");
         }
-        return c;  //return the card picked
+        return c;  //return the card picked (null if there is no card)
     }
 
     /**

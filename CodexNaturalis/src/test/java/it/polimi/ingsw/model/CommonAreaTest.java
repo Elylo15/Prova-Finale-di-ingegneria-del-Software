@@ -36,26 +36,26 @@ class CommonAreaTest {
     //Test for the method pickTableCard
     @Test
     void pickTableResourceCardReturnsCorrectCard() {
-        commonArea.getTableCards().add(resourceCard);
+        commonArea.getTableCards().set(0, resourceCard);
         assertEquals(resourceCard, commonArea.pickTableCard(resourceCard.getID()));
     }
 
     @Test
     void pickTableGoldCardReturnsCorrectCard() {
-        commonArea.getTableCards().add(goldCard);
+        commonArea.getTableCards().set(0, goldCard);
         assertEquals(goldCard, commonArea.pickTableCard(goldCard.getID()));
     }
 
     //Test for StartCard pickTableCard method
     @Test
     void pickTableStarterCardReturnsCorrectCard() {
-        commonArea.getTableCards().add(starterCard);
+        commonArea.getTableCards().set(0, starterCard);
         assertThrows(IllegalArgumentException.class, () -> commonArea.pickTableCard(starterCard.getID()));
     }
 
     @Test
     void pickTableCardRemovesCardFromTable() {
-        commonArea.getTableCards().add(resourceCard);
+        commonArea.getTableCards().set(0, resourceCard);
         commonArea.pickTableCard(resourceCard.getID());
         assertFalse(commonArea.getTableCards().contains(resourceCard));
     }
@@ -144,10 +144,10 @@ class CommonAreaTest {
     //Test for getTableCards method
     @Test
     void getCorrectNumberOfTableCards() {
-        commonArea.getTableCards().add(resourceCard);
-        commonArea.getTableCards().add(goldCard);
-        commonArea.getTableCards().add(resourceCard2);
-        commonArea.getTableCards().add(goldCard2);
+        commonArea.getTableCards().set(0, resourceCard);
+        commonArea.getTableCards().set(1, goldCard);
+        commonArea.getTableCards().set(2, resourceCard2);
+        commonArea.getTableCards().set(3, goldCard2);
         assertEquals(4, commonArea.getTableCards().size());
     }
 
@@ -158,10 +158,10 @@ class CommonAreaTest {
         commonArea.getD1().addCard(resourceCard2);
         commonArea.getD2().addCard(goldCard);
         commonArea.getD2().addCard(goldCard2);
-        commonArea.drawFromDeck(1);
-        commonArea.drawFromDeck(1);
-        commonArea.drawFromDeck(2);
-        commonArea.drawFromDeck(2);
+        commonArea.drawFromDeck(1, 0);
+        commonArea.drawFromDeck(1, 1);
+        commonArea.drawFromDeck(2, 2);
+        commonArea.drawFromDeck(2, 3);
         assertTrue(commonArea.getTableCards().get(0).isResource());
         assertTrue(commonArea.getTableCards().get(1).isResource());
         assertTrue(commonArea.getTableCards().get(2).isGold());
@@ -174,13 +174,14 @@ class CommonAreaTest {
         commonArea.getD1().addCard(resourceCard);
         commonArea.getD2().addCard(goldCard);
         commonArea.drawFromToPlayer(1);
-        commonArea.drawFromDeck(2);
+        commonArea.drawFromDeck(2, 0);
         assertFalse(commonArea.getD1().getList().contains(resourceCard));
         assertFalse(commonArea.getD2().getList().contains(goldCard));
     }
 
     @Test
-    void getTableCardsReturnsEmptyListWhenNoCards() {
-        assertTrue(commonArea.getTableCards().isEmpty());
+    void getTableCardsReturnsNullWhenNoCards() {
+        assertNull(commonArea.getTableCards().getFirst());
+        assertNull(commonArea.getTableCards().getLast());
     }
 }

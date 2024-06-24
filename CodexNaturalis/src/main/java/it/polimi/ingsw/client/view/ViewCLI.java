@@ -207,21 +207,20 @@ public class ViewCLI extends View {
         index += String.format("%11s", " (2) DECK");
         index += " (3)  " + "     ";
 
-        try {
-            this.printDeck(output, area.getD1().getList().stream().findFirst().orElse(null));
-        } catch (IndexOutOfBoundsException e) {
+        if (!area.getD1().getList().isEmpty())
+            this.printDeck(output, area.getD1().getList().getFirst());
+        else
             this.printDeck(output, null);
-        }
-        try {
-            this.printDeck(output, area.getD2().getList().stream().findFirst().orElse(null));
-        } catch (IndexOutOfBoundsException e) {
+
+        if (!area.getD2().getList().isEmpty())
+            this.printDeck(output, area.getD2().getList().getFirst());
+        else
             this.printDeck(output, null);
-        }
-        try {
-            this.printCard(output, area.getTableCards().get(0));
-        } catch (IndexOutOfBoundsException e) {
+
+        if (area.getTableCards().getFirst() != null)
+            this.printCard(output, area.getTableCards().getFirst());
+        else
             this.printCard(output, null);
-        }
 
         System.out.println(index);
         System.out.println(output.get(0));
@@ -247,21 +246,21 @@ public class ViewCLI extends View {
         index += " (5)  " + "     ";
         index += " (6)  " + "     ";
 
-        try {
+        if (area.getTableCards().get(1) != null)
             this.printCard(output, area.getTableCards().get(1));
-        } catch (IndexOutOfBoundsException e) {
+        else
             this.printCard(output, null);
-        }
-        try {
+
+        if (area.getTableCards().get(2) != null)
             this.printCard(output, area.getTableCards().get(2));
-        } catch (IndexOutOfBoundsException e) {
+        else
             this.printCard(output, null);
-        }
-        try {
+
+        if (area.getTableCards().get(3) != null)
             this.printCard(output, area.getTableCards().get(3));
-        } catch (IndexOutOfBoundsException e) {
+        else
             this.printCard(output, null);
-        }
+
 
         System.out.println(index);
         System.out.println(output.get(0));
@@ -1222,7 +1221,7 @@ public class ViewCLI extends View {
     public boolean answer(responseMessage message) {
         if (!message.getCorrect())
             System.out.println(RED_TEXT + "You didn't entered a valid value, please try again" + RESET);
-        else if(message.getCorrect() && (Objects.equals(state, "NameFAState") || Objects.equals(state, "AvailableColors"))
+        else if (message.getCorrect() && (Objects.equals(state, "NameFAState") || Objects.equals(state, "AvailableColors"))
                 && !Objects.equals(state, "Waiting") && (!newMessage.isNewMatch() || (newMessage.getMatchID() != null && !names.isEmpty()))) {
             System.out.println(PURPLE_TEXT + "Waiting for" + BLUE_TEXT + " other players" + GREEN_TEXT + " to join" + RED_TEXT + " the game..." + RESET);
             return true;
@@ -1392,7 +1391,7 @@ public class ViewCLI extends View {
                 break;
             } catch (NoSuchElementException | IllegalStateException e) {
                 scanner.nextLine();
-                System.out.println(RED_TEXT + "You didn't enter an integer value" +RESET);
+                System.out.println(RED_TEXT + "You didn't enter an integer value" + RESET);
             }
         }
 
@@ -1451,7 +1450,7 @@ public class ViewCLI extends View {
         int choice = 1000;
         Scanner scanner = new Scanner(System.in);
         try {
-            System.out.print("enter the NUMBER of the card you want to pick DECK (1)," + YELLOW_TEXT +"(2)" + RESET +" or TABLE (3),(4)," + YELLOW_TEXT +"(5),(6): "+ RESET);
+            System.out.print("enter the NUMBER of the card you want to pick DECK (1)," + YELLOW_TEXT + "(2)" + RESET + " or TABLE (3),(4)," + YELLOW_TEXT + "(5),(6): " + RESET);
             choice = scanner.nextInt();
             scanner.nextLine();
         } catch (NoSuchElementException | IllegalStateException e) {

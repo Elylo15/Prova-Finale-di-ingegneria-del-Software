@@ -274,13 +274,13 @@ class ViewCLITest {
         id = commonArea.getTableCards().getFirst().getID();
         commonArea.pickTableCard(id);
         viewCLI.showCommonArea(commonArea);
-        id = commonArea.getTableCards().getFirst().getID();
+        id = commonArea.getTableCards().get(1).getID();
         commonArea.pickTableCard(id);
         viewCLI.showCommonArea(commonArea);
-        id = commonArea.getTableCards().getFirst().getID();
+        id = commonArea.getTableCards().get(2).getID();
         commonArea.pickTableCard(id);
         viewCLI.showCommonArea(commonArea);
-        id = commonArea.getTableCards().getFirst().getID();
+        id = commonArea.getTableCards().get(3).getID();
         commonArea.pickTableCard(id);
         viewCLI.showCommonArea(commonArea);
     }

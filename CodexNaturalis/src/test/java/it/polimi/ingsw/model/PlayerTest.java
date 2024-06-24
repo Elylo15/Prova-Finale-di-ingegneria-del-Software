@@ -181,10 +181,10 @@ class PlayerTest {
         ResourceCard resourceCard2 = new ResourceCard(7);
         GoldCard goldCard1 = new GoldCard(43);
         GoldCard goldCard2 = new GoldCard(47);
-        commonArea.getTableCards().add(resourceCard1);
-        commonArea.getTableCards().add(resourceCard2);
-        commonArea.getTableCards().add(goldCard1);
-        commonArea.getTableCards().add(goldCard2);
+        commonArea.getTableCards().add(0, resourceCard1);
+        commonArea.getTableCards().add(1, resourceCard2);
+        commonArea.getTableCards().add(2, goldCard1);
+        commonArea.getTableCards().add(3, goldCard2);
 
         player.pickNewCard(pick);
         PlaceableCard card = deck.getPlaceableCards().getLast();
@@ -201,10 +201,10 @@ class PlayerTest {
         ResourceCard resourceCard2 = new ResourceCard(7);
         GoldCard goldCard1 = new GoldCard(43);
         GoldCard goldCard2 = new GoldCard(47);
-        commonArea.getTableCards().add(resourceCard1);
-        commonArea.getTableCards().add(resourceCard2);
-        commonArea.getTableCards().add(goldCard1);
-        commonArea.getTableCards().add(goldCard2);
+        commonArea.getTableCards().set(0, resourceCard1);
+        commonArea.getTableCards().add(1, resourceCard2);
+        commonArea.getTableCards().add(2, goldCard1);
+        commonArea.getTableCards().add(3, goldCard2);
 
         player.pickNewCard(pick);
         PlaceableCard card = deck.getPlaceableCards().getLast();
@@ -221,10 +221,10 @@ class PlayerTest {
         ResourceCard resourceCard2 = new ResourceCard(7);
         GoldCard goldCard1 = new GoldCard(43);
         GoldCard goldCard2 = new GoldCard(47);
-        commonArea.getTableCards().add(resourceCard1);
-        commonArea.getTableCards().add(resourceCard2);
-        commonArea.getTableCards().add(goldCard1);
-        commonArea.getTableCards().add(goldCard2);
+        commonArea.getTableCards().add(0, resourceCard1);
+        commonArea.getTableCards().add(1, resourceCard2);
+        commonArea.getTableCards().add(2, goldCard1);
+        commonArea.getTableCards().add(3, goldCard2);
 
         player.pickNewCard(pick);
         PlaceableCard card = deck.getPlaceableCards().getLast();
@@ -241,10 +241,10 @@ class PlayerTest {
         ResourceCard resourceCard2 = new ResourceCard(7);
         GoldCard goldCard1 = new GoldCard(43);
         GoldCard goldCard2 = new GoldCard(47);
-        commonArea.getTableCards().add(resourceCard1);
-        commonArea.getTableCards().add(resourceCard2);
-        commonArea.getTableCards().add(goldCard1);
-        commonArea.getTableCards().add(goldCard2);
+        commonArea.getTableCards().add(0, resourceCard1);
+        commonArea.getTableCards().add(1, resourceCard2);
+        commonArea.getTableCards().add(2, goldCard1);
+        commonArea.getTableCards().add(3, goldCard2);
 
         player.pickNewCard(pick);
         PlaceableCard card = deck.getPlaceableCards().getLast();
@@ -287,7 +287,7 @@ class PlayerTest {
         player.playTurn(0, 1, 1, 1); //place first card in playerHand
         System.out.println(player.getScore());
         System.out.println(player.getPlayerHand());
-        assertEquals(1,player.getScore());
+        assertEquals(1, player.getScore());
     }
 
     @Test
@@ -346,13 +346,13 @@ class PlayerTest {
         requirement.add(Resource.Plant);
         requirement.add(Resource.Plant);
 
-        player.getPlayerHand().addNewPlaceableCard(new ResourceCard(1,0, Reign.Fungus,true,card1));
-        player.getPlayerHand().addNewPlaceableCard(new ResourceCard(29,1,Reign.Animal,true,card29));
-        player.getPlayerHand().addNewPlaceableCard(new GoldCard(57, 3, Reign.Plant,true,card57,requirement));
+        player.getPlayerHand().addNewPlaceableCard(new ResourceCard(1, 0, Reign.Fungus, true, card1));
+        player.getPlayerHand().addNewPlaceableCard(new ResourceCard(29, 1, Reign.Animal, true, card29));
+        player.getPlayerHand().addNewPlaceableCard(new GoldCard(57, 3, Reign.Plant, true, card57, requirement));
         System.out.println(player.getPlayerHand());
 
         //should throw an exception if the player choose a card number that is not 0, 1 or 2 because pickPlaceableCard will return null
-        assertThrows(noPlaceCardException.class, () -> player.playTurn(4,1,1,1));
+        assertThrows(noPlaceCardException.class, () -> player.playTurn(4, 1, 1, 1));
 
         ArrayList<Resource> resources = new ArrayList<>();
         resources.add(Resource.Empty);
@@ -369,7 +369,7 @@ class PlayerTest {
         PlaceableCard starterCard = new StarterCard(81, 0, null, true, resources, permanentResources, bottomResources);
         playerArea.placeStarterCard(starterCard, true);
 
-        player.playTurn(1,1,1,1);
+        player.playTurn(1, 1, 1, 1);
         System.out.println(player.getPlayerHand());
 
 
