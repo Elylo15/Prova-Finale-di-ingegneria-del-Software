@@ -327,11 +327,12 @@ public class MatchManager implements Runnable {
                     gameOver = true;
                 }
             }
+            //after each turn we check the connection of each player and the number of online players
             this.checkPlayersConnections();
             this.checkOnlinePlayersNumber();
 
-            // Leaves a pause between each turn in order to allow new clients to join, each iteration of while cycle is performed
-            //after half a second from the previous one
+            // Leaves a pause between each turn in order to allow new clients to join,
+            // each iteration of while cycle is performed after half a second from the previous one
             try {
                 Thread.sleep(500);
             } catch (InterruptedException e) {
@@ -345,7 +346,7 @@ public class MatchManager implements Runnable {
 
 
     /**
-     * Manages the waiting state for players to join the match.
+     * Manages the WaitingForPlayers state for players to join the match.
      * It sends the current state data to all connected players, asks for the number of expected players for this match
      * and waits for the expected number of players to join.
      * When the number of expected players is met, it adds them to the match (model).
@@ -398,7 +399,8 @@ public class MatchManager implements Runnable {
                             // Checks if the client has properly given a response
                             if (expected.isNoResponse()) {
                                 correctAnswer = true;
-                                this.kickPlayer(host); //the host is kicked if noResponse attribute of expectedPlayersMessage is true
+                                //the host user is kicked if he does not make his choice on time, client will set the noResponse attribute to true on the expectedPlayersMessage forwarded by the controller
+                                this.kickPlayer(host);
                             } else {
                                 // Checks if the response is valid and answer back
                                 if (expected.getExpectedPlayers() >= 2 && expected.getExpectedPlayers() <= 4) {
@@ -477,7 +479,7 @@ public class MatchManager implements Runnable {
     private synchronized void player(Player player) {
         if (player == null) {
             logCreator.log("Player is null");
-            updateMatchStatus();
+            updateMatchStatus(); //set match state to the next player turn
             return;
         }
         PlayerInfo playerInfo = this.findPlayer(player);
@@ -486,26 +488,27 @@ public class MatchManager implements Runnable {
             updateMatchStatus();
         }
 
-
+        if(playerInfo!=null && playerInfo.getState()!=null){
         switch (playerInfo.getState()) {
+            //switch according to the state of the turn of the player
             case StarterCard -> {
                 logCreator.log("Player " + player.getNickname() + " has to place the starter card");
 
                 // Compute starter state itself
                 this.starterState(playerInfo);
 
-                // Updates the view of every player about the current one
+                // Updates the view of each online player with information about current one (player)
                 for (PlayerInfo playerInfo1 : this.getOnlinePlayerInfo()) {
                     updatePlayerMessage update = new updatePlayerMessage(player, playerInfo1.getPlayer().getNickname());
-                    playerInfo1.getConnection().sendUpdatePlayer(update);
+                    playerInfo1.getConnection().sendUpdatePlayer(update); //sends message to each player
                 }
 
-
                 // End turn and update states
-                if (this.getOnlinePlayerInfo().contains(playerInfo)) { // Checks if the player is online
+                //If the player is online
+                if (this.getOnlinePlayerInfo().contains(playerInfo)) {
                     logCreator.log("Player " + player.getNickname() + " placed the starter card");
-                    playerInfo.setState(State.Objective);
-                    playerInfo.getPlayer().initialHand();
+                    playerInfo.setState(State.Objective); //set the state of his turn to Objective
+                    playerInfo.getPlayer().initialHand(); //draws cards
                 }
 
                 this.updateMatchStatus();
@@ -519,8 +522,7 @@ public class MatchManager implements Runnable {
                 // Compute objective state itself
                 this.objectiveState(playerInfo);
 
-
-                // Updates the view of every player about the current one
+                // Updates the view of each online player with information about current one (player)
                 for (PlayerInfo playerInfo1 : this.getOnlinePlayerInfo()) {
                     updatePlayerMessage update = new updatePlayerMessage(player, playerInfo1.getPlayer().getNickname());
                     playerInfo1.getConnection().sendUpdatePlayer(update);
@@ -532,7 +534,7 @@ public class MatchManager implements Runnable {
                     if (this.matchInfo.isLastTurn())
                         playerInfo.setState(State.EndGame);
                     else
-                        playerInfo.setState(State.PlaceCard);
+                        playerInfo.setState(State.PlaceCard); //set the state of the player's turn to PlaceCard
                 }
 
                 this.updateMatchStatus();
@@ -547,6 +549,7 @@ public class MatchManager implements Runnable {
                 boolean canPlace = true;
                 if (playerInfo.getPlayer().getPlayerArea().getAvailablePosition().isEmpty()) {
                     logCreator.log("Player " + player.getNickname() + " cannot place a card. Ending his turn.");
+                    //if the player does not possess any available position in his area the state of the match is set to his next player's turn
                     this.updateMatchStatus();
                     canPlace = false;
                 } else {
@@ -554,14 +557,13 @@ public class MatchManager implements Runnable {
                     this.placeCardState(playerInfo);
                 }
 
-
-                // Updates all clients on the current situation
+                // Updates the view of each online player with information about current one (player)
                 for (PlayerInfo playerInfo1 : this.getOnlinePlayerInfo()) {
-                    updatePlayerMessage update = new updatePlayerMessage(playerInfo.getPlayer(), playerInfo1.getPlayer().getNickname());
+                    updatePlayerMessage update = new updatePlayerMessage(player, playerInfo1.getPlayer().getNickname());
                     playerInfo1.getConnection().sendUpdatePlayer(update);
                 }
 
-                // Update the states
+                // Update the state of player's turn to PickCard
                 if (this.getOnlinePlayerInfo().contains(playerInfo) && canPlace) {
                     playerInfo.setState(State.PickCard);
                 }
@@ -569,7 +571,7 @@ public class MatchManager implements Runnable {
                 /*
                 Match status is not updated, because this player has yet to pick a card to finish his turn.
                  */
-
+                // Saves the progress of the game
                 this.saveMatch();
             }
             case PickCard -> {
@@ -580,14 +582,12 @@ public class MatchManager implements Runnable {
                 } else {
                     logCreator.log("Player " + player.getNickname() + " has to pick a card from common area");
 
-
                     // Compute pick card state itself
                     this.pickCardState(playerInfo);
 
-
-                    // Updates all clients on the current situation
+                    // Updates the view of each online player with information about current one (player)
                     for (PlayerInfo playerInfo1 : this.getOnlinePlayerInfo()) {
-                        updatePlayerMessage update = new updatePlayerMessage(playerInfo.getPlayer(), playerInfo1.getPlayer().getNickname());
+                        updatePlayerMessage update = new updatePlayerMessage(player, playerInfo1.getPlayer().getNickname());
                         playerInfo1.getConnection().sendUpdatePlayer(update);
                     }
 
@@ -595,16 +595,15 @@ public class MatchManager implements Runnable {
                 }
 
                 // End turn
-                // Update all states
+                // Update all states, if this is last turn, next state of the player's turn will be EndGame, else it will be PlaceCard
                 if (this.getOnlinePlayerInfo().contains(playerInfo)) {
                     if (this.matchInfo.isLastTurn())
                         playerInfo.setState(State.EndGame);
                     else
                         playerInfo.setState(State.PlaceCard);
                 }
-
+                //update the state of the match
                 this.updateMatchStatus();
-
 
                 // Saves the progress of the game
                 this.saveMatch();
@@ -622,20 +621,20 @@ public class MatchManager implements Runnable {
                     this.placeCardState(playerInfo);
                 }
 
-
-                // Updates all clients on the current situation
+                // Updates the view of each online player with information about current one (player)
                 for (PlayerInfo playerInfo1 : this.getOnlinePlayerInfo()) {
-                    updatePlayerMessage update = new updatePlayerMessage(playerInfo.getPlayer(), playerInfo1.getPlayer().getNickname());
+                    updatePlayerMessage update = new updatePlayerMessage(player, playerInfo1.getPlayer().getNickname());
                     playerInfo1.getConnection().sendUpdatePlayer(update);
                 }
 
                 logCreator.log("Player " + player.getNickname() + " has ended his last turn");
 
-                // Update the state
+                // Update the state of the player's turn from LastTurn to EndGame
                 if (this.getOnlinePlayerInfo().contains(playerInfo))
                     playerInfo.setState(State.EndGame);
 
                 switch (this.matchInfo.getStatus()) {
+                    //update the state of the match, if the cycle of the players' turn is completed match state is set to EndGame
                     case Player1 -> this.matchInfo.setStatus(MatchState.Player2);
                     case Player2 -> this.matchInfo.setStatus(MatchState.Player3);
                     case Player3 -> this.matchInfo.setStatus(MatchState.Player4);
@@ -644,7 +643,7 @@ public class MatchManager implements Runnable {
 
                 this.saveMatch();
             }
-        }
+        }}
 
 
     }
@@ -663,7 +662,7 @@ public class MatchManager implements Runnable {
     }
 
     /**
-     * Manages the starter state of a player.
+     * Manages the StarterCard state of a player.
      *
      * @param playerInfo data about the player to manage.
      */
@@ -675,7 +674,7 @@ public class MatchManager implements Runnable {
                 noneMatch(PlaceableCard::isStarter))
             playerInfo.getPlayer().drawStarter();
 
-        // Sends current state messages to all clients
+        // Sends currentStateMessage to all online players with information about current player (player)
         for (PlayerInfo playerInfo1 : this.getOnlinePlayerInfo()) {
             currentStateMessage currState = new currentStateMessage(player, playerInfo1.getPlayer(), "StarterCardState", this.matchInfo.isLastTurn(), this.onlinePlayersNicknames(), null, this.matchInfo.getID());
             playerInfo1.getConnection().sendCurrentState(currState);
@@ -685,19 +684,21 @@ public class MatchManager implements Runnable {
         boolean correctAnswer = false;
         while (!correctAnswer) {
 
-
             Future<starterCardMessage> future = executor.submit(() -> playerInfo.getConnection().getStaterCard());
             starterCardMessage starter = null;
 
-
             try {
+                //waits 2 minutes to obtain starterCardMessage from client
                 starter = future.get(this.timeout, TimeUnit.MILLISECONDS);
             } catch (Exception e) {
                 logCreator.log("Player " + player.getNickname() + " has not answered");
                 this.kickPlayer(playerInfo);
                 return;
             }
-
+            //If we don't get the result of the task submitted to the executor within two minutes, an exception is thrown and player kicked
+            //If we receive the starterCardMessage result but inNoResponse is set to true because client did not receive on time the input of the user from cli or gui
+            //the player is kicked
+            //If we receive the starterCardMessage result but the value is not valid, there will be another iteration of while cycle
             if (starter != null) {
 
                 // Checks if the client has properly given a response
@@ -708,7 +709,7 @@ public class MatchManager implements Runnable {
                 } else {
                     // Checks if the answer is valid
                     if (starter.getSide() == 0 || starter.getSide() == 1) {
-
+                         //if the answer is valid the card is placed
                         playerInfo.getPlayer().placeStarter(starter.getSide());
                         correctAnswer = true;
                         playerInfo.getConnection().sendAnswer(true);
@@ -730,7 +731,7 @@ public class MatchManager implements Runnable {
     }
 
     /**
-     * Manages the objective state of a player.
+     * Manages the Objective state of a player.
      *
      * @param playerInfo data about the player to manage.
      */
@@ -741,7 +742,7 @@ public class MatchManager implements Runnable {
         if (playerInfo.getSavedObjectives() == null)
             playerInfo.setSavedObjectives(playerInfo.getPlayer().drawObjectives());
 
-        // Sends current state messages to all clients
+        // Sends currentStateMessage to all online players with information about current player (player)
         for (PlayerInfo playerInfo1 : this.getOnlinePlayerInfo()) {
             currentStateMessage currState = new currentStateMessage(player, playerInfo1.getPlayer(), "objectiveState", this.matchInfo.isLastTurn(), this.onlinePlayersNicknames(), this.matchInfo.getMatch().getCommonObjective(), this.matchInfo.getID());
             playerInfo1.getConnection().sendCurrentState(currState);
@@ -749,12 +750,13 @@ public class MatchManager implements Runnable {
 
         boolean correctAnswer = false;
         while (!correctAnswer) {
+            //creates an ArrayList<ObjectiveCard> with the objective cards in the savedObjectives array of PlayerInfo
             ArrayList<ObjectiveCard> objectives = new ArrayList<>(Arrays.asList(playerInfo.getSavedObjectives()));
             Future<objectiveCardMessage> future = executor.submit(() -> playerInfo.getConnection().getChosenObjective(objectives));
             objectiveCardMessage objective = null;
 
             try {
-
+                //waits for receive the objectiveCardMessage from client
                 objective = future.get(this.timeout, TimeUnit.MILLISECONDS);
             } catch (Exception e) {
                 logCreator.log("Player " + player.getNickname() + " has not answered");
@@ -788,14 +790,14 @@ public class MatchManager implements Runnable {
     }
 
     /**
-     * Manages the place card state of a player.
+     * Manages the PlaceCard state of a player.
      *
      * @param playerInfo data about the player to manage.
      */
     private void placeCardState(PlayerInfo playerInfo) {
         Player player = playerInfo.getPlayer();
 
-        // Sends current state messages to all clients
+        // Sends currentStateMessage to all online players with information about current player (player)
         for (PlayerInfo playerInfo1 : this.getOnlinePlayerInfo()) {
             currentStateMessage currState = new currentStateMessage(player, playerInfo1.getPlayer(), "PlaceTurnState", this.matchInfo.isLastTurn(), this.onlinePlayersNicknames(), this.matchInfo.getMatch().getCommonObjective(), this.matchInfo.getID());
             playerInfo1.getConnection().sendCurrentState(currState);
@@ -808,7 +810,7 @@ public class MatchManager implements Runnable {
             Future<placeCardMessage> future = executor.submit(() -> playerInfo.getConnection().getPlaceCard());
             placeCardMessage placeCard = null;
 
-            try {
+            try { //waits to receive the placeCardMessage from client
                 placeCard = future.get(this.timeout, TimeUnit.MILLISECONDS);
             } catch (Exception e) {
                 logCreator.log("Player " + player.getNickname() + " has not answered");
@@ -834,6 +836,7 @@ public class MatchManager implements Runnable {
                         logCreator.log("Player " + player.getNickname() + " has correctly answered");
                         correctAnswer = true;
                     } catch (noPlaceCardException e) {
+                        //if the user chose a card or positions that are not available noPlaceCardException is thrown and a negative responseMessage is sent
                         playerInfo.getConnection().sendAnswer(false);
                         logCreator.log("Player " + player.getNickname() + " has not correctly answered");
                     }
@@ -841,20 +844,21 @@ public class MatchManager implements Runnable {
             } else {
                 logCreator.log("Player " + player.getNickname() + " failed to answer");
                 this.kickPlayer(playerInfo);
-                correctAnswer = true;
+               // correctAnswer = true;
                 return;
             }
         }
     }
 
     /**
-     * Manages the pick card state of a player.
+     * Manages the PickCard state of a player.
      *
      * @param playerInfo data about the player to manage.
      */
     private void pickCardState(PlayerInfo playerInfo) {
         Player player = playerInfo.getPlayer();
 
+        // Sends currentStateMessage to all online players with information about current player (player)
         for (PlayerInfo playerInfo1 : this.getOnlinePlayerInfo()) {
             currentStateMessage currState = new currentStateMessage(player, playerInfo1.getPlayer(), "PickTurnState", this.matchInfo.isLastTurn(), this.onlinePlayersNicknames(), this.matchInfo.getMatch().getCommonObjective(), this.matchInfo.getID());
             playerInfo1.getConnection().sendCurrentState(currState);
@@ -883,7 +887,8 @@ public class MatchManager implements Runnable {
                         correctAnswer = true;
                         this.kickPlayer(playerInfo);
                     } else {
-                        // Checks if the answer is valid
+                        // Checks if the pickCardMessage has a valid value,
+                        // otherwise InvalidIdException is thrown, a negative responseMessage is sent, there will be another iteration of while cycle
                         try {
                             playerInfo.getPlayer().pickNewCard(pickCard.getCard());
                             correctAnswer = true;
@@ -898,7 +903,7 @@ public class MatchManager implements Runnable {
                 } else {
                     logCreator.log("Player " + player.getNickname() + " failed to answer");
                     this.kickPlayer(playerInfo);
-                    correctAnswer = true;
+                    // correctAnswer = true;
                     return;
                 }
             }
@@ -907,12 +912,14 @@ public class MatchManager implements Runnable {
 
 
     /**
-     * Manages the endgame state of the match.
+     * Manages the EndGame state of the match.
+     * Calculates score and number of objectives achieved by each player and sends a declareWinnerMessage to the client
      */
     private void endgame() {
         logCreator.log("ENDGAME");
-        // Sends current state messages to all clients
+        // Sends current state messages to all online players
         for (PlayerInfo playerInfo1 : this.getOnlinePlayerInfo()) {
+            //currentPlayer is null
             currentStateMessage currState = new currentStateMessage(null, playerInfo1.getPlayer(), "endGameState", this.matchInfo.isLastTurn(), this.onlinePlayersNicknames(), this.matchInfo.getMatch().getCommonObjective(), this.matchInfo.getID());
             playerInfo1.getConnection().sendCurrentState(currState);
         }
@@ -928,16 +935,17 @@ public class MatchManager implements Runnable {
         for (Player player : players) {
             int score = player.getScore();
             int count = 0;
+            //update score and count given by private objective
             if (player.getObjective() != null) {
                 score += player.getPlayerArea().checkPattern(player.getObjective());
                 count += player.getPlayerArea().countPattern(player.getObjective());
             }
-
+            //update score and count given by first common objective
             if (matchInfo.getMatch().getCommonObjective()[0] != null) {
                 score += player.getPlayerArea().checkPattern(this.matchInfo.getMatch().getCommonObjective()[0]);
                 count += player.getPlayerArea().countPattern(this.matchInfo.getMatch().getCommonObjective()[0]);
             }
-
+            //update score and count given by second common objective
             if (matchInfo.getMatch().getCommonObjective()[1] != null) {
                 score += player.getPlayerArea().checkPattern(this.matchInfo.getMatch().getCommonObjective()[1]);
                 count += player.getPlayerArea().countPattern(this.matchInfo.getMatch().getCommonObjective()[1]);
@@ -948,10 +956,10 @@ public class MatchManager implements Runnable {
         }
 
         for (PlayerInfo playerInfo1 : this.getOnlinePlayerInfo()) {
-
+             //send declareWinnerMessage to each online player
             playerInfo1.getConnection().sendEndGame(scores, numberOfObjects);
         }
-
+        //update the state of the match from EndGame to KickingPlayers
         this.matchInfo.setStatus(MatchState.KickingPlayers);
 
         this.saveMatch();
@@ -981,10 +989,11 @@ public class MatchManager implements Runnable {
 
     /**
      * Checks if the number of online players is correct.
-     * If only one player remains, they are declared the winner.
+     * If only one player remains, he is declared the winner.
      * If no players remain, the match is over.
      */
     private void checkOnlinePlayersNumber() {
+        // This method must be used at the end of every turn
 
         this.checkPlayersConnections();
 
@@ -992,7 +1001,6 @@ public class MatchManager implements Runnable {
         Timer timerCheckConnections = new Timer();
 
         synchronized (this) {
-            // This function must be used at the end of every turn
             if (this.getOnlinePlayerInfo().size() == 1) {
                 // Waits for a timeout.
                 // Then, if a player remains, he is declared the new winner
@@ -1001,7 +1009,7 @@ public class MatchManager implements Runnable {
                     @Override
                     public void run() {
                         synchronized (manager) {
-                            manager.checkPlayersConnections();
+                            manager.checkPlayersConnections(); //update the ArrayList of online players
                             if (manager.getOnlinePlayerInfo().size() == 1) {
                                 manager.matchInfo.setStatus(MatchState.Endgame);
                                 logCreator.log("Only one player remains, he is the winner");
@@ -1016,24 +1024,26 @@ public class MatchManager implements Runnable {
                         }
                     }
                 };
+                //task is performed after 2 minutes
                 timer.schedule(task, this.timeout);
 
-                // Timer taskCheckConnections that checks every 15 seconds if all players are still connected
 
+                // Timer taskCheckConnections that checks every 15 seconds if all players are still connected
                 TimerTask taskCheckConnections = new TimerTask() {
                     @Override
                     public void run() {
                         synchronized (manager) {
-                            manager.checkPlayersConnections();
-                            manager.notifyAll();
+                            manager.checkPlayersConnections(); //the ArrayList of online players is updated
+                            manager.notifyAll(); //wakes up threads synchronized on manager
                         }
                     }
                 };
-
+                //taskCheckConnections is performed every 15 seconds
                 timerCheckConnections.schedule(taskCheckConnections, 0, 15000);
             }
 
-
+            //while there is only one online player and the match is not in state EndGame or KickingPlayers the current thread waits,
+            //it can be awakened by the manager.notifyAll() and methods wakeUpPlayer, addPlayerInfo
             while (this.getOnlinePlayerInfo().size() == 1
                     && this.matchInfo.getStatus() != MatchState.Endgame
                     && this.matchInfo.getStatus() != MatchState.KickingPlayers) {
@@ -1043,7 +1053,6 @@ public class MatchManager implements Runnable {
                     logCreator.log("Thread interrupted while waiting for players to join again");
                 }
             }
-
 
             if (this.getOnlinePlayerInfo().isEmpty()) {
                 // Closes and doesn't save the match
@@ -1103,6 +1112,8 @@ public class MatchManager implements Runnable {
      * If a player is not connected, he is kicked out of the match.
      */
     private synchronized void checkPlayersConnections() {
+        // This method must be used at the end of every turn
+
         HashMap<Future<Boolean>, PlayerInfo> futures = new HashMap<>();
         ArrayList<Future<Boolean>> results = new ArrayList<>();
 

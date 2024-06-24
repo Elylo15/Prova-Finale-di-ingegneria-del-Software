@@ -12,7 +12,8 @@ import java.io.Serializable;
  * It provides methods for drawing and placing cards, picking objectives, and playing a turn.
  * It implements the Serializable interface.
  */
-public class Player implements Serializable {
+public class
+Player implements Serializable {
     private final String nickname; // The player's nickname
     private final String color; // The player's color
     private final PlayerHand deck; // The player's deck of cards
@@ -121,7 +122,7 @@ public class Player implements Serializable {
         Card card;
 
         card = pickPlaceableCard(cardPick); //card chosen from the cards in playerHand
-        // Just to be sure
+        //the card is null if cardPick is not 0 or 1 or 2
         if (card == null)
             throw new noPlaceCardException();
 
