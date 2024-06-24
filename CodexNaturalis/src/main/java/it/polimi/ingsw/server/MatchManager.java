@@ -160,9 +160,9 @@ public class MatchManager implements Runnable {
     }
 
     /**
-     * Getter of Match (model)
+     * Getter of the Match object (belonging to model)
      *
-     * @return Match
+     * @return the Match attribute of matchInfo
      */
     protected Match getMatch() {
         return this.matchInfo.getMatch();
@@ -184,7 +184,7 @@ public class MatchManager implements Runnable {
         }
 
         String filename = "savedMatches/match_" + copy.getID() + ".match";
-        try (FileOutputStream fileOut = new FileOutputStream(filename); //create a FileOutputStream to write bytes to the file
+        try (FileOutputStream fileOut = new FileOutputStream(filename); //creates a file with path filename and a FileOutputStream to write bytes to it
              ObjectOutputStream out = new ObjectOutputStream(fileOut))  //create a ObjectOutputStream to write serialized object to fileOut
         {    //fileOut and out are automatically closed after try block
             out.writeObject(copy); //write the matchInfo clone to the file
@@ -243,17 +243,18 @@ public class MatchManager implements Runnable {
 
             // Starts the normal flow of the game
             switch (this.matchInfo.getStatus()) {
+                //call the methods of MatchManager according to the state of the match
                 case Waiting -> this.waiting();
-
+                //turn if first player
                 case Player1 -> {
                     Player currentPlayer;
-                    if (matchInfo.getMatch().getPlayers().size() < 1)
+                    if (matchInfo.getMatch().getPlayers().isEmpty())
                         currentPlayer = null;
                     else
-                        currentPlayer = matchInfo.getMatch().getPlayers().get(0);
+                        currentPlayer = matchInfo.getMatch().getPlayers().getFirst();
 
                     this.player(currentPlayer);
-                }
+                } //turn of second player
                 case Player2 -> {
                     Player currentPlayer;
                     if (matchInfo.getMatch().getPlayers().size() < 2)
@@ -262,12 +263,12 @@ public class MatchManager implements Runnable {
                         currentPlayer = matchInfo.getMatch().getPlayers().get(1);
 
                     this.player(currentPlayer);
-                }
+                } //turn of third player
                 case Player3 -> {
                     Player currentPlayer;
                     if (matchInfo.getMatch().getPlayers().size() < 3)
-                        currentPlayer = null;
-                    else
+                        currentPlayer = null; //third player is null if the size of the ArrayList of players is 0 or 1 or 2
+                    else  //else he is the player at index 2
                         currentPlayer = matchInfo.getMatch().getPlayers().get(2);
 
                     this.player(currentPlayer);
@@ -281,7 +282,7 @@ public class MatchManager implements Runnable {
 
                     this.player(currentPlayer);
 
-                    this.turnNumber += 1;
+                    this.turnNumber += 1; //increment the number of turns played after every cycle of players playing their turn
 
 
                     if (currentPlayer != null && findPlayer(currentPlayer) != null && findPlayer(currentPlayer).getState() == State.PickCard) {
@@ -291,6 +292,9 @@ public class MatchManager implements Runnable {
                     if (this.matchInfo.isLastTurn())
                         this.matchInfo.setStatus(MatchState.Endgame);
 
+                    //if there is no fourth player and one of the players has achieved at least 20 points or
+                    //there is no fourth player and both decks of resource card and gold card have run out of cards
+                    // we set lastTurn to true
                     if (currentPlayer == null || findPlayer(currentPlayer) == null) {
                         if (this.matchInfo.getMatch().getPlayers().stream()
                                 .anyMatch(player -> player.getScore() >= 20) ||
@@ -299,7 +303,10 @@ public class MatchManager implements Runnable {
                             logCreator.log("This is the last turn");
                             matchInfo.setLastTurn(true);
                         }
-                    } else {
+                    } else
+                    {  //if there are four players and the fourth player is not in state PickCard
+                        //and one of the players has achieved at least 20 points or both resource ang gold cards decks have run out of cards
+                        //we set lastTurn to true
                         if (findPlayer(currentPlayer).getState() != State.PickCard) {
                             if (this.matchInfo.getMatch().getPlayers().stream()
                                     .anyMatch(player -> player.getScore() >= 20) ||
@@ -323,7 +330,8 @@ public class MatchManager implements Runnable {
             this.checkPlayersConnections();
             this.checkOnlinePlayersNumber();
 
-            // Leaves a pause between each turn in order to allow new clients to join
+            // Leaves a pause between each turn in order to allow new clients to join, each iteration of while cycle is performed
+            //after half a second from the previous one
             try {
                 Thread.sleep(500);
             } catch (InterruptedException e) {
@@ -341,7 +349,7 @@ public class MatchManager implements Runnable {
      * It sends the current state data to all connected players, asks for the number of expected players for this match
      * and waits for the expected number of players to join.
      * When the number of expected players is met, it adds them to the match (model).
-     * If a player takes too long to respond or provides an invalid response, they are kicked from the match.
+     * If a player takes too long to respond or provides an invalid response, he is kicked from the match.
      */
     private void waiting() {
         logCreator.log("Waiting for players");
@@ -350,7 +358,7 @@ public class MatchManager implements Runnable {
         while (this.matchInfo.getExpectedPlayers() == null) {
 
             synchronized (this) {
-                // Waiting for the first player that will be indicated as the "host"
+                // Waiting for the first player to join the match, he will choose the number of players and will be referred as the "host"
                 while (this.getOnlinePlayerInfo().isEmpty()) {
                     try {
                         this.wait();
@@ -367,10 +375,10 @@ public class MatchManager implements Runnable {
                 PlayerInfo host = this.getOnlinePlayerInfo().getFirst();
 
                 if (host != null) {
-                    // Sends current state data
+                    // Sends current state data to each online player
                     this.getOnlinePlayerInfo().forEach(playerInfo -> {
                         currentStateMessage curr = new currentStateMessage(null, playerInfo.getPlayer(), "WaitingForPlayerState", false, this.onlinePlayersNicknames(), null, this.matchInfo.getID());
-                        playerInfo.getConnection().sendCurrentState(curr);
+                        playerInfo.getConnection().sendCurrentState(curr); //sends to the client the message
                         playerInfo.getConnection().sendNewHostMessage(host.getPlayer().getNickname());
                     });
 
@@ -380,17 +388,17 @@ public class MatchManager implements Runnable {
                         Future<expectedPlayersMessage> future = executor.submit(() -> host.getConnection().getExpectedPlayer());
                         expectedPlayersMessage expected = null;
                         try {
-                            expected = future.get(this.timeout, TimeUnit.MILLISECONDS);
+                            expected = future.get(this.timeout, TimeUnit.MILLISECONDS); //waits 2 minutes to receive the expectedPlayersMessage response of the host
                         } catch (Exception e) {
                             logCreator.log("Player " + host.getPlayer().getNickname() + " has not answered");
-                            this.kickPlayer(host);
+                            this.kickPlayer(host); //the host is kicked if his answer is not received
                         }
 
                         if (expected != null) {
                             // Checks if the client has properly given a response
                             if (expected.isNoResponse()) {
                                 correctAnswer = true;
-                                this.kickPlayer(host);
+                                this.kickPlayer(host); //the host is kicked if noResponse attribute of expectedPlayersMessage is true
                             } else {
                                 // Checks if the response is valid and answer back
                                 if (expected.getExpectedPlayers() >= 2 && expected.getExpectedPlayers() <= 4) {
@@ -399,7 +407,8 @@ public class MatchManager implements Runnable {
                                     host.getConnection().sendAnswer(true);
                                     logCreator.log("Player " + host.getPlayer().getNickname() + " has correctly answered");
                                 } else {
-                                    host.getConnection().sendAnswer(false);
+                                    host.getConnection().sendAnswer(false); //send the host a negative responseMessage
+                                    //there will be another iteration of the while cycle until he chose a valid value
                                     logCreator.log("Player " + host.getPlayer().getNickname() + " has not correctly answered");
                                 }
                             }
@@ -422,7 +431,7 @@ public class MatchManager implements Runnable {
 
         synchronized (this) {
 
-            // Wait for the specified number of expected players
+            // Wait for the specified number of expected players to join
             while (this.getOnlinePlayerInfo().size() < this.matchInfo.getExpectedPlayers()) {
                 try {
                     this.wait();
@@ -430,20 +439,20 @@ public class MatchManager implements Runnable {
                 }
             }
         }
-
+        //the number of players must be exactly the one specified by the host
         while (this.getOnlinePlayerInfo().size() > this.matchInfo.getExpectedPlayers()) {
             logCreator.log("Too many players have joined the match");
             this.kickPlayer(this.getOnlinePlayerInfo().getLast());
         }
 
-        // Updates state of the match
+        // Updates state of the match to turn of the first player
         this.matchInfo.setStatus(MatchState.Player1);
         logCreator.log("Match state updated from \"Waiting\" to \"Player 1\"");
 
 
         // Adds all players to the match (match of the model)
         for (PlayerInfo playerInfo : this.getOnlinePlayerInfo()) {
-            try {
+            try { //each online player is added to the match and the state of their turn is StarterCard
                 this.matchInfo.getMatch().addPlayer(playerInfo.getPlayer());
                 playerInfo.setState(State.StarterCard);
                 logCreator.log("Player " + playerInfo.getPlayer().getNickname() + " added to the model");
@@ -455,7 +464,6 @@ public class MatchManager implements Runnable {
         // Prepares the match.
         this.matchInfo.getMatch().start();
         this.turnNumber = 1;
-
 
         // First save of the game
         this.saveMatch();
@@ -1064,16 +1072,16 @@ public class MatchManager implements Runnable {
 
 
     /**
-     * Loads a saved match and waits for all players to join. Then starts the game.
+     * Loads a saved match and waits for the right number of players to join. Then starts the game.
      */
     protected synchronized void loadAndWaitSavedMatch() {
         logCreator.log("Saved match " + this.matchInfo.getID() + " loaded: in state " + this.matchInfo.getStatus());
         logCreator.log("Waiting for players; expected players: " + this.matchInfo.getExpectedPlayers() + " players to be loaded: " + this.matchInfo.getAllPlayersInfo());
 
-        // Sets all players to offline
+        // Sets all players of the saved match to offline
         this.matchInfo.getAllPlayersInfo().forEach(this.matchInfo::setOffline);
 
-        // Waits for all players to join
+        // Waits for all players to join, we wait as long as the number of online players is lower than the number of expected players
         while (this.getOnlinePlayerInfo().size() < this.matchInfo.getExpectedPlayers()) {
             try {
                 this.wait();
@@ -1086,7 +1094,7 @@ public class MatchManager implements Runnable {
             logCreator.log("Too many players have joined the match");
             this.kickPlayer(this.getOnlinePlayerInfo().getLast());
         }
-
+        //if we are not in wait anymore the number of online players is reached the number of expected players, call the method run
         this.run();
     }
 

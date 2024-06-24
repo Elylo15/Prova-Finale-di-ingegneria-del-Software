@@ -5,7 +5,7 @@ import it.polimi.ingsw.messages.Message;
 import java.io.Serializable;
 
 /**
- * Message used to handle the new host
+ * Message used to handle the new host, first player that joined the match
  */
 public class newHostMessage implements Message, Serializable {
     private String newHostNickname;
