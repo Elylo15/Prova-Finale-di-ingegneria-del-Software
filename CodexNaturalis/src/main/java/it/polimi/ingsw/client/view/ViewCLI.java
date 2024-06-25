@@ -1,7 +1,5 @@
 package it.polimi.ingsw.client.view;
 
-import it.polimi.ingsw.client.view.gui.SceneManager;
-import it.polimi.ingsw.client.view.gui.message.GUIMessages;
 import it.polimi.ingsw.messages.connectionState.availableColorsMessage;
 import it.polimi.ingsw.messages.connectionState.connectionResponseMessage;
 import it.polimi.ingsw.messages.connectionState.unavailableNamesMessage;
@@ -19,7 +17,6 @@ import it.polimi.ingsw.model.cards.PlaceableCard;
 import it.polimi.ingsw.model.cards.PlayerHand;
 import it.polimi.ingsw.model.cards.enumeration.Reign;
 import it.polimi.ingsw.model.cards.enumeration.Resource;
-import javafx.application.Platform;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -63,6 +60,39 @@ public class ViewCLI extends View {
      */
     public ViewCLI() {
         super();
+    }
+
+    /**
+     * Method {@code startMain}: displays an entry message
+     *
+     * @return true to continue execution in Client
+     */
+    @Override
+    public boolean startMain(){
+        System.out.println("\n" + BLUE_TEXT +
+                "⎻⎻⎻⎻⎻⎻⎻⎻⎻" + PURPLE_TEXT + "⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻" + YELLOW_TEXT + "⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻" + GREEN_TEXT + "⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻" + RED_TEXT + "⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻\n" +
+                "                                                                                     \n" + PURPLE_TEXT +
+                "                   █████████  " + RED_TEXT + "             █████                                     \n" + PURPLE_TEXT +
+                "                  ███░░░░░███ " + RED_TEXT + "            ░░███                                      \n" + PURPLE_TEXT +
+                "                 ███     ░░░  " + BLUE_TEXT + " ██████ " + RED_TEXT + "  ███████ " + GREEN_TEXT + "  ██████ " + YELLOW_TEXT + " █████ █████                \n" + PURPLE_TEXT +
+                "                ░███         " + BLUE_TEXT + " ███░░███" + RED_TEXT + " ███░░███ " + GREEN_TEXT + " ███░░███ " + YELLOW_TEXT + "░███ ░░███                 \n" + PURPLE_TEXT +
+                "                ░███        " + BLUE_TEXT + " ░███ ░███" + RED_TEXT + " ███ ░███ " + GREEN_TEXT + "░███████  " + YELLOW_TEXT + "░░░█████░                  \n" + PURPLE_TEXT +
+                "                ░░███     ██ " + BLUE_TEXT + "░███ ░███" + RED_TEXT + " ███ ░███ " + GREEN_TEXT + "░███░░     " + YELLOW_TEXT + "███░░░███                 \n" + PURPLE_TEXT +
+                "                 ░░█████████ " + BLUE_TEXT + "░░██████ " + RED_TEXT + " ░███████ " + GREEN_TEXT + "░░██████  " + YELLOW_TEXT + "█████ █████                \n" + PURPLE_TEXT +
+                "                  ░░░░░░░░░ " + BLUE_TEXT + "  ░░░░░░  " + RED_TEXT + " ░░░░░░░░  " + GREEN_TEXT + "░░░░░░  " + YELLOW_TEXT + "░░░░░ ░░░░░                 \n" +
+                "                                                                                     \n" + RED_TEXT +
+                "     ██████   █████   " + GREEN_TEXT + "        █████                 " + BLUE_TEXT + "              ████ " + GREEN_TEXT + " ███           \n" + RED_TEXT +
+                "    ░░██████ ░░███    " + GREEN_TEXT + "        ░███                   " + BLUE_TEXT + "            ░░███                \n" + RED_TEXT +
+                "     ░███░███ ░███ " + PURPLE_TEXT + "  ██████ " + GREEN_TEXT + " ███████ " + BLUE_TEXT + " ░█████ ███ " + YELLOW_TEXT + " ████████" + RED_TEXT + "  ██████ " + BLUE_TEXT + "███ " + GREEN_TEXT + "████" + PURPLE_TEXT + "  █████    \n" + RED_TEXT +
+                "     ░███░░███░███  " + PURPLE_TEXT + "░░░░░███ " + GREEN_TEXT + "░░███░ " + BLUE_TEXT + " ░░███ ░███ " + YELLOW_TEXT + " ░███░░███" + RED_TEXT + " ░░░░███" + BLUE_TEXT + " ███░" + GREEN_TEXT + " ███" + PURPLE_TEXT + " ███░░     \n" + RED_TEXT +
+                "     ░███ ░░██████   " + PURPLE_TEXT + "███████" + GREEN_TEXT + "  ░███   " + BLUE_TEXT + " ░███ ░███ " + YELLOW_TEXT + " ░███ ░░░" + RED_TEXT + "  ███████" + BLUE_TEXT + " ███ " + GREEN_TEXT + "░███" + PURPLE_TEXT + " ░█████    \n" + RED_TEXT +
+                "     ░███  ░░█████  " + PURPLE_TEXT + "███░░███" + GREEN_TEXT + "  ░███ ██" + BLUE_TEXT + " ░███ ░███ " + YELLOW_TEXT + " ░███  " + RED_TEXT + "   ███░░███" + BLUE_TEXT + " ███ " + GREEN_TEXT + "░███ " + PURPLE_TEXT + "░░░░███   \n" + RED_TEXT +
+                "     █████  ░░█████ " + PURPLE_TEXT + "░████████ " + GREEN_TEXT + "░░█████ " + BLUE_TEXT + "░███████ " + YELLOW_TEXT + " █████ " + RED_TEXT + "  ░░████████ " + BLUE_TEXT + "████" + GREEN_TEXT + " ███" + PURPLE_TEXT + " ██████    \n" + RED_TEXT +
+                "    ░░░░░    ░░░░░  " + PURPLE_TEXT + "░░░░░░░░ " + GREEN_TEXT + "  ░░░░░ " + BLUE_TEXT + " ░░░░░░░  " + YELLOW_TEXT + "░░░░   " + RED_TEXT + "  ░░░░░░░░░ " + BLUE_TEXT + "░░░░ " + GREEN_TEXT + "░░░ " + PURPLE_TEXT + "░░░░░░     \n" + RED_TEXT +
+                "                                                                                     \n" + BLUE_TEXT +
+                "⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽" + YELLOW_TEXT + "⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽" + RED_TEXT + "⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽" + PURPLE_TEXT + "⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽" + GREEN_TEXT + "⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽\n" + RESET +
+                "\n");
+        return true;
     }
 
     /**
@@ -1473,8 +1503,7 @@ public class ViewCLI extends View {
         points = message.getPlayersPoints();
         numObjectives = message.getNumberOfObjects();
 
-        String[] win = new String[2];
-        win = this.findWinner(points);
+        String[] win = this.findWinner(points);
         System.out.print("FINAL RESULTS:");
         System.out.println("\nSCOREBOARD");
         for (String playerName : points.keySet()) {
@@ -1649,7 +1678,7 @@ public class ViewCLI extends View {
     /**
      * print a colored background containing the symbol of the reign corresponding to the color of the winner
      *
-     * @param color
+     * @param color color of the winner
      */
     private void printWinner(String color) {
         String cell1;

@@ -437,11 +437,11 @@ public class Client implements Runnable {
      */
     @Override
     public void run() {
-        if (getView() instanceof ViewGUI) {
-            boolean ok = false;
-            while (!ok)
-                ok = ((ViewGUI) getView()).startMain();
-        }
+
+        boolean ok = false;
+        while (!ok)
+            ok = getView().startMain();
+
 
         while (true) {
             try {

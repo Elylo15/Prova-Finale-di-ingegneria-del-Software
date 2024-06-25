@@ -42,6 +42,7 @@ public class ViewGUI extends View {
      * This method starts the main view of the game.
      * It clears the message queue and updates the scene to the main view.
      */
+    @Override
     public boolean startMain() {
         //to avoid reading unexpected messages
         GUIMessages.clearQueue();
