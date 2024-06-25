@@ -25,11 +25,12 @@ import java.util.concurrent.atomic.AtomicIntegerArray;
 /**
  * This class is the Client class.
  * It is responsible for the client side of the application.
- * It is responsible for the connection to the server and the communication with it
+ * It is responsible for the connection to the server and the communication with it.
  */
 public class Client implements Runnable {
     private final View view;
     private final ThreadPoolExecutor executor;
+    //initializes a default value, the methods of the view will return this value in case the user does not provide an answer in time
     private final Integer defaultValue = 1000;
     private String serverIP;
     private Controller controller;
@@ -68,7 +69,7 @@ public class Client implements Runnable {
     }
 
     /**
-     * method {@code connection}: sets socket or rmi. Enables gui or CLI.
+     * method {@code connection}: sets socket or rmi. Enables GUI or CLI.
      * Connects to a socket server or rmi server.
      */
     private void connection(boolean isSocket) {
@@ -98,7 +99,7 @@ public class Client implements Runnable {
 
     /**
      * method {@code serverOptions}: invocations of controller methods to send and receive serverOptionMessage.
-     * Invocations of view methods to display and receive player's info.
+     * Invocations of view methods to display options and receive user's choices.
      * invocations of controller methods to receive responseMessage. If responseMessage is correct, the loop ends.
      */
     private void serverOptions() {
@@ -113,17 +114,19 @@ public class Client implements Runnable {
                 ok = view.answer(answer);
 
             if (answer.getCorrect())
-                break;
+                break; //breaks the cycle if server received valid values
         }
     }
 
     /**
      * method {@code name}: invocations of controller methods to receive unavailableNamesMessage.
-     * Invocations of view methods to display and receive player's info.
+     * Invocations of view methods to display unavailable names and receive name chosen.
      * invocations of controller methods to send received info.
      * invocations of controller methods to receive responseMessage. If responseMessage is correct, the loop ends.
      */
     private void name() {
+        //in case the cli user does not provide an answer (only press enter), name is set to " "
+        //the loop will repeat until server receive a valid value
         while (true) {
             unavailableNamesMessage unavailableName = controller.getUnavailableName();
             String name = view.unavailableNames(unavailableName);
@@ -141,7 +144,7 @@ public class Client implements Runnable {
 
     /**
      * method {@code color}: invocations of controller methods to receive availableColorsMessage.
-     * Invocations of view methods to display and receive player's info.
+     * Invocations of view methods to display available colors and receive user's choice.
      * invocations of controller methods to send received info.
      * invocations of controller methods to receive responseMessage. If responseMessage is correct, the loop ends.
      */
@@ -162,8 +165,7 @@ public class Client implements Runnable {
     }
 
     /**
-     * method {@code color}: invocations of controller methods to receive availableColorsMessage.
-     * Invocations of view methods to display and receive player's info.
+     * Invocations of view methods to ask and receive from host the number of expected player.
      * invocations of controller methods to send received info.
      * invocations of controller methods to receive responseMessage. If responseMessage is correct, the loop ends.
      */
@@ -174,6 +176,7 @@ public class Client implements Runnable {
         newHostMessage newHost = controller.newHost();
 
         while (Objects.equals(newHost.getNewHostNickname(), current.getPlayer().getNickname())) {
+            //if the method expectedPlayers is not computed in time or user provide no answer, noResponse will be set to true
             expected = getFutureResult(view::expectedPlayers, noResponse);
 
             controller.expectedPlayers(expected, noResponse.get());
@@ -300,6 +303,29 @@ public class Client implements Runnable {
             return (T) defaultValue;
         }
     }
+
+//    /**
+//     *
+//     * @param task: Callable<Integer>, the result of the task will be an Integer
+//     * @param noResponse: AtomicBoolean
+//     * @return the result of the future task or defaultValue
+//     */
+//     Alternative: in this class we use this method submitting to the executor view.pickCard, view.expectedPlayers, view.placeStarter
+//     they all return an int value so there is no need use a generic value <T>
+//    private Integer getFutureResult(Callable<Integer> task, AtomicBoolean noResponse) {
+//        Future<Integer> future = executor.submit(task);
+//        Integer valueToReturn;
+//        try {
+//            valueToReturn = future.get(120, TimeUnit.SECONDS);
+//            return valueToReturn;
+//        } catch (Exception e) {
+//            //if the computation of the task is not completed within 2 minutes noResponse is set to true,
+//            // and we return the default value
+//            future.cancel(true);
+//            noResponse.set(true); // Update the noResponse flag
+//            return defaultValue;
+//        }
+//    }
 
     /**
      * method {@code placeCard}: invocations of controller methods to receive and send messages.

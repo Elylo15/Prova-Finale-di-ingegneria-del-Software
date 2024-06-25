@@ -11,9 +11,8 @@ import it.polimi.ingsw.model.CommonArea;
 import it.polimi.ingsw.model.Match;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.PlayerArea;
-import it.polimi.ingsw.model.cards.Deck;
-import it.polimi.ingsw.model.cards.ObjectiveCard;
-import it.polimi.ingsw.model.cards.PlaceableCard;
+import it.polimi.ingsw.model.cards.*;
+import it.polimi.ingsw.model.cards.exceptions.InvalidIdException;
 import it.polimi.ingsw.model.cards.exceptions.noPlaceCardException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,7 +24,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 class ViewCLITest {
 
@@ -228,6 +227,7 @@ class ViewCLITest {
         viewCLI.answer(message);
         message = new responseMessage(true);
         viewCLI.answer(message);
+        assertTrue(viewCLI.answer(message));
     }
 
     @Test
@@ -271,18 +271,73 @@ class ViewCLITest {
         }
         int id;
         viewCLI.showCommonArea(commonArea);
-        id = commonArea.getTableCards().getFirst().getID();
-        commonArea.pickTableCard(id);
-        viewCLI.showCommonArea(commonArea);
-        id = commonArea.getTableCards().get(1).getID();
+        id = commonArea.getTableCards().get(3).getID();
         commonArea.pickTableCard(id);
         viewCLI.showCommonArea(commonArea);
         id = commonArea.getTableCards().get(2).getID();
         commonArea.pickTableCard(id);
         viewCLI.showCommonArea(commonArea);
-        id = commonArea.getTableCards().get(3).getID();
+        id = commonArea.getTableCards().get(1).getID();
         commonArea.pickTableCard(id);
         viewCLI.showCommonArea(commonArea);
+        id = commonArea.getTableCards().getFirst().getID();
+        commonArea.pickTableCard(id);
+        viewCLI.showCommonArea(commonArea);
+    }
+    @Test
+    @DisplayName("Partially empty commonArea test")
+    void runOutOfGoldCards() {
+        //test the look of viewCli if decks and table have only resource cards
+        while (commonArea.getD2().getSize() > 0) {
+            commonArea.drawFromToPlayer(2);
+        }
+        //now gold deck is empty
+        int id;
+        viewCLI.showCommonArea(commonArea);
+
+        id = commonArea.getTableCards().get(3).getID(); //get first gold card
+        commonArea.pickTableCard(id);
+        viewCLI.showCommonArea(commonArea);
+
+        id = commonArea.getTableCards().get(2).getID(); //get second gold card
+        commonArea.pickTableCard(id);
+        viewCLI.showCommonArea(commonArea);
+
+        //if we pick a resource table card, its place will not be empty but replaced by another card (resource deck is not empty)
+        id = commonArea.getTableCards().getFirst().getID(); //get second gold card
+        commonArea.pickTableCard(id);
+        viewCLI.showCommonArea(commonArea);
+
+    }
+    @Test
+    @DisplayName("Partially empty commonArea test")
+    void runOutOfGoldCards2() {
+        //test the look of viewCli if decks and table have only resource cards
+        while (commonArea.getD2().getSize() > 0) {
+            commonArea.drawFromToPlayer(2);
+        }
+        //now gold deck is empty
+        int id;
+        int id2;
+        viewCLI.showCommonArea(commonArea);
+
+        id = commonArea.getTableCards().get(3).getID(); //get first gold card
+        commonArea.pickTableCard(id);
+        viewCLI.showCommonArea(commonArea);
+
+        id2 = commonArea.getTableCards().get(2).getID(); //get second gold card
+        commonArea.pickTableCard(id2);
+        viewCLI.showCommonArea(commonArea);
+
+        //if we pick a resource table card, its place will not be empty but replaced by another card (resource deck is not empty)
+        id = commonArea.getTableCards().getFirst().getID(); //get first resource card
+        commonArea.pickTableCard(id);
+        viewCLI.showCommonArea(commonArea);
+
+         //now tableCards at the indexes of gold cards removes has element null
+         Assertions.assertNull(commonArea.getTableCards().get(2));
+        Assertions.assertNull(commonArea.getTableCards().get(3));
+
     }
 
     @Test

@@ -204,7 +204,6 @@ public class MatchManager implements Runnable {
         boolean gameOver = false;
         while (!gameOver) {
 
-
             // After the first turns prioritizes the players who reconnect and are in state StarterCard or Objective
             synchronized (this) {
                 // Draws common objective cards, if the array of common objectives in the match is null call Match method drawCommonObjective()
@@ -230,7 +229,7 @@ public class MatchManager implements Runnable {
                 }
 
 
-                // Eventually update all players to LastTurn state
+                // Eventually, if the match is in last turn, we update all players in turn state PlaceCard to LastTurn
                 if (this.matchInfo.isLastTurn()) {
                     this.getOnlinePlayerInfo().stream()
                             .filter(playerInfo -> playerInfo.getState() == State.PlaceCard)
@@ -241,9 +240,9 @@ public class MatchManager implements Runnable {
 
             this.checkPlayersConnections();
 
-            // Starts the normal flow of the game
+            // Starts the normal flow of the game, we call the methods of this class according to the state of the match
             switch (this.matchInfo.getStatus()) {
-                //call the methods of MatchManager according to the state of the match
+                // enters the case corresponding to match status and then proceeds entering following cases (there is no break)
                 case Waiting -> this.waiting();
                 //turn if first player
                 case Player1 -> {
@@ -284,7 +283,7 @@ public class MatchManager implements Runnable {
 
                     this.turnNumber += 1; //increment the number of turns played after every cycle of players playing their turn
 
-
+                    //state of the match is actually Player4 only if fourth player is not null and in turn state PickCard
                     if (currentPlayer != null && findPlayer(currentPlayer) != null && findPlayer(currentPlayer).getState() == State.PickCard) {
                         this.matchInfo.setStatus(MatchState.Player4);
                     }
@@ -919,7 +918,7 @@ public class MatchManager implements Runnable {
         logCreator.log("ENDGAME");
         // Sends current state messages to all online players
         for (PlayerInfo playerInfo1 : this.getOnlinePlayerInfo()) {
-            //currentPlayer is null
+            //currentPlayer is null as we don't need to update other players about him anymore
             currentStateMessage currState = new currentStateMessage(null, playerInfo1.getPlayer(), "endGameState", this.matchInfo.isLastTurn(), this.onlinePlayersNicknames(), this.matchInfo.getMatch().getCommonObjective(), this.matchInfo.getID());
             playerInfo1.getConnection().sendCurrentState(currState);
         }

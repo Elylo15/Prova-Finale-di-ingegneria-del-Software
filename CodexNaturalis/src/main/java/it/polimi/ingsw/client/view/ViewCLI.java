@@ -981,12 +981,11 @@ public class ViewCLI extends View {
     public boolean askSocket() {
         state = "Socket";
         Scanner scanner = new Scanner(System.in);
-
         while (true) {
             System.out.println("Do you want to use Socket or rmi?");
             String choice = scanner.nextLine().toLowerCase();
-            if (choice.equals("socket")) return true;
-            else if (choice.equals("rmi")) return false;
+            if (choice.equals("socket")||choice.equals("s")) return true;
+            else if (choice.equals("rmi")||choice.equals("r")) return false;
         }
     }
 
@@ -1198,7 +1197,7 @@ public class ViewCLI extends View {
             System.out.println("All nicknames are available");
         }
 
-        String name = "";
+        String name = " ";
         boolean ok = false;
         while (!ok) {
             Scanner scanner = new Scanner(System.in);
@@ -1554,7 +1553,7 @@ public class ViewCLI extends View {
     }
 
     /**
-     * This method finds the winner of the game
+     * This method finds the winner or the two winners of the game
      *
      * @param points the points of the players related to their nickname
      * @return the name of the winner
@@ -1576,7 +1575,7 @@ public class ViewCLI extends View {
             }
 
         }
-        //int size = maxPoint2==0 ? 1 : 2;
+
         String[] winners = new String[2];
         winners[0] = winner1;
 
