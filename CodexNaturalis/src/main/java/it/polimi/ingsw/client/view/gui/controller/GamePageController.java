@@ -121,10 +121,10 @@ public class GamePageController implements Initializable {
     @FXML
     private ImageView colorName;
     private ImageView winner;
-    private ImageView red;
-    private ImageView blue;
-    private ImageView purple;
-    private ImageView green;
+    private ImageView red = null;
+    private ImageView blue = null;
+    private ImageView purple = null;
+    private ImageView green = null;
     private ImageView back;
     private ImageView selectedCard;
     private Player myself;
@@ -1554,29 +1554,29 @@ public class GamePageController implements Initializable {
             int score = player.getScore();
             Image img;
 
-            if (Objects.equals(color, "red") && red == null) {
-                img = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Pions/CODEX_pion_rouge.png")));
-                red = new ImageView(img);
+            if (Objects.equals(color, "red")) {
+                if(red == null) {
+                    img = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Pions/CODEX_pion_rouge.png")));
+                    red = new ImageView(img);
+                }
                 setPionPosition(red, score, allPions);
-            } else if (Objects.equals(color, "blue") && blue == null) {
-                img = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Pions/CODEX_pion_bleu.png")));
-                blue = new ImageView(img);
-                setPionPosition(blue, score, allPions);
-            } else if (Objects.equals(color, "purple") && purple == null) {
-                img = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Pions/CODEX_pion_purple.png")));
-                purple = new ImageView(img);
-                setPionPosition(purple, score, allPions);
-            } else if (Objects.equals(color, "green") && green == null) {
-                img = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Pions/CODEX_pion_vert.png")));
-                green = new ImageView(img);
-                setPionPosition(green, score, allPions);
-            } else if (Objects.equals(color, "red")) {
-                setPionPosition(red, score, allPions);
-            } else if (Objects.equals(color, "blue")) {
+            } else if (Objects.equals(color, "blue") ){
+                if(blue == null) {
+                    img = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Pions/CODEX_pion_bleu.png")));
+                    blue = new ImageView(img);
+                }
                 setPionPosition(blue, score, allPions);
             } else if (Objects.equals(color, "purple")) {
+                if(purple == null) {
+                    img = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Pions/CODEX_pion_purple.png")));
+                    purple = new ImageView(img);
+                }
                 setPionPosition(purple, score, allPions);
             } else if (Objects.equals(color, "green")) {
+                if(green == null) {
+                    img = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Pions/CODEX_pion_vert.png")));
+                    green = new ImageView(img);
+                }
                 setPionPosition(green, score, allPions);
             }
         });
@@ -1590,7 +1590,7 @@ public class GamePageController implements Initializable {
      * @param allPions the list of all pions
      */
     private void setPionPosition(ImageView pion, int score, List<ImageView> allPions) {
-        if (pion != null && !mainPane.getChildren().contains(pion) && !isPionAtDesiredPosition(pion, score)) {
+        if (pion != null && !mainPane.getChildren().contains(pion)) {
             double[] adjustedPosition = getAdjustedPosition(allPions, positions[score][0], positions[score][1], pion);
             pion.setLayoutX(adjustedPosition[0]);
             pion.setLayoutY(adjustedPosition[1]);
@@ -1625,13 +1625,12 @@ public class GamePageController implements Initializable {
 
             Timeline timeline = new Timeline();
 
-            int start = getScoreByPosition(startX, startY) + 1;
-            Utilities.fadeOutTransition(mainPane, pion, 1, false);
-            double[] adjustedPositionStart = getAdjustedPosition(allPions, positions[start][0], positions[start][1], pion);
-            pion.setLayoutX(adjustedPositionStart[0]);
-            pion.setLayoutY(adjustedPositionStart[1]);
-            pion.toFront();
-            Utilities.fadeInTransition(pion, 1);
+            int start = getScoreByPosition(startX, startY);
+            goToTop(pion, allPions, startX, startY);
+
+            if(start == score) {
+                return;
+            }
 
             for (int i = start; i <= score; i++) {
                 double[] adjustedPosition = getAdjustedPosition(allPions, positions[i][0], positions[i][1], pion);
@@ -1672,6 +1671,24 @@ public class GamePageController implements Initializable {
             }
         }
         return new double[]{targetX, targetY};
+    }
+
+    private void goToTop(ImageView myPion, List<ImageView> allPions, double targetX, double targetY) {
+
+        double offsetY = 0;
+
+        for (ImageView pion : allPions) {
+            if (pion != null && pion.getLayoutX() == targetX) {
+                while (pion.getLayoutY() == (targetY += offsetY)) {
+                    offsetY -= offsetPions;
+                }
+            }
+        }
+
+        myPion.setLayoutX(targetX);
+        myPion.setLayoutY(targetY);
+        myPion.toFront();
+        updatePionsPositions(allPions, myPion);
     }
 
     /**
