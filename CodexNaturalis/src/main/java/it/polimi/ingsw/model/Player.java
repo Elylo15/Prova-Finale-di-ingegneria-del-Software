@@ -219,6 +219,10 @@ Player implements Serializable {
         if (commonArea.getTableCards().isEmpty() && drawPick > 2)
             throw new InvalidIdException();
 
+        // Check if the picked card is not null
+        if (drawPick > 2 && commonArea.getTableCards().get(drawPick - 3) == null)
+            throw new InvalidIdException();
+
 
         if (drawPick == 1)
             deck.addNewPlaceableCard(commonArea.drawFromToPlayer(1));

@@ -575,7 +575,8 @@ public class MatchManager implements Runnable {
             }
             case PickCard -> {
 
-                if (this.matchInfo.getMatch().getCommonArea().getTableCards().isEmpty()) {
+                if (this.matchInfo.getMatch().getCommonArea().getTableCards().isEmpty()
+                        || this.getMatch().getCommonArea().getTableCards().stream().noneMatch(Objects::nonNull)){
                     logCreator.log("Common area is empty, player " + player.getNickname() + " cannot pick a card. Ending his turn.");
 
                 } else {
