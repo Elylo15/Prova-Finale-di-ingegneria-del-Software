@@ -1499,17 +1499,17 @@ public class GamePageController implements Initializable {
             }
 
             selectedCard = clickedCard;
-            if (cardID == commonArea.getD1().getList().getFirst().getID())
+            if (!commonArea.getD1().getList().isEmpty() && cardID == commonArea.getD1().getList().getFirst().getID())
                 selectedPick = 1;
-            else if (cardID == commonArea.getD2().getList().getFirst().getID())
+            else if (!commonArea.getD2().getList().isEmpty() && cardID == commonArea.getD2().getList().getFirst().getID())
                 selectedPick = 2;
-            else if (cardID == commonArea.getTableCards().getFirst().getID())
+            else if (commonArea.getTableCards().getFirst() != null && cardID == commonArea.getTableCards().getFirst().getID())
                 selectedPick = 3;
-            else if (cardID == commonArea.getTableCards().get(1).getID())
+            else if (commonArea.getTableCards().get(1) != null && cardID == commonArea.getTableCards().get(1).getID())
                 selectedPick = 4;
-            else if (cardID == commonArea.getTableCards().get(2).getID())
+            else if (commonArea.getTableCards().get(2) != null && cardID == commonArea.getTableCards().get(2).getID())
                 selectedPick = 5;
-            else if (cardID == commonArea.getTableCards().get(3).getID())
+            else if (commonArea.getTableCards().get(3) != null && cardID == commonArea.getTableCards().get(3).getID())
                 selectedPick = 6;
 
             GUIMessages.writeToClient(selectedPick);
