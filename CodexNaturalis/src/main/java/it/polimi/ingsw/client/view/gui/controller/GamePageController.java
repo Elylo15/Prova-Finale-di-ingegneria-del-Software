@@ -842,7 +842,7 @@ public class GamePageController implements Initializable {
         Platform.runLater(() -> {
             //Add the front up cards to commonArea
             if (commonArea.getTableCards().getFirst() == null) { //if there is no card (It should return null because commonArea is set to store null in the ArrayList if there is no card)
-                removeCardFromPosition(layoutXPick1, layoutYResource); //if there is an image remove it. The method will do nothing if there is not
+                removeCardFromPosition(layoutXPick0, layoutYResource); //if there is an image remove it. The method will do nothing if there is not
             } else //if there is a card, add the image
                 addNewCardToPane(mainPane, commonArea.getTableCards().getFirst().getID(), true,
                         commonArea.getTableCards().getFirst(), layoutXPick0, layoutYResource, fitHeightCommon, fitWidthCommon, this::pickCard);
