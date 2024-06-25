@@ -203,22 +203,6 @@ Player implements Serializable {
         if (commonArea.getD2().getSize() == 0 && drawPick == 2)
             throw new InvalidIdException();
 
-        // Check if there are less than 4 table cards
-        if (commonArea.getTableCards().size() < 4 && drawPick == 6)
-            throw new InvalidIdException();
-
-        // Check if there are less than 3 table cards
-        if (commonArea.getTableCards().size() < 3 && drawPick > 4)
-            throw new InvalidIdException();
-
-        // Check if there are less than 2 table cards
-        if (commonArea.getTableCards().size() < 2 && drawPick > 3)
-            throw new InvalidIdException();
-
-        // Check if there are no table cards
-        if (commonArea.getTableCards().isEmpty() && drawPick > 2)
-            throw new InvalidIdException();
-
         // Check if the picked card is not null
         if (drawPick > 2 && commonArea.getTableCards().get(drawPick - 3) == null)
             throw new InvalidIdException();

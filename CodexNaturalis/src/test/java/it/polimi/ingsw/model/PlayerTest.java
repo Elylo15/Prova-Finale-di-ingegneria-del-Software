@@ -9,6 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -140,9 +141,6 @@ class PlayerTest {
     void pickNewCard3_4_5_6_ShouldThrowException() {
         int size = commonArea.getTableCards().size();
 
-        for (int i = 0; i < size; i++) {
-            commonArea.getTableCards().removeFirst();
-        }
         assertThrows(InvalidIdException.class, () -> player.pickNewCard(3));
         assertThrows(InvalidIdException.class, () -> player.pickNewCard(4));
         assertThrows(InvalidIdException.class, () -> player.pickNewCard(5));
