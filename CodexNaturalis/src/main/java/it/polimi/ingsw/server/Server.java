@@ -507,7 +507,7 @@ public class Server implements Runnable {
                     return;
                 }
 
-                if (unavailableNames.contains(name.toLowerCase()))
+                if (unavailableNames.contains(name.toLowerCase()) || name.isEmpty() || name.isBlank())
                     connection.sendAnswer(false);
                 else {
                     connection.sendAnswer(true);

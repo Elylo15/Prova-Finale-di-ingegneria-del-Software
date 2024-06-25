@@ -33,6 +33,7 @@ public class Client implements Runnable {
     private final Integer defaultValue = 1000;
     private String serverIP;
     private Controller controller;
+    private int timeout;
 
     /**
      * method {@code Client}: Constructor for the Client class
@@ -40,6 +41,7 @@ public class Client implements Runnable {
      * @param view view of the client
      */
     public Client(View view) {
+        timeout = 120;
         this.view = view;
         int corePoolSize = 5;
         int maximumPoolSize = 200;
@@ -237,7 +239,7 @@ public class Client implements Runnable {
             Future<Integer> future = executor.submit(() -> view.chooseObjective(objectives));
 
             try {
-                pick = future.get(120, TimeUnit.SECONDS);
+                pick = future.get(timeout, TimeUnit.SECONDS);
             } catch (Exception e) {
                 future.cancel(true);
                 pick = defaultValue;
@@ -295,7 +297,7 @@ public class Client implements Runnable {
         Future<T> future = executor.submit(task);
 
         try {
-            return future.get(120, TimeUnit.SECONDS);
+            return future.get(timeout, TimeUnit.SECONDS);
         } catch (Exception e) {
             future.cancel(true);
             noResponse.set(true); // Update the noResponse flag
@@ -341,7 +343,7 @@ public class Client implements Runnable {
             //we wait two minutes to obtain the result of the submitted task
             //then if computation is not completed an exception is thrown, noResponse is set to true, user's choices are set to default value
             try {
-                int[] cardArray = future.get(240, TimeUnit.SECONDS);
+                int[] cardArray = future.get(timeout, TimeUnit.SECONDS);
                 card.set(0, cardArray[0]);
                 card.set(1, cardArray[1]);
                 card.set(2, cardArray[2]);
@@ -412,7 +414,7 @@ public class Client implements Runnable {
             Future<String> future = executor.submit(() -> view.pickNameFA(unavailableName));
 
             try {
-                name = future.get(120, TimeUnit.SECONDS);
+                name = future.get(timeout, TimeUnit.SECONDS);
             } catch (Exception e) {
                 future.cancel(true);
                 name = "defaultName";
@@ -452,6 +454,10 @@ public class Client implements Runnable {
                 setController(server, isSocket);
                 connection(isSocket);
             } catch (Exception e) {
+                // Remove this
+                System.out.println(e.getMessage());
+                e.printStackTrace();
+
                 System.out.println("\033[31mConnection failed.\033[0m");
                 continue;
             }

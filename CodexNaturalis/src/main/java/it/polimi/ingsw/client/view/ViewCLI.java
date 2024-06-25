@@ -19,6 +19,7 @@ import it.polimi.ingsw.model.cards.enumeration.Reign;
 import it.polimi.ingsw.model.cards.enumeration.Resource;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 /**
@@ -50,12 +51,33 @@ public class ViewCLI extends View {
     private ArrayList<String> names = new ArrayList<>();
     private final HashMap<String, String> playerColor = new HashMap<>();
 
+    private Scanner scanner = new Scanner(System.in);
+    private static final AtomicBoolean isInterrupted = new AtomicBoolean(false);
+
     /**
      * Method {@code ViewCLI}: constructs a new ViewCLI
      */
     public ViewCLI() {
         super();
     }
+
+    /**
+     * Method {@code getInput}: gets the input from the user
+     * @return the input String
+     */
+    private String getInput() throws InterruptedException {
+        isInterrupted.set(false);
+        scanner = new Scanner(System.in);
+        String input = scanner.nextLine();
+
+        // Check if the input thread has been interrupted
+        if(isInterrupted.get())
+            throw new InterruptedException("Scanner should not be read: isInterrupted flag is set.");
+
+        scanner.close();
+        return input;
+    }
+
 
     /**
      * Method {@code getBgColor}: gets the background color
@@ -122,11 +144,16 @@ public class ViewCLI extends View {
     @Override
     public String askIP() {
         state = "IP";
-        Scanner scanner = new Scanner(System.in);
         String server;
 
         System.out.print("Enter IP: ");
-        server = scanner.nextLine();
+
+        try {
+            server = getInput();
+        } catch (InterruptedException e) {
+            // If the input thread is interrupted, return the default IP
+            return "localhost";
+        }
         return server;
     }
 
@@ -135,6 +162,7 @@ public class ViewCLI extends View {
      */
     @Override
     public void playerDisconnected(Exception e) {
+        this.isInterrupted.set(true);
         state = "Disconnected";
         System.out.println("\n" + RED_BACKGROUND + "You have been disconnected." + RESET + "\n");
     }
@@ -1005,10 +1033,16 @@ public class ViewCLI extends View {
      */
     public boolean askSocket() {
         state = "Socket";
-        Scanner scanner = new Scanner(System.in);
         while (true) {
             System.out.println("Do you want to use Socket or rmi?");
-            String choice = scanner.nextLine().toLowerCase();
+            String choice;
+            try {
+                choice = getInput();
+            } catch (InterruptedException e) {
+                // Default is socket
+                return true;
+            }
+            choice = choice.toLowerCase();
             if (choice.equals("socket") || choice.equals("s")) return true;
             else if (choice.equals("rmi") || choice.equals("r")) return false;
         }
@@ -1034,17 +1068,23 @@ public class ViewCLI extends View {
      */
     public serverOptionMessage serverOptions(serverOptionMessage message) {
         state = "ServerOptions";
-        Scanner scanner = new Scanner(System.in);
-        boolean newMatch;
+        boolean newMatch = false;
         Integer matchID = null;
         Integer startedMatchID = null;
         boolean loadMatch = false;
         Integer savedMatchID = null;
 
+        serverOptionMessage emptyMessage = new serverOptionMessage(newMatch, matchID, startedMatchID, loadMatch, savedMatchID);
+
         // Asks the user if he wants to join a new match
         while (true) {
             System.out.print("Do you want to join a new match? [YES/no] ");
-            String choice = scanner.nextLine().toLowerCase();
+            String choice;
+            try {
+                choice = getInput();
+            } catch (InterruptedException e) {
+                return emptyMessage;
+            }
             if (choice.equals("yes") || choice.equals("y") || choice.equals("ye")) {
                 newMatch = true;
             } else if (choice.equals("no") || choice.equals("n")) {
@@ -1059,7 +1099,13 @@ public class ViewCLI extends View {
         // Asks the user if he wants to create a new match or join an existing one in waiting
         while (newMatch) {
             System.out.print("Create a New Match (1) or Join a Match (2)? ");
-            String choice = scanner.nextLine().toLowerCase();
+            String choice;
+            try {
+                choice = getInput().toLowerCase();
+            } catch (InterruptedException e) {
+                return emptyMessage;
+            }
+
             if (choice.equals("2")) {
                 if (message.getWaitingMatches().isEmpty()) {
                     System.out.println("There are no matches to join: creating a new match");
@@ -1074,17 +1120,17 @@ public class ViewCLI extends View {
                     }
                     System.out.print("Enter the match number: ");
                     try {
-                        matchID = scanner.nextInt();
-                        scanner.nextLine();
+                        matchID = Integer.parseInt(getInput());
                         if (matchID < 1 || matchID > i) {
                             System.out.println(RED_TEXT + "ANSWER NOT VALID" + RESET);
                             continue;
                         }
                         matchID = message.getWaitingMatches().get(matchID - 1);
                         break;
-                    } catch (Exception e) {
-                        scanner.nextLine();
+                    } catch (NumberFormatException e) {
                         System.out.println(RED_TEXT + "ANSWER NOT VALID" + RESET);
+                    } catch (InterruptedException e) {
+                        return emptyMessage;
                     }
                 }
 
@@ -1102,7 +1148,12 @@ public class ViewCLI extends View {
             boolean runMatch;
             while (true) {
                 System.out.print("Join a running match? [YES/no] ");
-                String choice = scanner.nextLine().toLowerCase();
+                String choice;
+                try {
+                    choice = getInput().toLowerCase();
+                } catch (InterruptedException e) {
+                    return emptyMessage;
+                }
                 if (choice.equals("yes") || choice.equals("y")) {
                     runMatch = true;
                 } else if (choice.equals("no") || choice.equals("n")) {
@@ -1132,18 +1183,17 @@ public class ViewCLI extends View {
                         }
                         System.out.print("Enter the match number: ");
                         try {
-                            startedMatchID = scanner.nextInt();
-                            scanner.nextLine();
-
+                            startedMatchID = Integer.parseInt(getInput());
                             if (startedMatchID < 1 || startedMatchID > i) {
                                 System.out.println(RED_TEXT + "ANSWER NOT VALID" + RESET);
                                 continue;
                             }
                             startedMatchID = message.getRunningMatches().get(startedMatchID - 1);
                             break;
-                        } catch (Exception e) {
-                            scanner.nextLine();
+                        } catch (NumberFormatException e) {
                             System.out.println(RED_TEXT + "You didn't enter an int value" + RESET);
+                        } catch (InterruptedException e) {
+                            return emptyMessage;
                         }
                     }
                 }
@@ -1152,7 +1202,12 @@ public class ViewCLI extends View {
                 //if runMatch is false proceeds to ask if the user wants to join a saved match
                 while (true) {
                     System.out.print("Join a saved match? [YES/no] ");
-                    String choice = scanner.nextLine().toLowerCase();
+                    String choice;
+                    try {
+                        choice = getInput().toLowerCase();
+                    } catch (InterruptedException e) {
+                        return emptyMessage;
+                    }
                     if (choice.equals("yes") || choice.equals("y")) {
                         loadMatch = true;
                     } else if (choice.equals("no") || choice.equals("n")) {
@@ -1180,8 +1235,7 @@ public class ViewCLI extends View {
                             }
                             System.out.print("Enter the saved match number: ");
                             try {
-                                savedMatchID = scanner.nextInt();
-                                scanner.nextLine();
+                                savedMatchID = Integer.parseInt(getInput());
 
                                 if (savedMatchID < 1 || savedMatchID > i) {
                                     System.out.println(RED_TEXT + "ANSWER NOT VALID" + RESET);
@@ -1190,9 +1244,10 @@ public class ViewCLI extends View {
 
                                 savedMatchID = message.getSavedMatches().get(savedMatchID - 1);
                                 break;
-                            } catch (Exception e) {
-                                scanner.nextLine();
+                            } catch (NumberFormatException e) {
                                 System.out.println(RED_TEXT + "ANSWER NOT VALID" + RESET);
+                            } catch (InterruptedException e) {
+                                return emptyMessage;
                             }
                         }
                     }
@@ -1225,9 +1280,12 @@ public class ViewCLI extends View {
         String name = " ";
         boolean ok = false;
         while (!ok) {
-            Scanner scanner = new Scanner(System.in);
             System.out.println("Choose a nickname:");
-            name = scanner.nextLine();
+            try {
+                name = getInput();
+            } catch (InterruptedException e) {
+                return "";
+            }
             if (name.length() > 10)
                 System.out.println(RED_TEXT + "Your nickname is too long! Use at most 10 characters." + RESET);
             else
@@ -1244,7 +1302,7 @@ public class ViewCLI extends View {
      */
     public boolean answer(responseMessage message) {
         if (!message.getCorrect())
-            System.out.println(RED_TEXT + "You didn't entered a valid value, please try again" + RESET);
+            System.out.println(RED_TEXT + "You didn't enter a valid value, please try again" + RESET);
         else if (message.getCorrect() && (Objects.equals(state, "NameFAState") || Objects.equals(state, "AvailableColors"))
                 && !Objects.equals(state, "Waiting") && (!newMessage.isNewMatch() || (newMessage.getMatchID() != null && !names.isEmpty()))) {
             System.out.println(PURPLE_TEXT + "Waiting for" + BLUE_TEXT + " other players" + GREEN_TEXT + " to join" + RED_TEXT + " the game..." + RESET);
@@ -1288,9 +1346,12 @@ public class ViewCLI extends View {
         System.out.print("\n");
 
         String color;
-        Scanner scanner = new Scanner(System.in);
         System.out.println("Choose a color:");
-        color = scanner.nextLine();
+        try {
+            color = getInput();
+        } catch (InterruptedException e) {
+            return " ";
+        }
         return color;
     }
 
@@ -1302,11 +1363,16 @@ public class ViewCLI extends View {
     public int placeStarter() {
         state = "PlaceStarter";
         System.out.println("Place your STARTER card on the table");
-        Scanner scanner = new Scanner(System.in);
 
         while (true) {
             System.out.print("FRONT or BACK? ");
-            String choice = scanner.nextLine().toLowerCase();
+            String choice;
+            try {
+                choice = getInput().toLowerCase();
+            } catch (InterruptedException e) {
+                return 0;
+            }
+
             switch (choice) {
                 case "f", "front", "front side" -> {
                     return 1;
@@ -1326,17 +1392,16 @@ public class ViewCLI extends View {
     public int expectedPlayers() {
         state = "ExpectedPlayers";
         int numExpected;
-        Scanner scanner = new Scanner(System.in);
         while (true) {
 
             try {
                 System.out.println("How many player do you want to be in the game?");
-                numExpected = scanner.nextInt();
-                scanner.nextLine();
+                numExpected = Integer.parseInt(getInput());
                 break;
-            } catch (NoSuchElementException | IllegalStateException e) {
-                scanner.nextLine();
+            } catch (NumberFormatException e) {
                 System.out.println(RED_TEXT + "You didn't enter an integer value" + RESET);
+            } catch (InterruptedException e) {
+                return 0;
             }
         }
         return numExpected;
@@ -1365,15 +1430,14 @@ public class ViewCLI extends View {
         printOutput(output);
 
         System.out.print("FIRST (1) or SECOND (2) ?  ");
-        Scanner scanner = new Scanner(System.in);
         while (true) {
             try {
-                objective = scanner.nextInt();
-                scanner.nextLine();
+                objective = Integer.parseInt(getInput());
                 break;
-            } catch (NoSuchElementException | IllegalStateException e) {
-                scanner.nextLine();
+            } catch (NumberFormatException e) {
                 System.out.println(RED_TEXT + "You didn't enter an integer value" + RESET);
+            } catch (InterruptedException e) {
+                return 0;
             }
         }
         return objective;
@@ -1406,23 +1470,28 @@ public class ViewCLI extends View {
         chosenCard[1] = 1000;
         chosenCard[2] = 1000;
         chosenCard[3] = 1000;
-        Scanner scanner = new Scanner(System.in);
+
         while (true) {
             try {
                 System.out.print("Enter the NUMBER of the card you want to place (0) or (1) or (2): ");
-                chosenCard[0] = scanner.nextInt();
-                scanner.nextLine();
+                chosenCard[0] = Integer.parseInt(getInput());
                 break;
-            } catch (NoSuchElementException | IllegalStateException e) {
-                scanner.nextLine();
+            } catch (NumberFormatException e) {
                 System.out.println(RED_TEXT + "You didn't enter an integer value" + RESET);
+            } catch (InterruptedException e) {
+                return chosenCard;
             }
         }
 
         boolean correct = false;
         while (!correct) {
             System.out.print("FRONT or BACK?");
-            String choice = scanner.nextLine().toLowerCase();
+            String choice;
+            try {
+                choice = getInput().toLowerCase();
+            } catch (InterruptedException e) {
+                return chosenCard;
+            }
             switch (choice) {
                 case "f", "front", "front side" -> {
                     chosenCard[1] = 1;
@@ -1439,12 +1508,12 @@ public class ViewCLI extends View {
         while (true) {
             try {
                 System.out.print("ROW: ");
-                chosenCard[2] = scanner.nextInt();
-                scanner.nextLine();
+                chosenCard[2] = Integer.parseInt(getInput());
                 break;
-            } catch (NoSuchElementException | IllegalStateException e) {
-                scanner.nextLine();
+            } catch (NumberFormatException e) {
                 System.out.println(RED_TEXT + "You didn't enter an integer value" + RESET);
+            } catch (InterruptedException e) {
+                return chosenCard;
             }
         }
 
@@ -1452,12 +1521,12 @@ public class ViewCLI extends View {
         while (true) {
             try {
                 System.out.print("COLUMN: ");
-                chosenCard[3] = scanner.nextInt();
-                scanner.nextLine();
+                chosenCard[3] = Integer.parseInt(getInput());
                 break;
-            } catch (NoSuchElementException | IllegalStateException e) {
-                scanner.nextLine();
+            } catch (NumberFormatException e) {
                 System.out.println(RED_TEXT + "You didn't enter an integer value" + RESET);
+            } catch (InterruptedException e) {
+                return chosenCard;
             }
         }
 
@@ -1472,14 +1541,13 @@ public class ViewCLI extends View {
     public int pickCard() {
         state = "PickCard";
         int choice = 1000;
-        Scanner scanner = new Scanner(System.in);
         try {
             System.out.print("enter the NUMBER of the card you want to pick DECK (1)," + YELLOW_TEXT + "(2)" + RESET + " or TABLE (3),(4)," + YELLOW_TEXT + "(5),(6): " + RESET);
-            choice = scanner.nextInt();
-            scanner.nextLine();
-        } catch (NoSuchElementException | IllegalStateException e) {
-            scanner.nextLine();
+            choice = Integer.parseInt(getInput());
+        } catch (NumberFormatException e) {
             System.out.println(RED_TEXT + "You didn't enter an integer value" + RESET);
+        } catch (InterruptedException e) {
+            return 0;
         }
         return choice;
     }
@@ -1653,18 +1721,17 @@ public class ViewCLI extends View {
             i++;
         }
         while (true) {
-            Scanner scanner = new Scanner(System.in);
             try {
-                int choice = scanner.nextInt();
-                scanner.nextLine();
+                int choice = Integer.parseInt(getInput());
                 if (choice > 0 && choice <= message.getNames().size()) {
                     return message.getNames().get(choice - 1);
                 } else {
                     System.out.println("Please enter a valid number");
                 }
-            } catch (Exception e) {
-                scanner.nextLine();
+            } catch (NumberFormatException e) {
                 System.out.println("Please enter a valid number");
+            } catch (InterruptedException e) {
+                return "";
             }
         }
 
