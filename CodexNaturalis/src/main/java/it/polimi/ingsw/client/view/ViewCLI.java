@@ -22,7 +22,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * This class is the view of the client, it is used to visualize the game in the command line
+ * This class is the view of the client, it is used to visualize the game in the command line.
  */
 public class ViewCLI extends View {
     // ANSI escape code constants for text color
@@ -48,11 +48,6 @@ public class ViewCLI extends View {
     private serverOptionMessage newMessage;
     private String state = "";
     private ArrayList<String> names = new ArrayList<>();
-
-    //the purpose of ViewCLI is to handle the interaction with the user and
-    // visualize what he needs to see in order to play the game
-    // by printing it in the command line
-
     private final HashMap<String, String> playerColor = new HashMap<>();
 
     /**
@@ -60,39 +55,6 @@ public class ViewCLI extends View {
      */
     public ViewCLI() {
         super();
-    }
-
-    /**
-     * Method {@code startMain}: displays an entry message
-     *
-     * @return true to continue execution in Client
-     */
-    @Override
-    public boolean startMain(){
-        System.out.println("\n" + BLUE_TEXT +
-                "⎻⎻⎻⎻⎻⎻⎻⎻⎻" + PURPLE_TEXT + "⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻" + YELLOW_TEXT + "⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻" + GREEN_TEXT + "⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻" + RED_TEXT + "⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻\n" +
-                "                                                                                     \n" + PURPLE_TEXT +
-                "                   █████████  " + RED_TEXT + "             █████                                     \n" + PURPLE_TEXT +
-                "                  ███░░░░░███ " + RED_TEXT + "            ░░███                                      \n" + PURPLE_TEXT +
-                "                 ███     ░░░  " + BLUE_TEXT + " ██████ " + RED_TEXT + "  ███████ " + GREEN_TEXT + "  ██████ " + YELLOW_TEXT + " █████ █████                \n" + PURPLE_TEXT +
-                "                ░███         " + BLUE_TEXT + " ███░░███" + RED_TEXT + " ███░░███ " + GREEN_TEXT + " ███░░███ " + YELLOW_TEXT + "░███ ░░███                 \n" + PURPLE_TEXT +
-                "                ░███        " + BLUE_TEXT + " ░███ ░███" + RED_TEXT + " ███ ░███ " + GREEN_TEXT + "░███████  " + YELLOW_TEXT + "░░░█████░                  \n" + PURPLE_TEXT +
-                "                ░░███     ██ " + BLUE_TEXT + "░███ ░███" + RED_TEXT + " ███ ░███ " + GREEN_TEXT + "░███░░     " + YELLOW_TEXT + "███░░░███                 \n" + PURPLE_TEXT +
-                "                 ░░█████████ " + BLUE_TEXT + "░░██████ " + RED_TEXT + " ░███████ " + GREEN_TEXT + "░░██████  " + YELLOW_TEXT + "█████ █████                \n" + PURPLE_TEXT +
-                "                  ░░░░░░░░░ " + BLUE_TEXT + "  ░░░░░░  " + RED_TEXT + " ░░░░░░░░  " + GREEN_TEXT + "░░░░░░  " + YELLOW_TEXT + "░░░░░ ░░░░░                 \n" +
-                "                                                                                     \n" + RED_TEXT +
-                "     ██████   █████   " + GREEN_TEXT + "        █████                 " + BLUE_TEXT + "              ████ " + GREEN_TEXT + " ███           \n" + RED_TEXT +
-                "    ░░██████ ░░███    " + GREEN_TEXT + "        ░███                   " + BLUE_TEXT + "            ░░███                \n" + RED_TEXT +
-                "     ░███░███ ░███ " + PURPLE_TEXT + "  ██████ " + GREEN_TEXT + " ███████ " + BLUE_TEXT + " ░█████ ███ " + YELLOW_TEXT + " ████████" + RED_TEXT + "  ██████ " + BLUE_TEXT + "███ " + GREEN_TEXT + "████" + PURPLE_TEXT + "  █████    \n" + RED_TEXT +
-                "     ░███░░███░███  " + PURPLE_TEXT + "░░░░░███ " + GREEN_TEXT + "░░███░ " + BLUE_TEXT + " ░░███ ░███ " + YELLOW_TEXT + " ░███░░███" + RED_TEXT + " ░░░░███" + BLUE_TEXT + " ███░" + GREEN_TEXT + " ███" + PURPLE_TEXT + " ███░░     \n" + RED_TEXT +
-                "     ░███ ░░██████   " + PURPLE_TEXT + "███████" + GREEN_TEXT + "  ░███   " + BLUE_TEXT + " ░███ ░███ " + YELLOW_TEXT + " ░███ ░░░" + RED_TEXT + "  ███████" + BLUE_TEXT + " ███ " + GREEN_TEXT + "░███" + PURPLE_TEXT + " ░█████    \n" + RED_TEXT +
-                "     ░███  ░░█████  " + PURPLE_TEXT + "███░░███" + GREEN_TEXT + "  ░███ ██" + BLUE_TEXT + " ░███ ░███ " + YELLOW_TEXT + " ░███  " + RED_TEXT + "   ███░░███" + BLUE_TEXT + " ███ " + GREEN_TEXT + "░███ " + PURPLE_TEXT + "░░░░███   \n" + RED_TEXT +
-                "     █████  ░░█████ " + PURPLE_TEXT + "░████████ " + GREEN_TEXT + "░░█████ " + BLUE_TEXT + "░███████ " + YELLOW_TEXT + " █████ " + RED_TEXT + "  ░░████████ " + BLUE_TEXT + "████" + GREEN_TEXT + " ███" + PURPLE_TEXT + " ██████    \n" + RED_TEXT +
-                "    ░░░░░    ░░░░░  " + PURPLE_TEXT + "░░░░░░░░ " + GREEN_TEXT + "  ░░░░░ " + BLUE_TEXT + " ░░░░░░░  " + YELLOW_TEXT + "░░░░   " + RED_TEXT + "  ░░░░░░░░░ " + BLUE_TEXT + "░░░░ " + GREEN_TEXT + "░░░ " + PURPLE_TEXT + "░░░░░░     \n" + RED_TEXT +
-                "                                                                                     \n" + BLUE_TEXT +
-                "⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽" + YELLOW_TEXT + "⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽" + RED_TEXT + "⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽" + PURPLE_TEXT + "⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽" + GREEN_TEXT + "⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽\n" + RESET +
-                "\n");
-        return true;
     }
 
     /**
@@ -117,6 +79,39 @@ public class ViewCLI extends View {
 
         }
         return BGColor;
+    }
+
+    /**
+     * Method {@code startMain}: displays an entry message
+     *
+     * @return true to continue execution in Client
+     */
+    @Override
+    public boolean startMain() {
+        System.out.println("\n" + BLUE_TEXT +
+                "⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻" + PURPLE_TEXT + "⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻" + GREEN_TEXT + "⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻" + RED_TEXT + "⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻\n" +
+                "                                                                                     \n" + PURPLE_TEXT +
+                "                   █████████  " + RED_TEXT + "             █████                                     \n" + PURPLE_TEXT +
+                "                  ███░░░░░███ " + RED_TEXT + "            ░░███                                      \n" + PURPLE_TEXT +
+                "                 ███     ░░░  " + BLUE_TEXT + " ██████ " + RED_TEXT + "  ███████ " + GREEN_TEXT + "  ██████ " + PURPLE_TEXT + " █████ █████                \n" + PURPLE_TEXT +
+                "                ░███         " + BLUE_TEXT + " ███░░███" + RED_TEXT + " ███░░███ " + GREEN_TEXT + " ███░░███ " + PURPLE_TEXT + "░███ ░░███                 \n" + PURPLE_TEXT +
+                "                ░███        " + BLUE_TEXT + " ░███ ░███" + RED_TEXT + " ███ ░███ " + GREEN_TEXT + "░███████  " + PURPLE_TEXT + "░░░█████░                  \n" + PURPLE_TEXT +
+                "                ░░███     ██ " + BLUE_TEXT + "░███ ░███" + RED_TEXT + " ███ ░███ " + GREEN_TEXT + "░███░░     " + PURPLE_TEXT + "███░░░███                 \n" + PURPLE_TEXT +
+                "                 ░░█████████ " + BLUE_TEXT + "░░██████ " + RED_TEXT + " ░███████ " + GREEN_TEXT + "░░██████  " + PURPLE_TEXT + "█████ █████                \n" + PURPLE_TEXT +
+                "                  ░░░░░░░░░ " + BLUE_TEXT + "  ░░░░░░  " + RED_TEXT + " ░░░░░░░░  " + GREEN_TEXT + "░░░░░░  " + PURPLE_TEXT + "░░░░░ ░░░░░                 \n" +
+                "                                                                                     \n" + RED_TEXT +
+                "     ██████   █████   " + GREEN_TEXT + "        █████                 " + BLUE_TEXT + "              ████ " + GREEN_TEXT + " ███           \n" + RED_TEXT +
+                "    ░░██████ ░░███    " + GREEN_TEXT + "        ░███                   " + BLUE_TEXT + "            ░░███                \n" + RED_TEXT +
+                "     ░███░███ ░███ " + PURPLE_TEXT + "  ██████ " + GREEN_TEXT + " ███████ " + BLUE_TEXT + " ░█████ ███ " + PURPLE_TEXT + " ████████" + RED_TEXT + "  ██████ " + BLUE_TEXT + "███ " + GREEN_TEXT + "████" + PURPLE_TEXT + "  █████    \n" + RED_TEXT +
+                "     ░███░░███░███  " + PURPLE_TEXT + "░░░░░███ " + GREEN_TEXT + "░░███░ " + BLUE_TEXT + " ░░███ ░███ " + PURPLE_TEXT + " ░███░░███" + RED_TEXT + " ░░░░███" + BLUE_TEXT + " ███░" + GREEN_TEXT + " ███" + PURPLE_TEXT + " ███░░     \n" + RED_TEXT +
+                "     ░███ ░░██████   " + PURPLE_TEXT + "███████" + GREEN_TEXT + "  ░███   " + BLUE_TEXT + " ░███ ░███ " + PURPLE_TEXT + " ░███ ░░░" + RED_TEXT + "  ███████" + BLUE_TEXT + " ███ " + GREEN_TEXT + "░███" + PURPLE_TEXT + " ░█████    \n" + RED_TEXT +
+                "     ░███  ░░█████  " + PURPLE_TEXT + "███░░███" + GREEN_TEXT + "  ░███ ██" + BLUE_TEXT + " ░███ ░███ " + PURPLE_TEXT + " ░███  " + RED_TEXT + "   ███░░███" + BLUE_TEXT + " ███ " + GREEN_TEXT + "░███ " + PURPLE_TEXT + "░░░░███   \n" + RED_TEXT +
+                "     █████  ░░█████ " + PURPLE_TEXT + "░████████ " + GREEN_TEXT + "░░█████ " + BLUE_TEXT + "░███████ " + PURPLE_TEXT + " █████ " + RED_TEXT + "  ░░████████ " + BLUE_TEXT + "████" + GREEN_TEXT + " ███" + PURPLE_TEXT + " ██████    \n" + RED_TEXT +
+                "    ░░░░░    ░░░░░  " + PURPLE_TEXT + "░░░░░░░░ " + GREEN_TEXT + "  ░░░░░ " + BLUE_TEXT + " ░░░░░░░  " + PURPLE_TEXT + "░░░░   " + RED_TEXT + "  ░░░░░░░░░ " + BLUE_TEXT + "░░░░ " + GREEN_TEXT + "░░░ " + PURPLE_TEXT + "░░░░░░     \n" + RED_TEXT +
+                "                                                                                     \n" + GREEN_TEXT +
+                "⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽" + RED_TEXT + "⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽" + PURPLE_TEXT + "⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽" + BLUE_TEXT + "⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽\n" + RESET +
+                "\n");
+        return true;
     }
 
     /**
@@ -1014,8 +1009,8 @@ public class ViewCLI extends View {
         while (true) {
             System.out.println("Do you want to use Socket or rmi?");
             String choice = scanner.nextLine().toLowerCase();
-            if (choice.equals("socket")||choice.equals("s")) return true;
-            else if (choice.equals("rmi")||choice.equals("r")) return false;
+            if (choice.equals("socket") || choice.equals("s")) return true;
+            else if (choice.equals("rmi") || choice.equals("r")) return false;
         }
     }
 

@@ -1,27 +1,26 @@
     package it.polimi.ingsw.client;
 
-import it.polimi.ingsw.client.controller.Controller;
-import it.polimi.ingsw.client.controller.ControllerRMI;
-import it.polimi.ingsw.client.controller.ControllerSocket;
-import it.polimi.ingsw.client.view.View;
-import it.polimi.ingsw.client.view.ViewCLI;
-import it.polimi.ingsw.client.view.ViewGUI;
-import it.polimi.ingsw.messages.connectionState.availableColorsMessage;
-import it.polimi.ingsw.messages.connectionState.connectionResponseMessage;
-import it.polimi.ingsw.messages.connectionState.unavailableNamesMessage;
-import it.polimi.ingsw.messages.currentStateMessage;
-import it.polimi.ingsw.messages.endGameState.declareWinnerMessage;
-import it.polimi.ingsw.messages.playerTurnState.updatePlayerMessage;
-import it.polimi.ingsw.messages.responseMessage;
-import it.polimi.ingsw.messages.serverOptionState.serverOptionMessage;
-import it.polimi.ingsw.messages.waitingForPlayerState.newHostMessage;
-import it.polimi.ingsw.model.cards.ObjectiveCard;
+    import it.polimi.ingsw.client.controller.Controller;
+    import it.polimi.ingsw.client.controller.ControllerRMI;
+    import it.polimi.ingsw.client.controller.ControllerSocket;
+    import it.polimi.ingsw.client.view.View;
+    import it.polimi.ingsw.client.view.ViewCLI;
+    import it.polimi.ingsw.messages.connectionState.availableColorsMessage;
+    import it.polimi.ingsw.messages.connectionState.connectionResponseMessage;
+    import it.polimi.ingsw.messages.connectionState.unavailableNamesMessage;
+    import it.polimi.ingsw.messages.currentStateMessage;
+    import it.polimi.ingsw.messages.endGameState.declareWinnerMessage;
+    import it.polimi.ingsw.messages.playerTurnState.updatePlayerMessage;
+    import it.polimi.ingsw.messages.responseMessage;
+    import it.polimi.ingsw.messages.serverOptionState.serverOptionMessage;
+    import it.polimi.ingsw.messages.waitingForPlayerState.newHostMessage;
+    import it.polimi.ingsw.model.cards.ObjectiveCard;
 
-import java.util.ArrayList;
-import java.util.Objects;
-import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicIntegerArray;
+    import java.util.ArrayList;
+    import java.util.Objects;
+    import java.util.concurrent.*;
+    import java.util.concurrent.atomic.AtomicBoolean;
+    import java.util.concurrent.atomic.AtomicIntegerArray;
 /**
  * This class is the Client class.
  * It is responsible for the client side of the application.

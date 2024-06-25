@@ -7,7 +7,6 @@ import it.polimi.ingsw.messages.serverOptionState.serverOptionMessage;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 

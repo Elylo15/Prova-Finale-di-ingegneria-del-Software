@@ -8,7 +8,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 
 
 /**
