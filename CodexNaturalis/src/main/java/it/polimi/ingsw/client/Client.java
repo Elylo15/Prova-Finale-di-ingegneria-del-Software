@@ -338,7 +338,8 @@ public class Client implements Runnable {
 
         while (true) {
             Future<int[]> future = executor.submit(view::placeCard);
-
+            //we wait two minutes to obtain the result of the submitted task
+            //then if computation is not completed an exception is thrown, noResponse is set to true, user's choices are set to default value
             try {
                 int[] cardArray = future.get(240, TimeUnit.SECONDS);
                 card.set(0, cardArray[0]);

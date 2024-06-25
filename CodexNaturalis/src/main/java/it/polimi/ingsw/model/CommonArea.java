@@ -44,21 +44,28 @@ public class CommonArea implements Serializable {
         PlaceableCard c;
         int cardIndex;
 
-        for (int i = 0; i < tableCards.size(); i++) { // Iterate over the face-up cards that should be 4, if there is no card with the given ID return null
-            if (tableCards.get(i) == null) {
-                return null;
-            } else if (cardNumber == tableCards.get(i).getID()) {
+        for (int i = 0; i < tableCards.size(); i++) {
+            // Iterate over the face-up cards that should be 4, if there is no card with the given ID return null
+
+
+             if (tableCards.get(i)!=null && tableCards.get(i).getID()==cardNumber) {
+
                 if (tableCards.get(i) instanceof StarterCard) {
                     throw new IllegalArgumentException("Cannot pick StarterCard");
                 }
                 c = tableCards.get(i); // get the card to remove
                 cardIndex = i; // Save the index of the card to remove
-                tableCards.set(cardIndex, null); //put null in the place of the card removed
-                if (c.getClass() == ResourceCard.class) {
-                    //if the card removed is a resource card pick a card from first deck to replace it, otherwise from second deck
+
+                 //set the element at cardIndex to null
+                tableCards.set(cardIndex, null);
+
+                //if the card removed is a resource card and the resource deck is not empty we replace it
+                 //otherwise tableCards element at cardIndex will remain null
+                if (c.getClass() == ResourceCard.class && this.getD1().getSize()>0) {
                     drawFromDeck(1, cardIndex);
-                } else {
-                    drawFromDeck(2, cardIndex);
+                }
+                if (c.getClass() == GoldCard.class && this.getD2().getSize()>0){
+                    drawFromDeck(2,cardIndex);
                 }
                 return c;
             }
