@@ -1597,11 +1597,16 @@ public class GamePageController implements Initializable {
             pion.setFitHeight(49);
             pion.setFitWidth(49);
             pion.setPreserveRatio(true);
-            updatePionsPositions(allPions, score);
             mainPane.getChildren().add(pion);
-        } else if (pion != null && !isPionAtDesiredPosition(pion, score)) {
+        } else if (pion != null && !isPionAtDesiredPosition(pion, score) && !Objects.equals(currentState, "CurrentState")) {
             if (myself.getNickname().equals(currentPlayerNickname))
                 playSoundEffect("/Audio/points.mp3");
+
+            double startX = pion.getLayoutX();
+            double startY = pion.getLayoutY();
+            int start = getScoreByPosition(startX, startY);
+            toTop(allPions, pion, positions[start][0], positions[start][1]);
+
             addPoints(pion, score, allPions);
         }
     }
@@ -1621,28 +1626,21 @@ public class GamePageController implements Initializable {
 
             double startX = pion.getLayoutX();
             double startY = pion.getLayoutY();
-            int start = getScoreByPosition(startX, startY) + 1;
-
-            Utilities.fadeOutTransition(mainPane, pion, 1, false);
-            double[] startPositions = getAdjustedPosition(allPions, positions[start][0], positions[start][1], pion);
-            pion.setLayoutY(startPositions[1]);
-            pion.setLayoutX(startPositions[0]);
-            pion.toFront();
-            Utilities.fadeInTransition(pion, 1);
-            updatePionsPositions(allPions, start);
-
-            PauseTransition pause = new PauseTransition(Duration.seconds(1));
+            int start = getScoreByPosition(startX, startY);
 
             Timeline timeline = new Timeline();
 
-            if(start == score) {
-                return;
-            }
+            KeyFrame keyFrame1 = new KeyFrame(Duration.millis(800), e -> {
+                pion.setLayoutX(pion.getLayoutX());
+                pion.setLayoutY(pion.getLayoutY());
+            });
 
-            for (int i = start; i <= score; i++) {
+            timeline.getKeyFrames().add(keyFrame1);
+
+            for (int i = start + 1; i <= score; i++) {
                 double[] adjustedPosition = getAdjustedPosition(allPions, positions[i][0], positions[i][1], pion);
 
-                KeyFrame keyFrame = new KeyFrame(Duration.millis((i - start) * 800), e -> {
+                KeyFrame keyFrame = new KeyFrame(Duration.millis(800), e -> {
                     pion.setLayoutX(adjustedPosition[0]);
                     pion.setLayoutY(adjustedPosition[1]);
                     pion.toFront();
@@ -1651,10 +1649,57 @@ public class GamePageController implements Initializable {
                 timeline.getKeyFrames().add(keyFrame);
             }
 
-            pause.setOnFinished(event -> timeline.play());
-            timeline.setOnFinished(event -> updatePionsPositions(allPions, start)); // Ensure positions are updated after animation
-            pause.play();
+            timeline.play();
+
         });
+    }
+
+    /**
+     * Move the pions down if there are pions in the same x position, with higher y position,
+     * to adapt the pions positions to the one that moved
+     *
+     * @param pions   the list of all pions
+     * @param myPion  the pion that moved
+     * @param targetX the x position of the pion
+     * @param targetY the y position of the pion
+     */
+    private void toTop(List<ImageView> pions, ImageView myPion, double targetX, double targetY){
+        List<ImageView> sameXNonMyPions = pions.stream()
+                .filter(Objects::nonNull)
+                .filter(pion -> pion != myPion)
+                .filter(pion -> pion.getLayoutX() == targetX)
+                .sorted(Comparator.comparingDouble(ImageView::getLayoutY).reversed())
+                .toList();
+
+        Timeline timeline = new Timeline();
+
+        if(sameXNonMyPions.isEmpty())
+            return;
+        else {
+            for(ImageView pion : sameXNonMyPions){
+
+                if(pion.getLayoutY() < myPion.getLayoutY() && isValid(pion.getLayoutY(), targetY)){
+
+                    KeyFrame keyFrame2 = new KeyFrame(Duration.millis(800), e -> pion.setLayoutY(pion.getLayoutY() + (offsetPions)));
+
+                    timeline.getKeyFrames().add(keyFrame2);
+                }
+            }
+        }
+
+        timeline.play();
+
+    }
+
+    /**
+     * Check if the position is valid
+     *
+     * @param layoutY the y position of the pion
+     * @param base    the base position
+     * @return true if the position is valid, false otherwise
+     */
+    private boolean isValid(double layoutY, double base){
+        return layoutY == base - offsetPions || layoutY == base - 2 * offsetPions || layoutY == base - 3 * offsetPions;
     }
 
     /**
@@ -1669,9 +1714,10 @@ public class GamePageController implements Initializable {
         double[] adjustedPosition = {targetX, targetY};
 
         List<ImageView> sameXNonMyPions = pions.stream()
+                .filter(Objects::nonNull)
                 .filter(pion -> pion != myPion)
                 .filter(pion -> pion.getLayoutX() == targetX)
-                .sorted(Comparator.comparingDouble(ImageView::getLayoutY))
+                .sorted(Comparator.comparingDouble(ImageView::getLayoutY).reversed())
                 .toList();
 
         for (ImageView pion : sameXNonMyPions) {
@@ -1701,30 +1747,6 @@ public class GamePageController implements Initializable {
     }
 
     /**
-     * Update the pions positions if a pion moved
-     *
-     * @param allPions  the list of all pions
-     * @param start position
-     */
-    private void updatePionsPositions(List<ImageView> allPions, int start) {
-
-        List<ImageView> nonNullSameXPions = allPions.stream()
-                .filter(Objects::nonNull)
-                .filter(pion -> pion.getLayoutX() == positions[start][0])
-                .sorted(Comparator.comparingDouble(ImageView::getLayoutY)) //Ordered by position (from bottom to top)
-                .toList();
-
-        for (ImageView pion : nonNullSameXPions) {
-            int score = getScoreByPosition(pion.getLayoutX(), pion.getLayoutY());
-            double[] adjustedPosition = getAdjustedPosition(allPions, positions[score][0], positions[score][1], pion);
-            pion.setLayoutX(adjustedPosition[0]);
-            pion.setLayoutY(adjustedPosition[1]);
-            pion.toFront();
-        }
-
-    }
-
-    /**
      * Gets the score based on the position.
      *
      * @param x the x position
@@ -1733,13 +1755,16 @@ public class GamePageController implements Initializable {
     private int getScoreByPosition(double x, double y) {
         for (int score = 0; score < positions.length; score++) {
             double[] position = positions[score];
-            if ((position[0] == x && position[1] == y) //Starting from up position, check downwards
-                    || (position[0] == x && position[1] == y + offsetPions)
-                    || (position[0] == x && position[1] == y + 2 * offsetPions)
-                    || (position[0] == x && position[1] == y + 3 * offsetPions)) {
+            if ((position[0] == x && position[1] == y) //Starting from up position, check upwards
+                    || (position[0] == x && position[1] - offsetPions == y )
+                    || (position[0] == x && position[1] - 2 * offsetPions == y )
+                    || (position[0] == x && position[1] - 3 * offsetPions == y )) {
                 return score;
             }
         }
+
+        System.out.println("Error: position not found" + y);
+
         return -1; // Not found
     }
 
