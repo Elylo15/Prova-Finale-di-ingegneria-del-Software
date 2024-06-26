@@ -65,17 +65,43 @@ public class ViewCLI extends View {
      * Method {@code getInput}: gets the input from the user
      * @return the input String
      */
-    private String getInput() throws InterruptedException {
-        isInterrupted.set(false);
+    private synchronized String getInput() throws InterruptedException {
+        while (isInterrupted.get()) {
+            try {
+                this.wait();
+            } catch (InterruptedException ignore) {}
+        }
+
         scanner = new Scanner(System.in);
         String input = scanner.nextLine();
 
         // Check if the input thread has been interrupted
-        if(isInterrupted.get())
+        if(isInterrupted.get()) {
+            isInterrupted.set(false);
             throw new InterruptedException("Scanner should not be read: isInterrupted flag is set.");
+        }
 
-        scanner.close();
         return input;
+    }
+
+    /**
+     * Method {@code checkInterrupted}: checks if the input thread has been interrupted and informs the user
+     */
+    private void checkInterrupted(){
+        if(isInterrupted.get()) {
+            System.out.println("\nPlease, press enter to continue.");
+
+            synchronized (this) {
+                while (isInterrupted.get()) {
+                    try {
+                        this.wait();
+                    } catch (InterruptedException ignore) {}
+                }
+            }
+        }
+
+
+
     }
 
 
@@ -143,6 +169,8 @@ public class ViewCLI extends View {
      */
     @Override
     public String askIP() {
+        checkInterrupted();
+
         state = "IP";
         String server;
 
