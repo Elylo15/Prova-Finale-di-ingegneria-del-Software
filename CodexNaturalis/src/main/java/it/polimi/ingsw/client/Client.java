@@ -454,9 +454,6 @@ public class Client implements Runnable {
                 setController(server, isSocket);
                 connection(isSocket);
             } catch (Exception e) {
-                // Remove this
-                System.out.println(e.getMessage());
-                e.printStackTrace();
 
                 System.out.println("\033[31mConnection failed.\033[0m");
                 continue;
