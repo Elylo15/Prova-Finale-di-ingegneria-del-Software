@@ -52,14 +52,16 @@ public class ViewCLI extends View {
     private final HashMap<String, String> playerColor = new HashMap<>();
 
     private Scanner scanner;
-    private static final AtomicBoolean isInterrupted = new AtomicBoolean(false);
-    private static final AtomicBoolean isReading = new AtomicBoolean(false);
+    private final AtomicBoolean isInterrupted;
+    private final AtomicBoolean isReading;
 
     /**
      * Method {@code ViewCLI}: constructs a new ViewCLI
      */
     public ViewCLI() {
         super();
+        isInterrupted = new AtomicBoolean(false);
+        isReading = new AtomicBoolean(false);
     }
 
     /**
@@ -105,6 +107,10 @@ public class ViewCLI extends View {
         }
     }
 
+    /**
+     * Method {@code sendInputInterrupt}: if a thread is waiting for input,
+     * it signals the input thread to launch an exception
+     */
     private void sendInputInterrupt() {
         if(isReading.get()) {
             isInterrupted.set(true);
