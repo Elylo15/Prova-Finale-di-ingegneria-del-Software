@@ -1,0 +1,297 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > MatchInfo</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">it.polimi.ingsw.server</a>
+</div>
+
+<h1>Coverage Summary for Class: MatchInfo (it.polimi.ingsw.server)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">MatchInfo</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (14/14)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    80%
+  </span>
+  <span class="absValue">
+    (8/10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (30/30)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package it.polimi.ingsw.server;
+&nbsp;
+&nbsp;import it.polimi.ingsw.model.Match;
+&nbsp;import it.polimi.ingsw.server.fsm.MatchState;
+&nbsp;
+&nbsp;import java.io.Serializable;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.concurrent.CopyOnWriteArrayList;
+&nbsp;
+&nbsp;/**
+&nbsp; * This class represents the information of a match used by the server, in addition to the match object itself.
+&nbsp; * This class will be serialized and saved as backup.
+&nbsp; *
+&nbsp; * &lt;p&gt;It contains information about the match, such as the match object, the match ID, the expected number of players,
+&nbsp; * the current status of the match, whether it&#39;s the last turn, and a list of all player information.
+&nbsp; */
+&nbsp;public class MatchInfo implements Serializable {
+&nbsp;    private final Match match;
+&nbsp;    private final Integer ID;
+&nbsp;    private final CopyOnWriteArrayList&lt;PlayerInfo&gt; allPlayersInfo;
+&nbsp;    private Integer expectedPlayers;
+&nbsp;    private MatchState status;
+&nbsp;    private boolean lastTurn;
+&nbsp;
+<b class="fc">&nbsp;    public MatchInfo(Match match, int ID, Integer expectedPlayers, MatchState status) {</b>
+<b class="fc">&nbsp;        this.match = match;</b>
+<b class="fc">&nbsp;        this.ID = ID;</b>
+<b class="fc">&nbsp;        this.expectedPlayers = expectedPlayers;</b>
+<b class="fc">&nbsp;        this.status = status;</b>
+<b class="fc">&nbsp;        this.lastTurn = false;</b>
+<b class="fc">&nbsp;        this.allPlayersInfo = new CopyOnWriteArrayList&lt;&gt;();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Creates a deep copy of this MatchInfo object for serialization.
+&nbsp;     * For the PlayerInfo objects, new instances are created with null for the ClientConnection to avoid serialization issues.
+&nbsp;     *
+&nbsp;     * @return A cloned MatchInfo object suitable for serialization.
+&nbsp;     */
+&nbsp;    public MatchInfo cloneForSerialization() {
+<b class="fc">&nbsp;        MatchInfo clonedMatchInfo = new MatchInfo(this.match, this.ID, this.expectedPlayers, this.status);</b>
+<b class="fc">&nbsp;        clonedMatchInfo.setLastTurn(this.lastTurn);</b>
+&nbsp;
+<b class="fc">&nbsp;        for (PlayerInfo playerInfo : this.allPlayersInfo) {</b>
+<b class="fc">&nbsp;            PlayerInfo clonedPlayerInfo = new PlayerInfo(playerInfo); //create a clone of each PlayerInfo</b>
+<b class="fc">&nbsp;            clonedMatchInfo.addPlayer(clonedPlayerInfo); //add each clone to the MatchInfo to return</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        return clonedMatchInfo;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;//    // Uncomment to show the status of all players&#39; connections when checked
+&nbsp;//    public void printPlayersStatus() {
+&nbsp;//        for (PlayerInfo player : allPlayersInfo) {
+&nbsp;//            String connection = player.getConnection() == null ? &quot;null&quot; : &quot;not null&quot;;
+&nbsp;//            System.out.println(player.getPlayer().getNickname() + &quot; &quot; + connection);
+&nbsp;//        }
+&nbsp;//        System.out.println(&quot; &quot;);
+&nbsp;//    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Adds a player to the match.
+&nbsp;     *
+&nbsp;     * @param player The PlayerInfo object representing the player to be added.
+&nbsp;     */
+&nbsp;    protected void addPlayer(PlayerInfo player) {
+<b class="fc">&nbsp;        this.allPlayersInfo.add(player);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets a player as offline by closing their connection and setting it to null.
+&nbsp;     *
+&nbsp;     * @param player The PlayerInfo object representing the player to be set offline.
+&nbsp;     */
+&nbsp;    protected void setOffline(PlayerInfo player) {
+<b class="pc">&nbsp;        if (player == null)</b>
+&nbsp;            return;
+&nbsp;
+<b class="fc">&nbsp;        if (player.getConnection() != null)</b>
+<b class="fc">&nbsp;            player.getConnection().closeConnection();</b>
+<b class="fc">&nbsp;        player.setConnection(null);  //the ClientConnection attribute of the PlayerInfo object is set to null</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Brings a player online by setting their connection.
+&nbsp;     *
+&nbsp;     * @param Nickname   The nickname of the player to be brought online.
+&nbsp;     * @param connection The ClientConnection object representing the player&#39;s connection.
+&nbsp;     */
+&nbsp;    protected void bringOnline(String Nickname, ClientConnection connection) {
+<b class="pc">&nbsp;        for (PlayerInfo player : allPlayersInfo) {</b>
+<b class="fc">&nbsp;            if (player.getPlayer().getNickname().equalsIgnoreCase(Nickname)) {</b>
+<b class="fc">&nbsp;                player.setConnection(connection); //the ClientConnection attribute of the PlayerInfo object is set to connection</b>
+&nbsp;                return;
+&nbsp;            }
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Gets the match object.
+&nbsp;     *
+&nbsp;     * @return The Match object representing the match.
+&nbsp;     */
+&nbsp;    protected Match getMatch() {
+<b class="fc">&nbsp;        return match;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Gets the ID of the match.
+&nbsp;     *
+&nbsp;     * @return The ID of the match.
+&nbsp;     */
+&nbsp;    protected Integer getID() {
+<b class="fc">&nbsp;        return ID;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Gets the expected number of players for the match.
+&nbsp;     *
+&nbsp;     * @return The expected number of players.
+&nbsp;     */
+&nbsp;    protected Integer getExpectedPlayers() {
+<b class="fc">&nbsp;        return expectedPlayers;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the expected number of players for the match.
+&nbsp;     *
+&nbsp;     * @param expectedPlayers The expected number of players.
+&nbsp;     */
+&nbsp;    protected void setExpectedPlayers(Integer expectedPlayers) {
+<b class="fc">&nbsp;        this.expectedPlayers = expectedPlayers;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Gets the status of the match.
+&nbsp;     *
+&nbsp;     * @return The MatchState object representing the status of the match.
+&nbsp;     */
+&nbsp;    protected MatchState getStatus() {
+<b class="fc">&nbsp;        return status;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the status of the match.
+&nbsp;     *
+&nbsp;     * @param status The MatchState object representing the status of the match.
+&nbsp;     */
+&nbsp;    protected void setStatus(MatchState status) {
+<b class="fc">&nbsp;        this.status = status;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Gets the status of the match.
+&nbsp;     *
+&nbsp;     * @return The MatchState object representing the status of the match.
+&nbsp;     */
+&nbsp;    protected boolean isLastTurn() {
+<b class="fc">&nbsp;        return lastTurn;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets whether it&#39;s the last turn of the match.
+&nbsp;     *
+&nbsp;     * @param lastTurn A boolean representing whether it&#39;s the last turn.
+&nbsp;     */
+&nbsp;    protected void setLastTurn(boolean lastTurn) {
+<b class="fc">&nbsp;        this.lastTurn = lastTurn;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Gets the information of all players in the match.
+&nbsp;     *
+&nbsp;     * @return An ArrayList of PlayerInfo objects representing all players in the match.
+&nbsp;     */
+&nbsp;    protected ArrayList&lt;PlayerInfo&gt; getAllPlayersInfo() {
+<b class="fc">&nbsp;        return new ArrayList&lt;&gt;(this.allPlayersInfo);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-06-26 22:00</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,210 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > PlayerInfo</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">it.polimi.ingsw.server</a>
+</div>
+
+<h1>Coverage Summary for Class: PlayerInfo (it.polimi.ingsw.server)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">PlayerInfo</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (9/9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (17/17)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package it.polimi.ingsw.server;
+&nbsp;
+&nbsp;import it.polimi.ingsw.model.Player;
+&nbsp;import it.polimi.ingsw.model.cards.ObjectiveCard;
+&nbsp;import it.polimi.ingsw.server.fsm.State;
+&nbsp;
+&nbsp;import java.io.Serializable;
+&nbsp;
+&nbsp;public class PlayerInfo implements Serializable {
+&nbsp;    private final Player player;
+&nbsp;    private State state;
+&nbsp;    private ClientConnection connection;
+&nbsp;    private ObjectiveCard[] savedObjectives;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Constructs a new PlayerInfo object with the given player, state, and connection.
+&nbsp;     *
+&nbsp;     * @param player     The player object.
+&nbsp;     * @param state      The current state of the player&#39;s fsm.
+&nbsp;     * @param connection The client connection object.
+&nbsp;     */
+<b class="fc">&nbsp;    public PlayerInfo(Player player, State state, ClientConnection connection) {</b>
+<b class="fc">&nbsp;        this.player = player;</b>
+<b class="fc">&nbsp;        this.state = state;</b>
+<b class="fc">&nbsp;        this.connection = connection;</b>
+<b class="fc">&nbsp;        this.savedObjectives = null;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Constructs a new PlayerInfo object by copying the player and state from another PlayerInfo object.
+&nbsp;     * The connection is set to null and the saved objectives are copied from the original PlayerInfo object.
+&nbsp;     *
+&nbsp;     * @param playerInfo The PlayerInfo object to copy from.
+&nbsp;     */
+<b class="fc">&nbsp;    public PlayerInfo(PlayerInfo playerInfo) {</b>
+<b class="fc">&nbsp;        this.player = playerInfo.getPlayer();</b>
+<b class="fc">&nbsp;        this.state = playerInfo.getState();</b>
+<b class="fc">&nbsp;        this.connection = null;</b>
+<b class="fc">&nbsp;        this.savedObjectives = playerInfo.getSavedObjectives();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves the array of objective cards saved by the player.
+&nbsp;     *
+&nbsp;     * @return The array of saved objective cards.
+&nbsp;     */
+&nbsp;    public ObjectiveCard[] getSavedObjectives() {
+<b class="fc">&nbsp;        return savedObjectives;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the array of objective cards saved by the player.
+&nbsp;     *
+&nbsp;     * @param savedObjectives The array of saved objective cards.
+&nbsp;     */
+&nbsp;    public void setSavedObjectives(ObjectiveCard[] savedObjectives) {
+<b class="fc">&nbsp;        this.savedObjectives = savedObjectives;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves the player object associated with this player information.
+&nbsp;     *
+&nbsp;     * @return The player object.
+&nbsp;     */
+&nbsp;    public Player getPlayer() {
+<b class="fc">&nbsp;        return player;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves the current state of the player.
+&nbsp;     *
+&nbsp;     * @return The state object representing the player&#39;s state.
+&nbsp;     */
+&nbsp;    public State getState() {
+<b class="fc">&nbsp;        return state;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the player&#39;s state to the given state.
+&nbsp;     *
+&nbsp;     * @param state The new state.
+&nbsp;     */
+&nbsp;    public void setState(State state) {
+<b class="fc">&nbsp;        this.state = state;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves the client connection object representing the player&#39;s connection.
+&nbsp;     *
+&nbsp;     * @return The client connection object.
+&nbsp;     */
+&nbsp;    public ClientConnection getConnection() {
+<b class="fc">&nbsp;        return connection;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the player connection manager.
+&nbsp;     *
+&nbsp;     * @param connection new connection object.
+&nbsp;     */
+&nbsp;    public void setConnection(ClientConnection connection) {
+<b class="fc">&nbsp;        this.connection = connection;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-06-26 22:00</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,150 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > updatePlayerMessage</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">it.polimi.ingsw.messages.playerTurnState</a>
+</div>
+
+<h1>Coverage Summary for Class: updatePlayerMessage (it.polimi.ingsw.messages.playerTurnState)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">updatePlayerMessage</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (3/3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (5/5)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package it.polimi.ingsw.messages.playerTurnState;
+&nbsp;
+&nbsp;import it.polimi.ingsw.messages.Message;
+&nbsp;import it.polimi.ingsw.model.Player;
+&nbsp;
+&nbsp;import java.io.Serializable;
+&nbsp;
+&nbsp;/**
+&nbsp; * Message used to update the player&#39;s information
+&nbsp; */
+&nbsp;public class updatePlayerMessage implements Message, Serializable {
+&nbsp;    private final Player player;
+&nbsp;    private final String nicknameViewer;
+&nbsp;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Constructor for the updatePlayerMessage class, which is used to update the player&#39;s information.
+&nbsp;     *
+&nbsp;     * @param player         The player whose information is to be updated.
+&nbsp;     * @param nicknameViewer The nickname of the player who is viewing the updated information.
+&nbsp;     */
+<b class="fc">&nbsp;    public updatePlayerMessage(Player player, String nicknameViewer) {</b>
+<b class="fc">&nbsp;        this.player = player;</b>
+<b class="fc">&nbsp;        this.nicknameViewer = nicknameViewer;</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Getter for the player attribute.
+&nbsp;     *
+&nbsp;     * @return The player whose information is to be updated.
+&nbsp;     */
+&nbsp;    public Player getPlayer() {
+<b class="fc">&nbsp;        return player;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Getter for the nicknameViewer attribute.
+&nbsp;     *
+&nbsp;     * @return The nickname of the player who is viewing the updated information.
+&nbsp;     */
+&nbsp;    public String getNicknameViewer() {
+<b class="fc">&nbsp;        return nicknameViewer;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-06-26 22:00</div>
+</div>
+</body>
+</html>

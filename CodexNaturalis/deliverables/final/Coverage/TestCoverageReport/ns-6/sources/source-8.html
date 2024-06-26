@@ -1,0 +1,275 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > JoinMatchController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">it.polimi.ingsw.client.view.gui.controller</a>
+</div>
+
+<h1>Coverage Summary for Class: JoinMatchController (it.polimi.ingsw.client.view.gui.controller)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">JoinMatchController</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/19)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">JoinMatchController$ClickableListCell</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/12)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/31)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package it.polimi.ingsw.client.view.gui.controller;
+&nbsp;
+&nbsp;
+&nbsp;import it.polimi.ingsw.client.view.gui.SceneManager;
+&nbsp;import it.polimi.ingsw.client.view.gui.Utilities;
+&nbsp;import it.polimi.ingsw.client.view.gui.message.GUIMessages;
+&nbsp;import it.polimi.ingsw.messages.serverOptionState.serverOptionMessage;
+&nbsp;import javafx.application.Platform;
+&nbsp;import javafx.collections.FXCollections;
+&nbsp;import javafx.collections.ObservableList;
+&nbsp;import javafx.fxml.FXML;
+&nbsp;import javafx.scene.control.ListCell;
+&nbsp;import javafx.scene.control.ListView;
+&nbsp;import javafx.scene.image.ImageView;
+&nbsp;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.Objects;
+&nbsp;
+&nbsp;/**
+&nbsp; * This class is a controller for the gui scene where the user joins a match.
+&nbsp; * It contains a ListView for the matches.
+&nbsp; * The ListView is populated with the matches waiting for players.
+&nbsp; * When a cell is clicked, it sends a message to the client with the match ID.
+&nbsp; */
+<b class="nc">&nbsp;public class JoinMatchController {</b>
+&nbsp;    @FXML
+&nbsp;    private ImageView back;
+&nbsp;    @FXML
+&nbsp;    private ImageView rotate1;
+&nbsp;    @FXML
+&nbsp;    private ImageView rotate2;
+&nbsp;    @FXML
+&nbsp;    private ImageView rotate3;
+&nbsp;    @FXML
+&nbsp;    private ImageView rotate4;
+&nbsp;    @FXML
+&nbsp;    private ListView&lt;String&gt; JoinMatchList; // ListView for the matches
+&nbsp;
+&nbsp;    /**
+&nbsp;     * This method is called when the scene is loaded.
+&nbsp;     * It reads the serverOptionMessage from the gui and gets the list of matches.
+&nbsp;     * Then, it populates the ListView with the matches and sets the cell factory to use buttons as cells.
+&nbsp;     */
+&nbsp;    @FXML
+&nbsp;    private void initialize() {
+<b class="nc">&nbsp;        JoinMatchList.getStylesheets().add(Objects.requireNonNull(getClass().getResource(&quot;/styles.css&quot;)).toExternalForm());</b>
+&nbsp;
+<b class="nc">&nbsp;        Utilities.rotateEffect(rotate1, 3);</b>
+<b class="nc">&nbsp;        Utilities.rotateEffect(rotate2, 2);</b>
+<b class="nc">&nbsp;        Utilities.rotateEffect(rotate3, 4);</b>
+<b class="nc">&nbsp;        Utilities.rotateEffect(rotate4, 5);</b>
+<b class="nc">&nbsp;        Utilities.hooverEffect(back, 1.05);</b>
+<b class="nc">&nbsp;        Utilities.hooverEffect(rotate1, 1.2);</b>
+<b class="nc">&nbsp;        Utilities.hooverEffect(rotate2, 1.2);</b>
+<b class="nc">&nbsp;        Utilities.hooverEffect(rotate3, 1.2);</b>
+<b class="nc">&nbsp;        Utilities.hooverEffect(rotate4, 1.2);</b>
+&nbsp;
+<b class="nc">&nbsp;        serverOptionMessage serverOptionMessage = (serverOptionMessage) GUIMessages.readToGUI();</b>
+<b class="nc">&nbsp;        ArrayList&lt;Integer&gt; matchList = serverOptionMessage.getWaitingMatches();</b>
+&nbsp;
+&nbsp;        // Convert the integers to strings and add them to the ListView
+<b class="nc">&nbsp;        ObservableList&lt;String&gt; items = FXCollections.observableArrayList();</b>
+<b class="nc">&nbsp;        for (Integer match : matchList) {</b>
+<b class="nc">&nbsp;            items.add(match.toString());</b>
+&nbsp;        }
+<b class="nc">&nbsp;        JoinMatchList.setItems(items);</b>
+&nbsp;
+<b class="nc">&nbsp;        JoinMatchList.setCellFactory(listView -&gt; new ClickableListCell());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * This method is called when the user clicks the &quot;Back&quot; button.
+&nbsp;     * It goes back to the server option scene.
+&nbsp;     */
+&nbsp;    @FXML
+&nbsp;    private void goBack() {
+<b class="nc">&nbsp;        Platform.runLater(SceneManager::InsertServerOption);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * This class is a custom cell for the ListView that handles clicks on the cell values.
+&nbsp;     * Each cell represents a match ID.
+&nbsp;     * When a cell is clicked, it sends a message to the client with the match ID.
+&nbsp;     */
+&nbsp;    class ClickableListCell extends ListCell&lt;String&gt; {
+<b class="nc">&nbsp;        public ClickableListCell() {</b>
+<b class="nc">&nbsp;            setOnMouseClicked(event -&gt; {</b>
+<b class="nc">&nbsp;                String item = getItem();</b>
+<b class="nc">&nbsp;                if (item != null) {</b>
+<b class="nc">&nbsp;                    GUIMessages.writeToClient(new serverOptionMessage(true, Integer.parseInt(item), null, false, null));</b>
+<b class="nc">&nbsp;                    JoinMatchList.setDisable(true);</b>
+&nbsp;                }
+&nbsp;            });
+&nbsp;        }
+&nbsp;
+&nbsp;        /**
+&nbsp;         * This method is called when the cell is updated.
+&nbsp;         * It sets the text of the cell to the match ID.
+&nbsp;         *
+&nbsp;         * @param item  the match ID
+&nbsp;         * @param empty true if the cell is empty, false otherwise
+&nbsp;         */
+&nbsp;        @Override
+&nbsp;        protected void updateItem(String item, boolean empty) {
+<b class="nc">&nbsp;            super.updateItem(item, empty);</b>
+&nbsp;
+<b class="nc">&nbsp;            if (empty || item == null) {</b>
+<b class="nc">&nbsp;                setText(null);</b>
+<b class="nc">&nbsp;                setGraphic(null);</b>
+&nbsp;            } else {
+&nbsp;                // Set the text of the cell to the match ID
+<b class="nc">&nbsp;                setText(item);</b>
+<b class="nc">&nbsp;                setGraphic(null);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-06-26 22:00</div>
+</div>
+</body>
+</html>

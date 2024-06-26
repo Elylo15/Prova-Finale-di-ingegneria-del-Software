@@ -1,0 +1,231 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > InsertServerOptionController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">it.polimi.ingsw.client.view.gui.controller</a>
+</div>
+
+<h1>Coverage Summary for Class: InsertServerOptionController (it.polimi.ingsw.client.view.gui.controller)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">InsertServerOptionController</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/48)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package it.polimi.ingsw.client.view.gui.controller;
+&nbsp;
+&nbsp;import it.polimi.ingsw.client.view.gui.SceneManager;
+&nbsp;import it.polimi.ingsw.client.view.gui.Utilities;
+&nbsp;import it.polimi.ingsw.client.view.gui.message.GUIMessages;
+&nbsp;import it.polimi.ingsw.messages.serverOptionState.serverOptionMessage;
+&nbsp;import javafx.application.Platform;
+&nbsp;import javafx.fxml.FXML;
+&nbsp;import javafx.scene.image.ImageView;
+&nbsp;import javafx.scene.text.Font;
+&nbsp;import javafx.scene.text.Text;
+&nbsp;
+&nbsp;/**
+&nbsp; * This class is a controller for the gui scene where the user chooses the server option.
+&nbsp; * It contains four buttons: new_match, join_match, load_match, and join_running_match.
+&nbsp; * Each button corresponds to a different server option.
+&nbsp; * When a button is clicked, it performs the corresponding action and sends a message to the client.
+&nbsp; */
+<b class="nc">&nbsp;public class InsertServerOptionController {</b>
+&nbsp;    @FXML
+&nbsp;    private ImageView reload0;
+&nbsp;    @FXML
+&nbsp;    private ImageView reload1;
+&nbsp;    @FXML
+&nbsp;    private ImageView reload2;
+&nbsp;    @FXML
+&nbsp;    private ImageView reload3;
+&nbsp;    @FXML
+&nbsp;    private ImageView reload4;
+&nbsp;    @FXML
+&nbsp;    private ImageView reload5;
+&nbsp;    @FXML
+&nbsp;    private ImageView reload6;
+&nbsp;    @FXML
+&nbsp;    private ImageView reload7;
+&nbsp;    @FXML
+&nbsp;    private ImageView reload8;
+&nbsp;    @FXML
+&nbsp;    private ImageView reload9;
+&nbsp;    @FXML
+&nbsp;    private ImageView reload10;
+&nbsp;    @FXML
+&nbsp;    private ImageView reload11;
+&nbsp;    @FXML
+&nbsp;    private Text new_match;// Button to start a new match
+&nbsp;    @FXML
+&nbsp;    private Text join_match;// Button to join a match
+&nbsp;    @FXML
+&nbsp;    private Text load_match;// Button to load a match
+&nbsp;    @FXML
+&nbsp;    private Text join_running_match;// Button to join a running match
+&nbsp;    private serverOptionMessage serverOptionMessage;// Message to be sent to the client
+&nbsp;
+&nbsp;    /**
+&nbsp;     * This method is called when the scene is loaded.
+&nbsp;     * It sets the action for each button.
+&nbsp;     * When the new_match button is clicked, it creates a new serverOptionMessage and sends it to the client.
+&nbsp;     * When the join_match, join_running_match or load_match button is clicked, it updates the scene to JoinMatch and sends the serverOptionMessage to the gui.
+&nbsp;     */
+&nbsp;    @FXML
+&nbsp;    private void initialize() throws NoSuchFieldException, IllegalAccessException {
+<b class="nc">&nbsp;        this.serverOptionMessage = (serverOptionMessage) GUIMessages.readToGUI();</b>
+<b class="nc">&nbsp;        GUIMessages.writeToGUI(serverOptionMessage);</b>
+&nbsp;
+<b class="nc">&nbsp;        join_match.setFont(Font.loadFont(getClass().getResourceAsStream(&quot;/Fonts/FantasyScript.ttf&quot;), 96));</b>
+<b class="nc">&nbsp;        load_match.setFont(Font.loadFont(getClass().getResourceAsStream(&quot;/Fonts/FantasyScript.ttf&quot;), 96));</b>
+<b class="nc">&nbsp;        join_running_match.setFont(Font.loadFont(getClass().getResourceAsStream(&quot;/Fonts/FantasyScript.ttf&quot;), 96));</b>
+<b class="nc">&nbsp;        new_match.setFont(Font.loadFont(getClass().getResourceAsStream(&quot;/Fonts/FantasyScript.ttf&quot;), 96));</b>
+&nbsp;
+<b class="nc">&nbsp;        Utilities.hooverEffect(new_match, 1.05);</b>
+<b class="nc">&nbsp;        Utilities.hooverEffect(join_match, 1.05);</b>
+<b class="nc">&nbsp;        Utilities.hooverEffect(load_match, 1.05);</b>
+<b class="nc">&nbsp;        Utilities.hooverEffect(join_running_match, 1.05);</b>
+<b class="nc">&nbsp;        Utilities.hooverEffect(reload0, 1.2);</b>
+<b class="nc">&nbsp;        Utilities.hooverEffect(reload1, 1.2);</b>
+<b class="nc">&nbsp;        Utilities.hooverEffect(reload2, 1.2);</b>
+<b class="nc">&nbsp;        Utilities.hooverEffect(reload3, 1.2);</b>
+<b class="nc">&nbsp;        Utilities.hooverEffect(reload4, 1.2);</b>
+<b class="nc">&nbsp;        Utilities.hooverEffect(reload5, 1.2);</b>
+<b class="nc">&nbsp;        Utilities.hooverEffect(reload6, 1.2);</b>
+<b class="nc">&nbsp;        Utilities.hooverEffect(reload7, 1.2);</b>
+<b class="nc">&nbsp;        Utilities.hooverEffect(reload8, 1.2);</b>
+<b class="nc">&nbsp;        Utilities.hooverEffect(reload9, 1.2);</b>
+<b class="nc">&nbsp;        Utilities.hooverEffect(reload10, 1.2);</b>
+<b class="nc">&nbsp;        Utilities.hooverEffect(reload11, 1.2);</b>
+&nbsp;
+<b class="nc">&nbsp;        Utilities.rotateEffect(reload0, 4);</b>
+<b class="nc">&nbsp;        Utilities.rotateEffectArrow(reload1, 5);</b>
+<b class="nc">&nbsp;        Utilities.rotateEffect(reload2, 2);</b>
+<b class="nc">&nbsp;        Utilities.rotateEffectArrow(reload3, 3);</b>
+<b class="nc">&nbsp;        Utilities.rotateEffect(reload4, 3);</b>
+<b class="nc">&nbsp;        Utilities.rotateEffectArrow(reload5, 3);</b>
+<b class="nc">&nbsp;        Utilities.rotateEffect(reload6, 2);</b>
+<b class="nc">&nbsp;        Utilities.rotateEffectArrow(reload7, 5);</b>
+<b class="nc">&nbsp;        Utilities.rotateEffectArrow(reload8, 3);</b>
+<b class="nc">&nbsp;        Utilities.rotateEffect(reload9, 2);</b>
+<b class="nc">&nbsp;        Utilities.rotateEffect(reload10, 4);</b>
+<b class="nc">&nbsp;        Utilities.rotateEffectArrow(reload11, 4);</b>
+&nbsp;
+&nbsp;
+<b class="nc">&nbsp;        new_match.setOnMouseClicked(event -&gt; {</b>
+<b class="nc">&nbsp;            serverOptionMessage = new serverOptionMessage(true, null, null, false, null);</b>
+<b class="nc">&nbsp;            GUIMessages.writeToClient(serverOptionMessage);</b>
+&nbsp;        });
+&nbsp;
+<b class="nc">&nbsp;        join_match.setOnMouseClicked(event -&gt; {</b>
+<b class="nc">&nbsp;            Platform.runLater(SceneManager::JoinMatch);</b>
+<b class="nc">&nbsp;            GUIMessages.writeToGUI(serverOptionMessage);</b>
+&nbsp;        });
+&nbsp;
+<b class="nc">&nbsp;        load_match.setOnMouseClicked(event -&gt; {</b>
+<b class="nc">&nbsp;            Platform.runLater(SceneManager::LoadMatch);</b>
+<b class="nc">&nbsp;            GUIMessages.writeToGUI(serverOptionMessage);</b>
+&nbsp;        });
+&nbsp;
+<b class="nc">&nbsp;        join_running_match.setOnMouseClicked(event -&gt; {</b>
+<b class="nc">&nbsp;            Platform.runLater(SceneManager::JoinRunningMatch);</b>
+<b class="nc">&nbsp;            GUIMessages.writeToGUI(serverOptionMessage);</b>
+&nbsp;        });
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    @FXML
+&nbsp;    public void reloadOptions() {
+<b class="nc">&nbsp;        GUIMessages.writeToClient(serverOptionMessage);</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-06-26 22:00</div>
+</div>
+</body>
+</html>

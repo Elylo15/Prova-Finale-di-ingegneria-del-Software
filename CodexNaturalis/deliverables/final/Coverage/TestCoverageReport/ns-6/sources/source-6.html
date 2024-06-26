@@ -1,0 +1,196 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > InsertIPController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">it.polimi.ingsw.client.view.gui.controller</a>
+</div>
+
+<h1>Coverage Summary for Class: InsertIPController (it.polimi.ingsw.client.view.gui.controller)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">InsertIPController</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/23)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package it.polimi.ingsw.client.view.gui.controller;
+&nbsp;
+&nbsp;import it.polimi.ingsw.client.view.gui.SceneManager;
+&nbsp;import it.polimi.ingsw.client.view.gui.Utilities;
+&nbsp;import it.polimi.ingsw.client.view.gui.message.GUIMessages;
+&nbsp;import javafx.application.Platform;
+&nbsp;import javafx.fxml.FXML;
+&nbsp;import javafx.scene.control.TextField;
+&nbsp;import javafx.scene.image.ImageView;
+&nbsp;import javafx.scene.text.Font;
+&nbsp;
+&nbsp;
+&nbsp;/**
+&nbsp; * This class is a controller for the gui scene where the user enters the IP address.
+&nbsp; * It contains a TextField for the IP address and an image-button to submit the IP address.
+&nbsp; * When the submit button is clicked, it sends the IP address to the client.
+&nbsp; */
+<b class="nc">&nbsp;public class InsertIPController {</b>
+&nbsp;    @FXML
+&nbsp;    private ImageView rotate;
+&nbsp;    @FXML
+&nbsp;    private ImageView rotate1;
+&nbsp;    @FXML
+&nbsp;    private ImageView rotate2;
+&nbsp;    @FXML
+&nbsp;    private ImageView rotate3;
+&nbsp;    @FXML
+&nbsp;    private ImageView rotate4;
+&nbsp;    @FXML
+&nbsp;    private ImageView rotate5;
+&nbsp;    @FXML
+&nbsp;    private ImageView rotate6;
+&nbsp;    @FXML
+&nbsp;    private ImageView rotate7;
+&nbsp;    @FXML
+&nbsp;    private ImageView rotate8;
+&nbsp;    @FXML
+&nbsp;    private ImageView rotate9;
+&nbsp;    @FXML
+&nbsp;    private ImageView rotate10;
+&nbsp;    @FXML
+&nbsp;    private ImageView backBtn;
+&nbsp;    @FXML
+&nbsp;    private TextField ip;
+&nbsp;    @FXML
+&nbsp;    private ImageView submit_ip;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * This method is called when the scene is loaded.
+&nbsp;     * It sets the action for the image-button.
+&nbsp;     * When the button is clicked, it sends the IP address to the client.
+&nbsp;     */
+&nbsp;    @FXML
+&nbsp;    private void initialize() {
+<b class="nc">&nbsp;        Utilities.rotateEffect(rotate, 5);</b>
+<b class="nc">&nbsp;        Utilities.rotateEffect(rotate1, 2);</b>
+<b class="nc">&nbsp;        Utilities.hooverEffect(rotate1, 1.1);</b>
+<b class="nc">&nbsp;        Utilities.rotateEffect(rotate2, 4);</b>
+<b class="nc">&nbsp;        Utilities.rotateEffect(rotate3, 3);</b>
+<b class="nc">&nbsp;        Utilities.hooverEffect(rotate3, 1.1);</b>
+<b class="nc">&nbsp;        Utilities.rotateEffect(rotate4, 4);</b>
+<b class="nc">&nbsp;        Utilities.rotateEffect(rotate5, 5);</b>
+<b class="nc">&nbsp;        Utilities.hooverEffect(rotate5, 1.1);</b>
+<b class="nc">&nbsp;        Utilities.rotateEffect(rotate6, 2);</b>
+<b class="nc">&nbsp;        Utilities.rotateEffect(rotate7, 3);</b>
+<b class="nc">&nbsp;        Utilities.rotateEffect(rotate8, 4);</b>
+<b class="nc">&nbsp;        Utilities.hooverEffect(rotate8, 1.1);</b>
+<b class="nc">&nbsp;        Utilities.rotateEffect(rotate9, 3);</b>
+<b class="nc">&nbsp;        Utilities.rotateEffect(rotate10, 2);</b>
+<b class="nc">&nbsp;        Utilities.hooverEffect(rotate10, 1.1);</b>
+&nbsp;
+<b class="nc">&nbsp;        Utilities.hooverEffect(submit_ip, 1.05);</b>
+<b class="nc">&nbsp;        Utilities.hooverEffect(backBtn, 1.05);</b>
+&nbsp;
+<b class="nc">&nbsp;        ip.setFont(Font.loadFont(getClass().getResourceAsStream(&quot;/Fonts/FantasyScript.ttf&quot;), 38));</b>
+&nbsp;
+<b class="nc">&nbsp;        submit_ip.setOnMouseClicked(event -&gt; {</b>
+<b class="nc">&nbsp;            GUIMessages.writeToClient(ip.getText());// Send the IP to the client</b>
+&nbsp;        });
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * This method is called when the user clicks on the back button
+&nbsp;     * It will go back to the main view
+&nbsp;     */
+&nbsp;    @FXML
+&nbsp;    private void back() {
+<b class="nc">&nbsp;        Platform.runLater(SceneManager::MainView);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-06-26 22:00</div>
+</div>
+</body>
+</html>

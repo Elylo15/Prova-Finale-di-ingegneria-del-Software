@@ -1,0 +1,273 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > StarterCard</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">it.polimi.ingsw.model.cards</a>
+</div>
+
+<h1>Coverage Summary for Class: StarterCard (it.polimi.ingsw.model.cards)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">StarterCard</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (8/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    88,9%
+  </span>
+  <span class="absValue">
+    (16/18)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (24/24)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package it.polimi.ingsw.model.cards;
+&nbsp;
+&nbsp;import com.fasterxml.jackson.annotation.JsonCreator;
+&nbsp;import com.fasterxml.jackson.annotation.JsonProperty;
+&nbsp;import it.polimi.ingsw.model.cards.enumeration.Reign;
+&nbsp;import it.polimi.ingsw.model.cards.enumeration.Resource;
+&nbsp;import it.polimi.ingsw.model.cards.exceptions.InvalidIdException;
+&nbsp;
+&nbsp;import java.io.Serializable;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.Objects;
+&nbsp;
+&nbsp;/**
+&nbsp; * This class represents the Starter cards in the game.
+&nbsp; * It extends the PlaceableCard class and implements the Serializable interface.
+&nbsp; * It provides constructors for creating a StarterCard with different parameters.
+&nbsp; */
+&nbsp;public class
+&nbsp;StarterCard extends PlaceableCard implements Serializable {
+&nbsp;    private ArrayList&lt;Resource&gt; permanentResource;
+&nbsp;    private ArrayList&lt;Resource&gt; bottomResource;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * This constructor creates a new StarterCard with the given ID.
+&nbsp;     * It throws an InvalidIdException if the ID is not between 81 and 86.
+&nbsp;     *
+&nbsp;     * @param ID, it must be &gt;=81 and &lt;=86
+&nbsp;     * @throws InvalidIdException if the condition on ID is not met
+&nbsp;     */
+&nbsp;    public StarterCard(int ID) throws InvalidIdException {
+<b class="fc">&nbsp;        super(ID);</b>
+<b class="fc">&nbsp;        if (ID &gt;= 81 &amp;&amp; ID &lt;= 86) {</b>
+<b class="fc">&nbsp;            this.ID = ID;</b>
+<b class="fc">&nbsp;        } else if (ID &lt; 81) {</b>
+<b class="fc">&nbsp;            throw new InvalidIdException(&quot;ID is too small&quot;);</b>
+&nbsp;        } else {
+<b class="fc">&nbsp;            throw new InvalidIdException(&quot;ID is too big&quot;);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * This constructor is used to load the cards from JSON.
+&nbsp;     * It creates a new StarterCard with the given parameters.
+&nbsp;     *
+&nbsp;     * @param ID,                it must be &gt;=1  and =&lt;40
+&nbsp;     * @param front,             true if the card is front, false if the card is back
+&nbsp;     * @param requirement,       resources required to place the card
+&nbsp;     * @param points,            points given by the card
+&nbsp;     * @param reign,             reign of the card
+&nbsp;     * @param cells,             cells of the card
+&nbsp;     * @param resources,         resources given by the card
+&nbsp;     * @param permanentResource, resources given by the card
+&nbsp;     * @param bottomResource,    resources given by the card
+&nbsp;     * @throws InvalidIdException if the condition on ID is not met
+&nbsp;     */
+&nbsp;    @JsonCreator
+&nbsp;    public StarterCard(@JsonProperty(&quot;ID&quot;) int ID,
+&nbsp;                       @JsonProperty(&quot;front&quot;) boolean front,
+&nbsp;                       @JsonProperty(&quot;requirement&quot;) ArrayList&lt;Resource&gt; requirement,
+&nbsp;                       @JsonProperty(&quot;points&quot;) int points,
+&nbsp;                       @JsonProperty(&quot;reign&quot;) Reign reign,
+&nbsp;                       @JsonProperty(&quot;cells&quot;) ArrayList&lt;Cell&gt; cells,
+&nbsp;                       @JsonProperty(&quot;resources&quot;) ArrayList&lt;Resource&gt; resources,
+&nbsp;                       @JsonProperty(&quot;permanentResource&quot;) ArrayList&lt;Resource&gt; permanentResource,
+&nbsp;                       @JsonProperty(&quot;bottomResource&quot;) ArrayList&lt;Resource&gt; bottomResource) throws InvalidIdException {
+<b class="fc">&nbsp;        super(ID, front, requirement, points, reign, cells, resources);</b>
+<b class="fc">&nbsp;        this.permanentResource = permanentResource;</b>
+<b class="fc">&nbsp;        this.bottomResource = bottomResource;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * This constructor creates a new StarterCard with the given parameters.
+&nbsp;     * It throws an InvalidIdException if the ID is not between 1 and 40.
+&nbsp;     *
+&nbsp;     * @param ID,                it must be &gt;=1  and =&lt;40
+&nbsp;     * @param front,             true if the card is front, false if the card is back
+&nbsp;     * @param points,            points given by the card
+&nbsp;     * @param reign,             reign of the card
+&nbsp;     * @param resources,         resources given by the card
+&nbsp;     * @param permanentResource, resources given by the card
+&nbsp;     * @param bottomResource,    resources given by the card
+&nbsp;     * @throws InvalidIdException if the condition on ID is not met
+&nbsp;     */
+&nbsp;    public StarterCard(int ID, int points, Reign reign, boolean front, ArrayList&lt;Resource&gt; resources, ArrayList&lt;Resource&gt; permanentResource, ArrayList&lt;Resource&gt; bottomResource) throws InvalidIdException {
+<b class="fc">&nbsp;        super(ID, points, reign, front, resources, null);</b>
+<b class="fc">&nbsp;        this.permanentResource = permanentResource;</b>
+<b class="fc">&nbsp;        this.bottomResource = bottomResource;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Overrides the equals method from the Object class.
+&nbsp;     * Compares two PlaceableCard objects to check for equality.
+&nbsp;     *
+&nbsp;     * @param o the object to be compared
+&nbsp;     * @return true if the specified objects are equal
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public boolean equals(Object o) {
+<b class="fc">&nbsp;        if (this == o) return true;</b>
+<b class="pc">&nbsp;        if (o == null || getClass() != o.getClass()) return false;</b>
+&nbsp;       // if (!super.equals(o)) return false;
+<b class="fc">&nbsp;        StarterCard that = (StarterCard) o;</b>
+<b class="fc">&nbsp;        return Objects.equals(permanentResource, that.permanentResource) &amp;&amp; Objects.equals(bottomResource, that.bottomResource);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Overrides the hashCode method from the Object class.
+&nbsp;     *
+&nbsp;     * @return the hash of the object
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public int hashCode() {
+<b class="fc">&nbsp;        return Objects.hash(super.hashCode(), permanentResource, bottomResource);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the resources in the front of the card if front is true, the resources in the back of the card if front is false.
+&nbsp;     *
+&nbsp;     * @return the resources in the front of the card if front is true, the resources in the back of the card if front is false.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public ArrayList&lt;Resource&gt; getResource() {
+&nbsp;        // if front is true call the method getResource of PlaceableCard, otherwise create and return an ArrayList with the bottomResource
+<b class="fc">&nbsp;        if (this.isFront()) {</b>
+<b class="fc">&nbsp;            return super.getResource();</b>
+&nbsp;        } else {
+<b class="fc">&nbsp;            return new ArrayList&lt;&gt;(this.bottomResource);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the permanent resources in the back of the card.
+&nbsp;     *
+&nbsp;     * @return the permanent resources in the back of the card.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public ArrayList&lt;Resource&gt; getPermanentResource() {
+&nbsp;        //if front is false returns the permanent resources in the back of the card, otherwise return an empty ArrayList
+<b class="fc">&nbsp;        if (!this.isFront()) {</b>
+<b class="fc">&nbsp;            return permanentResource;</b>
+&nbsp;        } else {
+<b class="fc">&nbsp;            return new ArrayList&lt;&gt;();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Checks if the requirement to place the card is met, it always returns true as starter cards have no requirement.
+&nbsp;     *
+&nbsp;     * @param req ArrayList containing the number of resources.
+&nbsp;     * @return true.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public boolean checkRequirement(ArrayList&lt;Integer&gt; req) {
+<b class="fc">&nbsp;        return true;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-06-26 22:00</div>
+</div>
+</body>
+</html>

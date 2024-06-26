@@ -1,0 +1,2011 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > ViewCLI</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">it.polimi.ingsw.client.view</a>
+</div>
+
+<h1>Coverage Summary for Class: ViewCLI (it.polimi.ingsw.client.view)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ViewCLI</td>
+<td class="coverageStat">
+  <span class="percent">
+    92,6%
+  </span>
+  <span class="absValue">
+    (50/54)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    71,8%
+  </span>
+  <span class="absValue">
+    (247/344)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    83,3%
+  </span>
+  <span class="absValue">
+    (699/839)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">ViewCLI$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/2)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    92,7%
+  </span>
+  <span class="absValue">
+    (51/55)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    71,8%
+  </span>
+  <span class="absValue">
+    (247/344)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    83,4%
+  </span>
+  <span class="absValue">
+    (701/841)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package it.polimi.ingsw.client.view;
+&nbsp;
+&nbsp;import it.polimi.ingsw.messages.connectionState.availableColorsMessage;
+&nbsp;import it.polimi.ingsw.messages.connectionState.connectionResponseMessage;
+&nbsp;import it.polimi.ingsw.messages.connectionState.unavailableNamesMessage;
+&nbsp;import it.polimi.ingsw.messages.currentStateMessage;
+&nbsp;import it.polimi.ingsw.messages.endGameState.declareWinnerMessage;
+&nbsp;import it.polimi.ingsw.messages.playerTurnState.updatePlayerMessage;
+&nbsp;import it.polimi.ingsw.messages.responseMessage;
+&nbsp;import it.polimi.ingsw.messages.serverOptionState.serverOptionMessage;
+&nbsp;import it.polimi.ingsw.model.CommonArea;
+&nbsp;import it.polimi.ingsw.model.Player;
+&nbsp;import it.polimi.ingsw.model.PlayerArea;
+&nbsp;import it.polimi.ingsw.model.cards.Cell;
+&nbsp;import it.polimi.ingsw.model.cards.ObjectiveCard;
+&nbsp;import it.polimi.ingsw.model.cards.PlaceableCard;
+&nbsp;import it.polimi.ingsw.model.cards.PlayerHand;
+&nbsp;import it.polimi.ingsw.model.cards.enumeration.Reign;
+&nbsp;import it.polimi.ingsw.model.cards.enumeration.Resource;
+&nbsp;
+&nbsp;import java.util.*;
+&nbsp;import java.util.concurrent.atomic.AtomicBoolean;
+&nbsp;import java.util.stream.Collectors;
+&nbsp;
+&nbsp;/**
+&nbsp; * This class is the view of the client, it is used to visualize the game in the command line.
+&nbsp; */
+&nbsp;public class ViewCLI extends View {
+&nbsp;    // ANSI escape code constants for text color
+&nbsp;    private static final String RESET = &quot;\033[0m&quot;;  // Reset to default color
+&nbsp;    //COLORS
+&nbsp;    private static final String BLACK_TEXT = &quot;\033[0;30m&quot;;
+&nbsp;    private static final String RED_TEXT = &quot;\033[0;31m&quot;;
+&nbsp;    private static final String GREEN_TEXT = &quot;\033[0;32m&quot;;
+&nbsp;    private static final String YELLOW_TEXT = &quot;\033[0;33m&quot;;
+&nbsp;    private static final String BLUE_TEXT = &quot;\033[0;34m&quot;;
+&nbsp;    private static final String PURPLE_TEXT = &quot;\033[0;35m&quot;;
+&nbsp;    private static final String CYAN_TEXT = &quot;\033[0;36m&quot;;
+&nbsp;    private static final String WHITE_TEXT = &quot;\033[0;37m&quot;;
+&nbsp;    // ANSI escape code constants for background color
+&nbsp;    private static final String BLACK_BACKGROUND = &quot;\033[40m&quot;;
+&nbsp;    private static final String RED_BACKGROUND = &quot;\033[41m&quot;;
+&nbsp;    private static final String GREEN_BACKGROUND = &quot;\033[42m&quot;;
+&nbsp;    private static final String YELLOW_BACKGROUND = &quot;\033[43m&quot;;
+&nbsp;    private static final String PURPLE_BACKGROUND = &quot;\033[45m&quot;;
+&nbsp;    private static final String CYAN_BACKGROUND = &quot;\033[46m&quot;;
+&nbsp;    private static final String BRIGHT_WHITE_BACKGROUND = &quot;\033[107m&quot;;
+&nbsp;
+&nbsp;    private serverOptionMessage newMessage;
+<b class="fc">&nbsp;    private String state = &quot;&quot;;</b>
+<b class="fc">&nbsp;    private ArrayList&lt;String&gt; names = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;    private final HashMap&lt;String, String&gt; playerColor = new HashMap&lt;&gt;();</b>
+&nbsp;
+&nbsp;    private Scanner scanner;
+&nbsp;    private final AtomicBoolean isInterrupted;
+&nbsp;    private final AtomicBoolean isReading;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Method {@code ViewCLI}: constructs a new ViewCLI
+&nbsp;     */
+&nbsp;    public ViewCLI() {
+<b class="fc">&nbsp;        super();</b>
+<b class="fc">&nbsp;        isInterrupted = new AtomicBoolean(false);</b>
+<b class="fc">&nbsp;        isReading = new AtomicBoolean(false);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Method {@code getInput}: gets the input from the user
+&nbsp;     * @return the input String
+&nbsp;     */
+&nbsp;    private synchronized String getInput() throws InterruptedException {
+&nbsp;        //thread waits as long as isInterrupted is true
+<b class="pc">&nbsp;        while (isInterrupted.get()) {</b>
+&nbsp;            try {
+<b class="nc">&nbsp;                this.wait();</b>
+<b class="nc">&nbsp;            } catch (InterruptedException ignore) {}</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        isReading.set(true);</b>
+<b class="fc">&nbsp;        String input = scanner.nextLine();</b>
+&nbsp;
+&nbsp;        // Check if the input thread has been interrupted
+<b class="pc">&nbsp;        if(isInterrupted.get()) {</b>
+<b class="nc">&nbsp;            isInterrupted.set(false);</b>
+<b class="nc">&nbsp;            isReading.set(false);</b>
+<b class="nc">&nbsp;            throw new InterruptedException(&quot;Scanner should not be read: isInterrupted flag is set.&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        isReading.set(false);</b>
+<b class="fc">&nbsp;        return input;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Method {@code checkInterrupted}: checks if the input thread has been interrupted and informs the user
+&nbsp;     */
+&nbsp;    private void checkInterrupted(){
+<b class="pc">&nbsp;        if(isInterrupted.get()) {</b>
+<b class="nc">&nbsp;            System.out.println(&quot;\nPlease, press enter to continue.&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;            synchronized (this) {</b>
+<b class="nc">&nbsp;                while (isInterrupted.get()) {</b>
+&nbsp;                    try {
+<b class="nc">&nbsp;                        this.wait();</b>
+<b class="nc">&nbsp;                    } catch (InterruptedException ignore) {}</b>
+&nbsp;                }
+<b class="nc">&nbsp;            }</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Method {@code sendInputInterrupt}: if a thread is waiting for input,
+&nbsp;     * it signals the input thread to launch an exception
+&nbsp;     */
+&nbsp;    private void sendInputInterrupt() {
+<b class="pc">&nbsp;        if(isReading.get()) {</b>
+<b class="nc">&nbsp;            isInterrupted.set(true);</b>
+<b class="nc">&nbsp;            synchronized (this) {</b>
+<b class="nc">&nbsp;                this.notifyAll();</b>
+<b class="nc">&nbsp;            }</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Method {@code getBgColor}: gets the background color
+&nbsp;     *
+&nbsp;     * @param card the card to get the background color of
+&nbsp;     * @return the background color
+&nbsp;     */
+&nbsp;    private static String getBgColor(PlaceableCard card) {
+<b class="fc">&nbsp;        Reign reign = card.getReign();</b>
+&nbsp;        String BGColor;
+<b class="pc">&nbsp;        switch (reign) {</b>
+<b class="fc">&nbsp;            case Fungus -&gt; BGColor = RED_BACKGROUND;</b>
+&nbsp;
+<b class="fc">&nbsp;            case Insect -&gt; BGColor = PURPLE_BACKGROUND;</b>
+&nbsp;
+<b class="fc">&nbsp;            case Animal -&gt; BGColor = CYAN_BACKGROUND;</b>
+&nbsp;
+<b class="fc">&nbsp;            case Plant -&gt; BGColor = GREEN_BACKGROUND;</b>
+&nbsp;
+<b class="nc">&nbsp;            case null -&gt; BGColor = YELLOW_BACKGROUND;</b>
+&nbsp;
+&nbsp;        }
+<b class="fc">&nbsp;        return BGColor;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Method {@code startMain}: displays an entry message
+&nbsp;     *
+&nbsp;     * @return true to continue execution in Client
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public boolean startMain() {
+<b class="nc">&nbsp;        System.out.println(&quot;\n&quot; + BLUE_TEXT +</b>
+&nbsp;                &quot;???????????????????&quot; + PURPLE_TEXT + &quot;????????????????????&quot; + GREEN_TEXT + &quot;???????????????????????&quot; + RED_TEXT + &quot;???????????????????????\n&quot; +
+&nbsp;                &quot;                                                                                     \n&quot; + PURPLE_TEXT +
+&nbsp;                &quot;                   ?????????  &quot; + RED_TEXT + &quot;             ?????                                     \n&quot; + PURPLE_TEXT +
+&nbsp;                &quot;                  ??????????? &quot; + RED_TEXT + &quot;            ?????                                      \n&quot; + PURPLE_TEXT +
+&nbsp;                &quot;                 ???     ???  &quot; + BLUE_TEXT + &quot; ?????? &quot; + RED_TEXT + &quot;  ??????? &quot; + GREEN_TEXT + &quot;  ?????? &quot; + PURPLE_TEXT + &quot; ????? ?????                \n&quot; + PURPLE_TEXT +
+&nbsp;                &quot;                ????         &quot; + BLUE_TEXT + &quot; ????????&quot; + RED_TEXT + &quot; ???????? &quot; + GREEN_TEXT + &quot; ???????? &quot; + PURPLE_TEXT + &quot;???? ?????                 \n&quot; + PURPLE_TEXT +
+&nbsp;                &quot;                ????        &quot; + BLUE_TEXT + &quot; ???? ????&quot; + RED_TEXT + &quot; ??? ???? &quot; + GREEN_TEXT + &quot;????????  &quot; + PURPLE_TEXT + &quot;?????????                  \n&quot; + PURPLE_TEXT +
+&nbsp;                &quot;                ?????     ?? &quot; + BLUE_TEXT + &quot;???? ????&quot; + RED_TEXT + &quot; ??? ???? &quot; + GREEN_TEXT + &quot;??????     &quot; + PURPLE_TEXT + &quot;?????????                 \n&quot; + PURPLE_TEXT +
+&nbsp;                &quot;                 ??????????? &quot; + BLUE_TEXT + &quot;???????? &quot; + RED_TEXT + &quot; ???????? &quot; + GREEN_TEXT + &quot;????????  &quot; + PURPLE_TEXT + &quot;????? ?????                \n&quot; + PURPLE_TEXT +
+&nbsp;                &quot;                  ????????? &quot; + BLUE_TEXT + &quot;  ??????  &quot; + RED_TEXT + &quot; ????????  &quot; + GREEN_TEXT + &quot;??????  &quot; + PURPLE_TEXT + &quot;????? ?????                 \n&quot; +
+&nbsp;                &quot;                                                                                     \n&quot; + RED_TEXT +
+&nbsp;                &quot;     ??????   ?????   &quot; + GREEN_TEXT + &quot;        ?????                 &quot; + BLUE_TEXT + &quot;              ???? &quot; + GREEN_TEXT + &quot; ???           \n&quot; + RED_TEXT +
+&nbsp;                &quot;    ???????? ?????    &quot; + GREEN_TEXT + &quot;        ????                   &quot; + BLUE_TEXT + &quot;            ?????                \n&quot; + RED_TEXT +
+&nbsp;                &quot;     ???????? ???? &quot; + PURPLE_TEXT + &quot;  ?????? &quot; + GREEN_TEXT + &quot; ??????? &quot; + BLUE_TEXT + &quot; ?????? ??? &quot; + PURPLE_TEXT + &quot; ????????&quot; + RED_TEXT + &quot;  ?????? &quot; + BLUE_TEXT + &quot;??? &quot; + GREEN_TEXT + &quot;????&quot; + PURPLE_TEXT + &quot;  ?????    \n&quot; + RED_TEXT +
+&nbsp;                &quot;     ?????????????  &quot; + PURPLE_TEXT + &quot;???????? &quot; + GREEN_TEXT + &quot;?????? &quot; + BLUE_TEXT + &quot; ????? ???? &quot; + PURPLE_TEXT + &quot; ?????????&quot; + RED_TEXT + &quot; ???????&quot; + BLUE_TEXT + &quot; ????&quot; + GREEN_TEXT + &quot; ???&quot; + PURPLE_TEXT + &quot; ?????     \n&quot; + RED_TEXT +
+&nbsp;                &quot;     ???? ????????   &quot; + PURPLE_TEXT + &quot;???????&quot; + GREEN_TEXT + &quot;  ????   &quot; + BLUE_TEXT + &quot; ???? ???? &quot; + PURPLE_TEXT + &quot; ???? ???&quot; + RED_TEXT + &quot;  ???????&quot; + BLUE_TEXT + &quot; ??? &quot; + GREEN_TEXT + &quot;????&quot; + PURPLE_TEXT + &quot; ??????    \n&quot; + RED_TEXT +
+&nbsp;                &quot;     ????  ???????  &quot; + PURPLE_TEXT + &quot;????????&quot; + GREEN_TEXT + &quot;  ???? ??&quot; + BLUE_TEXT + &quot; ???? ???? &quot; + PURPLE_TEXT + &quot; ????  &quot; + RED_TEXT + &quot;   ????????&quot; + BLUE_TEXT + &quot; ??? &quot; + GREEN_TEXT + &quot;???? &quot; + PURPLE_TEXT + &quot;???????   \n&quot; + RED_TEXT +
+&nbsp;                &quot;     ?????  ??????? &quot; + PURPLE_TEXT + &quot;????????? &quot; + GREEN_TEXT + &quot;??????? &quot; + BLUE_TEXT + &quot;???????? &quot; + PURPLE_TEXT + &quot; ????? &quot; + RED_TEXT + &quot;  ?????????? &quot; + BLUE_TEXT + &quot;????&quot; + GREEN_TEXT + &quot; ???&quot; + PURPLE_TEXT + &quot; ??????    \n&quot; + RED_TEXT +
+&nbsp;                &quot;    ?????    ?????  &quot; + PURPLE_TEXT + &quot;???????? &quot; + GREEN_TEXT + &quot;  ????? &quot; + BLUE_TEXT + &quot; ???????  &quot; + PURPLE_TEXT + &quot;????   &quot; + RED_TEXT + &quot;  ????????? &quot; + BLUE_TEXT + &quot;???? &quot; + GREEN_TEXT + &quot;??? &quot; + PURPLE_TEXT + &quot;??????     \n&quot; + RED_TEXT +
+&nbsp;                &quot;                                                                                     \n&quot; + GREEN_TEXT +
+&nbsp;                &quot;?????????????????????&quot; + RED_TEXT + &quot;???????????????????????&quot; + PURPLE_TEXT + &quot;??????????????????????&quot; + BLUE_TEXT + &quot;???????????????????\n&quot; + RESET +
+&nbsp;                &quot;\n&quot;);
+<b class="nc">&nbsp;        return true;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Method {@code askPortIP}: asks the user to enter the IP of the server
+&nbsp;     *
+&nbsp;     * @return String[]
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public String askIP() {
+<b class="fc">&nbsp;        scanner = new Scanner(System.in);</b>
+&nbsp;
+<b class="fc">&nbsp;        checkInterrupted();</b>
+&nbsp;
+<b class="fc">&nbsp;        state = &quot;IP&quot;;</b>
+&nbsp;        String server;
+&nbsp;
+<b class="fc">&nbsp;        System.out.print(&quot;Enter IP: &quot;);</b>
+&nbsp;
+&nbsp;        try {
+<b class="fc">&nbsp;            server = getInput();</b>
+<b class="nc">&nbsp;        } catch (InterruptedException e) {</b>
+&nbsp;            // If the input thread is interrupted, return the default IP
+<b class="nc">&nbsp;            return &quot;localhost&quot;;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return server;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Communicates to the user he lost connection
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void playerDisconnected(Exception e) {
+<b class="fc">&nbsp;        sendInputInterrupt();</b>
+<b class="fc">&nbsp;        state = &quot;Disconnected&quot;;</b>
+<b class="fc">&nbsp;        System.out.println(&quot;\n&quot; + RED_BACKGROUND + &quot;You have been disconnected.&quot; + RESET + &quot;\n&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Visualizes the current state of the players
+&nbsp;     *
+&nbsp;     * @param message: currentStateMessage
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void updatePlayer(currentStateMessage message) {
+<b class="fc">&nbsp;        state = &quot;UpdatePlayer&quot;;</b>
+<b class="fc">&nbsp;        System.out.println(&quot;\n This is the turn of &quot; + message.getCurrentPlayer().getNickname());</b>
+<b class="fc">&nbsp;        System.out.println(&quot;ID of the match: &quot; + message.getMatchID());</b>
+<b class="fc">&nbsp;        System.out.println(&quot;The online players are: &quot; + message.getOnlinePlayers());</b>
+&nbsp;
+<b class="pc">&nbsp;        if (!Objects.equals(message.getStateName(), &quot;StarterCardState&quot;)) {</b>
+<b class="fc">&nbsp;            ArrayList&lt;String&gt; objectives = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;            addOutput(objectives);</b>
+<b class="fc">&nbsp;            printObjective(message.getCommonObjectiveCards().get(0).getID(), objectives);</b>
+<b class="fc">&nbsp;            printObjective(message.getCommonObjectiveCards().get(1).getID(), objectives);</b>
+&nbsp;
+<b class="fc">&nbsp;            System.out.println(&quot;The common objectives are: &quot;);</b>
+<b class="fc">&nbsp;            printOutput(objectives);</b>
+&nbsp;
+<b class="pc">&nbsp;            if (!Objects.equals(message.getStateName(), &quot;objectiveState&quot;)) {</b>
+<b class="fc">&nbsp;                if (message.getPlayer().getNickname().equals(message.getCurrentPlayer().getNickname())) {</b>
+<b class="fc">&nbsp;                    System.out.println(&quot;The private objective is: &quot;);</b>
+<b class="fc">&nbsp;                    objectives = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;                    addOutput(objectives);</b>
+<b class="fc">&nbsp;                    printObjective(message.getPlayer().getObjective().getID(), objectives);</b>
+<b class="fc">&nbsp;                    printOutput(objectives);</b>
+&nbsp;                } else {
+<b class="fc">&nbsp;                    System.out.println(&quot;The private objective is: ?&quot;);</b>
+&nbsp;                }
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        this.showCommonArea(message.getCurrentPlayer().getCommonArea());</b>
+&nbsp;
+<b class="fc">&nbsp;        System.out.println(&quot;Score of &quot; + message.getCurrentPlayer().getNickname() + &quot;: &quot; + message.getCurrentPlayer().getScore());</b>
+&nbsp;
+<b class="pc">&nbsp;        if (!Objects.equals(message.getStateName(), &quot;StarterCardState&quot;)) {</b>
+<b class="fc">&nbsp;            this.showPlayerArea(message.getCurrentPlayer().getPlayerArea());</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        this.showPlayerHand(message.getCurrentPlayer(), message.getPlayer().getNickname());</b>
+&nbsp;
+<b class="fc">&nbsp;        if (message.isLastTurn()) {</b>
+<b class="fc">&nbsp;            System.out.println(&quot;\nTHIS IS THE LAST TURN\n&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        System.out.println(&quot;\n&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * @param output ArrayList&lt;String&gt;
+&nbsp;     */
+&nbsp;    private void addOutput(ArrayList&lt;String&gt; output) {
+<b class="fc">&nbsp;        output.add(&quot;&quot;);</b>
+<b class="fc">&nbsp;        output.add(&quot;&quot;);</b>
+<b class="fc">&nbsp;        output.add(&quot;&quot;);</b>
+<b class="fc">&nbsp;        output.add(&quot;&quot;);</b>
+<b class="fc">&nbsp;        output.add(&quot;&quot;);</b>
+<b class="fc">&nbsp;        output.add(&quot;&quot;);</b>
+<b class="fc">&nbsp;        output.add(&quot;&quot;);</b>
+<b class="fc">&nbsp;        output.add(&quot;&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Prints the current state of the common area
+&nbsp;     *
+&nbsp;     * @param area CommonArea to be printed
+&nbsp;     */
+&nbsp;    protected void showCommonArea(CommonArea area) {
+<b class="fc">&nbsp;        System.out.println(&quot;\nCARDS ON THE TABLE: &quot;);</b>
+<b class="fc">&nbsp;        this.firstRowCommonArea(area);</b>
+<b class="fc">&nbsp;        this.secondRowCommonArea(area);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Prints the first row of the common area
+&nbsp;     *
+&nbsp;     * @param area CommonArea to be printed
+&nbsp;     */
+&nbsp;    private void firstRowCommonArea(CommonArea area) {
+<b class="fc">&nbsp;        String index = &quot;&quot;;</b>
+<b class="fc">&nbsp;        ArrayList&lt;String&gt; output = new ArrayList&lt;&gt;();</b>
+&nbsp;        // Sets up the first 4 lines of the output
+<b class="fc">&nbsp;        output.add(&quot;&quot;);</b>
+<b class="fc">&nbsp;        output.add(&quot;&quot;);</b>
+<b class="fc">&nbsp;        output.add(&quot;&quot;);</b>
+&nbsp;
+<b class="fc">&nbsp;        index += String.format(&quot;%11s&quot;, &quot; (1) DECK&quot;);</b>
+<b class="fc">&nbsp;        index += String.format(&quot;%11s&quot;, &quot; (2) DECK&quot;);</b>
+<b class="fc">&nbsp;        index += &quot; (3)  &quot; + &quot;     &quot;;</b>
+&nbsp;
+<b class="fc">&nbsp;        if (!area.getD1().getList().isEmpty())</b>
+<b class="fc">&nbsp;            this.printDeck(output, area.getD1().getList().getFirst());</b>
+&nbsp;        else
+<b class="fc">&nbsp;            this.printDeck(output, null);</b>
+&nbsp;
+<b class="fc">&nbsp;        if (!area.getD2().getList().isEmpty())</b>
+<b class="fc">&nbsp;            this.printDeck(output, area.getD2().getList().getFirst());</b>
+&nbsp;        else
+<b class="fc">&nbsp;            this.printDeck(output, null);</b>
+&nbsp;
+<b class="fc">&nbsp;        if (area.getTableCards().getFirst() != null)</b>
+<b class="fc">&nbsp;            this.printCard(output, area.getTableCards().getFirst());</b>
+&nbsp;        else
+<b class="fc">&nbsp;            this.printCard(output, null);</b>
+&nbsp;
+<b class="fc">&nbsp;        System.out.println(index);</b>
+<b class="fc">&nbsp;        System.out.println(output.get(0));</b>
+<b class="fc">&nbsp;        System.out.println(output.get(1));</b>
+<b class="fc">&nbsp;        System.out.println(output.get(2));</b>
+<b class="fc">&nbsp;        System.out.println(&quot;\n&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Prints the second row of the common area
+&nbsp;     *
+&nbsp;     * @param area CommonArea to be printed
+&nbsp;     */
+&nbsp;    private void secondRowCommonArea(CommonArea area) {
+<b class="fc">&nbsp;        String index = &quot;&quot;;</b>
+<b class="fc">&nbsp;        ArrayList&lt;String&gt; output = new ArrayList&lt;&gt;();</b>
+&nbsp;        // Sets up the first 4 lines of the output
+<b class="fc">&nbsp;        output.add(&quot;&quot;);</b>
+<b class="fc">&nbsp;        output.add(&quot;&quot;);</b>
+<b class="fc">&nbsp;        output.add(&quot;&quot;);</b>
+&nbsp;
+<b class="fc">&nbsp;        index += &quot; (4)  &quot; + &quot;     &quot;;</b>
+<b class="fc">&nbsp;        index += &quot; (5)  &quot; + &quot;     &quot;;</b>
+<b class="fc">&nbsp;        index += &quot; (6)  &quot; + &quot;     &quot;;</b>
+&nbsp;
+<b class="fc">&nbsp;        if (area.getTableCards().get(1) != null)</b>
+<b class="fc">&nbsp;            this.printCard(output, area.getTableCards().get(1));</b>
+&nbsp;        else
+<b class="fc">&nbsp;            this.printCard(output, null);</b>
+&nbsp;
+<b class="fc">&nbsp;        if (area.getTableCards().get(2) != null)</b>
+<b class="fc">&nbsp;            this.printCard(output, area.getTableCards().get(2));</b>
+&nbsp;        else
+<b class="fc">&nbsp;            this.printCard(output, null);</b>
+&nbsp;
+<b class="fc">&nbsp;        if (area.getTableCards().get(3) != null)</b>
+<b class="fc">&nbsp;            this.printCard(output, area.getTableCards().get(3));</b>
+&nbsp;        else
+<b class="fc">&nbsp;            this.printCard(output, null);</b>
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;        System.out.println(index);</b>
+<b class="fc">&nbsp;        System.out.println(output.get(0));</b>
+<b class="fc">&nbsp;        System.out.println(output.get(1));</b>
+<b class="fc">&nbsp;        System.out.println(output.get(2));</b>
+<b class="fc">&nbsp;        System.out.println(&quot;\n&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Prints the color and the type (resource or gold) of the first card on top of the deck
+&nbsp;     *
+&nbsp;     * @param output ArrayList&lt;String&gt; to be printed
+&nbsp;     * @param card   PlaceableCard on top of the deck
+&nbsp;     */
+&nbsp;    private void printDeck(ArrayList&lt;String&gt; output, PlaceableCard card) {
+&nbsp;
+&nbsp;        // Adds a space column between the decks
+<b class="fc">&nbsp;        output.set(0, output.get(0) + &quot; &quot;);</b>
+<b class="fc">&nbsp;        output.set(1, output.get(1) + &quot; &quot;);</b>
+<b class="fc">&nbsp;        output.set(2, output.get(2) + &quot; &quot;);</b>
+&nbsp;
+<b class="fc">&nbsp;        if (card == null) {</b>
+<b class="fc">&nbsp;            setOutput(output);</b>
+&nbsp;
+&nbsp;        } else {
+<b class="fc">&nbsp;            Reign reign = card.getReign();</b>
+&nbsp;
+<b class="fc">&nbsp;            if (card.isGold()) {</b>
+<b class="pc">&nbsp;                switch (reign) {</b>
+&nbsp;                    case Fungus -&gt; {
+<b class="fc">&nbsp;                        output.set(0, output.get(0) + RED_BACKGROUND + String.format(&quot;%3s&quot;, &quot;&quot;) + YELLOW_BACKGROUND + String.format(&quot;%4s&quot;, &quot;&quot;) + RED_BACKGROUND + String.format(&quot;%3s&quot;, &quot;&quot;) + RESET);</b>
+<b class="fc">&nbsp;                        output.set(1, output.get(1) + YELLOW_BACKGROUND + &quot; &quot; + RED_BACKGROUND + String.format(&quot;%1s&quot;, &quot;&quot;) + &quot;FUNGUS&quot; + RED_BACKGROUND + String.format(&quot;%1s&quot;, &quot;&quot;) + YELLOW_BACKGROUND + &quot; &quot; + RESET);</b>
+<b class="fc">&nbsp;                        output.set(2, output.get(2) + RED_BACKGROUND + String.format(&quot;%3s&quot;, &quot;&quot;) + YELLOW_BACKGROUND + String.format(&quot;%4s&quot;, &quot;&quot;) + RED_BACKGROUND + String.format(&quot;%3s&quot;, &quot;&quot;) + RESET);</b>
+&nbsp;                    }
+&nbsp;                    case Insect -&gt; {
+<b class="nc">&nbsp;                        output.set(0, output.get(0) + PURPLE_BACKGROUND + String.format(&quot;%3s&quot;, &quot;&quot;) + YELLOW_BACKGROUND + String.format(&quot;%4s&quot;, &quot;&quot;) + PURPLE_BACKGROUND + String.format(&quot;%3s&quot;, &quot;&quot;) + RESET);</b>
+<b class="nc">&nbsp;                        output.set(1, output.get(1) + YELLOW_BACKGROUND + &quot; &quot; + PURPLE_BACKGROUND + String.format(&quot;%1s&quot;, &quot;&quot;) + &quot;INSECT&quot; + PURPLE_BACKGROUND + String.format(&quot;%1s&quot;, &quot;&quot;) + YELLOW_BACKGROUND + &quot; &quot; + RESET);</b>
+<b class="nc">&nbsp;                        output.set(2, output.get(2) + PURPLE_BACKGROUND + String.format(&quot;%3s&quot;, &quot;&quot;) + YELLOW_BACKGROUND + String.format(&quot;%4s&quot;, &quot;&quot;) + PURPLE_BACKGROUND + String.format(&quot;%3s&quot;, &quot;&quot;) + RESET);</b>
+&nbsp;                    }
+&nbsp;                    case Animal -&gt; {
+<b class="fc">&nbsp;                        output.set(0, output.get(0) + CYAN_BACKGROUND + String.format(&quot;%3s&quot;, &quot;&quot;) + YELLOW_BACKGROUND + String.format(&quot;%4s&quot;, &quot;&quot;) + CYAN_BACKGROUND + String.format(&quot;%3s&quot;, &quot;&quot;) + RESET);</b>
+<b class="fc">&nbsp;                        output.set(1, output.get(1) + YELLOW_BACKGROUND + &quot; &quot; + CYAN_BACKGROUND + String.format(&quot;%1s&quot;, &quot;&quot;) + &quot;ANIMAL&quot; + CYAN_BACKGROUND + String.format(&quot;%1s&quot;, &quot;&quot;) + YELLOW_BACKGROUND + &quot; &quot; + RESET);</b>
+<b class="fc">&nbsp;                        output.set(2, output.get(2) + CYAN_BACKGROUND + String.format(&quot;%3s&quot;, &quot;&quot;) + YELLOW_BACKGROUND + String.format(&quot;%4s&quot;, &quot;&quot;) + CYAN_BACKGROUND + String.format(&quot;%3s&quot;, &quot;&quot;) + RESET);</b>
+&nbsp;                    }
+&nbsp;                    case Plant -&gt; {
+<b class="fc">&nbsp;                        output.set(0, output.get(0) + GREEN_BACKGROUND + String.format(&quot;%3s&quot;, &quot;&quot;) + YELLOW_BACKGROUND + String.format(&quot;%4s&quot;, &quot;&quot;) + GREEN_BACKGROUND + String.format(&quot;%3s&quot;, &quot;&quot;) + RESET);</b>
+<b class="fc">&nbsp;                        output.set(1, output.get(1) + YELLOW_BACKGROUND + &quot; &quot; + GREEN_BACKGROUND + String.format(&quot;%1s&quot;, &quot;&quot;) + &quot;PLANT&quot; + GREEN_BACKGROUND + String.format(&quot;%2s&quot;, &quot;&quot;) + YELLOW_BACKGROUND + &quot; &quot; + RESET);</b>
+<b class="fc">&nbsp;                        output.set(2, output.get(2) + GREEN_BACKGROUND + String.format(&quot;%3s&quot;, &quot;&quot;) + YELLOW_BACKGROUND + String.format(&quot;%4s&quot;, &quot;&quot;) + GREEN_BACKGROUND + String.format(&quot;%3s&quot;, &quot;&quot;) + RESET);</b>
+&nbsp;                    }
+&nbsp;                }
+&nbsp;                return;
+&nbsp;            }
+&nbsp;
+<b class="pc">&nbsp;            switch (reign) {</b>
+&nbsp;                case Fungus -&gt; {
+<b class="fc">&nbsp;                    output.set(0, output.get(0) + RED_BACKGROUND + String.format(&quot;%10s&quot;, &quot;&quot;) + RESET);</b>
+<b class="fc">&nbsp;                    output.set(1, output.get(1) + RED_BACKGROUND + String.format(&quot;%2s&quot;, &quot;&quot;) + &quot;FUNGUS&quot; + RED_BACKGROUND + String.format(&quot;%2s&quot;, &quot;&quot;) + RESET);</b>
+<b class="fc">&nbsp;                    output.set(2, output.get(2) + RED_BACKGROUND + String.format(&quot;%10s&quot;, &quot;&quot;) + RESET);</b>
+&nbsp;                }
+&nbsp;                case Insect -&gt; {
+<b class="fc">&nbsp;                    output.set(0, output.get(0) + PURPLE_BACKGROUND + String.format(&quot;%10s&quot;, &quot;&quot;) + RESET);</b>
+<b class="fc">&nbsp;                    output.set(1, output.get(1) + PURPLE_BACKGROUND + String.format(&quot;%2s&quot;, &quot;&quot;) + &quot;INSECT&quot; + PURPLE_BACKGROUND + String.format(&quot;%2s&quot;, &quot;&quot;) + RESET);</b>
+<b class="fc">&nbsp;                    output.set(2, output.get(2) + PURPLE_BACKGROUND + String.format(&quot;%10s&quot;, &quot;&quot;) + RESET);</b>
+&nbsp;                }
+&nbsp;                case Animal -&gt; {
+<b class="fc">&nbsp;                    output.set(0, output.get(0) + CYAN_BACKGROUND + String.format(&quot;%10s&quot;, &quot;&quot;) + RESET);</b>
+<b class="fc">&nbsp;                    output.set(1, output.get(1) + CYAN_BACKGROUND + String.format(&quot;%2s&quot;, &quot;&quot;) + &quot;ANIMAL&quot; + CYAN_BACKGROUND + String.format(&quot;%2s&quot;, &quot;&quot;) + RESET);</b>
+<b class="fc">&nbsp;                    output.set(2, output.get(2) + CYAN_BACKGROUND + String.format(&quot;%10s&quot;, &quot;&quot;) + RESET);</b>
+&nbsp;                }
+&nbsp;                case Plant -&gt; {
+<b class="fc">&nbsp;                    output.set(0, output.get(0) + GREEN_BACKGROUND + String.format(&quot;%10s&quot;, &quot;&quot;) + RESET);</b>
+<b class="fc">&nbsp;                    output.set(1, output.get(1) + GREEN_BACKGROUND + String.format(&quot;%2s&quot;, &quot;&quot;) + &quot;PLANT&quot; + GREEN_BACKGROUND + String.format(&quot;%3s&quot;, &quot;&quot;) + RESET);</b>
+<b class="fc">&nbsp;                    output.set(2, output.get(2) + GREEN_BACKGROUND + String.format(&quot;%10s&quot;, &quot;&quot;) + RESET);</b>
+&nbsp;                }
+&nbsp;                case null -&gt; {
+<b class="nc">&nbsp;                    output.set(0, output.get(0) + YELLOW_BACKGROUND + String.format(&quot;%10s&quot;, &quot;&quot;) + RESET);</b>
+<b class="nc">&nbsp;                    output.set(1, output.get(1) + YELLOW_BACKGROUND + String.format(&quot;%10s&quot;, &quot;&quot;) + RESET);</b>
+<b class="nc">&nbsp;                    output.set(2, output.get(2) + YELLOW_BACKGROUND + String.format(&quot;%10s&quot;, &quot;&quot;) + RESET);</b>
+&nbsp;                }
+&nbsp;            }
+&nbsp;
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * @param output ArrayList&lt;String&gt;
+&nbsp;     */
+&nbsp;    private void setOutput(ArrayList&lt;String&gt; output) {
+<b class="fc">&nbsp;        output.set(0, output.get(0) + BLACK_BACKGROUND + String.format(&quot;%10s&quot;, &quot;&quot;) + RESET);</b>
+<b class="fc">&nbsp;        output.set(1, output.get(1) + BLACK_BACKGROUND + String.format(&quot;%2s&quot;, &quot;&quot;) + &quot;EMPTY&quot; + String.format(&quot;%3s&quot;, &quot;&quot;) + RESET);</b>
+<b class="fc">&nbsp;        output.set(2, output.get(2) + BLACK_BACKGROUND + String.format(&quot;%10s&quot;, &quot;&quot;) + RESET);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Adds a card to be printed in the ArrayList&lt;String&gt; output
+&nbsp;     *
+&nbsp;     * @param output ArrayList&lt;String&gt; to be printed
+&nbsp;     * @param card   PlaceableCard to be printed
+&nbsp;     */
+&nbsp;    private void printCard(ArrayList&lt;String&gt; output, PlaceableCard card) {
+&nbsp;
+&nbsp;        // Adds a space column between the cards
+<b class="fc">&nbsp;        output.set(0, output.get(0) + &quot; &quot;);</b>
+<b class="fc">&nbsp;        output.set(1, output.get(1) + &quot; &quot;);</b>
+<b class="fc">&nbsp;        output.set(2, output.get(2) + &quot; &quot;);</b>
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;        if (card == null) {</b>
+<b class="fc">&nbsp;            setOutput(output);</b>
+&nbsp;            return;
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        String BGColor = getBgColor(card);</b>
+&nbsp;
+&nbsp;        // Gets all the resources of the card
+<b class="fc">&nbsp;        ArrayList&lt;String&gt; resources = this.resourceToPrint(card);</b>
+&nbsp;
+<b class="fc">&nbsp;        if (card.isGold()) {</b>
+<b class="fc">&nbsp;            output.set(0, output.get(0) + BGColor + resources.get(0) + YELLOW_BACKGROUND + String.format(&quot;%4s&quot;, &quot;&quot;) + resources.get(1) + RESET);</b>
+<b class="pc">&nbsp;            if (card.isFront())</b>
+<b class="fc">&nbsp;                output.set(1, output.get(1) + YELLOW_BACKGROUND + &quot; &quot; + BGColor + String.format(&quot;%3s%2d%3s&quot;, &quot;&quot;, card.getID(), &quot;&quot;) + YELLOW_BACKGROUND + &quot; &quot; + RESET);</b>
+&nbsp;            else
+<b class="nc">&nbsp;                output.set(1, output.get(1) + YELLOW_BACKGROUND + &quot; &quot; + BGColor + String.format(&quot;%1s%2s%1s%3s%1s&quot;, &quot;&quot;, card.getID(), &quot;&quot;, this.reignToPrint(card), &quot;&quot;) + YELLOW_BACKGROUND + &quot; &quot; + RESET);</b>
+<b class="fc">&nbsp;            output.set(2, output.get(2) + BGColor + resources.get(2) + YELLOW_BACKGROUND + String.format(&quot;%4s&quot;, &quot;&quot;) + resources.get(3) + RESET);</b>
+&nbsp;            return;
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        output.set(0, output.get(0) + BGColor + resources.get(0) + BGColor + String.format(&quot;%4s&quot;, &quot;&quot;) + resources.get(1) + RESET);</b>
+<b class="pc">&nbsp;        if (card.isFront())</b>
+<b class="fc">&nbsp;            output.set(1, output.get(1) + BGColor + String.format(&quot;%4s%2d%4s&quot;, &quot;&quot;, card.getID(), &quot;&quot;) + RESET);</b>
+<b class="nc">&nbsp;        else if (card.isResource())</b>
+<b class="nc">&nbsp;            output.set(1, output.get(1) + BGColor + String.format(&quot;%2s%2s%1s%3s%2s&quot;, &quot;&quot;, card.getID(), &quot;&quot;, this.reignToPrint(card), &quot;&quot;) + RESET);</b>
+<b class="nc">&nbsp;        else if (card.isStarter())</b>
+<b class="nc">&nbsp;            output.set(1, output.get(1) + BGColor + String.format(&quot;%4s%2d%4s&quot;, &quot;&quot;, card.getID(), &quot;&quot;) + RESET);</b>
+<b class="fc">&nbsp;        output.set(2, output.get(2) + BGColor + resources.get(2) + BGColor + String.format(&quot;%4s&quot;, &quot;&quot;) + resources.get(3) + RESET);</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Converts the resources of a card to a string to be printed
+&nbsp;     *
+&nbsp;     * @param card the card to be converted
+&nbsp;     * @return the string to be printed
+&nbsp;     */
+&nbsp;    private ArrayList&lt;String&gt; resourceToPrint(PlaceableCard card) {
+<b class="fc">&nbsp;        ArrayList&lt;String&gt; output = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        for (Resource resource : card.getResource()) {</b>
+<b class="pc">&nbsp;            switch (resource) {</b>
+<b class="fc">&nbsp;                case Fungus -&gt; output.add(BLACK_TEXT + BRIGHT_WHITE_BACKGROUND + &quot;FUN&quot; + RESET);</b>
+<b class="fc">&nbsp;                case Insect -&gt; output.add(BLACK_TEXT + BRIGHT_WHITE_BACKGROUND + &quot;INS&quot; + RESET);</b>
+<b class="fc">&nbsp;                case Animal -&gt; output.add(BLACK_TEXT + BRIGHT_WHITE_BACKGROUND + &quot;ANI&quot; + RESET);</b>
+<b class="fc">&nbsp;                case Plant -&gt; output.add(BLACK_TEXT + BRIGHT_WHITE_BACKGROUND + &quot;PLA&quot; + RESET);</b>
+<b class="fc">&nbsp;                case Manuscript -&gt; output.add(BLACK_TEXT + BRIGHT_WHITE_BACKGROUND + &quot;MAN&quot; + RESET);</b>
+<b class="fc">&nbsp;                case Quill -&gt; output.add(BLACK_TEXT + BRIGHT_WHITE_BACKGROUND + &quot;QUI&quot; + RESET);</b>
+<b class="fc">&nbsp;                case Inkwell -&gt; output.add(BLACK_TEXT + BRIGHT_WHITE_BACKGROUND + &quot;INK&quot; + RESET);</b>
+<b class="fc">&nbsp;                case Empty -&gt; output.add(BLACK_TEXT + BRIGHT_WHITE_BACKGROUND + &quot;   &quot; + RESET);</b>
+&nbsp;                case Blocked -&gt; {
+<b class="pc">&nbsp;                    switch (card.getReign()) {</b>
+<b class="fc">&nbsp;                        case Fungus -&gt; output.add(RED_BACKGROUND + &quot;   &quot; + RESET);</b>
+<b class="fc">&nbsp;                        case Insect -&gt; output.add(PURPLE_BACKGROUND + &quot;   &quot; + RESET);</b>
+<b class="fc">&nbsp;                        case Animal -&gt; output.add(CYAN_BACKGROUND + &quot;   &quot; + RESET);</b>
+<b class="fc">&nbsp;                        case Plant -&gt; output.add(GREEN_BACKGROUND + &quot;   &quot; + RESET);</b>
+<b class="nc">&nbsp;                        case null -&gt; output.add(YELLOW_BACKGROUND + &quot;   &quot; + RESET);</b>
+&nbsp;                    }
+&nbsp;                }
+&nbsp;            }
+&nbsp;        }
+<b class="fc">&nbsp;        return output;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Converts the resources of a cell to a string to be printed
+&nbsp;     *
+&nbsp;     * @param cell the cell to be converted
+&nbsp;     * @return the string to be printed
+&nbsp;     */
+&nbsp;    private String resourceToPrint(Cell cell) {
+<b class="fc">&nbsp;        String output = &quot;&quot;;</b>
+<b class="fc">&nbsp;        PlaceableCard card = cell.getTopCard();</b>
+<b class="fc">&nbsp;        if (card == null) {</b>
+<b class="fc">&nbsp;            card = cell.getBottomCard();</b>
+&nbsp;        }
+<b class="pc">&nbsp;        switch (cell.getResource()) {</b>
+<b class="fc">&nbsp;            case Fungus -&gt; output += (BLACK_TEXT + BRIGHT_WHITE_BACKGROUND + &quot;FUN&quot; + RESET);</b>
+<b class="fc">&nbsp;            case Insect -&gt; output += (BLACK_TEXT + BRIGHT_WHITE_BACKGROUND + &quot;INS&quot; + RESET);</b>
+<b class="fc">&nbsp;            case Animal -&gt; output += (BLACK_TEXT + BRIGHT_WHITE_BACKGROUND + &quot;ANI&quot; + RESET);</b>
+<b class="fc">&nbsp;            case Plant -&gt; output += (BLACK_TEXT + BRIGHT_WHITE_BACKGROUND + &quot;PLA&quot; + RESET);</b>
+<b class="nc">&nbsp;            case Manuscript -&gt; output += (BLACK_TEXT + BRIGHT_WHITE_BACKGROUND + &quot;MAN&quot; + RESET);</b>
+<b class="nc">&nbsp;            case Quill -&gt; output += (BLACK_TEXT + BRIGHT_WHITE_BACKGROUND + &quot;QUI&quot; + RESET);</b>
+<b class="fc">&nbsp;            case Inkwell -&gt; output += (BLACK_TEXT + BRIGHT_WHITE_BACKGROUND + &quot;INK&quot; + RESET);</b>
+<b class="fc">&nbsp;            case Empty -&gt; output += (BLACK_TEXT + BRIGHT_WHITE_BACKGROUND + &quot;   &quot; + RESET);</b>
+&nbsp;            case Blocked -&gt; {
+<b class="pc">&nbsp;                switch (card.getReign()) {</b>
+<b class="nc">&nbsp;                    case Fungus -&gt; output += (RED_BACKGROUND + &quot;   &quot; + RESET);</b>
+<b class="nc">&nbsp;                    case Insect -&gt; output += (PURPLE_BACKGROUND + &quot;   &quot; + RESET);</b>
+<b class="fc">&nbsp;                    case Animal -&gt; output += (CYAN_BACKGROUND + &quot;   &quot; + RESET);</b>
+<b class="fc">&nbsp;                    case Plant -&gt; output += (GREEN_BACKGROUND + &quot;   &quot; + RESET);</b>
+<b class="nc">&nbsp;                    case null -&gt; output += (YELLOW_BACKGROUND + &quot;   &quot; + RESET);</b>
+&nbsp;                }
+&nbsp;            }
+&nbsp;        }
+<b class="fc">&nbsp;        return output;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Converts the reign of a card to a string to be printed
+&nbsp;     *
+&nbsp;     * @param card the card to be converted
+&nbsp;     * @return the string to be printed
+&nbsp;     */
+&nbsp;    private String reignToPrint(PlaceableCard card) {
+&nbsp;        String output;
+<b class="pc">&nbsp;        switch (card.getReign()) {</b>
+<b class="fc">&nbsp;            case Fungus -&gt; output = &quot;FUN&quot;;</b>
+<b class="fc">&nbsp;            case Insect -&gt; output = &quot;INS&quot;;</b>
+<b class="nc">&nbsp;            case Animal -&gt; output = &quot;ANI&quot;;</b>
+<b class="nc">&nbsp;            case Plant -&gt; output = &quot;PLA&quot;;</b>
+<b class="nc">&nbsp;            case null -&gt; output = &quot;   &quot;;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return output;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Prints the current state of the player area
+&nbsp;     *
+&nbsp;     * @param area PlayerArea to be printed
+&nbsp;     */
+&nbsp;    public void showPlayerArea(PlayerArea area) {
+<b class="fc">&nbsp;        System.out.println(&quot;\n&quot;);</b>
+&nbsp;
+<b class="fc">&nbsp;        ArrayList&lt;Integer&gt; resourceList = area.getResources();</b>
+<b class="fc">&nbsp;        String[] resourceNames = {RED_TEXT + &quot;FUNGUS&quot;, PURPLE_TEXT + &quot;INSECT&quot;, CYAN_TEXT + &quot;ANIMAL&quot;, GREEN_TEXT + &quot;PLANT&quot;, YELLOW_TEXT + &quot;MANUSCRIPT&quot;, YELLOW_TEXT + &quot;QUILL&quot;, YELLOW_TEXT + &quot;INKWELL&quot;, WHITE_TEXT + &quot;EMPTY&quot;};</b>
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;        for (int i = 0; i &lt; resourceList.size() - 1; i++) {</b>
+<b class="fc">&nbsp;            resourceNames[i] = String.format(&quot;%-25s&quot;, resourceNames[i] + &quot;: &quot; + resourceList.get(i) + RESET);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        System.out.println(resourceNames[0] + &quot; &quot; + resourceNames[1] + &quot; &quot; + resourceNames[2] + &quot; &quot; + resourceNames[3]);</b>
+<b class="fc">&nbsp;        System.out.println(resourceNames[4] + &quot; &quot; + resourceNames[5] + &quot; &quot; + resourceNames[6] + &quot; &quot; + resourceNames[7]);</b>
+<b class="fc">&nbsp;        System.out.println();</b>
+&nbsp;
+<b class="fc">&nbsp;        ArrayList&lt;Cell&gt; Cells = area.getAllCards().stream()</b>
+<b class="fc">&nbsp;                .map(PlaceableCard::getCells)</b>
+<b class="fc">&nbsp;                .flatMap(Collection::stream)</b>
+<b class="fc">&nbsp;                .distinct()</b>
+<b class="fc">&nbsp;                .collect(Collectors.toCollection(ArrayList::new));</b>
+&nbsp;
+<b class="fc">&nbsp;        ArrayList&lt;Integer[]&gt; availablePositions = area.getAvailablePosition();</b>
+&nbsp;
+<b class="fc">&nbsp;        int minCellRow = Cells.stream()</b>
+<b class="fc">&nbsp;                .mapToInt(Cell::getRow)</b>
+<b class="fc">&nbsp;                .min()</b>
+<b class="fc">&nbsp;                .orElse(0);</b>
+<b class="fc">&nbsp;        int minAvailableRow = availablePositions.stream()</b>
+<b class="fc">&nbsp;                .mapToInt(position -&gt; position[0])</b>
+<b class="fc">&nbsp;                .min()</b>
+<b class="fc">&nbsp;                .orElse(0);</b>
+<b class="fc">&nbsp;        int minRow = Math.min(minCellRow, minAvailableRow);</b>
+&nbsp;
+<b class="fc">&nbsp;        int maxCellRow = Cells.stream()</b>
+<b class="fc">&nbsp;                .mapToInt(Cell::getRow)</b>
+<b class="fc">&nbsp;                .max()</b>
+<b class="fc">&nbsp;                .orElse(0);</b>
+<b class="fc">&nbsp;        int maxAvailableRow = availablePositions.stream()</b>
+<b class="fc">&nbsp;                .mapToInt(position -&gt; position[0])</b>
+<b class="fc">&nbsp;                .max()</b>
+<b class="fc">&nbsp;                .orElse(0);</b>
+<b class="fc">&nbsp;        int maxRow = Math.max(maxCellRow, maxAvailableRow);</b>
+&nbsp;
+<b class="fc">&nbsp;        int minCellColumn = Cells.stream()</b>
+<b class="fc">&nbsp;                .mapToInt(Cell::getColumn)</b>
+<b class="fc">&nbsp;                .min()</b>
+<b class="fc">&nbsp;                .orElse(0);</b>
+<b class="fc">&nbsp;        int minAvailableColumn = availablePositions.stream()</b>
+<b class="fc">&nbsp;                .mapToInt(position -&gt; position[1])</b>
+<b class="fc">&nbsp;                .min()</b>
+<b class="fc">&nbsp;                .orElse(0);</b>
+<b class="fc">&nbsp;        int minColumn = Math.min(minCellColumn, minAvailableColumn);</b>
+&nbsp;
+<b class="fc">&nbsp;        int maxCellColumn = Cells.stream()</b>
+<b class="fc">&nbsp;                .mapToInt(Cell::getColumn)</b>
+<b class="fc">&nbsp;                .max()</b>
+<b class="fc">&nbsp;                .orElse(0);</b>
+<b class="fc">&nbsp;        int maxAvailableColumn = availablePositions.stream()</b>
+<b class="fc">&nbsp;                .mapToInt(position -&gt; position[1])</b>
+<b class="fc">&nbsp;                .max()</b>
+<b class="fc">&nbsp;                .orElse(0);</b>
+<b class="fc">&nbsp;        int maxColumn = Math.max(maxCellColumn, maxAvailableColumn);</b>
+&nbsp;
+&nbsp;        // Print the column numbers
+<b class="fc">&nbsp;        System.out.print(&quot;   &quot;);</b>
+<b class="fc">&nbsp;        for (int i = minColumn; i &lt;= maxColumn; i++) {</b>
+<b class="fc">&nbsp;            System.out.printf(&quot;%2d%5s&quot;, i, &quot;&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        System.out.println();</b>
+&nbsp;
+<b class="fc">&nbsp;        for (int i = minRow; i &lt;= maxRow; i++) {</b>
+<b class="fc">&nbsp;            ArrayList&lt;String&gt; lines = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;            lines.add(String.format(&quot;%2d&quot;, i) + &quot; &quot;);</b>
+<b class="fc">&nbsp;            lines.add(&quot;   &quot;);</b>
+&nbsp;
+<b class="fc">&nbsp;            for (int j = minColumn; j &lt;= maxColumn; j++) {</b>
+<b class="fc">&nbsp;                Cell cell = findCell(i, j, Cells);</b>
+<b class="fc">&nbsp;                if (cell != null) {</b>
+&nbsp;                    /*
+&nbsp;                     The reference card is always the card on top.
+&nbsp;                     If the top card is null, the reference card is the bottom card,
+&nbsp;                     so under the bottom card there is nothing to print
+&nbsp;                    */
+<b class="fc">&nbsp;                    PlaceableCard card = cell.getTopCard();</b>
+<b class="fc">&nbsp;                    boolean isTopCard = true;</b>
+<b class="fc">&nbsp;                    if (card == null) {</b>
+<b class="fc">&nbsp;                        card = cell.getBottomCard();</b>
+<b class="fc">&nbsp;                        isTopCard = false;</b>
+&nbsp;                    }
+&nbsp;
+<b class="fc">&nbsp;                    Integer relativePosition = findRelativeCellPosition(cell);</b>
+<b class="fc">&nbsp;                    String fillColor = reignColor(card.getReign());</b>
+&nbsp;
+<b class="pc">&nbsp;                    switch (relativePosition) {</b>
+&nbsp;                        case 0 -&gt; {
+&nbsp;                            // The cell is the top left corner of the card
+&nbsp;                            // So all the printed space is of the same card
+<b class="fc">&nbsp;                            lines.set(0, lines.get(0) + resourceToPrint(cell) + fillColor + String.format(&quot;%4s&quot;, &quot;&quot;) + RESET);</b>
+<b class="fc">&nbsp;                            if (card.isFront())</b>
+<b class="fc">&nbsp;                                lines.set(1, lines.get(1) + fillColor + String.format(&quot;%1s%2s%1s%3s&quot;, &quot;&quot;, card.getID(), &quot;&quot;, &quot;&quot;) + RESET);</b>
+&nbsp;                            else
+<b class="fc">&nbsp;                                lines.set(1, lines.get(1) + fillColor + String.format(&quot;%1s%2s%1s%3s&quot;, &quot;&quot;, card.getID(), &quot;&quot;, reignToPrint(card)) + RESET);</b>
+&nbsp;                        }
+&nbsp;                        case 1 -&gt; {
+&nbsp;                            // The cell is the top right corner of the card
+&nbsp;                            // So the top-right part to be printed is not of the same card
+<b class="fc">&nbsp;                            lines.set(0, lines.get(0) + resourceToPrint(cell) + otherCardColor(cell, isTopCard) + String.format(&quot;%4s&quot;, &quot;&quot;) + RESET);</b>
+<b class="fc">&nbsp;                            lines.set(1, lines.get(1) + fillColor + String.format(&quot;%3s&quot;, &quot;&quot;) + BLACK_BACKGROUND + String.format(&quot;%4s&quot;, &quot;&quot;) + RESET);</b>
+&nbsp;                        }
+&nbsp;                        case 2 -&gt; {
+&nbsp;                            // The cell is the bottom left corner of the card
+&nbsp;                            // So the bottom-left part to be printed is not of the same card
+<b class="fc">&nbsp;                            lines.set(0, lines.get(0) + resourceToPrint(cell) + fillColor + String.format(&quot;%4s&quot;, &quot;&quot;) + RESET);</b>
+<b class="fc">&nbsp;                            lines.set(1, lines.get(1) + otherCardColor(cell, isTopCard) + String.format(&quot;%3s&quot;, &quot;&quot;) + BLACK_BACKGROUND + String.format(&quot;%4s&quot;, &quot;&quot;) + RESET);</b>
+&nbsp;                        }
+&nbsp;                        case 3 -&gt; {
+&nbsp;                            // The cell is the bottom right corner of the card
+&nbsp;                            // So only the top right part is of the same card
+<b class="fc">&nbsp;                            lines.set(0, lines.get(0) + resourceToPrint(cell) + otherCardColor(cell, isTopCard) + String.format(&quot;%4s&quot;, &quot;&quot;) + RESET);</b>
+<b class="fc">&nbsp;                            if (isAvailablePosition(i, j, availablePositions))</b>
+<b class="fc">&nbsp;                                lines.set(1, lines.get(1) + printAvailablePosition(i, j));</b>
+&nbsp;                            else
+<b class="fc">&nbsp;                                lines.set(1, lines.get(1) + otherCardColor(cell, isTopCard) + String.format(&quot;%7s&quot;, &quot;&quot;) + RESET);</b>
+&nbsp;                        }
+&nbsp;                    }
+<b class="fc">&nbsp;                } else if (isAvailablePosition(i, j, availablePositions)) {</b>
+&nbsp;                    // The cell is an available position
+<b class="fc">&nbsp;                    lines.set(0, lines.get(0) + BLACK_BACKGROUND + String.format(&quot;%7s&quot;, &quot;&quot;) + RESET);</b>
+<b class="fc">&nbsp;                    lines.set(1, lines.get(1) + printAvailablePosition(i, j));</b>
+&nbsp;
+&nbsp;                } else {
+&nbsp;                    // The cell doesn&#39;t exist, so it is all black
+<b class="fc">&nbsp;                    for (int k = 0; k &lt; 2; k++) {</b>
+<b class="fc">&nbsp;                        lines.set(k, lines.get(k) + BLACK_BACKGROUND + String.format(&quot;%7s&quot;, &quot;&quot;) + RESET);</b>
+&nbsp;                    }
+&nbsp;                }
+&nbsp;            }
+&nbsp;
+<b class="fc">&nbsp;            for (String line : lines) {</b>
+<b class="fc">&nbsp;                System.out.println(line);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        System.out.println(&quot;\n&quot; + YELLOW_TEXT + &quot;The available positions [row, column] are on the graph.&quot; + RESET);</b>
+&nbsp;
+<b class="fc">&nbsp;        System.out.println(&quot;\n&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Checks if a position is in a list of available positions
+&nbsp;     *
+&nbsp;     * @param row                the row of the position
+&nbsp;     * @param column             the column of the position
+&nbsp;     * @param availablePositions the list of available positions
+&nbsp;     * @return true if the position is available, false otherwise
+&nbsp;     */
+&nbsp;    private boolean isAvailablePosition(int row, int column, ArrayList&lt;Integer[]&gt; availablePositions) {
+<b class="fc">&nbsp;        for (Integer[] position : availablePositions) {</b>
+<b class="fc">&nbsp;            if (position[0] == row &amp;&amp; position[1] == column) {</b>
+<b class="fc">&nbsp;                return true;</b>
+&nbsp;            }
+&nbsp;        }
+<b class="fc">&nbsp;        return false;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Finds a cell in a list of cells
+&nbsp;     *
+&nbsp;     * @param row    the row of the cell
+&nbsp;     * @param column the column of the cell
+&nbsp;     * @param cells  the list of cells
+&nbsp;     * @return the cell if found, null otherwise
+&nbsp;     */
+&nbsp;    private Cell findCell(int row, int column, List&lt;Cell&gt; cells) {
+<b class="fc">&nbsp;        return cells.stream()</b>
+<b class="fc">&nbsp;                .filter(cell -&gt; cell.getRow() == row &amp;&amp; cell.getColumn() == column)</b>
+<b class="fc">&nbsp;                .findFirst()</b>
+<b class="fc">&nbsp;                .orElse(null);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Finds the relative position of a cell in a card
+&nbsp;     *
+&nbsp;     * @param cell the cell to find
+&nbsp;     * @return the relative position of the cell in the card
+&nbsp;     */
+&nbsp;    private Integer findRelativeCellPosition(Cell cell) {
+<b class="pc">&nbsp;        if (cell == null)</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;
+<b class="fc">&nbsp;        PlaceableCard card = cell.getTopCard();</b>
+<b class="fc">&nbsp;        if (card == null) {</b>
+<b class="fc">&nbsp;            card = cell.getBottomCard();</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        ArrayList&lt;Cell&gt; cells = card.getCells();</b>
+<b class="pc">&nbsp;        for (int i = 0; i &lt; cells.size(); i++) {</b>
+<b class="fc">&nbsp;            if (cells.get(i) == cell) {</b>
+<b class="fc">&nbsp;                return i;</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        return 0;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Prints a label for the available positions
+&nbsp;     *
+&nbsp;     * @param row    the row of the position
+&nbsp;     * @param column the column of the position
+&nbsp;     * @return the string to be printed
+&nbsp;     */
+&nbsp;    private String printAvailablePosition(int row, int column) {
+<b class="fc">&nbsp;        return WHITE_TEXT + BLACK_BACKGROUND + String.format(&quot;[%2d,%2d]&quot;, row, column) + RESET;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Prints the color of the bottom card of a cell if it exists
+&nbsp;     *
+&nbsp;     * @param cell      the cell to be printed
+&nbsp;     * @param isTopCard if the cell is the top card
+&nbsp;     * @return the string to be printed
+&nbsp;     */
+&nbsp;    private String otherCardColor(Cell cell, boolean isTopCard) {
+&nbsp;
+<b class="fc">&nbsp;        if (!isTopCard) {</b>
+<b class="fc">&nbsp;            return BLACK_BACKGROUND;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        PlaceableCard bottomCard = cell.getBottomCard();</b>
+<b class="fc">&nbsp;        return reignColor(bottomCard.getReign());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Prints two colored empty spaces
+&nbsp;     *
+&nbsp;     * @param res the reign of the card
+&nbsp;     * @return the string to be printed
+&nbsp;     */
+&nbsp;    private String reignColor(Reign res) {
+&nbsp;        String color;
+<b class="pc">&nbsp;        switch (res) {</b>
+<b class="fc">&nbsp;            case Fungus -&gt; color = RED_BACKGROUND;</b>
+&nbsp;
+<b class="fc">&nbsp;            case Insect -&gt; color = PURPLE_BACKGROUND;</b>
+<b class="fc">&nbsp;            case Animal -&gt; color = CYAN_BACKGROUND;</b>
+<b class="fc">&nbsp;            case Plant -&gt; color = GREEN_BACKGROUND;</b>
+<b class="fc">&nbsp;            case null, default -&gt; color = YELLOW_BACKGROUND;</b>
+&nbsp;
+&nbsp;        }
+<b class="fc">&nbsp;        return color;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Prints the current state of the player hand
+&nbsp;     *
+&nbsp;     * @param currentPlayer the player whose hand is to be printed
+&nbsp;     */
+&nbsp;    protected void showPlayerHand(Player currentPlayer, String viewer) {
+&nbsp;        //PlayerHand hand = message.getCurrentPlayer().getPlayerHand();
+<b class="fc">&nbsp;        PlayerHand hand = currentPlayer.getPlayerHand();</b>
+<b class="fc">&nbsp;        String index = &quot;&quot;;</b>
+<b class="fc">&nbsp;        ArrayList&lt;String&gt; output = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        output.add(&quot;&quot;);</b>
+<b class="fc">&nbsp;        output.add(&quot;&quot;);</b>
+<b class="fc">&nbsp;        output.add(&quot;&quot;);</b>
+<b class="fc">&nbsp;        index += &quot; (0)  &quot; + &quot;     &quot;;</b>
+<b class="fc">&nbsp;        index += &quot; (1)  &quot; + &quot;     &quot;;</b>
+<b class="fc">&nbsp;        index += &quot; (2)  &quot; + &quot;     &quot;;</b>
+<b class="fc">&nbsp;        System.out.println(&quot;\nPLAYER HAND: &quot;);</b>
+<b class="fc">&nbsp;        if (currentPlayer.getNickname().equals(viewer)) {</b>
+<b class="fc">&nbsp;            hand.getPlaceableCards().forEach((card) -&gt; this.printCard(output, card));</b>
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;            System.out.println(index);</b>
+<b class="fc">&nbsp;            System.out.println(output.get(0));</b>
+<b class="fc">&nbsp;            System.out.println(output.get(1));</b>
+<b class="fc">&nbsp;            System.out.println(output.get(2));</b>
+<b class="fc">&nbsp;            int i = 0;</b>
+<b class="fc">&nbsp;            for (PlaceableCard card : hand.getPlaceableCards()) {</b>
+<b class="fc">&nbsp;                this.printRequirementCard(card, i);</b>
+<b class="fc">&nbsp;                i += 1;</b>
+&nbsp;            }
+<b class="fc">&nbsp;            System.out.println(&quot;\n&quot;);</b>
+&nbsp;
+&nbsp;        } else {
+<b class="fc">&nbsp;            for (PlaceableCard card : hand.getPlaceableCards()) {</b>
+<b class="fc">&nbsp;                this.printDeck(output, card);</b>
+&nbsp;            }
+&nbsp;
+<b class="fc">&nbsp;            System.out.println(index);</b>
+<b class="fc">&nbsp;            System.out.println(output.get(0));</b>
+<b class="fc">&nbsp;            System.out.println(output.get(1));</b>
+<b class="fc">&nbsp;            System.out.println(output.get(2));</b>
+<b class="fc">&nbsp;            System.out.println(&quot;\n&quot;);</b>
+&nbsp;
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Prints the requirements of a card
+&nbsp;     *
+&nbsp;     * @param card the card to be printed
+&nbsp;     * @param i    the index of the card
+&nbsp;     */
+&nbsp;    private void printRequirementCard(PlaceableCard card, int i) {
+<b class="fc">&nbsp;        if (card.getPoints() &gt; 0) {</b>
+<b class="fc">&nbsp;            System.out.print(&quot;CARD (&quot; + i + &quot;) - &quot;);</b>
+<b class="pc">&nbsp;            if (card.getPoints() &gt; 0)</b>
+<b class="fc">&nbsp;                System.out.print(&quot;Points: &quot; + card.getPoints());</b>
+<b class="fc">&nbsp;            if (card.isGold())</b>
+<b class="fc">&nbsp;                System.out.print(&quot; - Requirements: &quot; + card.getRequirement());</b>
+<b class="fc">&nbsp;            System.out.println();</b>
+&nbsp;        }
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Prints the objectives of the game
+&nbsp;     *
+&nbsp;     * @param i      the index of the objective
+&nbsp;     * @param output ArrayList&lt;String&gt;
+&nbsp;     */
+&nbsp;    protected void printObjective(int i, ArrayList&lt;String&gt; output) {
+<b class="fc">&nbsp;        output.set(0, output.get(0) + &quot; ID: &quot; + String.format(&quot;%2d&quot;, i) + &quot; &quot;);</b>
+<b class="fc">&nbsp;        output.set(1, output.get(1) + &quot; &quot;);</b>
+<b class="fc">&nbsp;        output.set(2, output.get(2) + &quot; &quot;);</b>
+<b class="fc">&nbsp;        output.set(3, output.get(3) + &quot; &quot;);</b>
+<b class="fc">&nbsp;        output.set(4, output.get(4) + &quot; &quot;);</b>
+<b class="fc">&nbsp;        output.set(5, output.get(5) + &quot; &quot;);</b>
+<b class="fc">&nbsp;        output.set(6, output.get(6) + &quot; &quot;);</b>
+<b class="fc">&nbsp;        output.set(7, output.get(7) + &quot; &quot;);</b>
+<b class="pc">&nbsp;        switch (i) {</b>
+<b class="fc">&nbsp;            case 87 -&gt; outputSet87_89(output, RED_BACKGROUND);</b>
+&nbsp;
+<b class="fc">&nbsp;            case 88 -&gt; outputSet88_90(output, GREEN_BACKGROUND);</b>
+&nbsp;
+<b class="fc">&nbsp;            case 89 -&gt; outputSet87_89(output, CYAN_BACKGROUND);</b>
+&nbsp;
+<b class="fc">&nbsp;            case 90 -&gt; outputSet88_90(output, PURPLE_BACKGROUND);</b>
+&nbsp;
+&nbsp;            case 91 -&gt; {
+<b class="fc">&nbsp;                output.set(1, output.get(1) + &quot; &quot; + String.format(&quot;%6s&quot;, &quot;&quot;));</b>
+<b class="fc">&nbsp;                output.set(2, output.get(2) + &quot; &quot; + RED_BACKGROUND + String.format(&quot;%3s&quot;, &quot;&quot;) + RESET + String.format(&quot;%3s&quot;, &quot;&quot;));</b>
+<b class="fc">&nbsp;                output.set(3, output.get(3) + &quot; &quot; + RED_BACKGROUND + String.format(&quot;%3s&quot;, &quot;&quot;) + RESET + String.format(&quot;%3s&quot;, &quot;&quot;));</b>
+<b class="fc">&nbsp;                outputSet91_94(output, GREEN_BACKGROUND, RED_BACKGROUND);</b>
+&nbsp;            }
+&nbsp;            case 92 -&gt; {
+<b class="fc">&nbsp;                output.set(1, output.get(1) + &quot; &quot; + String.format(&quot;%6s&quot;, &quot;&quot;));</b>
+<b class="fc">&nbsp;                output.set(2, output.get(2) + &quot; &quot; + String.format(&quot;%2s&quot;, &quot;&quot;) + GREEN_BACKGROUND + String.format(&quot;%3s&quot;, &quot;&quot;) + RESET + &quot; &quot;);</b>
+<b class="fc">&nbsp;                output.set(3, output.get(3) + &quot; &quot; + String.format(&quot;%2s&quot;, &quot;&quot;) + GREEN_BACKGROUND + String.format(&quot;%3s&quot;, &quot;&quot;) + RESET + &quot; &quot;);</b>
+<b class="fc">&nbsp;                outputSet92_93(output, PURPLE_BACKGROUND, GREEN_BACKGROUND);</b>
+&nbsp;            }
+&nbsp;            case 93 -&gt; {
+<b class="fc">&nbsp;                output.set(1, output.get(1) + &quot; &quot; + String.format(&quot;%6s&quot;, &quot;&quot;));</b>
+<b class="fc">&nbsp;                output.set(2, output.get(2) + &quot; &quot; + String.format(&quot;%2s&quot;, &quot;&quot;) + RED_BACKGROUND + String.format(&quot;%3s&quot;, &quot;&quot;) + RESET + &quot; &quot;);</b>
+<b class="fc">&nbsp;                output.set(3, output.get(3) + &quot; &quot; + CYAN_BACKGROUND + String.format(&quot;%3s&quot;, &quot;&quot;) + RESET + String.format(&quot;%2s&quot;, &quot;&quot;) + &quot; &quot;);</b>
+<b class="fc">&nbsp;                outputSet92_93(output, CYAN_BACKGROUND, CYAN_BACKGROUND);</b>
+&nbsp;            }
+&nbsp;            case 94 -&gt; {
+<b class="fc">&nbsp;                output.set(1, output.get(1) + &quot; &quot; + String.format(&quot;%6s&quot;, &quot;&quot;));</b>
+<b class="fc">&nbsp;                output.set(2, output.get(2) + &quot; &quot; + CYAN_BACKGROUND + String.format(&quot;%3s&quot;, &quot;&quot;) + RESET + String.format(&quot;%3s&quot;, &quot;&quot;));</b>
+<b class="fc">&nbsp;                output.set(3, output.get(3) + &quot; &quot; + String.format(&quot;%2s&quot;, &quot;&quot;) + PURPLE_BACKGROUND + String.format(&quot;%3s&quot;, &quot;&quot;) + RESET + &quot; &quot;);</b>
+<b class="fc">&nbsp;                outputSet91_94(output, PURPLE_BACKGROUND, PURPLE_BACKGROUND);</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            case 95 -&gt; {
+<b class="fc">&nbsp;                output.set(1, output.get(1) + String.format(&quot;%7s&quot;, &quot;&quot;));</b>
+<b class="fc">&nbsp;                output.set(2, output.get(2) + RED_BACKGROUND + String.format(&quot;%7s&quot;, &quot;x3&quot;) + RESET);</b>
+<b class="fc">&nbsp;                output.set(3, output.get(3) + RED_BACKGROUND + String.format(&quot;%7s&quot;, &quot;FUNGUS&quot;) + RESET);</b>
+<b class="fc">&nbsp;                outputSet95_96_96_97_98_100_101_102(output, RED_BACKGROUND);</b>
+&nbsp;            }
+&nbsp;            case 96 -&gt; {
+<b class="fc">&nbsp;                output.set(1, output.get(1) + String.format(&quot;%7s&quot;, &quot;&quot;));</b>
+<b class="fc">&nbsp;                output.set(2, output.get(2) + GREEN_BACKGROUND + String.format(&quot;%7s&quot;, &quot;x3&quot;) + RESET);</b>
+<b class="fc">&nbsp;                output.set(3, output.get(3) + GREEN_BACKGROUND + String.format(&quot;%7s&quot;, &quot;PLANT&quot;) + RESET);</b>
+<b class="fc">&nbsp;                outputSet95_96_96_97_98_100_101_102(output, GREEN_BACKGROUND);</b>
+&nbsp;            }
+&nbsp;            case 97 -&gt; {
+<b class="fc">&nbsp;                output.set(1, output.get(1) + String.format(&quot;%7s&quot;, &quot;&quot;));</b>
+<b class="fc">&nbsp;                output.set(2, output.get(2) + CYAN_BACKGROUND + String.format(&quot;%7s&quot;, &quot;x3&quot;) + RESET);</b>
+<b class="fc">&nbsp;                output.set(3, output.get(3) + CYAN_BACKGROUND + String.format(&quot;%7s&quot;, &quot;ANIMAL&quot;) + RESET);</b>
+<b class="fc">&nbsp;                outputSet95_96_96_97_98_100_101_102(output, CYAN_BACKGROUND);</b>
+&nbsp;            }
+&nbsp;            case 98 -&gt; {
+<b class="fc">&nbsp;                output.set(1, output.get(1) + String.format(&quot;%7s&quot;, &quot;&quot;));</b>
+<b class="fc">&nbsp;                output.set(2, output.get(2) + PURPLE_BACKGROUND + String.format(&quot;%7s&quot;, &quot;x3&quot;) + RESET);</b>
+<b class="fc">&nbsp;                output.set(3, output.get(3) + PURPLE_BACKGROUND + String.format(&quot;%7s&quot;, &quot;INSECT&quot;) + RESET);</b>
+<b class="fc">&nbsp;                outputSet95_96_96_97_98_100_101_102(output, PURPLE_BACKGROUND);</b>
+&nbsp;            }
+&nbsp;            case 99 -&gt; {
+<b class="fc">&nbsp;                output.set(1, output.get(1) + String.format(&quot;%7s&quot;, &quot;&quot;));</b>
+<b class="fc">&nbsp;                output.set(2, output.get(2) + YELLOW_BACKGROUND + String.format(&quot;%7s&quot;, &quot;x1 QUI&quot;) + RESET);</b>
+<b class="fc">&nbsp;                output.set(3, output.get(3) + YELLOW_BACKGROUND + String.format(&quot;%7s&quot;, &quot;x1 INK&quot;) + RESET);</b>
+<b class="fc">&nbsp;                output.set(4, output.get(4) + YELLOW_BACKGROUND + String.format(&quot;%7s&quot;, &quot;x1 MAN&quot;) + RESET);</b>
+<b class="fc">&nbsp;                output.set(5, output.get(5) + String.format(&quot;%7s&quot;, &quot;&quot;));</b>
+<b class="fc">&nbsp;                output.set(6, output.get(6) + YELLOW_BACKGROUND + String.format(&quot;%7s&quot;, &quot;+3 &quot;) + RESET);</b>
+<b class="fc">&nbsp;                output.set(7, output.get(7) + YELLOW_BACKGROUND + String.format(&quot;%7s&quot;, &quot;Points&quot;) + RESET);</b>
+&nbsp;            }
+&nbsp;            case 100 -&gt; {
+<b class="fc">&nbsp;                output.set(1, output.get(1) + String.format(&quot;%7s&quot;, &quot;&quot;));</b>
+<b class="fc">&nbsp;                output.set(2, output.get(2) + YELLOW_BACKGROUND + String.format(&quot;%7s&quot;, &quot;x2 MAN&quot;) + RESET);</b>
+<b class="fc">&nbsp;                output.set(3, output.get(3) + String.format(&quot;%7s&quot;, &quot;&quot;));</b>
+<b class="fc">&nbsp;                outputSet95_96_96_97_98_100_101_102(output, YELLOW_BACKGROUND);</b>
+&nbsp;            }
+&nbsp;            case 101 -&gt; {
+<b class="fc">&nbsp;                output.set(1, output.get(1) + String.format(&quot;%7s&quot;, &quot;&quot;));</b>
+<b class="fc">&nbsp;                output.set(2, output.get(2) + YELLOW_BACKGROUND + String.format(&quot;%7s&quot;, &quot;x2 INK&quot;) + RESET);</b>
+<b class="fc">&nbsp;                output.set(3, output.get(3) + String.format(&quot;%7s&quot;, &quot;&quot;));</b>
+<b class="fc">&nbsp;                outputSet95_96_96_97_98_100_101_102(output, YELLOW_BACKGROUND);</b>
+&nbsp;            }
+&nbsp;            case 102 -&gt; {
+<b class="fc">&nbsp;                output.set(1, output.get(1) + String.format(&quot;%7s&quot;, &quot;&quot;));</b>
+<b class="fc">&nbsp;                output.set(2, output.get(2) + YELLOW_BACKGROUND + String.format(&quot;%7s&quot;, &quot;x2 QUI&quot;) + RESET);</b>
+<b class="fc">&nbsp;                output.set(3, output.get(3) + String.format(&quot;%7s&quot;, &quot;&quot;));</b>
+<b class="fc">&nbsp;                outputSet95_96_96_97_98_100_101_102(output, YELLOW_BACKGROUND);</b>
+&nbsp;
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * @param output        ArrayList&lt;String&gt;
+&nbsp;     * @param redBackground String
+&nbsp;     */
+&nbsp;    private void outputSet95_96_96_97_98_100_101_102(ArrayList&lt;String&gt; output, String redBackground) {
+<b class="fc">&nbsp;        output.set(4, output.get(4) + String.format(&quot;%7s&quot;, &quot;&quot;));</b>
+<b class="fc">&nbsp;        output.set(5, output.get(5) + String.format(&quot;%7s&quot;, &quot;&quot;));</b>
+<b class="fc">&nbsp;        output.set(6, output.get(6) + redBackground + String.format(&quot;%7s&quot;, &quot;+2 &quot;) + RESET);</b>
+<b class="fc">&nbsp;        output.set(7, output.get(7) + redBackground + String.format(&quot;%7s&quot;, &quot;Points&quot;) + RESET);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * @param output          ArrayList&lt;String&gt;
+&nbsp;     * @param greenBackground String
+&nbsp;     */
+&nbsp;    private void outputSet92_93(ArrayList&lt;String&gt; output, String purpleBackground, String greenBackground) {
+<b class="fc">&nbsp;        output.set(4, output.get(4) + &quot; &quot; + purpleBackground + String.format(&quot;%3s&quot;, &quot;&quot;) + RESET + String.format(&quot;%2s&quot;, &quot;&quot;) + &quot; &quot;);</b>
+<b class="fc">&nbsp;        output.set(5, output.get(5) + &quot; &quot; + String.format(&quot;%6s&quot;, &quot;&quot;));</b>
+<b class="fc">&nbsp;        output.set(6, output.get(6) + greenBackground + String.format(&quot;%7s&quot;, &quot;+3 &quot;) + RESET);</b>
+<b class="fc">&nbsp;        output.set(7, output.get(7) + greenBackground + String.format(&quot;%7s&quot;, &quot;Points&quot;) + RESET);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * @param output          ArrayList&lt;String&gt;
+&nbsp;     * @param greenBackground String
+&nbsp;     * @param redBackground   String
+&nbsp;     */
+&nbsp;    private void outputSet91_94(ArrayList&lt;String&gt; output, String greenBackground, String redBackground) {
+<b class="fc">&nbsp;        output.set(4, output.get(4) + &quot; &quot; + String.format(&quot;%2s&quot;, &quot;&quot;) + greenBackground + String.format(&quot;%3s&quot;, &quot;&quot;) + RESET + &quot; &quot;);</b>
+<b class="fc">&nbsp;        output.set(5, output.get(5) + &quot; &quot; + String.format(&quot;%6s&quot;, &quot;&quot;));</b>
+<b class="fc">&nbsp;        output.set(6, output.get(6) + redBackground + String.format(&quot;%7s&quot;, &quot;+3 &quot;) + RESET);</b>
+<b class="fc">&nbsp;        output.set(7, output.get(7) + redBackground + String.format(&quot;%7s&quot;, &quot;Points&quot;) + RESET);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * @param output          ArrayList&lt;String&gt;
+&nbsp;     * @param greenBackground String
+&nbsp;     */
+&nbsp;    private void outputSet88_90(ArrayList&lt;String&gt; output, String greenBackground) {
+<b class="fc">&nbsp;        output.set(1, output.get(1) + String.format(&quot;%7s&quot;, &quot;&quot;));</b>
+<b class="fc">&nbsp;        output.set(2, output.get(2) + greenBackground + String.format(&quot;%3s&quot;, &quot;&quot;) + RESET + String.format(&quot;%4s&quot;, &quot;&quot;));</b>
+<b class="fc">&nbsp;        output.set(3, output.get(3) + String.format(&quot;%2s&quot;, &quot;&quot;) + greenBackground + String.format(&quot;%3s&quot;, &quot;&quot;) + RESET + String.format(&quot;%2s&quot;, &quot;&quot;));</b>
+<b class="fc">&nbsp;        output.set(4, output.get(4) + String.format(&quot;%4s&quot;, &quot;&quot;) + greenBackground + String.format(&quot;%3s&quot;, &quot;&quot;) + RESET);</b>
+<b class="fc">&nbsp;        output.set(5, output.get(5) + String.format(&quot;%7s&quot;, &quot;&quot;));</b>
+<b class="fc">&nbsp;        output.set(6, output.get(6) + greenBackground + String.format(&quot;%7s&quot;, &quot;+2 &quot;) + RESET);</b>
+<b class="fc">&nbsp;        output.set(7, output.get(7) + greenBackground + String.format(&quot;%7s&quot;, &quot;Points&quot;) + RESET);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * @param output        ArrayList&lt;String&gt;
+&nbsp;     * @param redBackground String
+&nbsp;     */
+&nbsp;    private void outputSet87_89(ArrayList&lt;String&gt; output, String redBackground) {
+<b class="fc">&nbsp;        output.set(1, output.get(1) + String.format(&quot;%7s&quot;, &quot;&quot;));</b>
+<b class="fc">&nbsp;        output.set(2, output.get(2) + String.format(&quot;%4s&quot;, &quot;&quot;) + redBackground + String.format(&quot;%3s&quot;, &quot;&quot;) + RESET);</b>
+<b class="fc">&nbsp;        output.set(3, output.get(3) + String.format(&quot;%2s&quot;, &quot;&quot;) + redBackground + String.format(&quot;%3s&quot;, &quot;&quot;) + RESET + String.format(&quot;%2s&quot;, &quot;&quot;));</b>
+<b class="fc">&nbsp;        output.set(4, output.get(4) + redBackground + String.format(&quot;%3s&quot;, &quot;&quot;) + RESET + String.format(&quot;%4s&quot;, &quot;&quot;));</b>
+<b class="fc">&nbsp;        output.set(5, output.get(5) + String.format(&quot;%7s&quot;, &quot;&quot;));</b>
+<b class="fc">&nbsp;        output.set(6, output.get(6) + redBackground + String.format(&quot;%7s&quot;, &quot;+2 &quot;) + RESET);</b>
+<b class="fc">&nbsp;        output.set(7, output.get(7) + redBackground + String.format(&quot;%7s&quot;, &quot;Points&quot;) + RESET);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * This method allow the user to say if he wants to connect with socket or rmi
+&nbsp;     *
+&nbsp;     * @return boolean
+&nbsp;     */
+&nbsp;    public boolean askSocket() {
+<b class="nc">&nbsp;        state = &quot;Socket&quot;;</b>
+<b class="nc">&nbsp;        scanner =new Scanner(System.in);</b>
+&nbsp;
+&nbsp;        while (true) {
+<b class="nc">&nbsp;            System.out.println(&quot;Do you want to use Socket or rmi?&quot;);</b>
+&nbsp;            String choice;
+&nbsp;            try {
+<b class="nc">&nbsp;                choice = getInput();</b>
+<b class="nc">&nbsp;            } catch (InterruptedException e) {</b>
+&nbsp;                // Default is socket
+<b class="nc">&nbsp;                return true;</b>
+&nbsp;            }
+<b class="nc">&nbsp;            choice = choice.toLowerCase();</b>
+<b class="nc">&nbsp;            if (choice.equals(&quot;socket&quot;) || choice.equals(&quot;s&quot;)) return true;</b>
+<b class="nc">&nbsp;            else if (choice.equals(&quot;rmi&quot;) || choice.equals(&quot;r&quot;)) return false;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * This method allow the client to visualize the server response about the connection
+&nbsp;     *
+&nbsp;     * @param message the message received from the server
+&nbsp;     */
+&nbsp;    public void answerToConnection(connectionResponseMessage message) {
+<b class="nc">&nbsp;        state = &quot;Connection&quot;;</b>
+<b class="nc">&nbsp;        if (message.getCorrect())</b>
+<b class="nc">&nbsp;            System.out.println(GREEN_TEXT + &quot;the connection has been established&quot; + RESET);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * This method allow the client to choose if he wants to create a new match, join an existing one in waiting (not yet started),
+&nbsp;     * join a running match or load a saved match
+&nbsp;     *
+&nbsp;     * @param message a serverOption message received from the server
+&nbsp;     * @return message with the values chosen by the user
+&nbsp;     */
+&nbsp;    public serverOptionMessage serverOptions(serverOptionMessage message) {
+<b class="fc">&nbsp;        scanner =new Scanner(System.in);</b>
+&nbsp;
+<b class="fc">&nbsp;        state = &quot;ServerOptions&quot;;</b>
+<b class="fc">&nbsp;        boolean newMatch = false;</b>
+<b class="fc">&nbsp;        Integer matchID = null;</b>
+<b class="fc">&nbsp;        Integer startedMatchID = null;</b>
+<b class="fc">&nbsp;        boolean loadMatch = false;</b>
+<b class="fc">&nbsp;        Integer savedMatchID = null;</b>
+&nbsp;
+<b class="fc">&nbsp;        serverOptionMessage emptyMessage = new serverOptionMessage(newMatch, matchID, startedMatchID, loadMatch, savedMatchID);</b>
+&nbsp;
+&nbsp;        // Asks the user if he wants to join a new match
+&nbsp;        while (true) {
+<b class="fc">&nbsp;            System.out.print(&quot;Do you want to join a new match? [YES/no] &quot;);</b>
+&nbsp;            String choice;
+&nbsp;            try {
+<b class="fc">&nbsp;                choice = getInput();</b>
+<b class="nc">&nbsp;            } catch (InterruptedException e) {</b>
+<b class="nc">&nbsp;                return emptyMessage;</b>
+&nbsp;            }
+<b class="pc">&nbsp;            if (choice.equals(&quot;yes&quot;) || choice.equals(&quot;y&quot;) || choice.equals(&quot;ye&quot;)) {</b>
+<b class="fc">&nbsp;                newMatch = true;</b>
+<b class="pc">&nbsp;            } else if (choice.equals(&quot;no&quot;) || choice.equals(&quot;n&quot;)) {</b>
+<b class="fc">&nbsp;                newMatch = false;</b>
+&nbsp;            } else {
+<b class="nc">&nbsp;                System.out.println(RED_TEXT + &quot;ANSWER NOT VALID&quot; + RESET);</b>
+&nbsp;                continue;
+&nbsp;            }
+&nbsp;            break;
+&nbsp;        }
+&nbsp;
+&nbsp;        // Asks the user if he wants to create a new match or join an existing one in waiting
+<b class="fc">&nbsp;        while (newMatch) {</b>
+<b class="fc">&nbsp;            System.out.print(&quot;Create a New Match (1) or Join a Match (2)? &quot;);</b>
+&nbsp;            String choice;
+&nbsp;            try {
+<b class="fc">&nbsp;                choice = getInput().toLowerCase();</b>
+<b class="nc">&nbsp;            } catch (InterruptedException e) {</b>
+<b class="nc">&nbsp;                return emptyMessage;</b>
+&nbsp;            }
+&nbsp;
+<b class="fc">&nbsp;            if (choice.equals(&quot;2&quot;)) {</b>
+<b class="pc">&nbsp;                if (message.getWaitingMatches().isEmpty()) {</b>
+<b class="nc">&nbsp;                    System.out.println(&quot;There are no matches to join: creating a new match&quot;);</b>
+<b class="nc">&nbsp;                    matchID = null;</b>
+&nbsp;                    break;
+&nbsp;                } else {
+<b class="fc">&nbsp;                    System.out.println(&quot;Here are the matches you can join: &quot;);</b>
+<b class="fc">&nbsp;                    int i = 1;</b>
+<b class="fc">&nbsp;                    for (Integer id : message.getWaitingMatches()) {</b>
+<b class="fc">&nbsp;                        System.out.println(&quot;(&quot; + i + &quot;) &quot; + id);</b>
+<b class="fc">&nbsp;                        i += 1;</b>
+&nbsp;                    }
+<b class="fc">&nbsp;                    System.out.print(&quot;Enter the match number: &quot;);</b>
+&nbsp;                    try {
+<b class="fc">&nbsp;                        matchID = Integer.parseInt(getInput());</b>
+<b class="pc">&nbsp;                        if (matchID &lt; 1 || matchID &gt; i) {</b>
+<b class="nc">&nbsp;                            System.out.println(RED_TEXT + &quot;ANSWER NOT VALID&quot; + RESET);</b>
+&nbsp;                            continue;
+&nbsp;                        }
+<b class="fc">&nbsp;                        matchID = message.getWaitingMatches().get(matchID - 1);</b>
+&nbsp;                        break;
+<b class="nc">&nbsp;                    } catch (NumberFormatException e) {</b>
+<b class="nc">&nbsp;                        System.out.println(RED_TEXT + &quot;ANSWER NOT VALID&quot; + RESET);</b>
+<b class="nc">&nbsp;                    } catch (InterruptedException e) {</b>
+<b class="nc">&nbsp;                        return emptyMessage;</b>
+&nbsp;                    }
+&nbsp;                }
+&nbsp;
+<b class="pc">&nbsp;            } else if (choice.equals(&quot;1&quot;)) {</b>
+<b class="fc">&nbsp;                matchID = null;</b>
+&nbsp;                break;
+&nbsp;            } else {
+<b class="nc">&nbsp;                System.out.println(RED_TEXT + &quot;ANSWER NOT VALID&quot; + RESET);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;        if (!newMatch) {</b>
+&nbsp;            //if newMatch is false proceeds to ask if the user wants to join a running match
+&nbsp;            boolean runMatch;
+&nbsp;            while (true) {
+<b class="fc">&nbsp;                System.out.print(&quot;Join a running match? [YES/no] &quot;);</b>
+&nbsp;                String choice;
+&nbsp;                try {
+<b class="fc">&nbsp;                    choice = getInput().toLowerCase();</b>
+<b class="nc">&nbsp;                } catch (InterruptedException e) {</b>
+<b class="nc">&nbsp;                    return emptyMessage;</b>
+&nbsp;                }
+<b class="pc">&nbsp;                if (choice.equals(&quot;yes&quot;) || choice.equals(&quot;y&quot;)) {</b>
+<b class="fc">&nbsp;                    runMatch = true;</b>
+<b class="pc">&nbsp;                } else if (choice.equals(&quot;no&quot;) || choice.equals(&quot;n&quot;)) {</b>
+<b class="fc">&nbsp;                    runMatch = false;</b>
+&nbsp;                } else {
+<b class="nc">&nbsp;                    System.out.println(RED_TEXT + &quot;ANSWER NOT VALID&quot; + RESET);</b>
+&nbsp;                    continue;
+&nbsp;                }
+&nbsp;                break;
+&nbsp;
+&nbsp;            }
+&nbsp;
+<b class="fc">&nbsp;            if (runMatch) {</b>
+&nbsp;
+&nbsp;                // Asks the user which running match he wants to join
+&nbsp;                while (true) {
+<b class="pc">&nbsp;                    if (message.getRunningMatches().isEmpty()) {</b>
+<b class="nc">&nbsp;                        System.out.println(&quot;There are no matches to join.&quot;);</b>
+<b class="nc">&nbsp;                        startedMatchID = null;</b>
+&nbsp;                        break;
+&nbsp;                    } else {
+<b class="fc">&nbsp;                        System.out.println(&quot;Here are the matches you can join: &quot;);</b>
+<b class="fc">&nbsp;                        int i = 1;</b>
+<b class="fc">&nbsp;                        for (Integer id : message.getRunningMatches()) {</b>
+<b class="fc">&nbsp;                            System.out.println(&quot;(&quot; + i + &quot;) &quot; + id);</b>
+<b class="fc">&nbsp;                            i += 1;</b>
+&nbsp;                        }
+<b class="fc">&nbsp;                        System.out.print(&quot;Enter the match number: &quot;);</b>
+&nbsp;                        try {
+<b class="fc">&nbsp;                            startedMatchID = Integer.parseInt(getInput());</b>
+<b class="pc">&nbsp;                            if (startedMatchID &lt; 1 || startedMatchID &gt; i) {</b>
+<b class="nc">&nbsp;                                System.out.println(RED_TEXT + &quot;ANSWER NOT VALID&quot; + RESET);</b>
+&nbsp;                                continue;
+&nbsp;                            }
+<b class="fc">&nbsp;                            startedMatchID = message.getRunningMatches().get(startedMatchID - 1);</b>
+&nbsp;                            break;
+<b class="nc">&nbsp;                        } catch (NumberFormatException e) {</b>
+<b class="nc">&nbsp;                            System.out.println(RED_TEXT + &quot;You didn&#39;t enter an int value&quot; + RESET);</b>
+<b class="nc">&nbsp;                        } catch (InterruptedException e) {</b>
+<b class="nc">&nbsp;                            return emptyMessage;</b>
+&nbsp;                        }
+&nbsp;                    }
+&nbsp;                }
+&nbsp;
+&nbsp;            } else {
+&nbsp;                //if runMatch is false proceeds to ask if the user wants to join a saved match
+&nbsp;                while (true) {
+<b class="fc">&nbsp;                    System.out.print(&quot;Join a saved match? [YES/no] &quot;);</b>
+&nbsp;                    String choice;
+&nbsp;                    try {
+<b class="fc">&nbsp;                        choice = getInput().toLowerCase();</b>
+<b class="nc">&nbsp;                    } catch (InterruptedException e) {</b>
+<b class="nc">&nbsp;                        return emptyMessage;</b>
+&nbsp;                    }
+<b class="pc">&nbsp;                    if (choice.equals(&quot;yes&quot;) || choice.equals(&quot;y&quot;)) {</b>
+<b class="fc">&nbsp;                        loadMatch = true;</b>
+<b class="nc">&nbsp;                    } else if (choice.equals(&quot;no&quot;) || choice.equals(&quot;n&quot;)) {</b>
+&nbsp;                        break;
+&nbsp;                    } else {
+<b class="nc">&nbsp;                        System.out.println(RED_TEXT + &quot;ANSWER NOT VALID&quot; + RESET);</b>
+&nbsp;                        continue;
+&nbsp;                    }
+&nbsp;                    break;
+&nbsp;                }
+&nbsp;
+<b class="pc">&nbsp;                if (loadMatch) {</b>
+&nbsp;                    // Asks the user which saved match he wants to join
+&nbsp;                    while (true) {
+<b class="pc">&nbsp;                        if (message.getSavedMatches().isEmpty()) {</b>
+<b class="nc">&nbsp;                            System.out.println(&quot;There are no matches to join.&quot;);</b>
+<b class="nc">&nbsp;                            savedMatchID = null;</b>
+&nbsp;                            break;
+&nbsp;                        } else {
+<b class="fc">&nbsp;                            System.out.println(&quot;Here are the matches you can join: &quot;);</b>
+<b class="fc">&nbsp;                            int i = 1;</b>
+<b class="fc">&nbsp;                            for (Integer id : message.getSavedMatches()) {</b>
+<b class="fc">&nbsp;                                System.out.println(&quot;(&quot; + i + &quot;) &quot; + id);</b>
+<b class="fc">&nbsp;                                i += 1;</b>
+&nbsp;                            }
+<b class="fc">&nbsp;                            System.out.print(&quot;Enter the saved match number: &quot;);</b>
+&nbsp;                            try {
+<b class="fc">&nbsp;                                savedMatchID = Integer.parseInt(getInput());</b>
+&nbsp;
+<b class="pc">&nbsp;                                if (savedMatchID &lt; 1 || savedMatchID &gt; i) {</b>
+<b class="nc">&nbsp;                                    System.out.println(RED_TEXT + &quot;ANSWER NOT VALID&quot; + RESET);</b>
+&nbsp;                                    continue;
+&nbsp;                                }
+&nbsp;
+<b class="fc">&nbsp;                                savedMatchID = message.getSavedMatches().get(savedMatchID - 1);</b>
+&nbsp;                                break;
+<b class="nc">&nbsp;                            } catch (NumberFormatException e) {</b>
+<b class="nc">&nbsp;                                System.out.println(RED_TEXT + &quot;ANSWER NOT VALID&quot; + RESET);</b>
+<b class="nc">&nbsp;                            } catch (InterruptedException e) {</b>
+<b class="nc">&nbsp;                                return emptyMessage;</b>
+&nbsp;                            }
+&nbsp;                        }
+&nbsp;                    }
+&nbsp;                }
+&nbsp;            }
+&nbsp;
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        message = new serverOptionMessage(newMatch, matchID, startedMatchID, loadMatch, savedMatchID);</b>
+<b class="fc">&nbsp;        newMessage = message;</b>
+<b class="fc">&nbsp;        return message;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * This method shows which nicknames are not available and allows the user to choose his nickname
+&nbsp;     *
+&nbsp;     * @param message the message received from the server
+&nbsp;     * @return the chosen nickname
+&nbsp;     */
+&nbsp;    public String unavailableNames(unavailableNamesMessage message) {
+<b class="fc">&nbsp;        scanner = new Scanner(System.in);</b>
+&nbsp;
+<b class="fc">&nbsp;        state = &quot;UnavailableNamesState&quot;;</b>
+<b class="fc">&nbsp;        names = message.getNames();</b>
+&nbsp;        //the client can call the method view.unavailableNames passing as a parameter the arraylist of unavailable names received from server
+<b class="pc">&nbsp;        if (!message.toString().equals(&quot;[]&quot;)) {</b>
+<b class="fc">&nbsp;            System.out.println(&quot;This nicknames are not available: &quot; + message);</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            System.out.println(&quot;All nicknames are available&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        String name = &quot; &quot;;</b>
+<b class="fc">&nbsp;        boolean ok = false;</b>
+<b class="fc">&nbsp;        while (!ok) {</b>
+<b class="fc">&nbsp;            System.out.println(&quot;Choose a nickname:&quot;);</b>
+&nbsp;            try {
+<b class="fc">&nbsp;                name = getInput();</b>
+<b class="nc">&nbsp;            } catch (InterruptedException e) {</b>
+<b class="nc">&nbsp;                return &quot;&quot;;</b>
+&nbsp;            }
+<b class="pc">&nbsp;            if (name.length() &gt; 10)</b>
+<b class="nc">&nbsp;                System.out.println(RED_TEXT + &quot;Your nickname is too long! Use at most 10 characters.&quot; + RESET);</b>
+&nbsp;            else
+<b class="fc">&nbsp;                ok = true;</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        return name;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * This method visualizes the response received from the server about the value entered by the user
+&nbsp;     *
+&nbsp;     * @param message the message received from the server
+&nbsp;     */
+&nbsp;    public boolean answer(responseMessage message) {
+<b class="fc">&nbsp;        if (!message.getCorrect())</b>
+<b class="fc">&nbsp;            System.out.println(RED_TEXT + &quot;You didn&#39;t enter a valid value, please try again&quot; + RESET);</b>
+<b class="pc">&nbsp;        else if (message.getCorrect() &amp;&amp; (Objects.equals(state, &quot;NameFAState&quot;) || Objects.equals(state, &quot;AvailableColors&quot;))</b>
+<b class="nc">&nbsp;                &amp;&amp; !Objects.equals(state, &quot;Waiting&quot;) &amp;&amp; (!newMessage.isNewMatch() || (newMessage.getMatchID() != null &amp;&amp; !names.isEmpty()))) {</b>
+<b class="nc">&nbsp;            System.out.println(PURPLE_TEXT + &quot;Waiting for&quot; + BLUE_TEXT + &quot; other players&quot; + GREEN_TEXT + &quot; to join&quot; + RED_TEXT + &quot; the game...&quot; + RESET);</b>
+<b class="nc">&nbsp;            return true;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return true;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * This method lets the user know that he has to wait for other players to join the game
+&nbsp;     */
+&nbsp;    public void waiting() {
+<b class="nc">&nbsp;        state = &quot;Waiting&quot;;</b>
+<b class="nc">&nbsp;        System.out.println(PURPLE_TEXT + &quot;Waiting for&quot; + BLUE_TEXT + &quot; other players&quot; + GREEN_TEXT + &quot; to join&quot; + RED_TEXT + &quot; the game...&quot; + RESET);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * This method shows what colors are available and allows the user to choose his color
+&nbsp;     *
+&nbsp;     * @param message the message received from the server
+&nbsp;     */
+&nbsp;    public String availableColors(availableColorsMessage message) {
+<b class="fc">&nbsp;        scanner = new Scanner(System.in);</b>
+&nbsp;
+<b class="fc">&nbsp;        state = &quot;AvailableColors&quot;;</b>
+&nbsp;        //the client can call the method view.availableColors passing as a parameter the arraylist of available colors received from server
+<b class="fc">&nbsp;        System.out.print(&quot;These are the colors that ara available:  &quot;);</b>
+<b class="fc">&nbsp;        for (int i = 0; i &lt; message.getColors().size(); i++) {</b>
+<b class="pc">&nbsp;            if (message.getColors().get(i).equals(&quot;red&quot;)) {</b>
+<b class="nc">&nbsp;                System.out.print(RED_TEXT + message.getColors().get(i) + &quot; &quot; + RESET);</b>
+&nbsp;            }
+<b class="pc">&nbsp;            if (message.getColors().get(i).equals(&quot;blue&quot;)) {</b>
+<b class="nc">&nbsp;                System.out.print(BLUE_TEXT + message.getColors().get(i) + &quot; &quot; + RESET);</b>
+&nbsp;            }
+<b class="pc">&nbsp;            if (message.getColors().get(i).equals(&quot;purple&quot;)) {</b>
+<b class="nc">&nbsp;                System.out.print(PURPLE_TEXT + message.getColors().get(i) + &quot; &quot; + RESET);</b>
+&nbsp;            }
+<b class="pc">&nbsp;            if (message.getColors().get(i).equals(&quot;green&quot;)) {</b>
+<b class="nc">&nbsp;                System.out.print(GREEN_TEXT + message.getColors().get(i) + &quot; &quot; + RESET);</b>
+&nbsp;            }
+&nbsp;        }
+<b class="fc">&nbsp;        System.out.print(&quot;\n&quot;);</b>
+&nbsp;
+&nbsp;        String color;
+<b class="fc">&nbsp;        System.out.println(&quot;Choose a color:&quot;);</b>
+&nbsp;        try {
+<b class="fc">&nbsp;            color = getInput();</b>
+<b class="nc">&nbsp;        } catch (InterruptedException e) {</b>
+<b class="nc">&nbsp;            return &quot; &quot;;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return color;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * This method allow the user to place his starter card
+&nbsp;     *
+&nbsp;     * @return the side of the card
+&nbsp;     */
+&nbsp;    public int placeStarter() {
+<b class="fc">&nbsp;        scanner = new Scanner(System.in);</b>
+&nbsp;
+<b class="fc">&nbsp;        state = &quot;PlaceStarter&quot;;</b>
+<b class="fc">&nbsp;        System.out.println(&quot;Place your STARTER card on the table&quot;);</b>
+&nbsp;
+&nbsp;        while (true) {
+<b class="fc">&nbsp;            System.out.print(&quot;FRONT or BACK? &quot;);</b>
+&nbsp;            String choice;
+&nbsp;            try {
+<b class="fc">&nbsp;                choice = getInput().toLowerCase();</b>
+<b class="nc">&nbsp;            } catch (InterruptedException e) {</b>
+<b class="nc">&nbsp;                return 0;</b>
+&nbsp;            }
+&nbsp;
+<b class="pc">&nbsp;            switch (choice) {</b>
+&nbsp;                case &quot;f&quot;, &quot;front&quot;, &quot;front side&quot; -&gt; {
+<b class="fc">&nbsp;                    return 1;</b>
+&nbsp;                }
+&nbsp;                case &quot;b&quot;, &quot;back&quot;, &quot;back side&quot; -&gt; {
+<b class="fc">&nbsp;                    return 0;</b>
+&nbsp;                }
+&nbsp;            }
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * This method allows the user to choose how many players will play
+&nbsp;     *
+&nbsp;     * @return number of expected players
+&nbsp;     */
+&nbsp;    public int expectedPlayers() {
+<b class="fc">&nbsp;        scanner = new Scanner(System.in);</b>
+&nbsp;
+<b class="fc">&nbsp;        state = &quot;ExpectedPlayers&quot;;</b>
+&nbsp;        int numExpected;
+&nbsp;        while (true) {
+&nbsp;
+&nbsp;            try {
+<b class="fc">&nbsp;                System.out.println(&quot;How many players do you want to be in the game?&quot;);</b>
+<b class="fc">&nbsp;                numExpected = Integer.parseInt(getInput());</b>
+&nbsp;                break;
+<b class="nc">&nbsp;            } catch (NumberFormatException e) {</b>
+<b class="nc">&nbsp;                System.out.println(RED_TEXT + &quot;You didn&#39;t enter an integer value&quot; + RESET);</b>
+<b class="nc">&nbsp;            } catch (InterruptedException e) {</b>
+<b class="nc">&nbsp;                return 0;</b>
+&nbsp;            }
+&nbsp;        }
+<b class="fc">&nbsp;        return numExpected;</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * This method allows the user to choose his secret objective
+&nbsp;     *
+&nbsp;     * @return int representing the chosen objective
+&nbsp;     */
+&nbsp;    public int chooseObjective(ArrayList&lt;ObjectiveCard&gt; objectives) {
+<b class="fc">&nbsp;        scanner = new Scanner(System.in);</b>
+&nbsp;
+<b class="fc">&nbsp;        state = &quot;ChooseObjective&quot;;</b>
+&nbsp;        int objective;
+<b class="fc">&nbsp;        System.out.println(&quot;You have to choose your personal objective&quot;);</b>
+&nbsp;
+<b class="fc">&nbsp;        for (int i = 0; i &lt; objectives.size(); i++) {</b>
+<b class="fc">&nbsp;            System.out.println(&quot;(&quot; + (i + 1) + &quot;) Objective  ID: &quot; + objectives.get(i).getID());</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        System.out.println(&quot;Choose your personal objective.&quot;);</b>
+<b class="fc">&nbsp;        ArrayList&lt;String&gt; output = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        addOutput(output);</b>
+<b class="fc">&nbsp;        this.printObjective(objectives.get(0).getID(), output);</b>
+<b class="fc">&nbsp;        this.printObjective(objectives.get(1).getID(), output);</b>
+<b class="fc">&nbsp;        printOutput(output);</b>
+&nbsp;
+<b class="fc">&nbsp;        System.out.print(&quot;FIRST (1) or SECOND (2) ?  &quot;);</b>
+&nbsp;        while (true) {
+&nbsp;            try {
+<b class="fc">&nbsp;                objective = Integer.parseInt(getInput());</b>
+&nbsp;                break;
+<b class="nc">&nbsp;            } catch (NumberFormatException e) {</b>
+<b class="nc">&nbsp;                System.out.println(RED_TEXT + &quot;You didn&#39;t enter an integer value&quot; + RESET);</b>
+<b class="nc">&nbsp;            } catch (InterruptedException e) {</b>
+<b class="nc">&nbsp;                return 0;</b>
+&nbsp;            }
+&nbsp;        }
+<b class="fc">&nbsp;        return objective;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * @param output ArrayList&lt;String&gt;
+&nbsp;     */
+&nbsp;    private void printOutput(ArrayList&lt;String&gt; output) {
+<b class="fc">&nbsp;        System.out.println(output.get(0));</b>
+<b class="fc">&nbsp;        System.out.println(output.get(1));</b>
+<b class="fc">&nbsp;        System.out.println(output.get(2));</b>
+<b class="fc">&nbsp;        System.out.println(output.get(3));</b>
+<b class="fc">&nbsp;        System.out.println(output.get(4));</b>
+<b class="fc">&nbsp;        System.out.println(output.get(5));</b>
+<b class="fc">&nbsp;        System.out.println(output.get(6));</b>
+<b class="fc">&nbsp;        System.out.println(output.get(7));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * This method allows the user to choose the card to place among the three cards in his hand,
+&nbsp;     * choose the side (front or back) and the position
+&nbsp;     *
+&nbsp;     * @return Array of int representing the card chosen by the user, side, and position
+&nbsp;     */
+&nbsp;    public int[] placeCard() {
+<b class="fc">&nbsp;        scanner = new Scanner(System.in);</b>
+&nbsp;
+<b class="fc">&nbsp;        state = &quot;PlaceCard&quot;;</b>
+&nbsp;
+<b class="fc">&nbsp;        int[] chosenCard = new int[4];</b>
+<b class="fc">&nbsp;        chosenCard[0] = 1000;</b>
+<b class="fc">&nbsp;        chosenCard[1] = 1000;</b>
+<b class="fc">&nbsp;        chosenCard[2] = 1000;</b>
+<b class="fc">&nbsp;        chosenCard[3] = 1000;</b>
+&nbsp;
+&nbsp;        while (true) {
+&nbsp;            try {
+<b class="fc">&nbsp;                System.out.print(&quot;Enter the NUMBER of the card you want to place (0) or (1) or (2): &quot;);</b>
+<b class="fc">&nbsp;                chosenCard[0] = Integer.parseInt(getInput());</b>
+&nbsp;                break;
+<b class="nc">&nbsp;            } catch (NumberFormatException e) {</b>
+<b class="nc">&nbsp;                System.out.println(RED_TEXT + &quot;You didn&#39;t enter an integer value&quot; + RESET);</b>
+<b class="nc">&nbsp;            } catch (InterruptedException e) {</b>
+<b class="nc">&nbsp;                return chosenCard;</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        boolean correct = false;</b>
+<b class="fc">&nbsp;        while (!correct) {</b>
+<b class="fc">&nbsp;            System.out.print(&quot;FRONT or BACK?&quot;);</b>
+&nbsp;            String choice;
+&nbsp;            try {
+<b class="fc">&nbsp;                choice = getInput().toLowerCase();</b>
+<b class="nc">&nbsp;            } catch (InterruptedException e) {</b>
+<b class="nc">&nbsp;                return chosenCard;</b>
+&nbsp;            }
+<b class="pc">&nbsp;            switch (choice) {</b>
+&nbsp;                case &quot;f&quot;, &quot;front&quot;, &quot;front side&quot; -&gt; {
+<b class="fc">&nbsp;                    chosenCard[1] = 1;</b>
+<b class="fc">&nbsp;                    correct = true;</b>
+&nbsp;                }
+&nbsp;                case &quot;b&quot;, &quot;back&quot;, &quot;back side&quot; -&gt; {
+<b class="nc">&nbsp;                    chosenCard[1] = 0;</b>
+<b class="nc">&nbsp;                    correct = true;</b>
+&nbsp;                }
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+&nbsp;
+&nbsp;        while (true) {
+&nbsp;            try {
+<b class="fc">&nbsp;                System.out.print(&quot;ROW: &quot;);</b>
+<b class="fc">&nbsp;                chosenCard[2] = Integer.parseInt(getInput());</b>
+&nbsp;                break;
+<b class="nc">&nbsp;            } catch (NumberFormatException e) {</b>
+<b class="nc">&nbsp;                System.out.println(RED_TEXT + &quot;You didn&#39;t enter an integer value&quot; + RESET);</b>
+<b class="nc">&nbsp;            } catch (InterruptedException e) {</b>
+<b class="nc">&nbsp;                return chosenCard;</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+&nbsp;
+&nbsp;        while (true) {
+&nbsp;            try {
+<b class="fc">&nbsp;                System.out.print(&quot;COLUMN: &quot;);</b>
+<b class="fc">&nbsp;                chosenCard[3] = Integer.parseInt(getInput());</b>
+&nbsp;                break;
+<b class="nc">&nbsp;            } catch (NumberFormatException e) {</b>
+<b class="nc">&nbsp;                System.out.println(RED_TEXT + &quot;You didn&#39;t enter an integer value&quot; + RESET);</b>
+<b class="nc">&nbsp;            } catch (InterruptedException e) {</b>
+<b class="nc">&nbsp;                return chosenCard;</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        return chosenCard;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * This method allows the user to say what card he wants to pick
+&nbsp;     *
+&nbsp;     * @return int representing the card the user wants to pick
+&nbsp;     */
+&nbsp;    public int pickCard() {
+<b class="fc">&nbsp;        scanner =new Scanner(System.in);</b>
+&nbsp;
+<b class="fc">&nbsp;        state = &quot;PickCard&quot;;</b>
+<b class="fc">&nbsp;        int choice = 1000;</b>
+&nbsp;        try {
+<b class="fc">&nbsp;            System.out.print(&quot;enter the NUMBER of the card you want to pick DECK (1),&quot; + YELLOW_TEXT + &quot;(2)&quot; + RESET + &quot; or TABLE (3),(4),&quot; + YELLOW_TEXT + &quot;(5),(6): &quot; + RESET);</b>
+<b class="fc">&nbsp;            choice = Integer.parseInt(getInput());</b>
+<b class="nc">&nbsp;        } catch (NumberFormatException e) {</b>
+<b class="nc">&nbsp;            System.out.println(RED_TEXT + &quot;You didn&#39;t enter an integer value&quot; + RESET);</b>
+<b class="nc">&nbsp;        } catch (InterruptedException e) {</b>
+<b class="nc">&nbsp;            return 0;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return choice;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * This method visualizes the final information about the game, points and number of objectives achieved by the players
+&nbsp;     *
+&nbsp;     * @param message the message received from the server
+&nbsp;     */
+&nbsp;    public void endGame(declareWinnerMessage message) {
+<b class="fc">&nbsp;        state = &quot;EndGame&quot;;</b>
+&nbsp;        HashMap&lt;String, Integer&gt; points;
+&nbsp;        HashMap&lt;String, Integer&gt; numObjectives;
+&nbsp;
+<b class="fc">&nbsp;        points = message.getPlayersPoints();</b>
+<b class="fc">&nbsp;        numObjectives = message.getNumberOfObjects();</b>
+&nbsp;
+<b class="fc">&nbsp;        String[] win = this.findWinner(points);</b>
+<b class="fc">&nbsp;        System.out.print(&quot;FINAL RESULTS:&quot;);</b>
+<b class="fc">&nbsp;        System.out.println(&quot;\nSCOREBOARD&quot;);</b>
+<b class="fc">&nbsp;        for (String playerName : points.keySet()) {</b>
+<b class="fc">&nbsp;            Integer playerPoints = points.get(playerName);</b>
+<b class="fc">&nbsp;            Integer playerObjectives = numObjectives.get(playerName);</b>
+<b class="fc">&nbsp;            String color = playerColor.get(playerName);</b>
+<b class="pc">&nbsp;            switch (color) {</b>
+&nbsp;                case (&quot;red&quot;): {
+<b class="fc">&nbsp;                    System.out.println(RED_TEXT + &quot;Player Name: &quot; + playerName + &quot;  -  Points: &quot; + playerPoints + &quot;  -  Number of Objectives: &quot; + playerObjectives + RESET);</b>
+&nbsp;                    break;
+&nbsp;                }
+&nbsp;                case (&quot;blue&quot;): {
+<b class="fc">&nbsp;                    System.out.println(BLUE_TEXT + &quot;Player Name: &quot; + playerName + &quot;  -  Points: &quot; + playerPoints + &quot;  -  Number of Objectives: &quot; + playerObjectives + RESET);</b>
+&nbsp;                    break;
+&nbsp;                }
+&nbsp;                case (&quot;green&quot;): {
+<b class="fc">&nbsp;                    System.out.println(GREEN_TEXT + &quot;Player Name: &quot; + playerName + &quot;  -  Points: &quot; + playerPoints + &quot;  -  Number of Objectives: &quot; + playerObjectives + RESET);</b>
+&nbsp;                    break;
+&nbsp;                }
+&nbsp;                case (&quot;purple&quot;): {
+<b class="fc">&nbsp;                    System.out.println(PURPLE_TEXT + &quot;Player Name: &quot; + playerName + &quot;  -  Points: &quot; + playerPoints + &quot;  -  Number of Objectives: &quot; + playerObjectives + RESET);</b>
+&nbsp;                }
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        if (win[1].equals(&quot;&quot;)) {</b>
+<b class="fc">&nbsp;            String namePlayer = win[0];</b>
+<b class="fc">&nbsp;            if (playerColor.get(namePlayer).equals(&quot;red&quot;)) {</b>
+<b class="fc">&nbsp;                System.out.println(RED_TEXT + &quot;The winner is: &quot; + namePlayer + RESET);</b>
+<b class="fc">&nbsp;                this.printWinner(&quot;red&quot;);</b>
+&nbsp;            }
+<b class="fc">&nbsp;            if (playerColor.get(namePlayer).equals(&quot;green&quot;)) {</b>
+<b class="fc">&nbsp;                System.out.println(GREEN_TEXT + &quot;The winner is: &quot; + namePlayer + RESET);</b>
+<b class="fc">&nbsp;                this.printWinner(&quot;green&quot;);</b>
+&nbsp;            }
+<b class="fc">&nbsp;            if (playerColor.get(namePlayer).equals(&quot;purple&quot;)) {</b>
+<b class="fc">&nbsp;                System.out.println(PURPLE_TEXT + &quot;The winner is: &quot; + namePlayer + RESET);</b>
+<b class="fc">&nbsp;                this.printWinner(&quot;purple&quot;);</b>
+&nbsp;
+&nbsp;            }
+<b class="fc">&nbsp;            if (playerColor.get(namePlayer).equals(&quot;blue&quot;)) {</b>
+<b class="fc">&nbsp;                System.out.println(BLUE_TEXT + &quot;The winner is: &quot; + namePlayer + RESET);</b>
+<b class="fc">&nbsp;                this.printWinner(&quot;blue&quot;);</b>
+&nbsp;
+&nbsp;            }
+&nbsp;        } else {
+<b class="fc">&nbsp;            String namePlayer1 = win[0];</b>
+<b class="fc">&nbsp;            String namePlayer2 = win[1];</b>
+&nbsp;
+<b class="fc">&nbsp;            System.out.print(&quot;THE WINNERS ARE:  &quot;);</b>
+<b class="fc">&nbsp;            winnerPlayer(namePlayer1);</b>
+<b class="fc">&nbsp;            winnerPlayer(namePlayer2);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * This method visualizes the winner of the game
+&nbsp;     *
+&nbsp;     * @param namePlayer the name of the winner
+&nbsp;     */
+&nbsp;    private void winnerPlayer(String namePlayer) {
+<b class="pc">&nbsp;        if (playerColor.get(namePlayer).equals(&quot;red&quot;)) {</b>
+<b class="nc">&nbsp;            System.out.print(RED_TEXT + namePlayer + &quot; &quot; + RESET);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (playerColor.get(namePlayer).equals(&quot;green&quot;)) {</b>
+<b class="fc">&nbsp;            System.out.print(GREEN_TEXT + namePlayer + &quot; &quot; + RESET);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (playerColor.get(namePlayer).equals(&quot;purple&quot;)) {</b>
+<b class="fc">&nbsp;            System.out.print(PURPLE_TEXT + namePlayer + &quot; &quot; + RESET);</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if (playerColor.get(namePlayer).equals(&quot;blue&quot;)) {</b>
+<b class="nc">&nbsp;            System.out.print(BLUE_TEXT + namePlayer + &quot; &quot; + RESET);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * This method finds the winner or the two winners of the game
+&nbsp;     *
+&nbsp;     * @param points the points of the players related to their nickname
+&nbsp;     * @return the name of the winner
+&nbsp;     */
+&nbsp;    public String[] findWinner(HashMap&lt;String, Integer&gt; points) {
+<b class="fc">&nbsp;        Integer maxPoint1 = 0;</b>
+&nbsp;
+<b class="fc">&nbsp;        String winner1 = &quot;&quot;;</b>
+<b class="fc">&nbsp;        String winner2 = &quot;&quot;;</b>
+&nbsp;
+<b class="fc">&nbsp;        for (String playerName : points.keySet()) {</b>
+<b class="fc">&nbsp;            if (maxPoint1 &lt; points.get(playerName)) {</b>
+<b class="fc">&nbsp;                maxPoint1 = points.get(playerName);</b>
+<b class="fc">&nbsp;                winner1 = playerName;</b>
+&nbsp;
+<b class="fc">&nbsp;            } else if (maxPoint1.equals(points.get(playerName))) {</b>
+&nbsp;
+<b class="fc">&nbsp;                winner2 = playerName;</b>
+&nbsp;            }
+&nbsp;
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        String[] winners = new String[2];</b>
+<b class="fc">&nbsp;        winners[0] = winner1;</b>
+&nbsp;
+<b class="fc">&nbsp;        winners[1] = winner2;</b>
+&nbsp;
+<b class="fc">&nbsp;        return winners;</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * This method saves the color of the player
+&nbsp;     *
+&nbsp;     * @param player the player whose color has to be saved
+&nbsp;     */
+&nbsp;    public void savePlayerColor(Player player) {
+<b class="fc">&nbsp;        if (!playerColor.containsKey(player.getNickname())) {</b>
+<b class="fc">&nbsp;            playerColor.put(player.getNickname(), player.getColor());</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * This method visualizes the updated state of the current player
+&nbsp;     *
+&nbsp;     * @param update the message received from the server
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void update(updatePlayerMessage update) {
+<b class="fc">&nbsp;        Player player = update.getPlayer();</b>
+<b class="fc">&nbsp;        this.showCommonArea(player.getCommonArea());</b>
+<b class="fc">&nbsp;        this.showPlayerArea(player.getPlayerArea());</b>
+<b class="fc">&nbsp;        this.showPlayerHand(player, update.getNicknameViewer());</b>
+<b class="fc">&nbsp;        this.savePlayerColor(update.getPlayer());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * This method allows the user to choose a nickname from the list of available names
+&nbsp;     * If the user wants to load a saved match, he will need this method to choose his name from the existing ones
+&nbsp;     *
+&nbsp;     * @param message the message containing the list of available names
+&nbsp;     * @return the chosen nickname
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public String pickNameFA(unavailableNamesMessage message) {
+<b class="fc">&nbsp;        scanner = new Scanner(System.in);</b>
+&nbsp;
+<b class="fc">&nbsp;        state = &quot;NameFAState&quot;;</b>
+<b class="fc">&nbsp;        System.out.println(&quot;Please choose a nickname: &quot;);</b>
+<b class="fc">&nbsp;        int i = 1;</b>
+&nbsp;        //print the available names preceded by a number to identify them
+<b class="fc">&nbsp;        for (String name : message.getNames()) {</b>
+<b class="fc">&nbsp;            System.out.println(&quot;(&quot; + i + &quot;) &quot; + name);</b>
+<b class="fc">&nbsp;            i++;</b>
+&nbsp;        }
+&nbsp;        while (true) {
+&nbsp;            try {
+<b class="fc">&nbsp;                int choice = Integer.parseInt(getInput());</b>
+<b class="pc">&nbsp;                if (choice &gt; 0 &amp;&amp; choice &lt;= message.getNames().size()) {</b>
+<b class="fc">&nbsp;                    return message.getNames().get(choice - 1);</b>
+&nbsp;                } else {
+<b class="nc">&nbsp;                    System.out.println(&quot;Please enter a valid number&quot;);</b>
+&nbsp;                }
+<b class="nc">&nbsp;            } catch (NumberFormatException e) {</b>
+<b class="nc">&nbsp;                System.out.println(&quot;Please enter a valid number&quot;);</b>
+<b class="nc">&nbsp;            } catch (InterruptedException e) {</b>
+<b class="nc">&nbsp;                return &quot;&quot;;</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * print a colored background containing the symbol of the reign corresponding to the color of the winner
+&nbsp;     *
+&nbsp;     * @param color color of the winner
+&nbsp;     */
+&nbsp;    private void printWinner(String color) {
+&nbsp;        String cell1;
+&nbsp;        String cell2;
+&nbsp;        String cell3;
+&nbsp;        String cell4;
+&nbsp;        String cell5;
+&nbsp;        String cell6;
+<b class="fc">&nbsp;        if (color.equals(&quot;red&quot;)) {</b>
+<b class="fc">&nbsp;            cell1 = &quot;              &quot;;</b>
+<b class="fc">&nbsp;            cell2 = &quot;      __      &quot;;</b>
+<b class="fc">&nbsp;            cell3 = &quot;     /  \\     &quot;;</b>
+<b class="fc">&nbsp;            cell4 = &quot;    /____\\    &quot;;</b>
+<b class="fc">&nbsp;            cell5 = &quot;      ||      &quot;;</b>
+<b class="fc">&nbsp;            cell6 = &quot;     WON!     &quot;;</b>
+&nbsp;
+<b class="fc">&nbsp;            System.out.println(cell1 + &quot;\n&quot; + RED_BACKGROUND + cell2 + RESET + &quot;\n&quot; + RED_BACKGROUND + cell3 + RESET + &quot;\n&quot; + RED_BACKGROUND + cell4 + RESET + &quot;\n&quot; + RED_BACKGROUND + cell5 + RESET + &quot;\n&quot; + RED_BACKGROUND + cell6 + RESET + &quot;\n&quot;);</b>
+&nbsp;
+&nbsp;        }
+<b class="fc">&nbsp;        if (color.equals(&quot;blue&quot;)) {</b>
+<b class="fc">&nbsp;            cell1 = &quot;              &quot;;</b>
+<b class="fc">&nbsp;            cell2 = &quot;              &quot;;</b>
+<b class="fc">&nbsp;            cell3 = &quot;    /\\__/\\    &quot;;</b>
+<b class="fc">&nbsp;            cell4 = &quot;    \\    /    &quot;;</b>
+<b class="fc">&nbsp;            cell5 = &quot;     \\__/     &quot;;</b>
+<b class="fc">&nbsp;            cell6 = &quot;     WON!     &quot;;</b>
+<b class="fc">&nbsp;            System.out.println(cell1 + &quot;\n&quot; + CYAN_BACKGROUND + cell2 + RESET + &quot;\n&quot; + CYAN_BACKGROUND + cell3 + RESET + &quot;\n&quot; + CYAN_BACKGROUND + cell4 + RESET + &quot;\n&quot; + CYAN_BACKGROUND + cell5 + RESET + &quot;\n&quot; + CYAN_BACKGROUND + cell6 + RESET + &quot;\n&quot;);</b>
+&nbsp;
+&nbsp;        }
+<b class="fc">&nbsp;        if (color.equals(&quot;green&quot;)) {</b>
+<b class="fc">&nbsp;            cell1 = &quot;              &quot;;</b>
+<b class="fc">&nbsp;            cell2 = &quot;     /|\\      &quot;;</b>
+<b class="fc">&nbsp;            cell3 = &quot;    |\\|/|     &quot;;</b>
+<b class="fc">&nbsp;            cell4 = &quot;     \\|/      &quot;;</b>
+<b class="fc">&nbsp;            cell5 = &quot;      |       &quot;;</b>
+<b class="fc">&nbsp;            cell6 = &quot;     WON!     &quot;;</b>
+<b class="fc">&nbsp;            System.out.println(cell1 + &quot;\n&quot; + GREEN_BACKGROUND + cell2 + RESET + &quot;\n&quot; + GREEN_BACKGROUND + cell3 + RESET + &quot;\n&quot; + GREEN_BACKGROUND + cell4 + RESET + &quot;\n&quot; + GREEN_BACKGROUND + cell5 + RESET + &quot;\n&quot; + GREEN_BACKGROUND + cell6 + RESET + &quot;\n&quot;);</b>
+&nbsp;
+&nbsp;        }
+<b class="fc">&nbsp;        if (color.equals(&quot;purple&quot;)) {</b>
+<b class="fc">&nbsp;            cell1 = &quot;              &quot;;</b>
+<b class="fc">&nbsp;            cell2 = &quot;    |\\  /|    &quot;;</b>
+<b class="fc">&nbsp;            cell3 = &quot;    | \\/ |    &quot;;</b>
+<b class="fc">&nbsp;            cell4 = &quot;    | /\\ |    &quot;;</b>
+<b class="fc">&nbsp;            cell5 = &quot;    |/  \\|    &quot;;</b>
+<b class="fc">&nbsp;            cell6 = &quot;     WON!     &quot;;</b>
+<b class="fc">&nbsp;            System.out.println(cell1 + &quot;\n&quot; + PURPLE_BACKGROUND + cell2 + RESET + &quot;\n&quot; + PURPLE_BACKGROUND + cell3 + RESET + &quot;\n&quot; + PURPLE_BACKGROUND + cell4 + RESET + &quot;\n&quot; + PURPLE_BACKGROUND + cell5 + RESET + &quot;\n&quot; + PURPLE_BACKGROUND + cell6 + RESET + &quot;\n&quot;);</b>
+&nbsp;
+&nbsp;        }
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-06-26 22:00</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,443 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > ClientRMI</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">it.polimi.ingsw.server</a>
+</div>
+
+<h1>Coverage Summary for Class: ClientRMI (it.polimi.ingsw.server)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ClientRMI</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    95,2%
+  </span>
+  <span class="absValue">
+    (20/21)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    87,7%
+  </span>
+  <span class="absValue">
+    (64/73)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package it.polimi.ingsw.server;
+&nbsp;
+&nbsp;import it.polimi.ingsw.messages.connectionState.*;
+&nbsp;import it.polimi.ingsw.messages.currentStateMessage;
+&nbsp;import it.polimi.ingsw.messages.endGameState.declareWinnerMessage;
+&nbsp;import it.polimi.ingsw.messages.objectiveState.objectiveCardMessage;
+&nbsp;import it.polimi.ingsw.messages.playerTurnState.pickCardMessage;
+&nbsp;import it.polimi.ingsw.messages.playerTurnState.placeCardMessage;
+&nbsp;import it.polimi.ingsw.messages.playerTurnState.updatePlayerMessage;
+&nbsp;import it.polimi.ingsw.messages.responseMessage;
+&nbsp;import it.polimi.ingsw.messages.serverOptionState.serverOptionMessage;
+&nbsp;import it.polimi.ingsw.messages.staterCardState.starterCardMessage;
+&nbsp;import it.polimi.ingsw.messages.waitingForPlayerState.expectedPlayersMessage;
+&nbsp;import it.polimi.ingsw.messages.waitingForPlayerState.newHostMessage;
+&nbsp;import it.polimi.ingsw.model.cards.ObjectiveCard;
+&nbsp;import it.polimi.ingsw.server.rmi.MessageExchanger;
+&nbsp;import it.polimi.ingsw.server.rmi.MessageExchangerInterface;
+&nbsp;
+&nbsp;import java.io.Serializable;
+&nbsp;import java.rmi.AlreadyBoundException;
+&nbsp;import java.rmi.RemoteException;
+&nbsp;import java.rmi.registry.Registry;
+&nbsp;import java.rmi.server.UnicastRemoteObject;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.HashMap;
+&nbsp;import java.util.concurrent.*;
+&nbsp;
+&nbsp;public class ClientRMI extends ClientConnection implements Runnable, Serializable {
+&nbsp;    private final Registry registry;
+&nbsp;    private final String lookupString;
+&nbsp;    private MessageExchangerInterface toServer;
+&nbsp;    private MessageExchangerInterface toClient;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Constructor {@code ClientRMI}: creates a new ClientRMI
+&nbsp;     *
+&nbsp;     * @param rmiCounter:   int
+&nbsp;     * @param lookupString: String
+&nbsp;     * @param registry:     Registry
+&nbsp;     * @throws RemoteException       when a remote exception occurs
+&nbsp;     * @throws AlreadyBoundException when the object is already bound
+&nbsp;     */
+&nbsp;    public ClientRMI(int rmiCounter, String lookupString, Registry registry) throws RemoteException, AlreadyBoundException {
+<b class="fc">&nbsp;        super(&quot;RMI_Client_&quot; + rmiCounter, &quot;no_port&quot;);</b>
+&nbsp;
+<b class="fc">&nbsp;        this.toServer = new MessageExchanger();</b>
+<b class="fc">&nbsp;        this.toClient = new MessageExchanger();</b>
+&nbsp;
+<b class="fc">&nbsp;        this.registry = registry;</b>
+&nbsp;
+<b class="fc">&nbsp;        this.registry.bind(lookupString + &quot;_toServer&quot;, this.toServer);</b>
+<b class="fc">&nbsp;        this.registry.bind(lookupString + &quot;_toClient&quot;, this.toClient);</b>
+&nbsp;
+<b class="fc">&nbsp;        this.lookupString = lookupString;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Empty method, needed for executors to work
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void run() {
+&nbsp;
+<b class="nc">&nbsp;    }</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * method {@code getServerOption}: sends an empty server option message and expects an answer.
+&nbsp;     *
+&nbsp;     * @return serverOptionMessage
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public synchronized serverOptionMessage getServerOption(ArrayList&lt;Integer&gt; waitingMatches, ArrayList&lt;Integer&gt; runningMatches, ArrayList&lt;Integer&gt; savedMatches) {
+&nbsp;        try {
+<b class="fc">&nbsp;            this.toClient.write(new serverOptionMessage(false, null, null, false, null, waitingMatches, runningMatches, savedMatches));</b>
+<b class="fc">&nbsp;            return (serverOptionMessage) this.toServer.read();</b>
+<b class="fc">&nbsp;        } catch (Exception e) {</b>
+<b class="fc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * method {@code sendNewHostMessage}: sends a newHostMessage
+&nbsp;     *
+&nbsp;     * @param hostNickname: String
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public synchronized void sendNewHostMessage(String hostNickname) {
+&nbsp;        try {
+<b class="fc">&nbsp;            toClient.write(new newHostMessage(hostNickname));</b>
+<b class="nc">&nbsp;        } catch (Exception ignore) {</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * method {@code getExpectedPlayer}: receives a expectedPlayerMessage
+&nbsp;     *
+&nbsp;     * @return expectedPlayersMessage
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public synchronized expectedPlayersMessage getExpectedPlayer() {
+&nbsp;        try {
+<b class="fc">&nbsp;            return (expectedPlayersMessage) toServer.read();</b>
+<b class="fc">&nbsp;        } catch (Exception e) {</b>
+<b class="fc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * method {@code sendAnswer}: sends a responseMessage
+&nbsp;     *
+&nbsp;     * @param correct: boolean
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public synchronized void sendAnswer(boolean correct) {
+&nbsp;        try {
+<b class="fc">&nbsp;            toClient.write(new responseMessage(correct));</b>
+<b class="nc">&nbsp;        } catch (Exception ignore) {</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * method {@code sendAnswerToConnection}: sends a connectionResponseMessage
+&nbsp;     *
+&nbsp;     * @param message: connectionResponseMessage
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public synchronized void sendAnswerToConnection(connectionResponseMessage message) {
+&nbsp;        try {
+<b class="fc">&nbsp;            toClient.write(message);</b>
+<b class="nc">&nbsp;        } catch (Exception ignore) {</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * method {@code sendUnavailableName}: sends a unavailableNamesMessage
+&nbsp;     *
+&nbsp;     * @param unavailableNames: ArrayList&lt;String&gt;
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    protected synchronized void sendUnavailableName(ArrayList&lt;String&gt; unavailableNames) {
+&nbsp;        try {
+<b class="fc">&nbsp;            toClient.write(new unavailableNamesMessage(unavailableNames));</b>
+<b class="fc">&nbsp;        } catch (Exception ignore) {</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * method {@code getName}: receives a chosenNameMessage
+&nbsp;     *
+&nbsp;     * @return chosenNameMessage
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public synchronized chosenNameMessage getName(ArrayList&lt;String&gt; unavailableNames) {
+&nbsp;        try {
+<b class="fc">&nbsp;            this.sendUnavailableName(unavailableNames);</b>
+<b class="fc">&nbsp;            return (chosenNameMessage) toServer.read();</b>
+<b class="fc">&nbsp;        } catch (Exception e) {</b>
+<b class="fc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * method {@code sendAvailableColor}: sends a availableColorsMessage
+&nbsp;     *
+&nbsp;     * @param availableColors: ArrayList&lt;String&gt;
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    protected synchronized void sendAvailableColor(ArrayList&lt;String&gt; availableColors) {
+&nbsp;        try {
+<b class="fc">&nbsp;            toClient.write(new availableColorsMessage(availableColors));</b>
+<b class="fc">&nbsp;        } catch (Exception ignore) {</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * method {@code getColor}: receives a chosenColorMessage
+&nbsp;     *
+&nbsp;     * @return chosenColorMessage
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public synchronized chosenColorMessage getColor(ArrayList&lt;String&gt; availableColors) {
+&nbsp;        try {
+<b class="fc">&nbsp;            this.sendAvailableColor(availableColors);</b>
+<b class="fc">&nbsp;            return (chosenColorMessage) toServer.read();</b>
+<b class="fc">&nbsp;        } catch (Exception e) {</b>
+<b class="fc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * method {@code sendCurrentState}: sends a currentStateMessage
+&nbsp;     *
+&nbsp;     * @param currentState: currentStateMessage
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public synchronized void sendCurrentState(currentStateMessage currentState) {
+&nbsp;        try {
+<b class="fc">&nbsp;            toClient.write(currentState);</b>
+<b class="fc">&nbsp;        } catch (Exception ignore) {</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * method {@code getStaterCard}: receives a starterCardMessage
+&nbsp;     *
+&nbsp;     * @return starterCardMessage
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public synchronized starterCardMessage getStaterCard() {
+&nbsp;        try {
+<b class="fc">&nbsp;            return (starterCardMessage) toServer.read();</b>
+<b class="fc">&nbsp;        } catch (Exception e) {</b>
+<b class="fc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * method {@code getChosenObjective}: receives a objectiveCardMessage
+&nbsp;     *
+&nbsp;     * @return objectiveCardMessage
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public synchronized objectiveCardMessage getChosenObjective(ArrayList&lt;ObjectiveCard&gt; objectiveCards) {
+&nbsp;        try {
+<b class="fc">&nbsp;            toClient.write(new objectiveCardMessage(objectiveCards));</b>
+<b class="fc">&nbsp;            return (objectiveCardMessage) toServer.read();</b>
+<b class="fc">&nbsp;        } catch (Exception e) {</b>
+<b class="fc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * method {@code getPlaceCard}: receives a placeCardMessage
+&nbsp;     *
+&nbsp;     * @return placeCardMessage
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public synchronized placeCardMessage getPlaceCard() {
+&nbsp;        try {
+<b class="fc">&nbsp;            return (placeCardMessage) toServer.read();</b>
+<b class="fc">&nbsp;        } catch (Exception e) {</b>
+<b class="fc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * method {@code getChosenPick}: receives a pickCardMessage
+&nbsp;     *
+&nbsp;     * @return pickCardMessage
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public synchronized pickCardMessage getChosenPick() {
+&nbsp;        try {
+<b class="fc">&nbsp;            return (pickCardMessage) toServer.read();</b>
+<b class="fc">&nbsp;        } catch (Exception e) {</b>
+<b class="fc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * method {@code sendEndGame}: sends a declareWinnerMessage
+&nbsp;     *
+&nbsp;     * @param score:              HashMap&lt;String, Integer&gt; score
+&nbsp;     * @param numberOfObjectives: HashMap&lt;String, Integer&gt; score
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public synchronized void sendEndGame(HashMap&lt;String, Integer&gt; score, HashMap&lt;String, Integer&gt; numberOfObjectives) {
+&nbsp;        try {
+<b class="fc">&nbsp;            toClient.write(new declareWinnerMessage(score, numberOfObjectives));</b>
+<b class="nc">&nbsp;        } catch (Exception ignore) {</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * method {@code sendUpdatePlayer}: sends a updatePlayerMessage
+&nbsp;     *
+&nbsp;     * @param updateMessage: updatePlayerMessage
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public synchronized void sendUpdatePlayer(updatePlayerMessage updateMessage) {
+&nbsp;        try {
+<b class="fc">&nbsp;            toClient.write(updateMessage);</b>
+<b class="nc">&nbsp;        } catch (Exception ignore) {</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * method {@code closeConnection}: closes the connection
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void closeConnection() {
+<b class="fc">&nbsp;        ExecutorService executor = Executors.newSingleThreadExecutor();</b>
+<b class="fc">&nbsp;        Future&lt;Void&gt; future = executor.submit(() -&gt; {</b>
+&nbsp;            // Unbind the objects from the registry
+<b class="fc">&nbsp;            registry.unbind(lookupString + &quot;_toServer&quot;);</b>
+<b class="fc">&nbsp;            registry.unbind(lookupString + &quot;_toClient&quot;);</b>
+&nbsp;
+&nbsp;            // Unexport the objects
+<b class="fc">&nbsp;            UnicastRemoteObject.unexportObject(toServer, true);</b>
+<b class="fc">&nbsp;            UnicastRemoteObject.unexportObject(toClient, true);</b>
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;            return null;</b>
+&nbsp;        });
+&nbsp;        try {
+<b class="fc">&nbsp;            future.get(10, TimeUnit.SECONDS);</b>
+<b class="nc">&nbsp;        } catch (TimeoutException e) {</b>
+<b class="nc">&nbsp;            future.cancel(true);</b>
+<b class="nc">&nbsp;        } catch (ExecutionException | InterruptedException ignore) {</b>
+&nbsp;        } finally {
+<b class="fc">&nbsp;            this.toClient = null;</b>
+<b class="fc">&nbsp;            this.toServer = null;</b>
+<b class="fc">&nbsp;            executor.shutdownNow();</b>
+<b class="fc">&nbsp;        }</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * method {@code isConnected}: sends a currentStateMessage to check if the connection is still active
+&nbsp;     * and expects an answer
+&nbsp;     *
+&nbsp;     * @return boolean true if the connection is active, false or no answer otherwise
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public synchronized boolean isConnected(ArrayList&lt;String&gt; onlinePlayers) {
+&nbsp;        try {
+<b class="fc">&nbsp;            String answer = &quot;ACK&quot;;</b>
+<b class="fc">&nbsp;            currentStateMessage message = new currentStateMessage(null, null, &quot;AnswerCheckConnection&quot;, false, onlinePlayers, null, null);</b>
+<b class="fc">&nbsp;            this.sendCurrentState(message);</b>
+<b class="fc">&nbsp;            return answer.equals(toServer.read());</b>
+<b class="fc">&nbsp;        } catch (Exception e) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;}
+&nbsp;
+&nbsp;
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-06-26 22:00</div>
+</div>
+</body>
+</html>

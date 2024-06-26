@@ -1,0 +1,167 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > View</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">it.polimi.ingsw.client.view</a>
+</div>
+
+<h1>Coverage Summary for Class: View (it.polimi.ingsw.client.view)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">View</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package it.polimi.ingsw.client.view;
+&nbsp;
+&nbsp;import it.polimi.ingsw.messages.connectionState.availableColorsMessage;
+&nbsp;import it.polimi.ingsw.messages.connectionState.unavailableNamesMessage;
+&nbsp;import it.polimi.ingsw.messages.currentStateMessage;
+&nbsp;import it.polimi.ingsw.messages.endGameState.declareWinnerMessage;
+&nbsp;import it.polimi.ingsw.messages.playerTurnState.updatePlayerMessage;
+&nbsp;import it.polimi.ingsw.messages.responseMessage;
+&nbsp;import it.polimi.ingsw.messages.serverOptionState.serverOptionMessage;
+&nbsp;import it.polimi.ingsw.model.cards.ObjectiveCard;
+&nbsp;
+&nbsp;import java.util.ArrayList;
+&nbsp;/**
+&nbsp; * This class is the abstract class for the View.
+&nbsp; * It is extended by the GUI and CLI views.
+&nbsp; */
+&nbsp;public abstract class View {
+&nbsp;
+&nbsp;    /**
+&nbsp;     * method {@code View}: abstract constructor for the View class
+&nbsp;     */
+<b class="fc">&nbsp;    public View() {</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * methods implemented by the gui and CLI views
+&nbsp;     */
+&nbsp;    public abstract String askIP();
+&nbsp;
+&nbsp;    public abstract void playerDisconnected(Exception e);
+&nbsp;
+&nbsp;    public abstract boolean askSocket();
+&nbsp;
+&nbsp;    public abstract void updatePlayer(currentStateMessage message);
+&nbsp;
+&nbsp;    public abstract serverOptionMessage serverOptions(serverOptionMessage message);
+&nbsp;
+&nbsp;    public abstract String unavailableNames(unavailableNamesMessage message);
+&nbsp;
+&nbsp;    public abstract boolean answer(responseMessage message);
+&nbsp;
+&nbsp;    public abstract String availableColors(availableColorsMessage message);
+&nbsp;
+&nbsp;    public abstract int placeStarter();
+&nbsp;
+&nbsp;    public abstract int expectedPlayers();
+&nbsp;
+&nbsp;    public abstract int chooseObjective(ArrayList&lt;ObjectiveCard&gt; objectives);
+&nbsp;
+&nbsp;    public abstract int[] placeCard();
+&nbsp;
+&nbsp;    public abstract int pickCard();
+&nbsp;
+&nbsp;    public abstract void endGame(declareWinnerMessage message);
+&nbsp;
+&nbsp;    public abstract void update(updatePlayerMessage update);
+&nbsp;
+&nbsp;    public abstract void waiting();
+&nbsp;
+&nbsp;    public abstract String pickNameFA(unavailableNamesMessage message);
+&nbsp;
+&nbsp;    public abstract boolean startMain();
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-06-26 22:00</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,282 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > LoadDecks</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">it.polimi.ingsw.model.cards</a>
+</div>
+
+<h1>Coverage Summary for Class: LoadDecks (it.polimi.ingsw.model.cards)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">LoadDecks</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    33,3%
+  </span>
+  <span class="absValue">
+    (2/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    88,9%
+  </span>
+  <span class="absValue">
+    (16/18)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">LoadDecks$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">LoadDecks$2</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">LoadDecks$3</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">LoadDecks$4</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">LoadDecks$5</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (7/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    33,3%
+  </span>
+  <span class="absValue">
+    (2/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    91,3%
+  </span>
+  <span class="absValue">
+    (21/23)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package it.polimi.ingsw.model.cards;
+&nbsp;
+&nbsp;import com.fasterxml.jackson.core.type.TypeReference;
+&nbsp;import com.fasterxml.jackson.databind.ObjectMapper;
+&nbsp;import it.polimi.ingsw.model.CommonArea;
+&nbsp;
+&nbsp;import java.io.IOException;
+&nbsp;import java.io.InputStream;
+&nbsp;import java.io.Serializable;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Map;
+&nbsp;
+&nbsp;
+&nbsp;/**
+&nbsp; * This class is responsible for loading the decks of cards from a JSON file.
+&nbsp; * It implements the Serializable interface.
+&nbsp; */
+<b class="fc">&nbsp;public class LoadDecks implements Serializable {</b>
+&nbsp;    /**
+&nbsp;     * This method loads the cards from the Cards.json file.
+&nbsp;     * It converts them into PlaceableCard/ObjectiveCard and places them in the various decks.
+&nbsp;     * Once inserted into the deck it puts them inside the CommonArea which is returned.
+&nbsp;     *
+&nbsp;     * @return CommonArea: common area of all players who will be placed in the match
+&nbsp;     */
+&nbsp;    public CommonArea load() {
+<b class="fc">&nbsp;        CommonArea c = new CommonArea();</b>
+<b class="fc">&nbsp;        ObjectMapper mapper = new ObjectMapper();</b>
+&nbsp;
+<b class="pc">&nbsp;        try (InputStream inputStream = getClass().getResourceAsStream(&quot;/Json/Cards.json&quot;)) {</b>
+<b class="pc">&nbsp;            if (inputStream == null) {</b>
+<b class="nc">&nbsp;                throw new IOException(&quot;Resource not found: /Json/Cards.json&quot;);</b>
+&nbsp;            }
+&nbsp;            // Map the JSON file to a Map object
+<b class="fc">&nbsp;            Map&lt;String, List&lt;?&gt;&gt; cardMap = mapper.readValue(inputStream, new TypeReference&lt;&gt;() {});</b>
+&nbsp;
+&nbsp;            // Convert the map values to the appropriate card types
+<b class="fc">&nbsp;            List&lt;ResourceCard&gt; resourceCards = mapper.convertValue(cardMap.get(&quot;ResourceCard&quot;), new TypeReference&lt;&gt;() {});</b>
+<b class="fc">&nbsp;            List&lt;GoldCard&gt; goldCards = mapper.convertValue(cardMap.get(&quot;GoldCard&quot;), new TypeReference&lt;&gt;() {});</b>
+<b class="fc">&nbsp;            List&lt;StarterCard&gt; starterCards = mapper.convertValue(cardMap.get(&quot;StarterCard&quot;), new TypeReference&lt;&gt;() {});</b>
+<b class="fc">&nbsp;            List&lt;ObjectiveCard&gt; objectiveCards = mapper.convertValue(cardMap.get(&quot;ObjectiveCard&quot;), new TypeReference&lt;&gt;() {});</b>
+&nbsp;
+&nbsp;            // Add the cards to the appropriate decks in the common area
+<b class="fc">&nbsp;            resourceCards.forEach(card -&gt; c.getD1().addCard(card));</b>
+<b class="fc">&nbsp;            goldCards.forEach(card -&gt; c.getD2().addCard(card));</b>
+<b class="fc">&nbsp;            starterCards.forEach(card -&gt; c.getD3().addCard(card));</b>
+<b class="fc">&nbsp;            objectiveCards.forEach(card -&gt; c.getD4().addCard(card));</b>
+&nbsp;
+<b class="pc">&nbsp;        } catch (IOException e) {</b>
+<b class="nc">&nbsp;            System.out.println(e.getMessage());</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        return c;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-06-26 22:00</div>
+</div>
+</body>
+</html>

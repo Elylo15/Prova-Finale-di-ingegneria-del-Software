@@ -1,0 +1,243 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > serverOptionMessage</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">it.polimi.ingsw.messages.serverOptionState</a>
+</div>
+
+<h1>Coverage Summary for Class: serverOptionMessage (it.polimi.ingsw.messages.serverOptionState)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">serverOptionMessage</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    90,9%
+  </span>
+  <span class="absValue">
+    (10/11)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    96,3%
+  </span>
+  <span class="absValue">
+    (26/27)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package it.polimi.ingsw.messages.serverOptionState;
+&nbsp;
+&nbsp;import it.polimi.ingsw.messages.Message;
+&nbsp;
+&nbsp;import java.io.Serializable;
+&nbsp;import java.util.ArrayList;
+&nbsp;
+&nbsp;/**
+&nbsp; * Message used to handle the server options
+&nbsp; */
+&nbsp;public class serverOptionMessage implements Message, Serializable {
+&nbsp;    private final boolean newMatch;         // true if the client wants to join a new game
+&nbsp;    private final Integer matchID;         // ID of the match (not yet started) the client wants to join. Null if the client wants to join a new game
+&nbsp;    private final Integer startedMatchID;  // ID of the started match the client wants to join
+&nbsp;    private final boolean loadMatch;        // true if the client wants to load a saved match
+&nbsp;    private final Integer savedMatchID;        // name of the saved game that the client wants to load
+&nbsp;
+&nbsp;    private final ArrayList&lt;Integer&gt; WaitingMatches;
+&nbsp;    private final ArrayList&lt;Integer&gt; runningMatches;
+&nbsp;    private final ArrayList&lt;Integer&gt; savedMatches;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Constructor for the serverOptionMessage class
+&nbsp;     *
+&nbsp;     * @param newMatch       true if the client wants to join a new game
+&nbsp;     * @param matchID        ID of the match (not yet started) the client wants to join. null if the client wants to join a new game
+&nbsp;     * @param startedMatchID ID of the started match the client wants to join
+&nbsp;     * @param loadMatch      true if the client wants to load a custom match
+&nbsp;     * @param savedMatchID   name of the saved game that the client wants to load
+&nbsp;     */
+<b class="fc">&nbsp;    public serverOptionMessage(boolean newMatch, Integer matchID, Integer startedMatchID, boolean loadMatch, Integer savedMatchID) {</b>
+<b class="fc">&nbsp;        this.newMatch = newMatch;</b>
+<b class="fc">&nbsp;        this.matchID = matchID;</b>
+<b class="fc">&nbsp;        this.startedMatchID = startedMatchID;</b>
+<b class="fc">&nbsp;        this.loadMatch = loadMatch;</b>
+<b class="fc">&nbsp;        this.savedMatchID = savedMatchID;</b>
+<b class="fc">&nbsp;        this.WaitingMatches = null;</b>
+<b class="fc">&nbsp;        this.runningMatches = null;</b>
+<b class="fc">&nbsp;        this.savedMatches = null;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Constructor for the serverOptionMessage class
+&nbsp;     *
+&nbsp;     * @param newMatch       true if the client wants to join a new game
+&nbsp;     * @param matchID        ID of the match (not yet started) the client wants to join. null if the client wants to join a new game
+&nbsp;     * @param startedMatchID ID of the started match the client wants to join
+&nbsp;     * @param loadMatch      true if the client wants to load a custom match
+&nbsp;     * @param savedMatchID   name of the saved game that the client wants to load
+&nbsp;     * @param waitingMatches list of waiting matches
+&nbsp;     * @param runningMatches list of running matches
+&nbsp;     * @param savedMatches   list of saved matches
+&nbsp;     */
+<b class="fc">&nbsp;    public serverOptionMessage(boolean newMatch, Integer matchID, Integer startedMatchID, boolean loadMatch, Integer savedMatchID, ArrayList&lt;Integer&gt; waitingMatches, ArrayList&lt;Integer&gt; runningMatches, ArrayList&lt;Integer&gt; savedMatches) {</b>
+<b class="fc">&nbsp;        this.newMatch = newMatch;</b>
+<b class="fc">&nbsp;        this.matchID = matchID;</b>
+<b class="fc">&nbsp;        this.startedMatchID = startedMatchID;</b>
+<b class="fc">&nbsp;        this.loadMatch = loadMatch;</b>
+<b class="fc">&nbsp;        this.savedMatchID = savedMatchID;</b>
+<b class="fc">&nbsp;        this.WaitingMatches = waitingMatches;</b>
+<b class="fc">&nbsp;        this.runningMatches = runningMatches;</b>
+<b class="fc">&nbsp;        this.savedMatches = savedMatches;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * @return true if the client wants to join a new game
+&nbsp;     */
+&nbsp;    public boolean isNewMatch() {
+<b class="fc">&nbsp;        return newMatch;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * @return ID of the match (not yet started) the client wants to join. Null if the client wants to join a new game
+&nbsp;     */
+&nbsp;    public Integer getMatchID() {
+<b class="fc">&nbsp;        return matchID;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * @return ID of the started match the client wants to join
+&nbsp;     */
+&nbsp;    public Integer getStartedMatchID() {
+<b class="fc">&nbsp;        return startedMatchID;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * @return true if the client wants to load a saved match
+&nbsp;     */
+&nbsp;    public boolean isLoadMatch() {
+<b class="fc">&nbsp;        return loadMatch;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * @return name of the saved game that the client wants to load
+&nbsp;     */
+&nbsp;    public Integer getSavedMatchID() {
+<b class="fc">&nbsp;        return savedMatchID;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * @return list of waiting matches
+&nbsp;     */
+&nbsp;    public ArrayList&lt;Integer&gt; getWaitingMatches() {
+<b class="fc">&nbsp;        return WaitingMatches;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * @return list of running matches
+&nbsp;     */
+&nbsp;    public ArrayList&lt;Integer&gt; getRunningMatches() {
+<b class="fc">&nbsp;        return runningMatches;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * @return list of saved matches
+&nbsp;     */
+&nbsp;    public ArrayList&lt;Integer&gt; getSavedMatches() {
+<b class="fc">&nbsp;        return savedMatches;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * @return a string representation of the serverOptionMessage
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public String toString() {
+<b class="nc">&nbsp;        return &quot;serverOptionMessage{&quot; +</b>
+&nbsp;                &quot;newMatch=&quot; + newMatch +
+&nbsp;                &quot;, matchID=&quot; + matchID +
+&nbsp;                &quot;, startedMatchID=&quot; + startedMatchID +
+&nbsp;                &quot;, loadMatch=&quot; + loadMatch +
+&nbsp;                &quot;, savedMatch=&#39;&quot; + savedMatchID + &#39;\&#39;&#39; +
+&nbsp;                &quot;, WaitingMatches=&quot; + WaitingMatches +
+&nbsp;                &quot;, runningMatches=&quot; + runningMatches +
+&nbsp;                &quot;, savedMatches=&quot; + savedMatches +
+&nbsp;                &#39;}&#39;;
+&nbsp;    }
+&nbsp;}
+&nbsp;
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-06-26 22:00</div>
+</div>
+</body>
+</html>
