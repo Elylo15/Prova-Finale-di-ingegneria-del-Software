@@ -1,6 +1,5 @@
 package it.polimi.ingsw.client.view.gui.controller;
 
-import it.polimi.ingsw.client.view.gui.SceneManager;
 import it.polimi.ingsw.client.view.gui.Utilities;
 import it.polimi.ingsw.client.view.gui.message.GUIMessages;
 import it.polimi.ingsw.messages.currentStateMessage;
@@ -26,8 +25,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
@@ -48,19 +45,20 @@ import static it.polimi.ingsw.client.view.gui.Utilities.*;
  * When the player's turn is active, it allows the player to interact with the game board.
  */
 public class GamePageController implements Initializable {
-    private final double offsetPions = 5;
+    private final double offsetPions = 5.0;
+    private final Map<ImageView, Timeline> activeTimelines = new HashMap<>();
     private final double[][] positions = {
-            {1668, 468},
-            {1726, 468}, {1784, 468},
-            {1812, 415}, {1755, 415}, {1697, 415}, {1639, 415},
-            {1639, 362}, {1697, 362}, {1755, 362}, {1812, 362},
-            {1812, 311}, {1755, 311}, {1697, 311}, {1639, 311},
-            {1639, 256}, {1697, 256}, {1755, 256}, {1812, 256},
-            {1812, 204}, {1726, 175}, {1639, 204},
-            {1639, 150}, {1639, 96},
-            {1673, 53}, {1726, 45}, {1781, 53},
-            {1812, 150}, {1812, 96},
-            {1726, 108}
+            {1668.0, 468.0},
+            {1726.0, 468.0}, {1784.0, 468.0},
+            {1812.0, 415.0}, {1755.0, 415.0}, {1697.0, 415.0}, {1639.0, 415.0},
+            {1639.0, 362.0}, {1697.0, 362.0}, {1755.0, 362.0}, {1812.0, 362.0},
+            {1812.0, 311.0}, {1755.0, 311.0}, {1697.0, 311.0}, {1639.0, 311.0},
+            {1639.0, 256.0}, {1697.0, 256.0}, {1755.0, 256.0}, {1812.0, 256.0},
+            {1812.0, 204.0}, {1726.0, 175.0}, {1639.0, 204.0},
+            {1639.0, 150.0}, {1639.0, 96.0},
+            {1673.0, 53.0}, {1726.0, 45.0}, {1781.0, 53.0},
+            {1812.0, 150.0}, {1812.0, 96.0},
+            {1726.0, 108.0}
     };
     private final double offsetAreaX = 156;
     private final double offsetAreaY = 79;
@@ -461,10 +459,7 @@ public class GamePageController implements Initializable {
 
         if (currentStateMessage.getCurrentPlayer().getNickname().equals(myself.getNickname())) {
             if (Objects.equals(currentState, "StarterCardState")) {
-                String audioFile = Objects.requireNonNull(SceneManager.class.getResource("/Audio/you.mp3")).toString();
-                Media media = new Media(audioFile);
-                MediaPlayer mediaPlayer = new MediaPlayer(media);
-                mediaPlayer.play();
+                playSoundEffect("/Audio/you.mp3");
                 setState(currentStateMessage.getPlayer().getColor());
                 starterCase();
                 choosePopUp(currentStateMessage.getPlayer().getColor());
@@ -473,7 +468,8 @@ public class GamePageController implements Initializable {
                     setLastTurn(currentStateMessage.getCurrentPlayer().getColor());
                 else
                     setState(currentStateMessage.getPlayer().getColor());
-                if (!wrong)
+
+                if (!wrong && !Objects.equals(currentState, "PickTurnState"))
                     playSoundEffect("/Audio/you.mp3");
             }
         } else {
@@ -1601,13 +1597,15 @@ public class GamePageController implements Initializable {
         } else if (pion != null && !isPionAtDesiredPosition(pion, score) && !Objects.equals(currentState, "CurrentState")) {
             if (myself.getNickname().equals(currentPlayerNickname))
                 playSoundEffect("/Audio/points.mp3");
+            Platform.runLater(() -> {
+                double startX = pion.getLayoutX();
+                double startY = pion.getLayoutY();
+                int start = getScoreByPosition(startX, startY);
+                if(start >= 0 && start <= 29)
+                    toTop(allPions, pion, positions[start][0]);
 
-            double startX = pion.getLayoutX();
-            double startY = pion.getLayoutY();
-            int start = getScoreByPosition(startX, startY);
-            toTop(allPions, pion, positions[start][0], positions[start][1]);
-
-            addPoints(pion, score, allPions);
+                addPoints(pion, score, allPions);
+            });
         }
     }
 
@@ -1628,6 +1626,13 @@ public class GamePageController implements Initializable {
             double startY = pion.getLayoutY();
             int start = getScoreByPosition(startX, startY);
 
+            if(start < 0 || start > 29)
+                return;  // Invalid start position
+
+            if (activeTimelines.containsKey(pion)) {
+                return;  // Do nothing if a timeline is already active
+            }
+
             Timeline timeline = new Timeline();
 
             KeyFrame keyFrame1 = new KeyFrame(Duration.millis(800), e -> {
@@ -1640,7 +1645,7 @@ public class GamePageController implements Initializable {
             for (int i = start + 1; i <= score; i++) {
                 double[] adjustedPosition = getAdjustedPosition(allPions, positions[i][0], positions[i][1], pion);
 
-                KeyFrame keyFrame = new KeyFrame(Duration.millis(800), e -> {
+                KeyFrame keyFrame = new KeyFrame(Duration.millis((i - start + 1) * 800), e -> {
                     pion.setLayoutX(adjustedPosition[0]);
                     pion.setLayoutY(adjustedPosition[1]);
                     pion.toFront();
@@ -1648,6 +1653,10 @@ public class GamePageController implements Initializable {
 
                 timeline.getKeyFrames().add(keyFrame);
             }
+
+            timeline.setOnFinished(e -> activeTimelines.remove(pion));
+
+            activeTimelines.put(pion, timeline);
 
             timeline.play();
 
@@ -1660,46 +1669,44 @@ public class GamePageController implements Initializable {
      *
      * @param pions   the list of all pions
      * @param myPion  the pion that moved
-     * @param targetX the x position of the pion
-     * @param targetY the y position of the pion
+     * @param positionX the x position of the moved pion
      */
-    private void toTop(List<ImageView> pions, ImageView myPion, double targetX, double targetY){
+    private void toTop(List<ImageView> pions, ImageView myPion, double positionX) {
         List<ImageView> sameXNonMyPions = pions.stream()
                 .filter(Objects::nonNull)
                 .filter(pion -> pion != myPion)
-                .filter(pion -> pion.getLayoutX() == targetX)
+                .filter(pion -> pion.getLayoutX() == positionX)
                 .sorted(Comparator.comparingDouble(ImageView::getLayoutY).reversed())
                 .toList();
 
-        Timeline timeline = new Timeline();
-
-        if(sameXNonMyPions.isEmpty())
+        if (sameXNonMyPions.isEmpty())
             return;
-        else {
-            for(ImageView pion : sameXNonMyPions){
 
-                if(pion.getLayoutY() < myPion.getLayoutY() && isValid(pion.getLayoutY(), targetY)){
+        Platform.runLater(() -> {
 
-                    KeyFrame keyFrame2 = new KeyFrame(Duration.millis(800), e -> pion.setLayoutY(pion.getLayoutY() + (offsetPions)));
+            Timeline timeline = new Timeline();
 
-                    timeline.getKeyFrames().add(keyFrame2);
+            for (ImageView pion : sameXNonMyPions) {
+                if (pion.getLayoutY() < myPion.getLayoutY()) {
+                    KeyFrame keyFrame = new KeyFrame(Duration.millis(2000), e -> {
+                        int score = getScoreByPosition(pion.getLayoutX(), pion.getLayoutY() + offsetPions);
+                        if (score >= 0 && score <= 29) {
+                            boolean found = sameXNonMyPions.stream()
+                                    .anyMatch(p -> p != pion && p.getLayoutY() == pion.getLayoutY() + offsetPions);
+
+                            if (!found) {
+                                pion.setLayoutY(pion.getLayoutY() + offsetPions);
+                            } else
+                                pion.setLayoutY(pion.getLayoutY());
+
+                        } else
+                            pion.setLayoutY(pion.getLayoutY());
+                    });
+                    timeline.getKeyFrames().add(keyFrame);
                 }
             }
-        }
-
-        timeline.play();
-
-    }
-
-    /**
-     * Check if the position is valid
-     *
-     * @param layoutY the y position of the pion
-     * @param base    the base position
-     * @return true if the position is valid, false otherwise
-     */
-    private boolean isValid(double layoutY, double base){
-        return layoutY == base - offsetPions || layoutY == base - 2 * offsetPions || layoutY == base - 3 * offsetPions;
+            timeline.play();
+        });
     }
 
     /**
@@ -1754,16 +1761,13 @@ public class GamePageController implements Initializable {
      */
     private int getScoreByPosition(double x, double y) {
         for (int score = 0; score < positions.length; score++) {
-            double[] position = positions[score];
-            if ((position[0] == x && position[1] == y) //Starting from up position, check upwards
-                    || (position[0] == x && position[1] - offsetPions == y )
-                    || (position[0] == x && position[1] - 2 * offsetPions == y )
-                    || (position[0] == x && position[1] - 3 * offsetPions == y )) {
+            if ((positions[score][0] == x && positions[score][1] == y) //Starting from up position, check upwards
+                    || (positions[score][0] == x && (positions[score][1] - offsetPions)== y ) //367 e piu 5
+                    || (positions[score][0] == x && (positions[score][1] - 2 * offsetPions) == y )
+                    || (positions[score][0] == x && (positions[score][1] - 3 * offsetPions) == y )) {
                 return score;
             }
         }
-
-        System.out.println("Error: position not found" + y);
 
         return -1; // Not found
     }
