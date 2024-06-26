@@ -62,6 +62,16 @@ Here you can find the [Requirements](https://github.com/Elylo15/ing-sw-2024-Loll
 <a href="https://ibb.co/db87dx1"><img src="https://i.ibb.co/28G5DHm/Screenshot-2024-06-22-160200.png" alt="Screenshot-2024-06-22-160200" width="1920"></a>
 
 ## How to use/Download:
+**Requirements:** java 21 installed (to check it run in the terminal `java -version`).
+
+Obtain the `.jar` files from `CodexNaturalis/Deliverables/JAR/**.jar`.
+Go where you stored the files and:
+
+- Run `java -jar PSP27-1.0-SNAPSHOT-clientGUI.jar` to start the client *GUI*.
+- Run `java -jar PSP27-1.0-SNAPSHOT-clientCLI.jar` to start the client *CLI*.
+- Run `java -jar PSP27-1.0-SNAPSHOT-server.jar` to start the *server*.
+
+**Note on the server:** By running the server, you will also create two directories with files in your current position.
 
 ## Other Features
 * Full screen mode responsive
