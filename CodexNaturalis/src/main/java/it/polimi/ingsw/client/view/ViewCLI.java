@@ -53,6 +53,7 @@ public class ViewCLI extends View {
 
     private Scanner scanner = new Scanner(System.in);
     private static final AtomicBoolean isInterrupted = new AtomicBoolean(false);
+    private static final AtomicBoolean isReading = new AtomicBoolean(false);
 
     /**
      * Method {@code ViewCLI}: constructs a new ViewCLI
@@ -72,15 +73,18 @@ public class ViewCLI extends View {
             } catch (InterruptedException ignore) {}
         }
 
+        isReading.set(true);
         scanner = new Scanner(System.in);
         String input = scanner.nextLine();
 
         // Check if the input thread has been interrupted
         if(isInterrupted.get()) {
             isInterrupted.set(false);
+            isReading.set(false);
             throw new InterruptedException("Scanner should not be read: isInterrupted flag is set.");
         }
 
+        isReading.set(false);
         return input;
     }
 
@@ -99,9 +103,15 @@ public class ViewCLI extends View {
                 }
             }
         }
+    }
 
-
-
+    private void sendInputInterrupt() {
+        if(isReading.get()) {
+            isInterrupted.set(true);
+            synchronized (this) {
+                this.notifyAll();
+            }
+        }
     }
 
 
@@ -190,7 +200,7 @@ public class ViewCLI extends View {
      */
     @Override
     public void playerDisconnected(Exception e) {
-        this.isInterrupted.set(true);
+        sendInputInterrupt();
         state = "Disconnected";
         System.out.println("\n" + RED_BACKGROUND + "You have been disconnected." + RESET + "\n");
     }
