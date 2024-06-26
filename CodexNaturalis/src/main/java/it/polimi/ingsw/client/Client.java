@@ -106,7 +106,16 @@ public class Client implements Runnable {
     private void serverOptions() {
         while (true) {
             serverOptionMessage options = controller.serverOptions();
-            options = view.serverOptions(options);
+            //options = view.serverOptions(options);
+            serverOptionMessage finalOptions = options;
+
+            Future<serverOptionMessage> future = executor.submit(() -> view.serverOptions(finalOptions));
+            try {
+                options = future.get(timeout, TimeUnit.SECONDS);
+            } catch (Exception e) {
+                future.cancel(true);
+            }
+
             controller.sendOptions(options);
             responseMessage answer = controller.correctAnswer();
 
@@ -130,7 +139,16 @@ public class Client implements Runnable {
         //the loop will repeat until server receive a valid value
         while (true) {
             unavailableNamesMessage unavailableName = controller.getUnavailableName();
-            String name = view.unavailableNames(unavailableName);
+
+            String name;
+            Future<String> future = executor.submit(() -> view.unavailableNames(unavailableName));
+            try {
+                name = future.get(timeout, TimeUnit.SECONDS);
+            } catch (Exception e) {
+                future.cancel(true);
+                name = "";
+            }
+
             controller.chooseName(name);
             responseMessage answer = controller.correctAnswer();
 
@@ -152,7 +170,16 @@ public class Client implements Runnable {
     private void color() {
         while (true) {
             availableColorsMessage availableColor = controller.getAvailableColor();
-            String color = view.availableColors(availableColor);
+            //String color = view.availableColors(availableColor);
+            String color;
+            Future<String> future = executor.submit(() -> view.availableColors(availableColor));
+            try {
+                color = future.get(timeout, TimeUnit.SECONDS);
+            } catch (Exception e) {
+                future.cancel(true);
+                color = "";
+            }
+
             controller.chooseColor(color);
             responseMessage answer = controller.correctAnswer();
 

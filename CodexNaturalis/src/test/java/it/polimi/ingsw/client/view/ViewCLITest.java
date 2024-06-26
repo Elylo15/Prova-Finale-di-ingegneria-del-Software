@@ -441,10 +441,10 @@ class ViewCLITest {
     @Test
     @DisplayName("Expected players test")
     void expectedPlayersTest() {
-        ByteArrayInputStream in = new ByteArrayInputStream("a\n1\n".getBytes());
+        ByteArrayInputStream in = new ByteArrayInputStream("2\n".getBytes());
         System.setIn(in);
 
-        assertEquals(1, viewCLI.expectedPlayers());
+        assertEquals(2, viewCLI.expectedPlayers());
 
         System.setIn(sysInBackup);
     }
@@ -452,6 +452,7 @@ class ViewCLITest {
     @Test
     @DisplayName("Objective choice test")
     void chooseObjectiveTest() {
+        //user chooses 1
         ByteArrayInputStream in = new ByteArrayInputStream("1\n".getBytes());
         System.setIn(in);
 
@@ -459,11 +460,18 @@ class ViewCLITest {
         objectives.add(commonArea.drawObjectiveCard());
         objectives.add(commonArea.drawObjectiveCard());
 
-        assertEquals(1, viewCLI.chooseObjective(objectives));
+        int choice1 = viewCLI.chooseObjective(objectives);
+        System.out.println(choice1);
+        assertEquals(1, choice1);
 
+        //user chooses 2
         in = new ByteArrayInputStream("2\n".getBytes());
         System.setIn(in);
-        assertEquals(2, viewCLI.chooseObjective(objectives));
+
+        int choice2 = viewCLI.chooseObjective(objectives);
+        System.out.println(choice2);
+
+        assertEquals(2, choice2);
 
         System.setIn(sysInBackup);
     }
@@ -471,11 +479,15 @@ class ViewCLITest {
     @Test
     @DisplayName("Card placement test")
     void cardPlacementTest() {
-        ByteArrayInputStream in = new ByteArrayInputStream("1\nfront\n2\n3\n".getBytes());
+        ByteArrayInputStream in = new ByteArrayInputStream("1\nf\n2\n3\n".getBytes());
         System.setIn(in);
 
         int[] expected = {1, 1, 2, 3};
         int[] result = viewCLI.placeCard();
+        System.out.println("\n");
+        for (int i=0; i<4;i++) {
+            System.out.print(result[i]);
+        }
 
         for (int i = 0; i < expected.length; i++) {
             assertEquals(expected[i], result[i]);

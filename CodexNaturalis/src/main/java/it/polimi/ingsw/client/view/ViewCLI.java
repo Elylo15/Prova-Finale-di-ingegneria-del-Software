@@ -51,15 +51,17 @@ public class ViewCLI extends View {
     private ArrayList<String> names = new ArrayList<>();
     private final HashMap<String, String> playerColor = new HashMap<>();
 
-    private Scanner scanner = new Scanner(System.in);
-    private static final AtomicBoolean isInterrupted = new AtomicBoolean(false);
-    private static final AtomicBoolean isReading = new AtomicBoolean(false);
+    private Scanner scanner;
+    private final AtomicBoolean isInterrupted;
+    private final AtomicBoolean isReading;
 
     /**
      * Method {@code ViewCLI}: constructs a new ViewCLI
      */
     public ViewCLI() {
         super();
+        isInterrupted = new AtomicBoolean(false);
+        isReading = new AtomicBoolean(false);
     }
 
     /**
@@ -67,6 +69,7 @@ public class ViewCLI extends View {
      * @return the input String
      */
     private synchronized String getInput() throws InterruptedException {
+        //thread waits as long as isInterrupted is true
         while (isInterrupted.get()) {
             try {
                 this.wait();
@@ -74,7 +77,6 @@ public class ViewCLI extends View {
         }
 
         isReading.set(true);
-        scanner = new Scanner(System.in);
         String input = scanner.nextLine();
 
         // Check if the input thread has been interrupted
@@ -105,6 +107,10 @@ public class ViewCLI extends View {
         }
     }
 
+    /**
+     * Method {@code sendInputInterrupt}: if a thread is waiting for input,
+     * it signals the input thread to launch an exception
+     */
     private void sendInputInterrupt() {
         if(isReading.get()) {
             isInterrupted.set(true);
@@ -179,6 +185,8 @@ public class ViewCLI extends View {
      */
     @Override
     public String askIP() {
+        scanner = new Scanner(System.in);
+
         checkInterrupted();
 
         state = "IP";
@@ -1071,6 +1079,8 @@ public class ViewCLI extends View {
      */
     public boolean askSocket() {
         state = "Socket";
+        scanner =new Scanner(System.in);
+
         while (true) {
             System.out.println("Do you want to use Socket or rmi?");
             String choice;
@@ -1105,6 +1115,8 @@ public class ViewCLI extends View {
      * @return message with the values chosen by the user
      */
     public serverOptionMessage serverOptions(serverOptionMessage message) {
+        scanner =new Scanner(System.in);
+
         state = "ServerOptions";
         boolean newMatch = false;
         Integer matchID = null;
@@ -1306,6 +1318,8 @@ public class ViewCLI extends View {
      * @return the chosen nickname
      */
     public String unavailableNames(unavailableNamesMessage message) {
+        scanner = new Scanner(System.in);
+
         state = "UnavailableNamesState";
         names = message.getNames();
         //the client can call the method view.unavailableNames passing as a parameter the arraylist of unavailable names received from server
@@ -1364,6 +1378,8 @@ public class ViewCLI extends View {
      * @param message the message received from the server
      */
     public String availableColors(availableColorsMessage message) {
+        scanner = new Scanner(System.in);
+
         state = "AvailableColors";
         //the client can call the method view.availableColors passing as a parameter the arraylist of available colors received from server
         System.out.print("These are the colors that ara available:  ");
@@ -1399,6 +1415,8 @@ public class ViewCLI extends View {
      * @return the side of the card
      */
     public int placeStarter() {
+        scanner = new Scanner(System.in);
+
         state = "PlaceStarter";
         System.out.println("Place your STARTER card on the table");
 
@@ -1428,12 +1446,14 @@ public class ViewCLI extends View {
      * @return number of expected players
      */
     public int expectedPlayers() {
+        scanner = new Scanner(System.in);
+
         state = "ExpectedPlayers";
         int numExpected;
         while (true) {
 
             try {
-                System.out.println("How many player do you want to be in the game?");
+                System.out.println("How many players do you want to be in the game?");
                 numExpected = Integer.parseInt(getInput());
                 break;
             } catch (NumberFormatException e) {
@@ -1452,6 +1472,8 @@ public class ViewCLI extends View {
      * @return int representing the chosen objective
      */
     public int chooseObjective(ArrayList<ObjectiveCard> objectives) {
+        scanner = new Scanner(System.in);
+
         state = "ChooseObjective";
         int objective;
         System.out.println("You have to choose your personal objective");
@@ -1502,7 +1524,10 @@ public class ViewCLI extends View {
      * @return Array of int representing the card chosen by the user, side, and position
      */
     public int[] placeCard() {
+        scanner = new Scanner(System.in);
+
         state = "PlaceCard";
+
         int[] chosenCard = new int[4];
         chosenCard[0] = 1000;
         chosenCard[1] = 1000;
@@ -1577,6 +1602,8 @@ public class ViewCLI extends View {
      * @return int representing the card the user wants to pick
      */
     public int pickCard() {
+        scanner =new Scanner(System.in);
+
         state = "PickCard";
         int choice = 1000;
         try {
@@ -1750,6 +1777,8 @@ public class ViewCLI extends View {
      */
     @Override
     public String pickNameFA(unavailableNamesMessage message) {
+        scanner = new Scanner(System.in);
+
         state = "NameFAState";
         System.out.println("Please choose a nickname: ");
         int i = 1;
