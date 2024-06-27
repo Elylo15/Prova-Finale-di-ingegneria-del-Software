@@ -65,17 +65,18 @@ Here you can find the [Requirements](https://github.com/Elylo15/ing-sw-2024-Loll
 
 * Download the `.jar` files from the latest release by clicking [here](https://github.com/Elylo15/ing-sw-2024-Lollino-Ianosel-Locatelli-Martini/releases/tag/CodexNaturalis).
 
-* Open a terminal, navigate to the directory where you stored the files and run the following commands (replace `<YOUR OS>` accordingly to the files you downloaded):
+* Open a terminal, navigate to the directory where you stored the files and run the following commands:
 
-  - Run `java -jar Client-GUI-<YOUR OS>.jar` to start the client **GUI**.
-  - Run `java -jar Client-CLI-<YOUR OS>.jar` to start the client **CLI**.
-  - Run `java -jar Server-<YOUR OS>.jar` to start the **server**.
+  - Run `java -jar PSP27-1.0-SNAPSHOT-clientGUI.jar` to start the client **GUI**.
+  - Run `java -jar PSP27-1.0-SNAPSHOT-clientCLI.jar` to start the client **CLI**.
+  - Run `java -jar PSP27-1.0-SNAPSHOT-server.jar` to start the **server**.
 
 **Note:** Running the server will create two directories in the server's location.
 
 ## Other Features
 * Full screen mode responsive
 * Sound effects
+* Cross-Platform
 
 ## Software and Packages used
 * IntelliJ Idea
