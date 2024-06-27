@@ -232,6 +232,11 @@ public class GamePageController implements Initializable {
         }
     }
 
+    /**
+     * handles the situation in which the state of currentStateMessage received is objectiveState
+     *
+     * @param list ArrayList containing the objective cards to choose from
+     */
     private void handleObjectiveMessage(ArrayList<?> list) {
         if (Objects.equals(currentState, "objectiveState") && !list.isEmpty() && list.get(0) instanceof ObjectiveCard) {
             playSoundEffect("/Audio/you.mp3");
@@ -1275,6 +1280,11 @@ public class GamePageController implements Initializable {
             // If Card with the same ID and position exists, do nothing
         }
     }
+
+    /**
+     * Turns the card around when clicked twice
+     * @param event the mouse event
+     */
 
     private void turnObjectives(MouseEvent event) {
         if (event.getClickCount() == 2) {
