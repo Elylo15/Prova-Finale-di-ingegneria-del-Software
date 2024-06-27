@@ -29,7 +29,7 @@ public abstract class ClientConnection implements Runnable, Serializable {
     /**
      * method {@code ClientConnection}: constructs a new ClientConnection object
      *
-     * @param IP: String, is the IP address of the client .
+     * @param IP:   String, is the IP address of the client .
      * @param port: String, is the port of the client.
      */
     public ClientConnection(String IP, String port) {

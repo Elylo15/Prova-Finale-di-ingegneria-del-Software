@@ -11,8 +11,8 @@ import it.polimi.ingsw.model.CommonArea;
 import it.polimi.ingsw.model.Match;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.PlayerArea;
-import it.polimi.ingsw.model.cards.*;
-import it.polimi.ingsw.model.cards.exceptions.InvalidIdException;
+import it.polimi.ingsw.model.cards.ObjectiveCard;
+import it.polimi.ingsw.model.cards.PlaceableCard;
 import it.polimi.ingsw.model.cards.exceptions.noPlaceCardException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,7 +24,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ViewCLITest {
 
@@ -80,6 +81,7 @@ class ViewCLITest {
 
 
     }
+
     @Test
     @DisplayName("ShowPlayerArea test")
     void showPlayerAreaTest2() throws noPlaceCardException {
@@ -91,8 +93,8 @@ class ViewCLITest {
 
         playerArea.placeStarterCard(starterCard, false);
         System.out.println(starterCard.getResource());
-       playerArea.placeCard(testCard, -1, 1, false);
-       playerArea.placeCard(testCard3, -1, -1, true);
+        playerArea.placeCard(testCard, -1, 1, false);
+        playerArea.placeCard(testCard3, -1, -1, true);
 
         viewCLI.showPlayerArea(playerArea);
 
@@ -284,6 +286,7 @@ class ViewCLITest {
         commonArea.pickTableCard(id);
         viewCLI.showCommonArea(commonArea);
     }
+
     @Test
     @DisplayName("Partially empty commonArea test")
     void runOutOfGoldCards() {
@@ -309,6 +312,7 @@ class ViewCLITest {
         viewCLI.showCommonArea(commonArea);
 
     }
+
     @Test
     @DisplayName("Partially empty commonArea test")
     void runOutOfGoldCards2() {
@@ -334,8 +338,8 @@ class ViewCLITest {
         commonArea.pickTableCard(id);
         viewCLI.showCommonArea(commonArea);
 
-         //now tableCards at the indexes of gold cards removes has element null
-         Assertions.assertNull(commonArea.getTableCards().get(2));
+        //now tableCards at the indexes of gold cards removes has element null
+        Assertions.assertNull(commonArea.getTableCards().get(2));
         Assertions.assertNull(commonArea.getTableCards().get(3));
 
     }
@@ -485,7 +489,7 @@ class ViewCLITest {
         int[] expected = {1, 1, 2, 3};
         int[] result = viewCLI.placeCard();
         System.out.println("\n");
-        for (int i=0; i<4;i++) {
+        for (int i = 0; i < 4; i++) {
             System.out.print(result[i]);
         }
 

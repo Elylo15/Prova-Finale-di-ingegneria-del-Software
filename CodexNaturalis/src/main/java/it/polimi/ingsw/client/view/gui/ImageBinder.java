@@ -6,6 +6,7 @@ import javafx.scene.image.ImageView;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+
 /**
  * This class is a controller for the images.
  * It contains a map that binds the image to the image view.

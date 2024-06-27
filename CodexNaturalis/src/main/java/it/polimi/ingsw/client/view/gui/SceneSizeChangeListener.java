@@ -11,6 +11,7 @@ import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+
 /**
  * This class is the controller for the main page of the game.
  * It handles the user's interaction with the GUI on the main page.
@@ -19,7 +20,7 @@ public class SceneSizeChangeListener implements ChangeListener<Parent> {
     final double initWidth = 1920;
     final double initHeight = 1080;
     final Pane root = new Pane();
-    private  Scene scene;
+    private Scene scene;
 
     /**
      * This constructor creates a new SceneSizeChangeListener.
@@ -37,7 +38,7 @@ public class SceneSizeChangeListener implements ChangeListener<Parent> {
         controller.setPrefHeight(initHeight);
         root.getChildren().add(controller);
 
-        if(mainStage.getScene() == null){
+        if (mainStage.getScene() == null) {
             scene = new Scene(root, initWidth, initHeight);
             mainStage.setScene(scene);
             mainStage.setResizable(true);

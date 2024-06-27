@@ -37,7 +37,7 @@ public class LogCreatorTest {
         String lastLine = getLastLineFromLogFile(logCreator);
 
         //check if the lines contain the corresponding logged message
-         assertTrue(lastLine.contains("Test message without match ID - second line"));
+        assertTrue(lastLine.contains("Test message without match ID - second line"));
 
     }
 
@@ -57,9 +57,10 @@ public class LogCreatorTest {
 
         //check if lines contain the corresponding logged message with match ID
         assertTrue(lastLine.contains("Test message with match ID - third line"));
-       assertTrue(lastLine.contains("IdMatch=" + matchID));
+        assertTrue(lastLine.contains("IdMatch=" + matchID));
 
     }
+
     @Test
     public void testConstructorWithMatchID() throws IOException {
         // Set match ID
@@ -97,6 +98,7 @@ public class LogCreatorTest {
             return lastLine;
         }
     }
+
     private String getFirstLineFromLogFile(LogCreator logCreator) throws IOException {
         // Read the first line of the log file
         try (BufferedReader reader = new BufferedReader(new FileReader(logCreator.getFileName()))) {

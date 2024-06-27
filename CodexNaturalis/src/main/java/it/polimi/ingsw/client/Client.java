@@ -1,26 +1,27 @@
-    package it.polimi.ingsw.client;
+package it.polimi.ingsw.client;
 
-    import it.polimi.ingsw.client.controller.Controller;
-    import it.polimi.ingsw.client.controller.ControllerRMI;
-    import it.polimi.ingsw.client.controller.ControllerSocket;
-    import it.polimi.ingsw.client.view.View;
-    import it.polimi.ingsw.client.view.ViewCLI;
-    import it.polimi.ingsw.messages.connectionState.availableColorsMessage;
-    import it.polimi.ingsw.messages.connectionState.connectionResponseMessage;
-    import it.polimi.ingsw.messages.connectionState.unavailableNamesMessage;
-    import it.polimi.ingsw.messages.currentStateMessage;
-    import it.polimi.ingsw.messages.endGameState.declareWinnerMessage;
-    import it.polimi.ingsw.messages.playerTurnState.updatePlayerMessage;
-    import it.polimi.ingsw.messages.responseMessage;
-    import it.polimi.ingsw.messages.serverOptionState.serverOptionMessage;
-    import it.polimi.ingsw.messages.waitingForPlayerState.newHostMessage;
-    import it.polimi.ingsw.model.cards.ObjectiveCard;
+import it.polimi.ingsw.client.controller.Controller;
+import it.polimi.ingsw.client.controller.ControllerRMI;
+import it.polimi.ingsw.client.controller.ControllerSocket;
+import it.polimi.ingsw.client.view.View;
+import it.polimi.ingsw.client.view.ViewCLI;
+import it.polimi.ingsw.messages.connectionState.availableColorsMessage;
+import it.polimi.ingsw.messages.connectionState.connectionResponseMessage;
+import it.polimi.ingsw.messages.connectionState.unavailableNamesMessage;
+import it.polimi.ingsw.messages.currentStateMessage;
+import it.polimi.ingsw.messages.endGameState.declareWinnerMessage;
+import it.polimi.ingsw.messages.playerTurnState.updatePlayerMessage;
+import it.polimi.ingsw.messages.responseMessage;
+import it.polimi.ingsw.messages.serverOptionState.serverOptionMessage;
+import it.polimi.ingsw.messages.waitingForPlayerState.newHostMessage;
+import it.polimi.ingsw.model.cards.ObjectiveCard;
 
-    import java.util.ArrayList;
-    import java.util.Objects;
-    import java.util.concurrent.*;
-    import java.util.concurrent.atomic.AtomicBoolean;
-    import java.util.concurrent.atomic.AtomicIntegerArray;
+import java.util.ArrayList;
+import java.util.Objects;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicIntegerArray;
+
 /**
  * This class is the Client class.
  * It is responsible for the client side of the application.
@@ -31,9 +32,9 @@ public class Client implements Runnable {
     private final ThreadPoolExecutor executor;
     //initializes a default value, the methods of the view will return this value in case the user does not provide an answer in time
     private final Integer defaultValue = 1000;
+    private final int timeout;
     private String serverIP;
     private Controller controller;
-    private int timeout;
 
     /**
      * method {@code Client}: Constructor for the Client class
@@ -72,6 +73,8 @@ public class Client implements Runnable {
     /**
      * method {@code connection}: sets socket or rmi. Enables GUI or CLI.
      * Connects to a socket server or rmi server.
+     *
+     * @param isSocket: boolean
      */
     private void connection(boolean isSocket) {
 
@@ -196,6 +199,8 @@ public class Client implements Runnable {
      * Invocations of view methods to ask and receive from host the number of expected player.
      * invocations of controller methods to send received info.
      * invocations of controller methods to receive responseMessage. If responseMessage is correct, the loop ends.
+     *
+     * @param current: currentStateMessage
      */
     private void waitingPlayer(currentStateMessage current) {
         Integer expected;

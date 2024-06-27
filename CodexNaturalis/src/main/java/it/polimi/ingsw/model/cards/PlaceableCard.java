@@ -96,7 +96,7 @@ public abstract class PlaceableCard extends Card implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         PlaceableCard that = (PlaceableCard) o;
-        return points == that.points && this.isFront() == that.isFront() && Objects.equals(requirement, that.requirement) && reign == that.reign &&  Objects.equals(resources, that.resources);
+        return points == that.points && this.isFront() == that.isFront() && Objects.equals(requirement, that.requirement) && reign == that.reign && Objects.equals(resources, that.resources);
     }
 
     /**

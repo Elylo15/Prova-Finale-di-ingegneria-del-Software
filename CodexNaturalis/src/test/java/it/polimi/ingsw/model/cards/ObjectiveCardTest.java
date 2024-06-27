@@ -16,8 +16,7 @@ class ObjectiveCardTest {
     private CommonArea commonArea;
 
     @BeforeEach
-    void setUp()
-    {
+    void setUp() {
         LoadDecks loadDecks = new LoadDecks();
         commonArea = loadDecks.load();
     }
@@ -101,14 +100,15 @@ class ObjectiveCardTest {
         ObjectiveCard objectiveCard = new ObjectiveCard(90);
         assertNull(objectiveCard.getReignCards());
     }
+
     @Test
     void LoadDecks92() throws InvalidIdException {
-       Deck<ObjectiveCard> cards = commonArea.getD4();
-       ObjectiveCard card = (ObjectiveCard) cards.getCard(92);
+        Deck<ObjectiveCard> cards = commonArea.getD4();
+        ObjectiveCard card = (ObjectiveCard) cards.getCard(92);
 
-        ArrayList<int[]> patternTest  =  new ArrayList<>();
-        int[] array1 = {2,0};
-        int[] array2 = {3,-1};
+        ArrayList<int[]> patternTest = new ArrayList<>();
+        int[] array1 = {2, 0};
+        int[] array2 = {3, -1};
         patternTest.add(array1);
         patternTest.add(array2);
         ArrayList<Reign> reignTest = new ArrayList<>();
@@ -117,7 +117,7 @@ class ObjectiveCardTest {
         reignTest.add(Reign.Insect);
 
 
-        ObjectiveCard testCard = new ObjectiveCard(92,3,null,patternTest,reignTest);
+        ObjectiveCard testCard = new ObjectiveCard(92, 3, null, patternTest, reignTest);
         Assertions.assertEquals(testCard.getPoints(), card.getPoints());
         Assertions.assertEquals(testCard.getReignCards(), card.getReignCards());
         Assertions.assertNull(card.getRequirements());
@@ -126,12 +126,13 @@ class ObjectiveCardTest {
         int[] testPattern1 = testCard.getPattern().get(0);
         int[] testPattern2 = testCard.getPattern().get(1);
 
-        Assertions.assertEquals(testPattern1[0],card92Pattern1[0]);
-        Assertions.assertEquals(testPattern1[1],card92Pattern1[1]);
-        Assertions.assertEquals(testPattern2[0],card92Pattern2[0]);
-        Assertions.assertEquals(testPattern2[1],card92Pattern2[1]);
+        Assertions.assertEquals(testPattern1[0], card92Pattern1[0]);
+        Assertions.assertEquals(testPattern1[1], card92Pattern1[1]);
+        Assertions.assertEquals(testPattern2[0], card92Pattern2[0]);
+        Assertions.assertEquals(testPattern2[1], card92Pattern2[1]);
 
     }
+
     @Test
     void LoadDecks99() throws InvalidIdException {
         Deck<ObjectiveCard> cards = commonArea.getD4();
@@ -141,11 +142,11 @@ class ObjectiveCardTest {
         test.add(Resource.Quill);
         test.add(Resource.Inkwell);
         test.add(Resource.Manuscript);
-        ObjectiveCard testCard = new ObjectiveCard(99,3,test,null,null);
+        ObjectiveCard testCard = new ObjectiveCard(99, 3, test, null, null);
 
         Assertions.assertEquals(testCard.getPoints(), card.getPoints());
         Assertions.assertNull(card.getReignCards());
-        Assertions.assertEquals(testCard.getRequirements(),card.getRequirements());
+        Assertions.assertEquals(testCard.getRequirements(), card.getRequirements());
 
     }
 

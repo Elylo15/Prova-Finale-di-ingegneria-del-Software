@@ -39,7 +39,6 @@ class ClientSocketTest {
     //in order to see if ClientSocket can correctly send and receive messages we create a ControllerSocket object to exchange them
 
 
-
     @BeforeEach
     void setUp() throws IOException {
         int corePoolSize = 15;
@@ -227,7 +226,7 @@ class ClientSocketTest {
         //ClientSocket should correctly receive a pickCardMessage
         controller.pickCard(0, false);
         pickCardMessage messageReceived = connection.getChosenPick();
-        Assertions.assertEquals(0,messageReceived.getCard());
+        Assertions.assertEquals(0, messageReceived.getCard());
         Assertions.assertFalse(messageReceived.isNoResponse());
     }
 
@@ -245,8 +244,8 @@ class ClientSocketTest {
         Assertions.assertEquals("Alfa", received.getPlayer().getNickname());
         Assertions.assertEquals("Red", received.getPlayer().getColor());
         //commonArea of the player send in the message is equal to the commonArea of the player received
-        Assertions.assertEquals(area.getD1().getSize(),received.getPlayer().getCommonArea().getD1().getSize());
-        Assertions.assertEquals(area.getD1().getCard(1),received.getPlayer().getCommonArea().getD1().getCard(1));
+        Assertions.assertEquals(area.getD1().getSize(), received.getPlayer().getCommonArea().getD1().getSize());
+        Assertions.assertEquals(area.getD1().getCard(1), received.getPlayer().getCommonArea().getD1().getCard(1));
 
     }
 

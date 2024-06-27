@@ -168,7 +168,7 @@ Player implements Serializable {
      */
     private PlaceableCard pickPlaceableCard(int cardPick) {
 
-        if(cardPick == 0){ //return the first card in playerHand
+        if (cardPick == 0) { //return the first card in playerHand
             return deck.getPlaceableCards().getFirst();
         }
         if (cardPick == 1) { //return the second card in playerHand

@@ -22,10 +22,9 @@ public class LogCreator {
         File dir = new File("logs");
         if (!dir.exists()) {
             working = dir.mkdir(); //creates the directory
-            if(working) {
+            if (working) {
                 System.out.println("directory correctly created");
-            }
-            else {
+            } else {
                 System.out.println("Failed to create directory: " + dir.getAbsolutePath());
                 System.err.println("Failed to create directory: " + dir.getAbsolutePath());
 

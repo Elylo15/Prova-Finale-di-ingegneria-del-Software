@@ -248,7 +248,7 @@ public class Server implements Runnable {
                 return null;
 
             // Checks if the response message is valid
-               //the user wants to create a new game or join an existing one (not yet started)
+            //the user wants to create a new game or join an existing one (not yet started)
             if (msg.isNewMatch() && (msg.getMatchID() == null || waitingGames.contains(msg.getMatchID()))) {
                 correctResponse = true;
             } //the user wants to join a running match
@@ -649,9 +649,9 @@ public class Server implements Runnable {
             for (File file : files) {
                 try (FileInputStream fileIn = new FileInputStream(file);
                      ObjectInputStream in = new ObjectInputStream(fileIn)) {
-                     MatchInfo matchInfo = (MatchInfo) in.readObject();
-                     if (matchInfo.getStatus() != MatchState.Endgame && matchInfo.getStatus() != MatchState.KickingPlayers && matchInfo.getStatus() != MatchState.Waiting)
-                         matchFiles.add(Integer.parseInt(file.getName().substring(6, file.getName().length() - 6))); //extract a substring from index 6 to length - 6
+                    MatchInfo matchInfo = (MatchInfo) in.readObject();
+                    if (matchInfo.getStatus() != MatchState.Endgame && matchInfo.getStatus() != MatchState.KickingPlayers && matchInfo.getStatus() != MatchState.Waiting)
+                        matchFiles.add(Integer.parseInt(file.getName().substring(6, file.getName().length() - 6))); //extract a substring from index 6 to length - 6
                 } catch (IOException | ClassNotFoundException e) {
                     logCreator.log("Error reading match " + file.getName() + ": " + e.getMessage());
                 }

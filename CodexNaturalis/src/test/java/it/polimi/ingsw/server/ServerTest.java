@@ -3,7 +3,6 @@ package it.polimi.ingsw.server;
 import it.polimi.ingsw.client.controller.Controller;
 import it.polimi.ingsw.client.controller.ControllerRMI;
 import it.polimi.ingsw.client.controller.ControllerSocket;
-import it.polimi.ingsw.client.view.ViewCLI;
 import it.polimi.ingsw.messages.currentStateMessage;
 import it.polimi.ingsw.messages.endGameState.declareWinnerMessage;
 import it.polimi.ingsw.messages.serverOptionState.serverOptionMessage;

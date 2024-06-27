@@ -3,6 +3,7 @@ package it.polimi.ingsw.model.cards;
 import it.polimi.ingsw.model.cards.exceptions.InvalidIdException;
 
 import java.io.Serializable;
+
 /**
  * Abstract class that represents a generic card.
  */
@@ -13,7 +14,8 @@ public abstract class Card implements Serializable {
     /**
      * Constructs a new {@code Card} object with the specified {@param ID}.
      *
-     * @param ID must be <103 and >0
+     * @param ID    must be >= 0 and <= 102
+     * @param front true if the card is front, false if the card is back
      * @throws InvalidIdException if ID´s condition is not met.
      */
     protected Card(int ID, boolean front) throws InvalidIdException {
@@ -30,6 +32,8 @@ public abstract class Card implements Serializable {
     }
 
     /**
+     * It gets the card ID.
+     *
      * @return card ID: int
      */
     public int getID() {
@@ -37,6 +41,8 @@ public abstract class Card implements Serializable {
     }
 
     /**
+     * It gets the card's front status.
+     *
      * @return front: boolean
      */
     public boolean isFront() {
@@ -44,6 +50,8 @@ public abstract class Card implements Serializable {
     }
 
     /**
+     * It sets the card's front status.
+     *
      * @param front: boolean
      */
     public void setFront(boolean front) {

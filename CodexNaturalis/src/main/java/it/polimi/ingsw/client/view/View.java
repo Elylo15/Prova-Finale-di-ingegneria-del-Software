@@ -10,6 +10,7 @@ import it.polimi.ingsw.messages.serverOptionState.serverOptionMessage;
 import it.polimi.ingsw.model.cards.ObjectiveCard;
 
 import java.util.ArrayList;
+
 /**
  * This class is the abstract class for the View.
  * It is extended by the GUI and CLI views.

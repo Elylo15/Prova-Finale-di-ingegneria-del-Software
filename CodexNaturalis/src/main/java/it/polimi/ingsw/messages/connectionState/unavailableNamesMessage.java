@@ -32,6 +32,7 @@ public class unavailableNamesMessage implements Message, Serializable {
 
     /**
      * Setter for unavailableNames
+     *
      * @return String
      */
     public String toString() {

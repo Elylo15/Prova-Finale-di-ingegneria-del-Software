@@ -4,6 +4,7 @@ import it.polimi.ingsw.client.view.gui.Utilities;
 import it.polimi.ingsw.client.view.gui.message.GUIMessages;
 import javafx.fxml.FXML;
 import javafx.scene.image.ImageView;
+
 /**
  * This class is a controller for the gui scene where the user chooses the number of expected players.
  * It contains three image-buttons: two, three, and four.

@@ -5,6 +5,7 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 
 import java.util.Objects;
+
 /**
  * This class is a controller for the background music.
  * It contains a media player that plays the background music.

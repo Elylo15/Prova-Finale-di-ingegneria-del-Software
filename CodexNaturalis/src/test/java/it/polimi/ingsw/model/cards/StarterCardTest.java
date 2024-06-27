@@ -23,8 +23,7 @@ class StarterCardTest {
     //then we check if the cards converted from json file are correctly loaded
 
     @BeforeEach
-    void setUp()
-    {
+    void setUp() {
         LoadDecks loadDecks = new LoadDecks();
         commonArea = loadDecks.load();
     }
@@ -137,7 +136,7 @@ class StarterCardTest {
         testButton.add(Resource.Insect);
         testButton.add(Resource.Empty);
         Assertions.assertEquals(testResources, card81.getResource());
-        Assertions.assertNotEquals(testButton,card81.getResource());
+        Assertions.assertNotEquals(testButton, card81.getResource());
     }
 
     @Test
@@ -163,9 +162,8 @@ class StarterCardTest {
         testButton.add(Resource.Empty);
         //if front is false method getResource() will return an ArrayList containing the bottom resources
         Assertions.assertNotEquals(test, card81.getResource());
-        Assertions.assertEquals(testButton,card81.getResource());
+        Assertions.assertEquals(testButton, card81.getResource());
     }
-
 
 
     @Test
@@ -190,7 +188,7 @@ class StarterCardTest {
         testButton.add(Resource.Blocked);
         testButton.add(Resource.Blocked);
         Assertions.assertEquals(test, card86.getResource());
-        Assertions.assertNotEquals(testButton,card86.getResource());
+        Assertions.assertNotEquals(testButton, card86.getResource());
 
     }
 
@@ -216,7 +214,7 @@ class StarterCardTest {
         testButton.add(Resource.Blocked);
         testButton.add(Resource.Blocked);
         Assertions.assertEquals(testButton, card86.getResource());
-        Assertions.assertNotEquals(test,card86.getResource());
+        Assertions.assertNotEquals(test, card86.getResource());
     }
 
 
@@ -284,6 +282,7 @@ class StarterCardTest {
             assertDoesNotThrow(() -> new StarterCard(a));
         }
     }
+
     @Test
     void loadLoadDecksCard() throws InvalidIdException {
         Deck<StarterCard> cards = commonArea.getD3();
@@ -302,15 +301,15 @@ class StarterCardTest {
         testPermanent.add(Resource.Plant);
         testPermanent.add(Resource.Fungus);
 
-        StarterCard testCard = new StarterCard(83,0,null,true,test,testPermanent,testButton);
+        StarterCard testCard = new StarterCard(83, 0, null, true, test, testPermanent, testButton);
 
-        Assertions.assertEquals(testCard.getResource(),card.getResource());
-        Assertions.assertEquals(testCard.getPoints(),card.getPoints());
-        assertTrue(card.equals(testCard));
+        Assertions.assertEquals(testCard.getResource(), card.getResource());
+        Assertions.assertEquals(testCard.getPoints(), card.getPoints());
+        assertEquals(card, testCard);
         card.setFront(false);
         testCard.setFront(false);
-        Assertions.assertEquals(testCard.getResource(),card.getResource());
-        Assertions.assertEquals(testCard.getPermanentResource(),card.getPermanentResource());
+        Assertions.assertEquals(testCard.getResource(), card.getResource());
+        Assertions.assertEquals(testCard.getPermanentResource(), card.getPermanentResource());
 
 
     }
@@ -318,12 +317,12 @@ class StarterCardTest {
     @Test
     void loadLoadDecksCards() throws InvalidIdException {
         Deck<StarterCard> cards = commonArea.getD3();
-        for (int i=81; i< 87; i++){
+        for (int i = 81; i < 87; i++) {
             ArrayList<Integer> requirement = new ArrayList<>();
             requirement.add(1);
             StarterCard card = (StarterCard) cards.getCard(i);
             Assertions.assertTrue(card.isStarter());
-            Assertions.assertEquals(0,card.getPoints());
+            Assertions.assertEquals(0, card.getPoints());
             Assertions.assertTrue(card.checkRequirement(requirement));
 
 

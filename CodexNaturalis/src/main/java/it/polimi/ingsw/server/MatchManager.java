@@ -141,6 +141,7 @@ public class MatchManager implements Runnable {
 
     /**
      * Retrieves a list of all online players in the match.
+     *
      * @return An ArrayList of PlayerInfo objects containing the offline players.
      */
 
@@ -297,19 +298,18 @@ public class MatchManager implements Runnable {
                     if (currentPlayer == null || findPlayer(currentPlayer) == null) {
                         if (this.matchInfo.getMatch().getPlayers().stream()
                                 .anyMatch(player -> player.getScore() >= 20) ||
-                                ( this.getMatch().getCommonArea().getD1().getList().isEmpty()
+                                (this.getMatch().getCommonArea().getD1().getList().isEmpty()
                                         && this.getMatch().getCommonArea().getD2().getList().isEmpty())) {
                             logCreator.log("This is the last turn");
                             matchInfo.setLastTurn(true);
                         }
-                    } else
-                    {  //if there are four players and the fourth player is not in state PickCard
+                    } else {  //if there are four players and the fourth player is not in state PickCard
                         //and one of the players has achieved at least 20 points or both resource ang gold cards decks have run out of cards
                         //we set lastTurn to true
                         if (findPlayer(currentPlayer).getState() != State.PickCard) {
                             if (this.matchInfo.getMatch().getPlayers().stream()
                                     .anyMatch(player -> player.getScore() >= 20) ||
-                                    ( this.getMatch().getCommonArea().getD1().getList().isEmpty()
+                                    (this.getMatch().getCommonArea().getD1().getList().isEmpty()
                                             && this.getMatch().getCommonArea().getD2().getList().isEmpty())) {
                                 logCreator.log("This is the last turn");
                                 matchInfo.setLastTurn(true);
@@ -487,103 +487,39 @@ public class MatchManager implements Runnable {
             updateMatchStatus();
         }
 
-        if(playerInfo!=null && playerInfo.getState()!=null){
-        switch (playerInfo.getState()) {
-            //switch according to the state of the turn of the player
-            case StarterCard -> {
-                logCreator.log("Player " + player.getNickname() + " has to place the starter card");
+        if (playerInfo != null && playerInfo.getState() != null) {
+            switch (playerInfo.getState()) {
+                //switch according to the state of the turn of the player
+                case StarterCard -> {
+                    logCreator.log("Player " + player.getNickname() + " has to place the starter card");
 
-                // Compute starter state itself
-                this.starterState(playerInfo);
+                    // Compute starter state itself
+                    this.starterState(playerInfo);
 
-                // Updates the view of each online player with information about current one (player)
-                for (PlayerInfo playerInfo1 : this.getOnlinePlayerInfo()) {
-                    updatePlayerMessage update = new updatePlayerMessage(player, playerInfo1.getPlayer().getNickname());
-                    playerInfo1.getConnection().sendUpdatePlayer(update); //sends message to each player
-                }
+                    // Updates the view of each online player with information about current one (player)
+                    for (PlayerInfo playerInfo1 : this.getOnlinePlayerInfo()) {
+                        updatePlayerMessage update = new updatePlayerMessage(player, playerInfo1.getPlayer().getNickname());
+                        playerInfo1.getConnection().sendUpdatePlayer(update); //sends message to each player
+                    }
 
-                // End turn and update states
-                //If the player is online
-                if (this.getOnlinePlayerInfo().contains(playerInfo)) {
-                    logCreator.log("Player " + player.getNickname() + " placed the starter card");
-                    playerInfo.setState(State.Objective); //set the state of his turn to Objective
-                    playerInfo.getPlayer().initialHand(); //draws cards
-                }
+                    // End turn and update states
+                    //If the player is online
+                    if (this.getOnlinePlayerInfo().contains(playerInfo)) {
+                        logCreator.log("Player " + player.getNickname() + " placed the starter card");
+                        playerInfo.setState(State.Objective); //set the state of his turn to Objective
+                        playerInfo.getPlayer().initialHand(); //draws cards
+                    }
 
-                this.updateMatchStatus();
-
-                // Saves the progress of the game
-                this.saveMatch();
-            }
-            case Objective -> {
-                logCreator.log("Player " + player.getNickname() + " has to choose an objective");
-
-                // Compute objective state itself
-                this.objectiveState(playerInfo);
-
-                // Updates the view of each online player with information about current one (player)
-                for (PlayerInfo playerInfo1 : this.getOnlinePlayerInfo()) {
-                    updatePlayerMessage update = new updatePlayerMessage(player, playerInfo1.getPlayer().getNickname());
-                    playerInfo1.getConnection().sendUpdatePlayer(update);
-                }
-
-                // End turn and update states
-                if (this.getOnlinePlayerInfo().contains(playerInfo)) {
-                    logCreator.log("Player " + player.getNickname() + " has correctly chosen an objective");
-                    if (this.matchInfo.isLastTurn())
-                        playerInfo.setState(State.EndGame);
-                    else
-                        playerInfo.setState(State.PlaceCard); //set the state of the player's turn to PlaceCard
-                }
-
-                this.updateMatchStatus();
-
-                // Saves the progress of the game
-                this.saveMatch();
-            }
-            case PlaceCard -> {
-                logCreator.log("Player " + player.getNickname() + " starts normal turn and has to place a card");
-
-                // Check if the current player can place a card
-                boolean canPlace = true;
-                if (playerInfo.getPlayer().getPlayerArea().getAvailablePosition().isEmpty()) {
-                    logCreator.log("Player " + player.getNickname() + " cannot place a card. Ending his turn.");
-                    //if the player does not possess any available position in his area the state of the match is set to his next player's turn
                     this.updateMatchStatus();
-                    canPlace = false;
-                } else {
-                    // Compute place card state itself
-                    this.placeCardState(playerInfo);
+
+                    // Saves the progress of the game
+                    this.saveMatch();
                 }
+                case Objective -> {
+                    logCreator.log("Player " + player.getNickname() + " has to choose an objective");
 
-                // Updates the view of each online player with information about current one (player)
-                for (PlayerInfo playerInfo1 : this.getOnlinePlayerInfo()) {
-                    updatePlayerMessage update = new updatePlayerMessage(player, playerInfo1.getPlayer().getNickname());
-                    playerInfo1.getConnection().sendUpdatePlayer(update);
-                }
-
-                // Update the state of player's turn to PickCard
-                if (this.getOnlinePlayerInfo().contains(playerInfo) && canPlace) {
-                    playerInfo.setState(State.PickCard);
-                }
-
-                /*
-                Match status is not updated, because this player has yet to pick a card to finish his turn.
-                 */
-                // Saves the progress of the game
-                this.saveMatch();
-            }
-            case PickCard -> {
-
-                if (this.matchInfo.getMatch().getCommonArea().getTableCards().isEmpty()
-                        || this.getMatch().getCommonArea().getTableCards().stream().noneMatch(Objects::nonNull)){
-                    logCreator.log("Common area is empty, player " + player.getNickname() + " cannot pick a card. Ending his turn.");
-
-                } else {
-                    logCreator.log("Player " + player.getNickname() + " has to pick a card from common area");
-
-                    // Compute pick card state itself
-                    this.pickCardState(playerInfo);
+                    // Compute objective state itself
+                    this.objectiveState(playerInfo);
 
                     // Updates the view of each online player with information about current one (player)
                     for (PlayerInfo playerInfo1 : this.getOnlinePlayerInfo()) {
@@ -591,59 +527,124 @@ public class MatchManager implements Runnable {
                         playerInfo1.getConnection().sendUpdatePlayer(update);
                     }
 
-                    logCreator.log("Player " + player.getNickname() + " has ended his normal turn");
-                }
+                    // End turn and update states
+                    if (this.getOnlinePlayerInfo().contains(playerInfo)) {
+                        logCreator.log("Player " + player.getNickname() + " has correctly chosen an objective");
+                        if (this.matchInfo.isLastTurn())
+                            playerInfo.setState(State.EndGame);
+                        else
+                            playerInfo.setState(State.PlaceCard); //set the state of the player's turn to PlaceCard
+                    }
 
-                // End turn
-                // Update all states, if this is last turn, next state of the player's turn will be EndGame, else it will be PlaceCard
-                if (this.getOnlinePlayerInfo().contains(playerInfo)) {
-                    if (this.matchInfo.isLastTurn())
-                        playerInfo.setState(State.EndGame);
-                    else
-                        playerInfo.setState(State.PlaceCard);
-                }
-                //update the state of the match
-                this.updateMatchStatus();
-
-                // Saves the progress of the game
-                this.saveMatch();
-
-
-            }
-            case LastTurn -> {
-                logCreator.log("Player " + player.getNickname() + " plays his last turn");
-
-                if (playerInfo.getPlayer().getPlayerArea().getAvailablePosition().isEmpty()) {
-                    logCreator.log("Player " + player.getNickname() + " cannot place a card. Ending his turn.");
                     this.updateMatchStatus();
-                } else {
-                    // Compute place card state itself
-                    this.placeCardState(playerInfo);
+
+                    // Saves the progress of the game
+                    this.saveMatch();
                 }
+                case PlaceCard -> {
+                    logCreator.log("Player " + player.getNickname() + " starts normal turn and has to place a card");
 
-                // Updates the view of each online player with information about current one (player)
-                for (PlayerInfo playerInfo1 : this.getOnlinePlayerInfo()) {
-                    updatePlayerMessage update = new updatePlayerMessage(player, playerInfo1.getPlayer().getNickname());
-                    playerInfo1.getConnection().sendUpdatePlayer(update);
+                    // Check if the current player can place a card
+                    boolean canPlace = true;
+                    if (playerInfo.getPlayer().getPlayerArea().getAvailablePosition().isEmpty()) {
+                        logCreator.log("Player " + player.getNickname() + " cannot place a card. Ending his turn.");
+                        //if the player does not possess any available position in his area the state of the match is set to his next player's turn
+                        this.updateMatchStatus();
+                        canPlace = false;
+                    } else {
+                        // Compute place card state itself
+                        this.placeCardState(playerInfo);
+                    }
+
+                    // Updates the view of each online player with information about current one (player)
+                    for (PlayerInfo playerInfo1 : this.getOnlinePlayerInfo()) {
+                        updatePlayerMessage update = new updatePlayerMessage(player, playerInfo1.getPlayer().getNickname());
+                        playerInfo1.getConnection().sendUpdatePlayer(update);
+                    }
+
+                    // Update the state of player's turn to PickCard
+                    if (this.getOnlinePlayerInfo().contains(playerInfo) && canPlace) {
+                        playerInfo.setState(State.PickCard);
+                    }
+
+                /*
+                Match status is not updated, because this player has yet to pick a card to finish his turn.
+                 */
+                    // Saves the progress of the game
+                    this.saveMatch();
                 }
+                case PickCard -> {
 
-                logCreator.log("Player " + player.getNickname() + " has ended his last turn");
+                    if (this.matchInfo.getMatch().getCommonArea().getTableCards().isEmpty()
+                            || this.getMatch().getCommonArea().getTableCards().stream().noneMatch(Objects::nonNull)) {
+                        logCreator.log("Common area is empty, player " + player.getNickname() + " cannot pick a card. Ending his turn.");
 
-                // Update the state of the player's turn from LastTurn to EndGame
-                if (this.getOnlinePlayerInfo().contains(playerInfo))
-                    playerInfo.setState(State.EndGame);
+                    } else {
+                        logCreator.log("Player " + player.getNickname() + " has to pick a card from common area");
 
-                switch (this.matchInfo.getStatus()) {
-                    //update the state of the match, if the cycle of the players' turn is completed match state is set to EndGame
-                    case Player1 -> this.matchInfo.setStatus(MatchState.Player2);
-                    case Player2 -> this.matchInfo.setStatus(MatchState.Player3);
-                    case Player3 -> this.matchInfo.setStatus(MatchState.Player4);
-                    case Player4 -> this.matchInfo.setStatus(MatchState.Endgame);
+                        // Compute pick card state itself
+                        this.pickCardState(playerInfo);
+
+                        // Updates the view of each online player with information about current one (player)
+                        for (PlayerInfo playerInfo1 : this.getOnlinePlayerInfo()) {
+                            updatePlayerMessage update = new updatePlayerMessage(player, playerInfo1.getPlayer().getNickname());
+                            playerInfo1.getConnection().sendUpdatePlayer(update);
+                        }
+
+                        logCreator.log("Player " + player.getNickname() + " has ended his normal turn");
+                    }
+
+                    // End turn
+                    // Update all states, if this is last turn, next state of the player's turn will be EndGame, else it will be PlaceCard
+                    if (this.getOnlinePlayerInfo().contains(playerInfo)) {
+                        if (this.matchInfo.isLastTurn())
+                            playerInfo.setState(State.EndGame);
+                        else
+                            playerInfo.setState(State.PlaceCard);
+                    }
+                    //update the state of the match
+                    this.updateMatchStatus();
+
+                    // Saves the progress of the game
+                    this.saveMatch();
+
+
                 }
+                case LastTurn -> {
+                    logCreator.log("Player " + player.getNickname() + " plays his last turn");
 
-                this.saveMatch();
+                    if (playerInfo.getPlayer().getPlayerArea().getAvailablePosition().isEmpty()) {
+                        logCreator.log("Player " + player.getNickname() + " cannot place a card. Ending his turn.");
+                        this.updateMatchStatus();
+                    } else {
+                        // Compute place card state itself
+                        this.placeCardState(playerInfo);
+                    }
+
+                    // Updates the view of each online player with information about current one (player)
+                    for (PlayerInfo playerInfo1 : this.getOnlinePlayerInfo()) {
+                        updatePlayerMessage update = new updatePlayerMessage(player, playerInfo1.getPlayer().getNickname());
+                        playerInfo1.getConnection().sendUpdatePlayer(update);
+                    }
+
+                    logCreator.log("Player " + player.getNickname() + " has ended his last turn");
+
+                    // Update the state of the player's turn from LastTurn to EndGame
+                    if (this.getOnlinePlayerInfo().contains(playerInfo))
+                        playerInfo.setState(State.EndGame);
+
+                    switch (this.matchInfo.getStatus()) {
+                        //update the state of the match, if the cycle of the players' turn is completed match state is set to EndGame
+                        case Player1 -> this.matchInfo.setStatus(MatchState.Player2);
+                        case Player2 -> this.matchInfo.setStatus(MatchState.Player3);
+                        case Player3 -> this.matchInfo.setStatus(MatchState.Player4);
+                        case Player4 -> this.matchInfo.setStatus(MatchState.Endgame);
+                    }
+
+                    this.saveMatch();
+                }
             }
-        }}
+        }
 
 
     }
@@ -709,7 +710,7 @@ public class MatchManager implements Runnable {
                 } else {
                     // Checks if the answer is valid
                     if (starter.getSide() == 0 || starter.getSide() == 1) {
-                         //if the answer is valid the card is placed
+                        //if the answer is valid the card is placed
                         playerInfo.getPlayer().placeStarter(starter.getSide());
                         correctAnswer = true;
                         playerInfo.getConnection().sendAnswer(true);
@@ -844,7 +845,7 @@ public class MatchManager implements Runnable {
             } else {
                 logCreator.log("Player " + player.getNickname() + " failed to answer");
                 this.kickPlayer(playerInfo);
-               // correctAnswer = true;
+                // correctAnswer = true;
                 return;
             }
         }
@@ -956,7 +957,7 @@ public class MatchManager implements Runnable {
         }
 
         for (PlayerInfo playerInfo1 : this.getOnlinePlayerInfo()) {
-             //send declareWinnerMessage to each online player
+            //send declareWinnerMessage to each online player
             playerInfo1.getConnection().sendEndGame(scores, numberOfObjects);
         }
         //update the state of the match from EndGame to KickingPlayers

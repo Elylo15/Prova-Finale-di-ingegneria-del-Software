@@ -65,63 +65,6 @@ public class ViewCLI extends View {
     }
 
     /**
-     * Method {@code getInput}: gets the input from the user
-     * @return the input String
-     */
-    private synchronized String getInput() throws InterruptedException {
-        //thread waits as long as isInterrupted is true
-        while (isInterrupted.get()) {
-            try {
-                this.wait();
-            } catch (InterruptedException ignore) {}
-        }
-
-        isReading.set(true);
-        String input = scanner.nextLine();
-
-        // Check if the input thread has been interrupted
-        if(isInterrupted.get()) {
-            isInterrupted.set(false);
-            isReading.set(false);
-            throw new InterruptedException("Scanner should not be read: isInterrupted flag is set.");
-        }
-
-        isReading.set(false);
-        return input;
-    }
-
-    /**
-     * Method {@code checkInterrupted}: checks if the input thread has been interrupted and informs the user
-     */
-    private void checkInterrupted(){
-        if(isInterrupted.get()) {
-            System.out.println("\nPlease, press enter to continue.");
-
-            synchronized (this) {
-                while (isInterrupted.get()) {
-                    try {
-                        this.wait();
-                    } catch (InterruptedException ignore) {}
-                }
-            }
-        }
-    }
-
-    /**
-     * Method {@code sendInputInterrupt}: if a thread is waiting for input,
-     * it signals the input thread to launch an exception
-     */
-    private void sendInputInterrupt() {
-        if(isReading.get()) {
-            isInterrupted.set(true);
-            synchronized (this) {
-                this.notifyAll();
-            }
-        }
-    }
-
-
-    /**
      * Method {@code getBgColor}: gets the background color
      *
      * @param card the card to get the background color of
@@ -143,6 +86,65 @@ public class ViewCLI extends View {
 
         }
         return BGColor;
+    }
+
+    /**
+     * Method {@code getInput}: gets the input from the user
+     *
+     * @return the input String
+     */
+    private synchronized String getInput() throws InterruptedException {
+        //thread waits as long as isInterrupted is true
+        while (isInterrupted.get()) {
+            try {
+                this.wait();
+            } catch (InterruptedException ignore) {
+            }
+        }
+
+        isReading.set(true);
+        String input = scanner.nextLine();
+
+        // Check if the input thread has been interrupted
+        if (isInterrupted.get()) {
+            isInterrupted.set(false);
+            isReading.set(false);
+            throw new InterruptedException("Scanner should not be read: isInterrupted flag is set.");
+        }
+
+        isReading.set(false);
+        return input;
+    }
+
+    /**
+     * Method {@code checkInterrupted}: checks if the input thread has been interrupted and informs the user
+     */
+    private void checkInterrupted() {
+        if (isInterrupted.get()) {
+            System.out.println("\nPlease, press enter to continue.");
+
+            synchronized (this) {
+                while (isInterrupted.get()) {
+                    try {
+                        this.wait();
+                    } catch (InterruptedException ignore) {
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Method {@code sendInputInterrupt}: if a thread is waiting for input,
+     * it signals the input thread to launch an exception
+     */
+    private void sendInputInterrupt() {
+        if (isReading.get()) {
+            isInterrupted.set(true);
+            synchronized (this) {
+                this.notifyAll();
+            }
+        }
     }
 
     /**
@@ -1079,7 +1081,7 @@ public class ViewCLI extends View {
      */
     public boolean askSocket() {
         state = "Socket";
-        scanner =new Scanner(System.in);
+        scanner = new Scanner(System.in);
 
         while (true) {
             System.out.println("Do you want to use Socket or rmi?");
@@ -1115,7 +1117,7 @@ public class ViewCLI extends View {
      * @return message with the values chosen by the user
      */
     public serverOptionMessage serverOptions(serverOptionMessage message) {
-        scanner =new Scanner(System.in);
+        scanner = new Scanner(System.in);
 
         state = "ServerOptions";
         boolean newMatch = false;
@@ -1602,7 +1604,7 @@ public class ViewCLI extends View {
      * @return int representing the card the user wants to pick
      */
     public int pickCard() {
-        scanner =new Scanner(System.in);
+        scanner = new Scanner(System.in);
 
         state = "PickCard";
         int choice = 1000;

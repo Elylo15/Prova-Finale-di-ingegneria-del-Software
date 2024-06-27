@@ -30,6 +30,8 @@ public class chosenColorMessage implements Message, Serializable {
 
     /**
      * Setter for color
+     *
+     * @param color: String
      */
     public void setColor(String color) {
         this.color = color;

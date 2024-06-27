@@ -150,8 +150,6 @@ public class GamePageController implements Initializable {
     Future<Void> messageProcessor;
 
 
-
-
     /**
      * It is used to initialize the controller, it starts the message listener and processor threads.
      *
@@ -1551,25 +1549,25 @@ public class GamePageController implements Initializable {
             Image img;
 
             if (Objects.equals(color, "red")) {
-                if(red == null) {
+                if (red == null) {
                     img = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Pions/CODEX_pion_rouge.png")));
                     red = new ImageView(img);
                 }
                 setPionPosition(red, score, allPions);
-            } else if (Objects.equals(color, "blue") ){
-                if(blue == null) {
+            } else if (Objects.equals(color, "blue")) {
+                if (blue == null) {
                     img = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Pions/CODEX_pion_bleu.png")));
                     blue = new ImageView(img);
                 }
                 setPionPosition(blue, score, allPions);
             } else if (Objects.equals(color, "purple")) {
-                if(purple == null) {
+                if (purple == null) {
                     img = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Pions/CODEX_pion_purple.png")));
                     purple = new ImageView(img);
                 }
                 setPionPosition(purple, score, allPions);
             } else if (Objects.equals(color, "green")) {
-                if(green == null) {
+                if (green == null) {
                     img = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Pions/CODEX_pion_vert.png")));
                     green = new ImageView(img);
                 }
@@ -1601,7 +1599,7 @@ public class GamePageController implements Initializable {
                 double startX = pion.getLayoutX();
                 double startY = pion.getLayoutY();
                 int start = getScoreByPosition(startX, startY);
-                if(start >= 0 && start <= 29)
+                if (start >= 0 && start <= 29)
                     toTop(allPions, pion, positions[start][0]);
 
                 addPoints(pion, score, allPions);
@@ -1626,7 +1624,7 @@ public class GamePageController implements Initializable {
             double startY = pion.getLayoutY();
             int start = getScoreByPosition(startX, startY);
 
-            if(start < 0 || start > 29)
+            if (start < 0 || start > 29)
                 return;  // Invalid start position
 
             if (activeTimelines.containsKey(pion)) {
@@ -1667,8 +1665,8 @@ public class GamePageController implements Initializable {
      * Move the pions down if there are pions in the same x position, with higher y position,
      * to adapt the pions positions to the one that moved
      *
-     * @param pions   the list of all pions
-     * @param myPion  the pion that moved
+     * @param pions     the list of all pions
+     * @param myPion    the pion that moved
      * @param positionX the x position of the moved pion
      */
     private void toTop(List<ImageView> pions, ImageView myPion, double positionX) {
@@ -1761,10 +1759,10 @@ public class GamePageController implements Initializable {
      */
     private int getScoreByPosition(double x, double y) {
         for (int score = 0; score < positions.length; score++) {
-            if ((positions[score][0] == x && positions[score][1] == y) //Starting from up position, check upwards
-                    || (positions[score][0] == x && (positions[score][1] - offsetPions)== y ) //367 e piu 5
-                    || (positions[score][0] == x && (positions[score][1] - 2 * offsetPions) == y )
-                    || (positions[score][0] == x && (positions[score][1] - 3 * offsetPions) == y )) {
+            if ((positions[score][0] == x && positions[score][1] == y) //Starting from base position, check upwards
+                    || (positions[score][0] == x && (positions[score][1] - offsetPions) == y)
+                    || (positions[score][0] == x && (positions[score][1] - 2 * offsetPions) == y)
+                    || (positions[score][0] == x && (positions[score][1] - 3 * offsetPions) == y)) {
                 return score;
             }
         }

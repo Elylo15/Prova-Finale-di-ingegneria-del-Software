@@ -71,14 +71,14 @@ class PlayerAreaTest {
 
 
     // REMOVE THIS
-    void prova(){
+    void prova() {
 
         CommonArea commonArea = (new LoadDecks()).load();
         ArrayList<StarterCard> cards = commonArea.getD3().getList();
 
         PlayerArea area;
 
-        for(StarterCard card : cards){
+        for (StarterCard card : cards) {
             System.out.println(card);
 
             area = new PlayerArea();

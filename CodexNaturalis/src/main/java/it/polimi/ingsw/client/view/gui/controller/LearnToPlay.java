@@ -26,6 +26,7 @@ import java.util.Objects;
 import java.util.ResourceBundle;
 
 import static it.polimi.ingsw.client.view.gui.Utilities.rotateEffect;
+
 /**
  * This class is a controller for the gui scene where the player can learn how to play.
  * It contains an image-view that shows the explanation of the game.

@@ -1,73 +1,89 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.Pane?>
-<?import javafx.scene.text.Font?>
-<?import javafx.scene.text.Text?>
-
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.client.view.gui.controller.InsertServerOptionController">
+<?import javafx.scene.text.*?>
+<BorderPane xmlns:fx="http://javafx.com/fxml/1" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+            minWidth="-Infinity"
+            prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/21"
+            fx:controller="it.polimi.ingsw.client.view.gui.controller.InsertServerOptionController">
     <center>
         <Pane BorderPane.alignment="CENTER">
             <ImageView fitHeight="1080.0" fitWidth="1920.0" preserveRatio="true">
-                <Image url="@Images/ServerOptions/options.png" />
+                <Image url="@Images/ServerOptions/options.png"/>
             </ImageView>
-            <Text fx:id="new_match" fill="#351f17" layoutX="202.0" layoutY="420.0" strokeType="OUTSIDE" strokeWidth="0.0" text="New Match" wrappingWidth="602.13671875">
+            <Text fx:id="new_match" fill="#351f17" layoutX="202.0" layoutY="420.0" strokeType="OUTSIDE"
+                  strokeWidth="0.0" text="New Match" wrappingWidth="602.13671875">
                 <font>
-                    <Font name="Fantasy Script" size="96.0" />
+                    <Font name="Fantasy Script" size="96.0"/>
                 </font>
             </Text>
-            <Text fx:id="load_match" fill="#351f17" layoutX="1235.0" layoutY="158.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Load Match" wrappingWidth="618.13671875">
+            <Text fx:id="load_match" fill="#351f17" layoutX="1235.0" layoutY="158.0" strokeType="OUTSIDE"
+                  strokeWidth="0.0" text="Load Match" wrappingWidth="618.13671875">
                 <font>
-                    <Font name="Fantasy Script" size="96.0" />
+                    <Font name="Fantasy Script" size="96.0"/>
                 </font>
             </Text>
-            <Text fx:id="join_match" fill="#351f17" layoutX="907.0" layoutY="324.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Join Match" wrappingWidth="696.13671875">
+            <Text fx:id="join_match" fill="#351f17" layoutX="907.0" layoutY="324.0" strokeType="OUTSIDE"
+                  strokeWidth="0.0" text="Join Match" wrappingWidth="696.13671875">
                 <font>
-                    <Font name="Fantasy Script" size="96.0" />
+                    <Font name="Fantasy Script" size="96.0"/>
                 </font>
             </Text>
-            <Text fx:id="join_running_match" fill="#351f17" layoutX="160.0" layoutY="172.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Started Match" wrappingWidth="802.13671875">
+            <Text fx:id="join_running_match" fill="#351f17" layoutX="160.0" layoutY="172.0" strokeType="OUTSIDE"
+                  strokeWidth="0.0" text="Started Match" wrappingWidth="802.13671875">
                 <font>
-                    <Font name="Fantasy Script" size="96.0" />
+                    <Font name="Fantasy Script" size="96.0"/>
                 </font>
             </Text>
-            <ImageView fx:id="reload11" fitHeight="200.0" fitWidth="200.0" layoutX="1569.0" layoutY="196.0" onMouseClicked="#reloadOptions">
-                <Image url="@Images/ServerOptions/reload.png" />
+            <ImageView fx:id="reload11" fitHeight="200.0" fitWidth="200.0" layoutX="1569.0" layoutY="196.0"
+                       onMouseClicked="#reloadOptions">
+                <Image url="@Images/ServerOptions/reload.png"/>
             </ImageView>
-            <ImageView fx:id="reload10" fitHeight="200.0" fitWidth="200.0" layoutX="926.0" layoutY="24.0" onMouseClicked="#reloadOptions">
-                <Image url="@Images/ServerOptions/reload.png" />
+            <ImageView fx:id="reload10" fitHeight="200.0" fitWidth="200.0" layoutX="926.0" layoutY="24.0"
+                       onMouseClicked="#reloadOptions">
+                <Image url="@Images/ServerOptions/reload.png"/>
             </ImageView>
-            <ImageView fx:id="reload9" fitHeight="200.0" fitWidth="200.0" layoutX="1127.0" layoutY="357.0" onMouseClicked="#reloadOptions">
-                <Image url="@Images/ServerOptions/reload.png" />
+            <ImageView fx:id="reload9" fitHeight="200.0" fitWidth="200.0" layoutX="1127.0" layoutY="357.0"
+                       onMouseClicked="#reloadOptions">
+                <Image url="@Images/ServerOptions/reload.png"/>
             </ImageView>
-            <ImageView fx:id="reload8" fitHeight="200.0" fitWidth="200.0" layoutX="39.0" layoutY="174.0" onMouseClicked="#reloadOptions">
-                <Image url="@Images/ServerOptions/reload.png" />
+            <ImageView fx:id="reload8" fitHeight="200.0" fitWidth="200.0" layoutX="39.0" layoutY="174.0"
+                       onMouseClicked="#reloadOptions">
+                <Image url="@Images/ServerOptions/reload.png"/>
             </ImageView>
-            <ImageView fx:id="reload7" fitHeight="200.0" fitWidth="200.0" layoutX="1209.0" layoutY="683.0" onMouseClicked="#reloadOptions">
-                <Image url="@Images/ServerOptions/reload.png" />
+            <ImageView fx:id="reload7" fitHeight="200.0" fitWidth="200.0" layoutX="1209.0" layoutY="683.0"
+                       onMouseClicked="#reloadOptions">
+                <Image url="@Images/ServerOptions/reload.png"/>
             </ImageView>
-            <ImageView fx:id="reload6" fitHeight="200.0" fitWidth="200.0" layoutX="1017.0" layoutY="585.0" onMouseClicked="#reloadOptions">
-                <Image url="@Images/ServerOptions/reload.png" />
+            <ImageView fx:id="reload6" fitHeight="200.0" fitWidth="200.0" layoutX="1017.0" layoutY="585.0"
+                       onMouseClicked="#reloadOptions">
+                <Image url="@Images/ServerOptions/reload.png"/>
             </ImageView>
-            <ImageView fx:id="reload5" fitHeight="200.0" fitWidth="200.0" layoutX="886.0" layoutY="780.0" onMouseClicked="#reloadOptions">
-                <Image url="@Images/ServerOptions/reload.png" />
+            <ImageView fx:id="reload5" fitHeight="200.0" fitWidth="200.0" layoutX="886.0" layoutY="780.0"
+                       onMouseClicked="#reloadOptions">
+                <Image url="@Images/ServerOptions/reload.png"/>
             </ImageView>
-            <ImageView fx:id="reload4" fitHeight="200.0" fitWidth="200.0" layoutX="864.0" layoutY="444.0" onMouseClicked="#reloadOptions">
-                <Image url="@Images/ServerOptions/reload.png" />
+            <ImageView fx:id="reload4" fitHeight="200.0" fitWidth="200.0" layoutX="864.0" layoutY="444.0"
+                       onMouseClicked="#reloadOptions">
+                <Image url="@Images/ServerOptions/reload.png"/>
             </ImageView>
-            <ImageView fx:id="reload3" fitHeight="200.0" fitWidth="200.0" layoutX="575.0" layoutY="174.0" onMouseClicked="#reloadOptions">
-                <Image url="@Images/ServerOptions/reload.png" />
+            <ImageView fx:id="reload3" fitHeight="200.0" fitWidth="200.0" layoutX="575.0" layoutY="174.0"
+                       onMouseClicked="#reloadOptions">
+                <Image url="@Images/ServerOptions/reload.png"/>
             </ImageView>
-            <ImageView fx:id="reload2" fitHeight="200.0" fitWidth="200.0" layoutX="1749.0" layoutY="-26.0" onMouseClicked="#reloadOptions">
-                <Image url="@Images/ServerOptions/reload.png" />
+            <ImageView fx:id="reload2" fitHeight="200.0" fitWidth="200.0" layoutX="1749.0" layoutY="-26.0"
+                       onMouseClicked="#reloadOptions">
+                <Image url="@Images/ServerOptions/reload.png"/>
             </ImageView>
-            <ImageView fx:id="reload1" fitHeight="200.0" fitWidth="200.0" layoutX="587.0" layoutY="431.0" onMouseClicked="#reloadOptions">
-                <Image url="@Images/ServerOptions/reload.png" />
+            <ImageView fx:id="reload1" fitHeight="200.0" fitWidth="200.0" layoutX="587.0" layoutY="431.0"
+                       onMouseClicked="#reloadOptions">
+                <Image url="@Images/ServerOptions/reload.png"/>
             </ImageView>
-            <ImageView fx:id="reload0" fitHeight="200.0" fitWidth="200.0" layoutX="1045.0" layoutY="888.0" onMouseClicked="#reloadOptions">
-                <Image url="@Images/ServerOptions/reload.png" />
+            <ImageView fx:id="reload0" fitHeight="200.0" fitWidth="200.0" layoutX="1045.0" layoutY="888.0"
+                       onMouseClicked="#reloadOptions">
+                <Image url="@Images/ServerOptions/reload.png"/>
             </ImageView>
         </Pane>
     </center>

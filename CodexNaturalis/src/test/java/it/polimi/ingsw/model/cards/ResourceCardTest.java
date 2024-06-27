@@ -21,11 +21,11 @@ class ResourceCardTest {
     private CommonArea commonArea;
 
     @BeforeEach
-    void setUp()
-    {
+    void setUp() {
         LoadDecks loadDecks = new LoadDecks();
         commonArea = loadDecks.load();
     }
+
     @Test
     void checkIsEqual() throws InvalidIdException {
         reign = Reign.Fungus;
@@ -168,7 +168,7 @@ class ResourceCardTest {
         for (int i = 1; i < 41; i++) {
             ArrayList<Resource> test = new ArrayList<>();
             ResourceCard resourceCard = new ResourceCard(i, points, reign, true, resources);
-            Assertions.assertEquals(test,resourceCard.getRequirement());
+            Assertions.assertEquals(test, resourceCard.getRequirement());
         }
     }
 
@@ -231,7 +231,7 @@ class ResourceCardTest {
 
     @Test
     void shouldNotThrowExceptionWhenIdIsAtLimit() {
-        for (int i=1;i<41; i++) {
+        for (int i = 1; i < 41; i++) {
             int a = i;
             assertDoesNotThrow(() -> new ResourceCard(a));
         }
@@ -252,23 +252,24 @@ class ResourceCardTest {
 
 
         ResourceCard testCard = new ResourceCard(1, 0, Reign.Fungus, true, test);
-        assertEquals(card1.getResource(),testCard.getResource());
-        assertEquals(card1.getReign(),testCard.getReign());
+        assertEquals(card1.getResource(), testCard.getResource());
+        assertEquals(card1.getReign(), testCard.getReign());
         assertEquals(card1.getPoints(), testCard.getPoints());
-        assertEquals(card1.getRequirement(),testRequirement);
-        assertEquals(card1.getPermanentResource(),testRequirement); //the card is face-up
+        assertEquals(card1.getRequirement(), testRequirement);
+        assertEquals(card1.getPermanentResource(), testRequirement); //the card is face-up
         assertTrue(card1.isResource());
-        System.out.println(card1.toString());
-        System.out.println(testCard.toString());
-        assertTrue(card1.equals(testCard));
+        System.out.println(card1);
+        System.out.println(testCard);
+        assertEquals(card1, testCard);
 
 
         ArrayList<Resource> testReign = new ArrayList<>();
         testReign.add(Resource.Fungus);
         card1.setFront(false);
-        assertEquals(card1.getPermanentResource(),testReign); //the card is face-down
+        assertEquals(card1.getPermanentResource(), testReign); //the card is face-down
 
     }
+
     @Test
     void loadLoadDecksCard40() throws InvalidIdException {
 
@@ -284,24 +285,25 @@ class ResourceCardTest {
 
 
         ResourceCard testCard = new ResourceCard(40, 1, Reign.Insect, true, test);
-        assertEquals(card40.getResource(),testCard.getResource());
-        assertEquals(card40.getReign(),testCard.getReign());
+        assertEquals(card40.getResource(), testCard.getResource());
+        assertEquals(card40.getReign(), testCard.getReign());
         assertEquals(card40.getPoints(), testCard.getPoints());
-        assertEquals(card40.getRequirement(),testRequirement);
-        assertEquals(card40.getPermanentResource(),testRequirement); //the card is face-up
+        assertEquals(card40.getRequirement(), testRequirement);
+        assertEquals(card40.getPermanentResource(), testRequirement); //the card is face-up
         assertTrue(card40.isResource());
 
 
         ArrayList<Resource> testReign = new ArrayList<>();
         testReign.add(Resource.Insect);
         card40.setFront(false);
-        assertEquals(card40.getPermanentResource(),testReign); //the card is face-down
+        assertEquals(card40.getPermanentResource(), testReign); //the card is face-down
 
     }
+
     @Test
     void loadLoadDecksCards() throws InvalidIdException {
         Deck<ResourceCard> cards = commonArea.getD1();
-        for (int i = 1; i< 41; i++){
+        for (int i = 1; i < 41; i++) {
 
             ResourceCard card = (ResourceCard) cards.getCard(i);
             Assertions.assertTrue(card.isResource());
@@ -313,7 +315,7 @@ class ResourceCardTest {
             test.add(Resource.Empty);
 
             card.setFront(false);
-            Assertions.assertEquals(test,card.getResource());
+            Assertions.assertEquals(test, card.getResource());
             //resource cards have no requirement
             ArrayList<Integer> req = new ArrayList<>();
             req.add(2);
@@ -321,17 +323,19 @@ class ResourceCardTest {
 
             ArrayList<Resource> permanent = new ArrayList<>();
 
-            if(card.getID()>0 && card.getID()<11){
+            if (card.getID() > 0 && card.getID() < 11) {
                 permanent.add(Resource.Fungus);
                 assertEquals(permanent, card.getPermanentResource());
             }
-            if(card.getID()>10 && card.getID()<21){
+            if (card.getID() > 10 && card.getID() < 21) {
                 permanent.add(Resource.Plant);
                 assertEquals(permanent, card.getPermanentResource());
-            }if(card.getID()>20 && card.getID()<31){
+            }
+            if (card.getID() > 20 && card.getID() < 31) {
                 permanent.add(Resource.Animal);
                 assertEquals(permanent, card.getPermanentResource());
-            }if(card.getID()>30 && card.getID()<41){
+            }
+            if (card.getID() > 30 && card.getID() < 41) {
                 permanent.add(Resource.Insect);
                 assertEquals(permanent, card.getPermanentResource());
             }
@@ -340,7 +344,6 @@ class ResourceCardTest {
 
 
     }
-
 
 
 }

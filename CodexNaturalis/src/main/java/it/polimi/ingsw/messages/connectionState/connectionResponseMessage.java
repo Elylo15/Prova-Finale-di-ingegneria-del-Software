@@ -31,6 +31,8 @@ public class connectionResponseMessage implements Message, Serializable {
 
     /**
      * Setter for correct
+     *
+     * @param correct: boolean
      */
     public void setCorrect(boolean correct) {
         this.correct = correct;

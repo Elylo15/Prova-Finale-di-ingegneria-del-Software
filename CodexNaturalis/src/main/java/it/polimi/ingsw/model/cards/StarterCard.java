@@ -72,7 +72,7 @@ StarterCard extends PlaceableCard implements Serializable {
      * This constructor creates a new StarterCard with the given parameters.
      * It throws an InvalidIdException if the ID is not between 1 and 40.
      *
-     * @param ID,                it must be >=1  and =<40
+     * @param ID,                it must be >=1  and <=40
      * @param front,             true if the card is front, false if the card is back
      * @param points,            points given by the card
      * @param reign,             reign of the card
@@ -98,7 +98,7 @@ StarterCard extends PlaceableCard implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-       // if (!super.equals(o)) return false;
+        // if (!super.equals(o)) return false;
         StarterCard that = (StarterCard) o;
         return Objects.equals(permanentResource, that.permanentResource) && Objects.equals(bottomResource, that.bottomResource);
     }

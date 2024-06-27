@@ -19,6 +19,7 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+
 /**
  * This class is the controller for the RMI connection.
  * It handles the communication between the client and the server.

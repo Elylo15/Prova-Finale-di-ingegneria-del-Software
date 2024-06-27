@@ -30,8 +30,9 @@ public class ClientSocket extends ClientConnection implements Serializable {
     /**
      * method {@code ClientSocket}: constructs a new ClientSocket
      *
-     * @param IP:   String, Ip of the client
-     * @param port: String, port of the client
+     * @param IP:     String, Ip of the client
+     * @param port:   String, port of the client
+     * @param socket: Socket, socket of the client
      */
     public ClientSocket(String IP, String port, Socket socket) {
         super(IP, port);
