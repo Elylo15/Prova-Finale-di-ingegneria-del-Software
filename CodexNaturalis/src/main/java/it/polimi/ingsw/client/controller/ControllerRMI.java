@@ -48,7 +48,6 @@ public class ControllerRMI extends Controller {
         try {
             Registry registry = LocateRegistry.getRegistry(serverIP, Integer.parseInt(serverPort));
             MainRemoteServerInterface server = (MainRemoteServerInterface) registry.lookup("MainServer");
-            // todo check Naming.lookup()
 
             String lookup = server.helloFromClient();
             this.toServer = (MessageExchangerInterface) registry.lookup(lookup + "_toServer");

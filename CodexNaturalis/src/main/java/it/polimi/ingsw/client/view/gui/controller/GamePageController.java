@@ -232,6 +232,12 @@ public class GamePageController implements Initializable {
         }
     }
 
+    /**
+     * Handles the objectiveMessage received from the server
+     * Shows the player the objectives to choose from
+     *
+     * @param list the list of objectives received from the server
+     */
     private void handleObjectiveMessage(ArrayList<?> list) {
         if (Objects.equals(currentState, "objectiveState") && !list.isEmpty() && list.get(0) instanceof ObjectiveCard) {
             playSoundEffect("/Audio/you.mp3");
@@ -1276,6 +1282,11 @@ public class GamePageController implements Initializable {
         }
     }
 
+    /**
+     * Turns objectiveCard when clicked twice
+     *
+     * @param event the mouse event
+     */
     private void turnObjectives(MouseEvent event) {
         if (event.getClickCount() == 2) {
             Utilities.turnAround(event);
