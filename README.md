@@ -3,7 +3,7 @@
 
 **Codex Naturalis** is the Java implementation of the omonimus Board Game by **Cranio Creation**. It is the final project of the **Software Engineering** course of **Computer Science Engineering** held at **Politecnico di Milano**.
 
-## Grade ??/30
+## Grade 30L/30
 
 ## Developers
 * [Bianca Roberta Ianosel](https://github.com/BIA3IA)
