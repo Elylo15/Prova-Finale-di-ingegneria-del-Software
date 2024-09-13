@@ -324,7 +324,8 @@ public class GamePageController implements Initializable {
                 winnerLabel.setText(winners.getFirst());
             } else {
                 winner.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Winner/winTwo.png"))));
-                winnerLabel.setText(winners.getFirst() + "\n" + winners.get(1));
+                for(String winner : winners)
+                    winnerLabel.setText(winner + "\n");
             }
             mainPane.getChildren().add(winner);
             Utilities.fadeInTransition(winner, 1.0);

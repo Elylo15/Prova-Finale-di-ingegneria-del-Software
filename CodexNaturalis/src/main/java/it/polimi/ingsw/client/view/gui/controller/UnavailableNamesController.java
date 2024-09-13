@@ -55,7 +55,7 @@ public class UnavailableNamesController implements Initializable {
             } else if (nameToChoose.getText().length() >= 10) {
                 retry.setText("Too Long!");
                 retry.setVisible(true);
-            } else if (names.contains(nameToChoose.getText())) {
+            } else if (names.contains(nameToChoose.getText().toLowerCase())) {
                 retry.setText("Name Taken!");
                 retry.setVisible(true);
             } else

@@ -61,8 +61,6 @@ public class LearnToPlay implements Initializable {
     @FXML
     private ImageView state;
     @FXML
-    private Pane playground;
-    @FXML
     private ImageView onTop;
     @FXML
     private ImageView colorName;
@@ -115,17 +113,12 @@ public class LearnToPlay implements Initializable {
         mainPane2.setOpacity(0.0);
 
         mainPane2.setOnMouseClicked((e -> {
-            i++;
             if (i < 60) {
                 clickHandler();
             }
+            i++;
         }));
-
-        playground.setOnMouseClicked(e -> {
-
-        });
     }
-
 
     /**
      * This method is called when the user clicks on the screen, it will load the next explanation
@@ -134,177 +127,173 @@ public class LearnToPlay implements Initializable {
         double fitHeightPlaced = 133;
         double fitWidthPlaced = 200;
 
+
         if (i == 0) {
-            explanation2.setMouseTransparent(true);
             explanation2.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/2.png"))));
-            onCLick(explanation2, explanation);
+            onCLick(explanation2, explanation, true);
         } else if (i == 1) {
             explanation.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/3.png"))));
-            onCLick(explanation, explanation2);
+            onCLick(explanation, explanation2, true);
         } else if (i == 2) {
             explanation2.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/4.png"))));
-            onCLick(explanation2, explanation);
+            onCLick(explanation2, explanation, true);
         } else if (i == 3) {
             explanation.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/5.png"))));
-            onCLick(explanation, explanation2);
+            onCLick(explanation, explanation2, true);
         } else if (i == 4) {
             explanation2.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/6.png"))));
-            onCLick(explanation2, explanation);
+            onCLick(explanation2, explanation, true);
         } else if (i == 5) {
             explanation.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/7.png"))));
-            onCLick(explanation, explanation2);
+            onCLick(explanation, explanation2, true);
         } else if (i == 6) {
             explanation2.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/8.png"))));
-            onCLick(explanation2, explanation);
+            onCLick(explanation2, explanation, true);
         } else if (i == 7) {
             explanation.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/9.png"))));
-            onCLick(explanation, explanation2);
+            onCLick(explanation, explanation2, true);
         } else if (i == 8) {
             explanation2.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/10.png"))));
-            onCLick(explanation2, explanation);
+            onCLick(explanation2, explanation, true);
         } else if (i == 9) {
             explanation.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/59.png"))));
-            onCLick(explanation, explanation2);
+            onCLick(explanation, explanation2, true);
         } else if (i == 10) {
             addStarter();
             explanation2.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/11.png"))));
-            onCLick(explanation2, explanation);
+            onCLick(explanation2, explanation, true);
         } else if (i == 11) {
             explanation.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/12.png"))));
-            onCLick(explanation, explanation2);
+            onCLick(explanation, explanation2, true);
         } else if (i == 12) {
             explanation2.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/13.png"))));
-            onCLick(explanation2, explanation);
+            onCLick(explanation2, explanation, true);
         } else if (i == 13) {
             ImageView starterImg = Utilities.getCardFromPosition(layoutXCard1, layoutYHand, mainPane);
             starterImg.setImage(imageBinder.getOppositeImage(myS.getID(), myS.isFront()));
             myS.setFront(false);
             explanation.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/14.png"))));
-            onCLick(explanation, explanation2);
+            onCLick(explanation, explanation2, true);
         } else if (i == 14) {
             explanation2.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/15.png"))));
-            onCLick(explanation2, explanation);
+            onCLick(explanation2, explanation, true);
         } else if (i == 15) {
             explanation.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/16.png"))));
-            onCLick(explanation, explanation2);
+            onCLick(explanation, explanation2, true);
         } else if (i == 16) {
             Utilities.getCardFromPosition(layoutXCard1, layoutYHand, mainPane).setOnMouseClicked(this::selectCard);
             explanation2.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/17.png"))));
-            onCLick(explanation2, explanation);
+            onCLick(explanation2, explanation, true);
         } else if (i == 17) {
-            mainPane2.setDisable(true);
             explanation.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/18.png"))));
             addClickablePlaceholder(680, 359, fitHeightPlaced, fitWidthPlaced, this::waitForClickStarter);
-            onCLick(explanation, explanation2);
+            onCLick(explanation, explanation2, false);
         } else if (i == 18) {
-            mainPane2.setDisable(false);
             addCommonObj();
             explanation2.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/19.png"))));
-            onCLick(explanation2, explanation);
+            onCLick(explanation2, explanation, true);
         } else if (i == 19) {
             explanation.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/20.png"))));
-            onCLick(explanation, explanation2);
+            onCLick(explanation, explanation2, true);
         } else if (i == 20) {
             explanation2.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/21.png"))));
-            onCLick(explanation2, explanation);
+            onCLick(explanation2, explanation, true);
         } else if (i == 21) {
             explanation.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/22.png"))));
-            onCLick(explanation, explanation2);
+            onCLick(explanation, explanation2, true);
         } else if (i == 22) {
             adMyObj();
             explanation2.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/24.png"))));
-            onCLick(explanation2, explanation);
+            onCLick(explanation2, explanation, true);
         } else if (i == 23) {
-            mainPane2.setDisable(true);
             pick = true;
             addClickablePlaceholder(layoutXObjective, 606, fitHeightCommon, fitWidthCommon, this::waitForClickObjective);
             explanation.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/25.png"))));
-            onCLick(explanation, explanation2);
+            onCLick(explanation, explanation2, false);
         } else if (i == 24) {
             removeObjectives();
             explanation2.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/26.png"))));
-            onCLick(explanation2, explanation);
+            onCLick(explanation2, explanation, true);
         } else if (i == 25) {
             addCardsToHand();
             explanation.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/27.png"))));
-            onCLick(explanation, explanation2);
+            onCLick(explanation, explanation2, true);
         } else if (i == 26) {
             explanation2.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/28.png"))));
-            onCLick(explanation2, explanation);
+            onCLick(explanation2, explanation, true);
         } else if (i == 27) {
             explanation.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/29.png"))));
-            onCLick(explanation, explanation2);
+            onCLick(explanation, explanation2, true);
         } else if (i == 28) {
             explanation2.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/30.png"))));
-            onCLick(explanation2, explanation);
+            onCLick(explanation2, explanation, true);
         } else if (i == 29) {
             explanation.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/31.png"))));
-            onCLick(explanation, explanation2);
+            onCLick(explanation, explanation2, true);
         } else if (i == 30) {
             explanation2.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/32.png"))));
-            onCLick(explanation2, explanation);
+            onCLick(explanation2, explanation, true);
         } else if (i == 31) {
             explanation.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/33.png"))));
-            onCLick(explanation, explanation2);
+            onCLick(explanation, explanation2, true);
         } else if (i == 32) {
             turnAroundCardsHand();
             explanation2.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/34.png"))));
-            onCLick(explanation2, explanation);
+            onCLick(explanation2, explanation, true);
         } else if (i == 33) {
             explanation.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/35.png"))));
-            onCLick(explanation, explanation2);
+            onCLick(explanation, explanation2, true);
         } else if (i == 34) {
             explanation2.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/36.png"))));
-            onCLick(explanation2, explanation);
+            onCLick(explanation2, explanation, true);
         } else if (i == 35) {
             addClickablePlaceholder(837, 278, fitHeightPlaced, fitWidthPlaced, null);
             addClickablePlaceholder(523, 278, fitHeightPlaced, fitWidthPlaced, null);
             addClickablePlaceholder(837, 439, fitHeightPlaced, fitWidthPlaced, null);
             addClickablePlaceholder(523, 439, fitHeightPlaced, fitWidthPlaced, null);
             explanation.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/37.png"))));
-            onCLick(explanation, explanation2);
+            onCLick(explanation, explanation2, true);
         } else if (i == 36) {
             explanation2.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/38.png"))));
-            onCLick(explanation2, explanation);
+            onCLick(explanation2, explanation, true);
         } else if (i == 37) {
             Utilities.getCardFromPosition(layoutXCard1, layoutYHand, mainPane).setOnMouseClicked(this::selectCard);
             Utilities.getCardFromPosition(layoutXCard2, layoutYHand, mainPane).setOnMouseClicked(this::selectCard);
             Utilities.getCardFromPosition(layoutXCard0, layoutYHand, mainPane).setOnMouseClicked(this::selectCard);
             explanation.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/39.png"))));
-            onCLick(explanation, explanation2);
+            onCLick(explanation, explanation2, true);
         } else if (i == 38) {
             explanation2.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/40.png"))));
-            onCLick(explanation2, explanation);
+            onCLick(explanation2, explanation, true);
         } else if (i == 39) {
-            mainPane2.setDisable(true);
             pick = true;
             Utilities.getCardFromPosition(837, 278, mainPane).setOnMouseClicked(this::selectedPlaceHolder);
             Utilities.getCardFromPosition(523, 278, mainPane).setOnMouseClicked(this::selectedPlaceHolder);
             Utilities.getCardFromPosition(837, 439, mainPane).setOnMouseClicked(this::selectedPlaceHolder);
             Utilities.getCardFromPosition(523, 439, mainPane).setOnMouseClicked(this::selectedPlaceHolder);
             explanation.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/41.png"))));
-            onCLick(explanation, explanation2);
+            onCLick(explanation, explanation2, false);
         } else if (i == 40) {
             explanation2.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/42.png"))));
-            onCLick(explanation2, explanation);
+            onCLick(explanation2, explanation, true);
         } else if (i == 41) {
             explanation.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/43.png"))));
-            onCLick(explanation, explanation2);
+            onCLick(explanation, explanation2, true);
         } else if (i == 42) {
             explanation2.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/44.png"))));
-            onCLick(explanation2, explanation);
+            onCLick(explanation2, explanation, true);
         } else if (i == 43) {
             explanation.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/45.png"))));
-            onCLick(explanation, explanation2);
+            onCLick(explanation, explanation2, true);
         } else if (i == 44) {
             explanation2.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/46.png"))));
-            onCLick(explanation2, explanation);
+            onCLick(explanation2, explanation, true);
         } else if (i == 45) {
             explanation.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/47.png"))));
-            onCLick(explanation, explanation2);
+            onCLick(explanation, explanation2, true);
         } else if (i == 46) {
             explanation2.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/48.png"))));
-            onCLick(explanation2, explanation);
+            onCLick(explanation2, explanation, true);
         } else if (i == 47) {
             mainPane2.setDisable(true);
             pick = true;
@@ -315,34 +304,34 @@ public class LearnToPlay implements Initializable {
             Utilities.getCardFromPosition(layoutXPick0, layoutYGold, mainPane).setOnMouseClicked(this::selectPick);
             Utilities.getCardFromPosition(layoutXPick1, layoutYGold, mainPane).setOnMouseClicked(this::selectPick);
             explanation.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/49.png"))));
-            onCLick(explanation, explanation2);
+            onCLick(explanation, explanation2, true);
         } else if (i == 48) {
             explanation2.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/50.png"))));
-            onCLick(explanation2, explanation);
+            onCLick(explanation2, explanation, true);
         } else if (i == 49) {
             explanation.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/51.png"))));
-            onCLick(explanation, explanation2);
+            onCLick(explanation, explanation2, true);
         } else if (i == 50) {
             explanation2.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/52.png"))));
-            onCLick(explanation2, explanation);
+            onCLick(explanation2, explanation, true);
         } else if (i == 51) {
             explanation.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/53.png"))));
-            onCLick(explanation, explanation2);
+            onCLick(explanation, explanation2, true);
         } else if (i == 52) {
             explanation2.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/54.png"))));
-            onCLick(explanation2, explanation);
+            onCLick(explanation2, explanation, true);
         } else if (i == 53) {
             explanation.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/55.png"))));
-            onCLick(explanation, explanation2);
+            onCLick(explanation, explanation2, true);
         } else if (i == 54) {
             explanation2.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/56.png"))));
-            onCLick(explanation2, explanation);
+            onCLick(explanation2, explanation, true);
         } else if (i == 55) {
             explanation.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/57.png"))));
-            onCLick(explanation, explanation2);
+            onCLick(explanation, explanation2, true);
         } else if (i == 56) {
             explanation2.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/rulesTxt/58.png"))));
-            onCLick(explanation2, explanation);
+            onCLick(explanation2, explanation, true);
         }
 
     }
@@ -674,7 +663,7 @@ public class LearnToPlay implements Initializable {
      * @param previous the previous explanation
      * @param image    the new explanation
      */
-    private void onCLick(ImageView image, ImageView previous) {
+    private void onCLick(ImageView image, ImageView previous, boolean enable) {
         if (!mainPane.getChildren().contains(image)) {
             mainPane2.setDisable(true);
             FadeTransition fadeTransitionOut = new FadeTransition(Duration.seconds(1), previous);
@@ -697,7 +686,8 @@ public class LearnToPlay implements Initializable {
                     pauseTransition,
                     fadeTransitionIn
             );
-            sequentialTransition.onFinishedProperty().set(event -> mainPane2.setDisable(false));
+            if(enable)
+                sequentialTransition.onFinishedProperty().set(event -> mainPane2.setDisable(false));
 
             sequentialTransition.play();
         }
